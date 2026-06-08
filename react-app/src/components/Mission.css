@@ -1,0 +1,54 @@
+.mission-section {
+    padding: 100px 8%;
+    background-color: var(--sand-white);
+}
+
+.mission-container {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.mission-text h2 {
+    font-size: 3rem;
+    color: var(--earth-deep);
+    margin-bottom: 30px;
+}
+
+.mission-text p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--earth);
+    margin-bottom: 20px;
+}
+
+.lead-text {
+    font-size: 1.3rem !important;
+    color: var(--grass) !important;
+    font-weight: 500;
+}
+
+.mission-quote-box {
+    background-color: var(--sand-pale);
+    padding: 40px;
+    border-left: 5px solid var(--sunset);
+    border-radius: 0 12px 12px 0;
+}
+
+.quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--earth-deep);
+    margin-bottom: 15px;
+}
+
+.quote-author {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--earth);
+    font-weight: 600;
+}

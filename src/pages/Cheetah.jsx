@@ -1,36 +1,81 @@
 function Cheetah({ goTo }) {
   return (
     <>
-      <div className="page-hero page-hero-warm">
-        <p className="section-tag" style={{ color: 'var(--sunset-glow)' }}>~ Our Core Mission ~</p>
-        <h2 className="section-title">Cheetah <em>Breeding</em> Project</h2>
-        <p className="intro">Building a genetically diverse captive population to give cheetahs a fighting chance in a world running out of space.</p>
+      <div className="page-hero-img">
+        <img
+          src="https://novaslegacy.com/wp-content/uploads/2022/08/IMG-20210120-WA0031-1170x600.jpg"
+          alt="Ghepardo Nova's Legacy"
+        />
+        <div className="page-hero-img-overlay" />
+        <div className="page-hero-text">
+          <span className="label label-light">~ Il Progetto Ghepardi ~</span>
+          <h1>Breeding <em>&amp; Cheetah Run</em></h1>
+          <p>
+            Allevamento responsabile, conservazione del patrimonio genetico
+            e un&apos;esperienza unica per conoscere il felino più veloce del mondo.
+          </p>
+        </div>
       </div>
 
-      <div className="page-body">
+      <div className="page-content">
         <div className="container">
-          <span className="back-link" onClick={() => goTo('home', 'projects')}>← Back to Projects</span>
+          <span className="back-btn" onClick={() => goTo('home')}>← Torna alla Home</span>
 
-          <div className="page-img-placeholder" style={{ background: 'linear-gradient(135deg, #8B6B3D, #3D2B1F)' }}>
-            <span style={{ fontSize: '6rem' }}>🐆</span>
-            <div className="caption">Our cheetahs at the Waterberg centre</div>
+          <h2>La storia di <em>Nova</em></h2>
+          <p>
+            Nova era una gheparda a tre zampe, salvata da una situazione disperata
+            e allevata a mano da Kim Hiltrop — infermiera veterinaria con un cuore grande
+            come l&apos;Africa. Nova non poteva sopravvivere in natura, ma ha dato vita
+            a qualcosa di straordinario: un intero progetto di conservazione che porta il suo nome.
+          </p>
+          <p>
+            Oggi Nova&apos;s Legacy è molto più di un rifugio. È un centro di allevamento
+            certificato, un punto di riferimento per la conservazione del ghepardo
+            nel Waterberg, e una casa per decine di animali selvatici.
+          </p>
+
+          <div className="highlight">
+            <p>
+              <strong>Il ghepardo è la specie felina più a rischio in Africa.</strong>
+              Meno di 7.000 esemplari vivono ancora allo stato selvatico — l&apos;80% del declino
+              è avvenuto negli ultimi 100 anni. Il bracconaggio, la perdita di habitat
+              e il conflitto con i pastori sono le cause principali.
+            </p>
           </div>
 
-          <h2>Why Cheetah <em>Breeding</em> Matters</h2>
-          <p>Cheetahs are Africa&apos;s most endangered big cat. With fewer than 7,000 remaining in the wild and a gene pool that&apos;s dangerously narrow, captive breeding isn&apos;t just helpful — it&apos;s essential for the survival of the species.</p>
-          <p>At Nova&apos;s Legacy, we breed cheetahs with careful genetic planning, ensuring maximum diversity. Our goal is not to keep cheetahs in captivity forever, but to build a strong gene pool that can one day help repopulate the African plains when safe, wild habitat is available.</p>
+          <h2>Il <em>Cheetah Run</em></h2>
+          <p>
+            Il Cheetah Run è l&apos;esperienza più adrenalinica che puoi fare a Nova&apos;s Legacy.
+            Corri su una pista di 60 metri accanto a un ghepardo vivo, senti la sua
+            accelerazione esplosiva, guardalo toccare i 112 km/h. Non è uno spettacolo —
+            è una finestra sulla natura che ti cambia per sempre.
+          </p>
+          <p>
+            Disponibile per visitatori, gruppi e volontari. La durata dell&apos;esperienza
+            è di circa 15–20 minuti incluso il briefing di sicurezza.
+            Contattaci via email o WhatsApp per prenotare.
+          </p>
 
-          <div className="highlight-box">
-            <p><strong>King Cheetahs:</strong> We are one of the few centres in the world that houses king cheetahs — a rare genetic variant with large, blotched markings instead of the typical spots. Their presence in our programme adds invaluable genetic diversity.</p>
-          </div>
+          <h2>Il Programma di <em>Breeding</em></h2>
+          <p>
+            Il nostro programma di riproduzione è sviluppato in collaborazione con
+            esperti di conservazione internazionali. Ogni accoppiamento è pianificato
+            per massimizzare la diversità genetica della popolazione captiva,
+            riducendo la consanguineità e aumentando la vitalità degli esemplari.
+          </p>
+          <p>
+            I cuccioli nati a Nova&apos;s Legacy vengono monitorati fin dai primi giorni.
+            Dove possibile, vengono avviate procedure per il reinserimento in natura
+            tramite programmi di rewilding in collaborazione con riserve partner.
+          </p>
 
-          <h2>Our <em>Approach</em></h2>
-          <p>Every breeding decision is guided by studbook data and genetic analysis. We work with other centres and conservation bodies to ensure our programme contributes to the broader species survival plan. Cubs born here are raised with careful socialisation protocols that prepare them for possible future reintroduction.</p>
-          <p>We also run a comprehensive educational programme that teaches visitors, volunteers, and local communities about the challenges cheetahs face — from habitat loss to human-wildlife conflict — and what can be done to help.</p>
-
-          <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-            <a className="btn btn-primary" onClick={() => goTo('volunteer')}>Volunteer with Our Cheetahs</a>
-            <a className="btn btn-outline-dark" onClick={() => goTo('adopt')} style={{ marginLeft: '0.5rem' }}>Adopt a Cheetah</a>
+          <div style={{ marginTop: '3rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <button className="btn btn-dark" onClick={() => goTo('volunteer')}>
+              Diventa Volontario
+            </button>
+            <button className="btn btn-outline-dark" onClick={() => goTo('adopt')}>
+              Adotta un Ghepardo
+            </button>
           </div>
         </div>
       </div>

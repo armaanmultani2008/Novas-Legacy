@@ -1,26 +1,104 @@
+const CHALETS = [
+  {
+    name: 'Chalet Nova',
+    size: 'Per 2 persone',
+    desc: 'Il chalet principale, dedicato alla nostra fondatrice. Vista sugli enclosure dei ghepardi. Camera matrimoniale, bagno privato, cucina attrezzata.',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/vol-4-1024x768.jpg',
+  },
+  {
+    name: 'Chalet Bush',
+    size: 'Per 2–4 persone',
+    desc: 'Immerso nella vegetazione del Waterberg. Letti twin o matrimoniale, spazio esterno privato, braai (barbecue africano) incluso.',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-42.jpg',
+  },
+  {
+    name: 'Chalet Waterberg',
+    size: 'Per 2–4 persone',
+    desc: 'Il più panoramico. Terrazza con vista sulle montagne, perfetto per famiglie o coppie che cercano privacy assoluta nella natura.',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-41.jpg',
+  },
+]
+
 function Visit({ goTo }) {
   return (
     <>
-      <div className="page-hero page-hero-warm" style={{ background: 'linear-gradient(135deg, var(--sky-warm), var(--earth-deep))' }}>
-        <p className="section-tag" style={{ color: 'var(--sand-light)' }}>~ Stay With Us ~</p>
-        <h2 className="section-title">Visits &amp; <em>Accommodation</em></h2>
-        <p className="intro">Experience the Waterberg in comfort. Stunning views, unforgettable wildlife encounters, and African hospitality.</p>
+      <div className="page-hero-img">
+        <img
+          src="https://novaslegacy.com/wp-content/uploads/2022/05/vol-4-1024x768.jpg"
+          alt="Soggiorno a Nova's Legacy"
+        />
+        <div className="page-hero-img-overlay" />
+        <div className="page-hero-text">
+          <span className="label label-light">~ Soggiorno &amp; Visite ~</span>
+          <h1>Dormire nel <em>Bush Africano</em></h1>
+          <p>
+            Tre chalet self-catering immersi nel Waterberg.
+            Colazione inclusa, animali selvatici a portata di sguardo,
+            e un silenzio che non trovi in nessun altro posto al mondo.
+          </p>
+        </div>
       </div>
 
-      <div className="page-body">
+      <div className="page-content">
         <div className="container">
-          <span className="back-link" onClick={() => goTo('home', 'experience')}>← Back to Experiences</span>
+          <span className="back-btn" onClick={() => goTo('home')}>← Torna alla Home</span>
 
-          <h2>Your Home in the <em>Bush</em></h2>
-          <p>Not everyone can commit to a full volunteer programme — and that&apos;s perfectly fine. We welcome day visitors, overnight guests, and short-stay travellers who want to experience what we do, meet our animals up close, and enjoy the breathtaking beauty of the Waterberg region.</p>
-          <p>Our accommodation is clean, comfortable, and surrounded by nature. Wake up to birdsong, have breakfast while watching giraffes pass by, and end your day with a sunset that will stay with you forever. We&apos;re in a malaria-free zone, making it safe and accessible for families too.</p>
+          <h2>Tre chalet, <em>un&apos;esperienza unica</em></h2>
+          <p>
+            I nostri chalet self-catering sono progettati per chi vuole vivere
+            l&apos;Africa autentica senza rinunciare al comfort. Ogni chalet è dotato
+            di cucina attrezzata, bagno privato, acqua calda e WiFi.
+            La colazione è inclusa nel prezzo ogni mattina.
+          </p>
 
-          <div className="highlight-box">
-            <p><strong>Activities during your stay:</strong> Guided tours of the centre, cheetah feeding experiences, game drives through our 865-hectare reserve, photo safaris, and educational talks. We&apos;ll tailor your experience to your interests.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', margin: '2rem 0 3rem' }}>
+            {CHALETS.map(c => (
+              <div key={c.name} style={{ border: '1px solid #EDE5D8', overflow: 'hidden', background: 'var(--off-white)' }}>
+                <div style={{ height: '200px', overflow: 'hidden' }}>
+                  <img src={c.img} alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div style={{ padding: '1.5rem' }}>
+                  <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.4rem' }}>{c.size}</div>
+                  <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.25rem', marginBottom: '0.6rem', color: 'var(--dark)' }}>{c.name}</h3>
+                  <p style={{ fontSize: '0.85rem', color: '#777', lineHeight: '1.65', fontWeight: 300 }}>{c.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-            <a className="btn btn-primary" onClick={() => goTo('home', 'contact')}>Book Your Stay</a>
+          <h2>Come <em>arrivare</em></h2>
+          <p>
+            Siamo a circa 130 km a nord di Pretoria, nel distretto di Bela-Bela (Warmbaths),
+            Limpopo. L&apos;indirizzo esatto è: <strong>431 Diepdrift, Bela-Bela, 0480, South Africa</strong>.
+          </p>
+          <p>
+            L&apos;aeroporto più vicino è OR Tambo (Johannesburg), a circa 2 ore di guida.
+            Possiamo organizzare un transfer su richiesta (costo aggiuntivo).
+            Per i percorsi da seguire una volta in zona, ti mandiamo le istruzioni precise al momento della prenotazione.
+          </p>
+
+          <div className="highlight">
+            <p>
+              <strong>Periodi consigliati:</strong> aprile–ottobre (stagione secca, temperatura ideale,
+              animali più visibili). L&apos;estate (nov–mar) è calda e piovosa ma ugualmente magica.
+              Il Waterberg è una destinazione tutto l&apos;anno.
+            </p>
+          </div>
+
+          <h2>Aggiungi il <em>Cheetah Run</em></h2>
+          <p>
+            Tutti gli ospiti degli chalet possono prenotare il Cheetah Run durante il soggiorno.
+            È l&apos;esperienza che rende una vacanza un ricordo per tutta la vita.
+            Disponibile nei giorni feriali, mattina o pomeriggio.
+          </p>
+
+          <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <a href="mailto:kim@novaslegacy.co.za" className="btn btn-dark">
+              Prenota ora
+            </a>
+            <button className="btn btn-outline-dark" onClick={() => goTo('cheetah')}>
+              Scopri il Cheetah Run
+            </button>
           </div>
         </div>
       </div>

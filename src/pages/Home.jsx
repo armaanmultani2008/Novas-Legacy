@@ -1,214 +1,348 @@
-import { useEffect } from 'react'
-import { useScrollReveal } from '../hooks/useScrollReveal'
+import { useEffect, useRef, useState } from 'react'
 
-const ANIMALS = [
-  { emoji: '🐆', name: 'Nova', desc: 'Cheetah · The One Who Started It All', bg: 'linear-gradient(160deg,#8B6B3D,#3D2B1F)' },
-  { emoji: '🦁', name: 'Shira', desc: 'Lion · Rescued as a Cub', bg: 'linear-gradient(160deg,#7B5B2A,#2A1A0A)' },
-  { emoji: '🐕', name: 'Ghost Pack', desc: 'African Wild Dogs', bg: 'linear-gradient(160deg,#5B7B4A,#1A2A0F)' },
-  { emoji: '🐎', name: 'Spirit', desc: 'Horse · Rescued & Rehabilitated', bg: 'linear-gradient(160deg,#7B6B5A,#2A1D14)' },
-  { emoji: '🦒', name: 'Tumelo', desc: 'Giraffe · Free-Roaming', bg: 'linear-gradient(160deg,#6B5B3A,#1A150A)' },
-  { emoji: '🦓', name: 'Stripe', desc: 'Zebra · Part of the Herd', bg: 'linear-gradient(160deg,#4B5B3A,#0F1A0A)' },
-  { emoji: '🦊', name: 'Sandy', desc: 'Bat-Eared Fox', bg: 'linear-gradient(160deg,#6B4B3A,#2A1A10)' },
-  { emoji: '🐈', name: 'Shadow', desc: 'Serval · Night Hunter', bg: 'linear-gradient(160deg,#5B4B3A,#1A1510)' },
+const BASE = 'https://novaslegacy.com/wp-content/uploads/2022/'
+
+// ── Image bank (no repeats within sections) ──
+const IMG = {
+  hero:        BASE + '08/Nova-2.jpg',
+  pillar1:     BASE + '08/20201209_171109-scaled.jpg',
+  pillar2:     BASE + '08/IMG_20200927_132938_928.jpg',
+  pillar3:     BASE + '08/IMG-20210918-WA0026.jpg',
+  cheetahRun:  BASE + '08/IMG-20210120-WA0031-1170x600.jpg',
+  progRun:     BASE + '08/IMG-20210312-WA0032.jpg',
+  progVol:     BASE + '08/IMG-20210830-WA0148-1.jpg',
+  progChalet:  BASE + '08/IMG_20200803_140430_917.jpg',
+  progInt:     BASE + '08/Vol-1-768x576.jpg',
+  progAdopt:   BASE + '08/20210906_112700-scaled.jpg',
+  progBreed:   BASE + '08/20210512_112828-scaled.jpg',
+  vol1:        BASE + '08/IMG_20200605_110224_811.jpg',
+  vol2:        BASE + '08/IMG-20210830-WA0148-1.jpg',
+  vol3:        BASE + '08/IMG-20210312-WA0032.jpg',
+  vol4:        BASE + '08/20210512_112828-scaled.jpg',
+  bigCta:      BASE + '08/IMG_20200430_113154_083-1.jpg',
+  accom:       BASE + '08/vol-4-1024x768.jpg',
+  accom2:      BASE + '08/IMG_20200803_140430_917.jpg',
+}
+
+const GALLERY_IMGS = [
+  { src: BASE + '08/20201128_175257-1-scaled.jpg',   caption: 'La Riserva' },
+  { src: BASE + '08/IMG-20210219-WA0008.jpg',         caption: 'I Ghepardi' },
+  { src: BASE + '08/20201209_173407-scaled.jpg',      caption: 'Nel Bush' },
+  { src: BASE + '08/IMG_20210723_183151_565.jpg',     caption: 'Alba sul Waterberg' },
+  { src: BASE + '08/IMG-20210329-WA0010.jpg',         caption: 'Vita Selvatica' },
+  { src: BASE + '08/IMG-20210816-WA0006-2.jpg',       caption: 'I Volontari' },
+  { src: BASE + '08/20210123_161512-scaled.jpg',      caption: 'Mattina al Recinto' },
+  { src: BASE + '08/IMG_20200428_090037_903-1.jpg',   caption: 'Cura Quotidiana' },
+  { src: BASE + '08/IMG-20210925-WA0027-1.jpg',       caption: 'Tramonto' },
+  { src: BASE + '08/IMG_20200430_113154_083-1.jpg',   caption: 'Nova' },
 ]
 
-const SCHEDULE = [
-  { time: '06:00', title: 'Sunrise & Morning Prep', desc: 'Wake to the bush. Prepare food and enrichment for all animals.' },
-  { time: '07:00', title: 'Feeding Time', desc: 'Feed cheetahs, wild dogs, caracals, and all residents. Learn their personalities.' },
-  { time: '09:00', title: 'Enclosure Work', desc: 'Maintenance, cleaning, and habitat improvement. Physical work with purpose.' },
-  { time: '12:00', title: 'Lunch & Rest', desc: 'Enjoy a meal together and soak in views of the Waterberg mountains.' },
-  { time: '14:00', title: 'Afternoon Activities', desc: 'Educational sessions, enrichment, horse project, or game drives through the reserve.' },
-  { time: '17:00', title: 'Evening Feed & Sunset', desc: "Final rounds, evening feeds, and the most spectacular sunsets you'll ever witness." },
+const ANIMALS_MARQUEE = [
+  { name: 'Nova',       role: 'Gheparda · La Fondatrice',          src: BASE + '08/Nova-2.jpg' },
+  { name: 'Shira',      role: 'Leonessa · Salvata da cucciola',     src: BASE + '08/IMG-20210925-WA0024.jpg' },
+  { name: 'Ghost Pack', role: 'Cani Selvatici Africani',            src: BASE + '08/IMG-20210203-WA0020.jpg' },
+  { name: 'Tumelo',     role: 'Giraffa · Libera nella Riserva',    src: BASE + '08/IMG_20200428_090037_903-1.jpg' },
+  { name: 'Spirit',     role: 'Cavallo · Riabilitato',              src: BASE + '08/20210830_171758-scaled.jpg' },
+  { name: 'Sandy',      role: 'Volpe dalle Orecchie a Pipistrello', src: BASE + '08/IMG-20210203-WA0023.jpg' },
+  { name: 'Caracal',    role: 'Lince del Deserto',                  src: BASE + '08/IMG-20210223-WA0016.jpg' },
+  { name: 'Serval',     role: 'Cacciatore Notturno',                src: BASE + '08/IMG-20210308-WA0015.jpg' },
 ]
 
-function AnimalCard({ emoji, name, desc, bg }) {
+const PROGRAMS = [
+  { tag: 'Esperienza',   title: 'Cheetah Run',         img: IMG.progRun,   page: 'cheetah',      desc: 'Corri 60 metri accanto al ghepardo più veloce del mondo. Un\'esperienza che dura secondi ma rimane per sempre.' },
+  { tag: 'Volontariato', title: 'Join the Coalition',  img: IMG.progVol,   page: 'volunteer',    desc: 'Vitto, alloggio e un lavoro che conta. Lavora fianco a fianco con il team. Minimo 2 settimane.' },
+  { tag: 'Soggiorno',    title: 'Chalet nel Bush',      img: IMG.progChalet,page: 'visit',        desc: 'Tre chalet indipendenti immersi nella natura. Cucina, WiFi, acqua calda. Svegliati coi ghepardi.' },
+  { tag: 'Formazione',   title: 'Internship',           img: IMG.progInt,   page: 'internship',   desc: 'Stage universitari in veterinaria, ecologia, biologia. Documentazione accademica e mentoring professionale.' },
+  { tag: 'Adozione',     title: 'Adotta un Animale',   img: IMG.progAdopt, page: 'adopt',        desc: 'Adotta simbolicamente uno dei nostri animali. Ricevi aggiornamenti mensili e il certificato ufficiale.' },
+  { tag: 'Conservazione',title: 'Breeding Program',    img: IMG.progBreed, page: 'conservation', desc: 'Il programma di riproduzione contribuisce al gene pool globale. Collaboriamo con zoo e riserve internazionali.' },
+]
+
+const TESTIMONIALS = [
+  {
+    quote: 'Un\'esperienza che ha cambiato la mia prospettiva sulla vita. Vedere Nova correre libera è qualcosa che non dimenticherò mai.',
+    name: 'Giulia M.', location: 'Milano, Italia', stars: 5,
+  },
+  {
+    quote: 'Kim e il suo team sono incredibili. Ho imparato più in tre settimane qui che in un anno di università.',
+    name: 'Thomas W.', location: 'Berlin, Germany', stars: 5,
+  },
+  {
+    quote: 'Gli chalet sono confortevoli, il cibo ottimo. Ma la cosa più bella è svegliarsi a contatto con questi animali straordinari.',
+    name: 'Ana R.', location: 'Madrid, Spain', stars: 5,
+  },
+]
+
+// ── Hooks ──
+function useScrollReveal() {
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible') }),
+      { threshold: 0.1, rootMargin: '0px 0px -30px 0px' }
+    )
+    const sel = '.reveal,.rv,.rv-left,.rv-right,.rv-scale,.rv-up'
+    document.querySelectorAll(sel).forEach(el => obs.observe(el))
+    return () => obs.disconnect()
+  }, [])
+}
+
+function useCounter(target, active) {
+  const [val, setVal] = useState(0)
+  useEffect(() => {
+    if (!active) return
+    let cur = 0
+    const step = Math.ceil(target / 55)
+    const t = setInterval(() => {
+      cur = Math.min(cur + step, target)
+      setVal(cur)
+      if (cur >= target) clearInterval(t)
+    }, 28)
+    return () => clearInterval(t)
+  }, [active, target])
+  return val
+}
+
+function StatItem({ num, suffix, label }) {
+  const ref = useRef(null)
+  const [active, setActive] = useState(false)
+  const count = useCounter(num, active)
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setActive(true) }, { threshold: 0.4 })
+    if (ref.current) obs.observe(ref.current)
+    return () => obs.disconnect()
+  }, [])
+
   return (
-    <div className="animal-card">
-      <div className="animal-img" style={{ background: bg }}>{emoji}</div>
-      <div className="animal-info">
-        <h4>{name}</h4>
-        <span>{desc}</span>
-      </div>
+    <div className="hero-strip-item" ref={ref}>
+      <div className="strip-num">{active ? count.toLocaleString('it-IT') : 0}{suffix}</div>
+      <div className="strip-label">{label}</div>
     </div>
   )
 }
 
+// ── Component ──
 function Home({ goTo }) {
   useScrollReveal()
 
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return
-        const el = entry.target
-        const target = parseInt(el.dataset.target)
-        if (isNaN(target)) return
-        let current = 0
-        const increment = target / 50
-        const timer = setInterval(() => {
-          current += increment
-          if (current >= target) {
-            el.textContent = target + '+'
-            clearInterval(timer)
-          } else {
-            el.textContent = Math.floor(current)
-          }
-        }, 30)
-        observer.unobserve(el)
-      })
-    }, { threshold: 0.5 })
-
-    document.querySelectorAll('.stat-number[data-target]').forEach(el => observer.observe(el))
-    return () => observer.disconnect()
-  }, [])
-
-  useEffect(() => {
-    const marquee = document.getElementById('marquee')
-    if (!marquee) return
-    const pause = () => { marquee.style.animationPlayState = 'paused' }
-    const resume = () => { marquee.style.animationPlayState = 'running' }
-    marquee.addEventListener('mouseenter', pause)
-    marquee.addEventListener('mouseleave', resume)
-    return () => {
-      marquee.removeEventListener('mouseenter', pause)
-      marquee.removeEventListener('mouseleave', resume)
-    }
-  }, [])
-
   return (
     <>
-      {/* Hero */}
+      {/* ── HERO ── */}
       <section className="hero">
-        <div className="hero-sky"></div>
-        <div className="hero-sun"></div>
-        <svg
-          style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', zIndex: 1 }}
-          viewBox="0 0 1440 320"
-          preserveAspectRatio="none"
-        >
-          <path d="M0,280 Q60,240 80,260 Q100,220 130,250 Q160,200 200,240 Q230,210 260,250 Q290,190 330,235 Q360,220 400,255 Q430,200 470,240 Q500,220 540,250 Q570,200 610,240 Q640,190 680,230 Q710,210 740,250 Q770,180 810,230 Q840,210 880,245 Q910,200 950,240 Q980,220 1020,250 Q1050,190 1090,235 Q1120,210 1160,250 Q1190,220 1220,245 Q1250,200 1290,240 Q1320,215 1360,250 Q1390,230 1440,260 L1440,320 L0,320 Z" fill="#2A1D14" opacity="0.5" />
-          <path d="M0,290 Q40,260 70,280 Q100,240 140,270 Q170,250 210,275 Q240,230 280,265 Q320,245 360,270 Q400,240 440,265 Q480,250 520,275 Q560,235 600,260 Q640,245 680,270 Q720,230 760,260 Q800,240 840,270 Q880,250 920,275 Q960,235 1000,265 Q1040,250 1080,275 Q1120,240 1160,270 Q1200,255 1240,275 Q1280,245 1320,270 Q1360,260 1400,280 Q1420,265 1440,275 L1440,320 L0,320 Z" fill="#2A1D14" opacity="0.8" />
-          <path d="M0,300 Q100,285 200,295 Q350,280 500,295 Q650,285 800,300 Q950,288 1100,298 Q1250,290 1440,305 L1440,320 L0,320 Z" fill="#2A1D14" />
-        </svg>
-        <div className="hero-bg"></div>
+        <img className="hero-img" src={IMG.hero} alt="Nova — la gheparda fondatrice" />
+        <div className="hero-overlay" />
+
         <div className="hero-content">
-          <p className="hero-tag">~ Waterberg, Limpopo — South Africa ~</p>
-          <h1 className="hero-title">Saving Cheetahs,<br />One <em>Spot</em> at a Time</h1>
-          <p className="hero-sub">A breeding centre, a conservation mission, a community of changemakers. Fighting for those who can&apos;t fight for themselves.</p>
+          <div className="hero-eyebrow">● Bela-Bela, Limpopo · South Africa</div>
+          <h1>
+            Salviamo i Ghepardi<br />
+            dall&apos;<em>Estinzione</em>
+          </h1>
+          <p className="hero-sub">
+            Nova&apos;s Legacy è un centro di allevamento e conservazione dei ghepardi
+            nel cuore del Waterberg. Fondato da Kim Hiltrop per Nova —
+            una gheparda a tre zampe allevata a mano.
+          </p>
           <div className="hero-buttons">
-            <a className="btn btn-primary" onClick={() => goTo('volunteer')}>Join the Coalition</a>
-            <a className="btn btn-outline" onClick={() => goTo('cheetah')}>Our Mission</a>
+            <button className="btn btn-gold" onClick={() => goTo('volunteer')}>
+              Diventa Volontario
+            </button>
+            <button className="btn btn-outline" onClick={() => goTo('cheetah')}>
+              Scopri il Progetto
+            </button>
           </div>
         </div>
-        <div className="hero-scroll"><span>Scroll</span><div className="line"></div></div>
+
+        <div className="hero-strip">
+          <StatItem num={7000} suffix="+"    label="Ghepardi rimasti al mondo" />
+          <StatItem num={865}  suffix=" ha"  label="Riserva protetta" />
+          <StatItem num={50}   suffix="+"    label="Animali ospitati" />
+          <StatItem num={200}  suffix="+"    label="Volontari ogni anno" />
+        </div>
       </section>
 
-      {/* Stats */}
-      <div className="stats">
-        <div className="stats-grid">
-          <div className="reveal"><div className="stat-number" data-target="865">0</div><div className="stat-label">Hectares of Wild</div></div>
-          <div className="reveal reveal-d1"><div className="stat-number" data-target="50">0</div><div className="stat-label">Animals in Care</div></div>
-          <div className="reveal reveal-d2"><div className="stat-number" data-target="200">0</div><div className="stat-label">Volunteers &amp; Growing</div></div>
-          <div className="reveal reveal-d3"><div className="stat-number" data-target="11">0</div><div className="stat-label">Years of Impact</div></div>
-        </div>
+      {/* ── ALERT BAR ── */}
+      <div className="alert-bar">
+        <span className="alert-tag">⚠ Emergenza</span>
+        <p>
+          Meno di <strong>7.000 ghepardi</strong> vivono ancora allo stato selvatico.
+          Negli ultimi 100 anni ne abbiamo persi il <strong>90%</strong>.
+          Senza intervento, questa specie non sopravviverà.
+        </p>
+        <button className="btn btn-outline btn-sm" onClick={() => goTo('conservation')}>
+          Scopri Come Aiutare →
+        </button>
       </div>
 
-      {/* About */}
-      <section id="about" style={{ padding: '7rem 3rem' }}>
-        <div className="container">
-          <div className="about-grid">
-            <div className="about-text reveal">
-              <p className="section-tag">~ Who We Are ~</p>
-              <h2 className="section-title">Born from Love,<br />Built for <em>Legacy</em></h2>
-              <p className="body">Nova&apos;s Legacy was born from an unbreakable bond between a woman and a cheetah. Founded to support Feracare Wildlife Centre in the heart of the Waterberg, we took on the mission of caring for cheetahs and every animal that joins our family across 865 hectares of wild South African bush.</p>
-              <p className="body">From cheetah breeding to wildlife rehabilitation, from predator education to hands-on conservation — we exist because Nova taught us that every single life matters and every action counts.</p>
-              <div className="kim-card">
-                <h4>Kim Hiltrop</h4>
-                <p className="role">Founder &amp; Project Manager</p>
-                <p className="bio">Born in &apos;84, Kim left everything behind to follow her calling in South Africa. From birds to small cats to magnificent cheetahs — her journey led to Nova, the first cheetah cub she ever hand-reared. Eleven years together forged a bond that became a life mission. Today, Kim leads the fight for cheetah survival through captive breeding and education.</p>
+      {/* ── WHAT WE DO ── */}
+      <section className="what-we-do">
+        <div className="top">
+          <div>
+            <span className="label rv">~ Il Nostro Lavoro ~</span>
+            <h2 className="h2 rv rv-d1">Tre pilastri per <em>salvare una specie</em></h2>
+          </div>
+          <p className="body-lg rv rv-d2">
+            Da oltre 11 anni lavoriamo su tre fronti: allevamento responsabile,
+            educazione ambientale e riabilitazione animale. Ogni programma è progettato
+            per massimizzare l&apos;impatto sulla sopravvivenza del ghepardo.
+          </p>
+        </div>
+
+        <div className="pillars">
+          <div className="pillar rv">
+            <img src={IMG.pillar1} alt="Allevamento" />
+            <div className="pillar-overlay">
+              <div className="pillar-num">01</div>
+              <h3>Breeding & Conservazione</h3>
+              <p>Programma di riproduzione certificato che contribuisce al gene pool globale. Collaboriamo con riserve e zoo internazionali.</p>
+              <span className="pillar-link" onClick={() => goTo('conservation')}>Scopri di più</span>
+            </div>
+          </div>
+          <div className="pillar rv rv-d1">
+            <img src={IMG.pillar2} alt="Educazione" />
+            <div className="pillar-overlay">
+              <div className="pillar-num">02</div>
+              <h3>Educazione & Comunità</h3>
+              <p>Portiamo studenti locali e internazionali a conoscere la wildlife. Ogni visita è un seme piantato per il futuro.</p>
+              <span className="pillar-link" onClick={() => goTo('volunteer')}>Scopri di più</span>
+            </div>
+          </div>
+          <div className="pillar rv rv-d2">
+            <img src={IMG.pillar3} alt="Riabilitazione" />
+            <div className="pillar-overlay">
+              <div className="pillar-num">03</div>
+              <h3>Riabilitazione Animale</h3>
+              <p>Accogliamo animali feriti o orfani — ghepardi, cavalli, cani selvatici — e li curiamo per restituirli alla natura.</p>
+              <span className="pillar-link" onClick={() => goTo('horses')}>Scopri di più</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CHEETAH RUN ── */}
+      <section className="cheetah-run">
+        <div className="cheetah-run-img">
+          <img src={IMG.cheetahRun} alt="Cheetah Run" />
+        </div>
+        <div className="cheetah-run-content">
+          <span className="label label-light rv">~ Esperienza Unica ~</span>
+          <h2 className="rv rv-d1">
+            Il <em>Cheetah Run</em> —<br />correre accanto al re della velocità
+          </h2>
+          <p className="rv rv-d2">
+            Il ghepardo è l&apos;animale terrestre più veloce del pianeta.
+            Con il nostro Cheetah Run hai la possibilità di corrergli accanto
+            su 60 metri di pista, sentire il rombo dei suoi passi,
+            guardarlo accelerare fino a 112 km/h.
+          </p>
+          <div className="speed-badge rv rv-d3">
+            <span className="num">112</span>
+            <span className="txt">km/h<br />velocità massima<br />del ghepardo</span>
+          </div>
+          <button className="btn btn-gold rv rv-d4" onClick={() => goTo('cheetah')}>
+            Prenota il Cheetah Run
+          </button>
+        </div>
+      </section>
+
+      {/* ── PROGRAMS GRID ── */}
+      <section className="programs" id="programs">
+        <span className="label rv">~ Come Partecipare ~</span>
+        <h2 className="h2 rv rv-d1">Scegli il tuo modo di <em>fare la differenza</em></h2>
+
+        <div className="programs-grid">
+          {PROGRAMS.map((p, i) => (
+            <div
+              key={p.title}
+              className={`program-card rv rv-d${Math.min(i + 1, 5)}`}
+              onClick={() => goTo(p.page)}
+            >
+              <div className="program-img">
+                <img src={p.img} alt={p.title} />
+              </div>
+              <div className="program-body">
+                <div className="program-tag">{p.tag}</div>
+                <h3>{p.title}</h3>
+                <p>{p.desc}</p>
+                <span className="program-link">Scopri di più →</span>
               </div>
             </div>
-            <div className="about-image reveal reveal-d2">
-              <div className="about-image-box" style={{ background: 'linear-gradient(160deg, var(--grass-dark), var(--earth-mid))' }}>
-                <div className="img-placeholder">🐆</div>
-                <div className="img-caption">&ldquo;He taught me the beauty in cheetahs&rdquo;</div>
-              </div>
-              <div className="about-accent-border"></div>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* Projects */}
-      <section className="section-dark" id="projects">
-        <div className="container">
-          <p className="section-tag reveal">~ Our Mission ~</p>
-          <h2 className="section-title reveal">Three Projects, One <em>Purpose</em></h2>
-          <div className="projects-grid">
-            <div className="project-card reveal" onClick={() => goTo('cheetah')}>
-              <span className="project-icon">🐆</span>
-              <h3>Cheetah Breeding</h3>
-              <p>Breeding genetically diverse cheetahs in captivity, building a gene pool that will one day repopulate the African plains. Home to spotted and rare king cheetahs.</p>
-              <span className="learn-link">Explore Project</span>
+      {/* ── GALLERY ── */}
+      <section className="gallery-section" id="gallery">
+        <div>
+          <span className="label label-light rv">~ La Vita nel Bush ~</span>
+          <h2 className="h2 h2-light rv rv-d1">Ogni giorno è un <em>momento unico</em></h2>
+        </div>
+
+        <div className="gallery-masonry">
+          {GALLERY_IMGS.map((g, i) => (
+            <div key={i} className="gm-item">
+              <img src={g.src} alt={g.caption} loading="lazy" />
+              <div className="gm-caption">{g.caption}</div>
             </div>
-            <div className="project-card reveal reveal-d1" onClick={() => goTo('conservation')}>
-              <span className="project-icon">🌍</span>
-              <h3>Conservation &amp; Education</h3>
-              <p>An educational centre focused on cheetah and predator challenges. From wild dogs to servals — we care for them while teaching the world why they matter.</p>
-              <span className="learn-link">Explore Project</span>
-            </div>
-            <div className="project-card reveal reveal-d2" onClick={() => goTo('horses')}>
-              <span className="project-icon">🐎</span>
-              <h3>Horse Project</h3>
-              <p>Rescued and rehabilitated horses get a second chance. Volunteers learn horsemanship while contributing to their ongoing care and wellbeing.</p>
-              <span className="learn-link">Explore Project</span>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* Experiences */}
-      <section className="section-warm" id="experience">
-        <div className="container">
-          <p className="section-tag reveal">~ What You Can Do ~</p>
-          <h2 className="section-title reveal">Your <em>Adventure</em> Starts Here</h2>
-          <div className="exp-grid">
-            <div className="exp-card reveal" onClick={() => goTo('volunteer')}>
-              <div className="exp-icon">🤝</div>
-              <h4>Volunteering</h4>
-              <p>Live alongside our team. Feed animals, maintain enclosures, and become part of our daily rhythm.</p>
+      {/* ── VOLUNTEER ── */}
+      <section className="volunteer-section" id="volunteer">
+        {/* 2×2 photo grid — no rv class so always visible */}
+        <div className="volunteer-img-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '3px' }}>
+          {[IMG.vol1, IMG.vol2, IMG.vol3, IMG.vol4].map((src, i) => (
+            <div key={i} style={{ overflow: 'hidden' }}>
+              <img
+                src={src}
+                alt={`Volontari ${i + 1}`}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s cubic-bezier(0.22,1,0.36,1)' }}
+                onMouseEnter={e => { e.target.style.transform = 'scale(1.06)' }}
+                onMouseLeave={e => { e.target.style.transform = 'none' }}
+              />
             </div>
-            <div className="exp-card reveal reveal-d1" onClick={() => goTo('internship')}>
-              <div className="exp-icon">🎓</div>
-              <h4>Internships</h4>
-              <p>Accredited field placements for veterinary, zoology, and conservation students.</p>
-            </div>
-            <div className="exp-card reveal reveal-d2" onClick={() => goTo('visit')}>
-              <div className="exp-icon">🏡</div>
-              <h4>Visits &amp; Stays</h4>
-              <p>Stay in our accommodation. Experience sunsets, wildlife encounters, and the African bush.</p>
-            </div>
-            <div className="exp-card reveal reveal-d3" onClick={() => goTo('volunteer')}>
-              <div className="exp-icon">📸</div>
-              <h4>Photo Safaris</h4>
-              <p>Intimate, ethical wildlife photography encounters you won&apos;t find anywhere else.</p>
-            </div>
+          ))}
+        </div>
+        <div className="vol-content">
+          <span className="label rv">~ Join the Coalition ~</span>
+          <h2 className="h2 rv rv-d1">Vivi il bush. <em>Salva una specie.</em></h2>
+          <p className="rv rv-d2">
+            Il volontariato a Nova&apos;s Legacy non è un&apos;esperienza turistica —
+            è un lavoro vero. Contribuirai alla cura quotidiana degli animali,
+            alla manutenzione della riserva, all&apos;educazione dei visitatori.
+          </p>
+          <p className="rv rv-d2">
+            In cambio: alloggio nel bush, tre pasti al giorno in comune,
+            un team appassionato e la soddisfazione di fare qualcosa che conta davvero.
+          </p>
+          <div className="vol-tasks rv rv-d3">
+            {['Cura e alimentazione animali','Pulizia enclosure','Arricchimento ambientale','Manutenzione strutture','Educazione visitatori','Game drives','Raccolta dati scientifici','Progetto cavalli'].map(t => (
+              <div key={t} className="vol-task">{t}</div>
+            ))}
           </div>
+          <button className="btn btn-dark rv rv-d4" onClick={() => goTo('volunteer')}>
+            Candidati come Volontario
+          </button>
         </div>
       </section>
 
-      {/* Schedule */}
-      <section className="section-dark" id="schedule">
-        <div className="container">
-          <p className="section-tag reveal">~ A Day at the Farm ~</p>
-          <h2 className="section-title reveal">The Rhythm of <em>Wild</em> Life</h2>
-          <div className="schedule-container">
-            {SCHEDULE.map(item => (
-              <div key={item.time} className="schedule-item reveal">
-                <div className="schedule-time">{item.time}</div>
-                <div className="schedule-desc">
-                  <h4>{item.title}</h4>
-                  <p>{item.desc}</p>
+      {/* ── ANIMALS MARQUEE ── */}
+      <section className="animals-section" id="animals">
+        <div className="animals-header">
+          <span className="label rv">~ I Nostri Animali ~</span>
+          <h2 className="h2 rv rv-d1">Ogni animale ha <em>la sua storia</em></h2>
+        </div>
+
+        <div style={{ overflow: 'hidden' }}>
+          <div className="marquee-track">
+            {[...ANIMALS_MARQUEE, ...ANIMALS_MARQUEE].map((a, i) => (
+              <div key={i} className="animal-card">
+                <div className="animal-photo">
+                  <img src={a.src} alt={a.name} />
+                </div>
+                <div className="animal-info">
+                  <h4>{a.name}</h4>
+                  <span>{a.role}</span>
                 </div>
               </div>
             ))}
@@ -216,97 +350,160 @@ function Home({ goTo }) {
         </div>
       </section>
 
-      {/* Animals Marquee */}
-      <section className="section-grass" id="animals" style={{ overflow: 'hidden' }}>
-        <div className="container">
-          <p className="section-tag reveal">~ Our Residents ~</p>
-          <h2 className="section-title reveal">Meet the <em>Family</em></h2>
-          <p className="reveal" style={{ color: 'var(--sand)', fontWeight: 300, maxWidth: '550px', lineHeight: 1.7 }}>Every animal here has a name, a story, and a place in our hearts.</p>
-        </div>
-        <div className="animals-marquee" id="marquee">
-          {ANIMALS.map(a => <AnimalCard key={a.name} {...a} />)}
-          {ANIMALS.map(a => <AnimalCard key={a.name + '-dup'} {...a} />)}
+      {/* ── TESTIMONIALS ── */}
+      <section className="testimonials">
+        <span className="label rv">~ Cosa Dicono ~</span>
+        <h2 className="h2 rv rv-d1">Le parole di chi è già <em>parte della Coalition</em></h2>
+
+        <div className="testimonials-grid">
+          {TESTIMONIALS.map((t, i) => (
+            <div key={t.name} className={`testi-card rv rv-d${i + 1}`}>
+              <div className="testi-stars">{'★'.repeat(t.stars)}</div>
+              <div className="testi-quote">{t.quote}</div>
+              <div className="testi-author">
+                <div className="testi-avatar">{t.name[0]}</div>
+                <div>
+                  <div className="testi-name">{t.name}</div>
+                  <div className="testi-location">{t.location}</div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Volunteer Stories */}
-      <section className="section-warm" id="volunteers">
-        <div className="container">
-          <p className="section-tag reveal">~ The Coalition ~</p>
-          <h2 className="section-title reveal">Their Words, Their <em>Stories</em></h2>
-          <div className="vol-grid">
-            <div className="vol-card reveal">
-              <p className="vol-quote">&ldquo;This wasn&apos;t just volunteering — it was a transformation. Waking up to feed cheetahs, watching sunsets, and finding a family I never knew I needed.&rdquo;</p>
-              <div className="vol-author">
-                <div className="vol-avatar">SR</div>
-                <div><div className="vol-name">Sarah R.</div><div className="vol-from">Pennsylvania, USA · 2 weeks</div></div>
-              </div>
+      {/* ── ACCOMMODATION ── */}
+      <section className="accom-section" id="accommodation">
+        <span className="label label-light rv">~ Dove Dormire ~</span>
+        <h2 className="h2 h2-light rv rv-d1">Tre chalet nel <em>cuore del Waterberg</em></h2>
+
+        <div className="accom-grid">
+          {/* No rv class — CSS animation fires immediately */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', animation: 'fadeUp 0.9s 0.2s both' }}>
+            <div className="accom-main-img">
+              <img src={IMG.accom} alt="Chalet Nova's Legacy" />
             </div>
-            <div className="vol-card reveal reveal-d1">
-              <p className="vol-quote">&ldquo;As a vet student, this was the most impactful field experience I could have asked for. Real conservation, real challenges, real connections.&rdquo;</p>
-              <div className="vol-author">
-                <div className="vol-avatar">LM</div>
-                <div><div className="vol-name">Lucas M.</div><div className="vol-from">Berlin, Germany · 4 weeks</div></div>
-              </div>
-            </div>
-            <div className="vol-card reveal reveal-d2">
-              <p className="vol-quote">&ldquo;I came for the cheetahs and left with a new perspective on life. Kim&apos;s dedication is contagious. This place changes you.&rdquo;</p>
-              <div className="vol-author">
-                <div className="vol-avatar">EB</div>
-                <div><div className="vol-name">Emma B.</div><div className="vol-from">Melbourne, Australia · 3 weeks</div></div>
-              </div>
+            <div style={{ height: '180px', overflow: 'hidden' }}>
+              <img
+                src={IMG.accom2}
+                alt="Vista sulla riserva"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%' }}
+              />
             </div>
           </div>
+          <div className="accom-right">
+            {[
+              { icon: '🏡', title: '3 Chalet Indipendenti', desc: 'Self-catering, completamente attrezzati. Cucina, bagno privato, letto matrimoniale o twin.' },
+              { icon: '🌿', title: 'Immersi nella Natura',   desc: 'A pochi passi dagli enclosure degli animali. Di notte si sentono i ghepardi.' },
+              { icon: '🍽',  title: 'Colazione Inclusa',     desc: 'Ogni mattina prima di andare agli animali. Pranzo e cena su richiesta.' },
+              { icon: '📶', title: 'WiFi & Comodità',        desc: 'Acqua calda, elettricità. Tutto il necessario, niente di superfluo.' },
+            ].map((f, i) => (
+              <div key={f.title} className={`accom-feature rv rv-d${i + 1}`}>
+                <div className="accom-feature-icon">{f.icon}</div>
+                <h4>{f.title}</h4>
+                <p>{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ marginTop: '2.5rem', textAlign: 'center' }} className="rv">
+          <button className="btn btn-gold" onClick={() => goTo('visit')}>
+            Prenota il Tuo Soggiorno
+          </button>
         </div>
       </section>
 
-      {/* Big CTA */}
+      {/* ── BIG CTA ── */}
       <section className="big-cta">
-        <p className="section-tag reveal" style={{ color: 'var(--sunset-glow)' }}>~ Ready? ~</p>
-        <h2 className="section-title reveal">Be Part of <em>Something</em><br />Bigger Than Yourself</h2>
-        <p className="reveal">The animals are waiting. The sunsets are calling. Your place in the coalition is here.</p>
-        <div className="reveal">
-          <a className="btn btn-primary" style={{ fontSize: '0.9rem', padding: '1.1rem 2.8rem' }} onClick={() => goTo('volunteer')}>Start Your Journey</a>
+        <img src={IMG.bigCta} alt="Ghepardo" />
+        <div className="big-cta-content">
+          <span className="label label-light rv">~ Il Tempo Stringe ~</span>
+          <h2 className="rv rv-d1">
+            I ghepardi non possono aspettare.<br /><em>Tu puoi agire oggi.</em>
+          </h2>
+          <p className="rv rv-d2">
+            Dona, adotta, fai volontariato o semplicemente condividi.<br />
+            Ogni gesto conta. Ogni voce conta.
+          </p>
+          <div className="rv rv-d3" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button className="btn btn-gold" onClick={() => goTo('adopt')}>Adotta un Animale</button>
+            <button className="btn btn-outline" onClick={() => goTo('volunteer')}>Fai Volontariato</button>
+          </div>
         </div>
       </section>
 
-      {/* Contact */}
-      <section className="section-dark" id="contact">
-        <div className="container">
-          <p className="section-tag reveal">~ Get in Touch ~</p>
-          <h2 className="section-title reveal">Let&apos;s <em>Talk</em></h2>
-          <div className="contact-grid">
-            <div className="contact-info reveal">
-              <p className="intro">Whether you want to volunteer, visit, sponsor an animal, or learn more — we&apos;d love to hear from you.</p>
-              <div className="contact-detail">
-                <div className="icon">📍</div>
-                <div><div className="label">Location</div><div className="text">Waterberg, Bela Bela · Limpopo, South Africa</div></div>
-              </div>
-              <div className="contact-detail">
-                <div className="icon">✉️</div>
-                <div><div className="label">Email</div><div className="text">info@novaslegacy.com</div></div>
-              </div>
-              <div className="contact-detail">
-                <div className="icon">📱</div>
-                <div><div className="label">Social</div><div className="text">@feracarewildlife</div></div>
+      {/* ── CONTACT ── */}
+      <section className="contact-section" id="contact">
+        <span className="label rv">~ Contattaci ~</span>
+        <h2 className="h2 rv rv-d1">Inizia il tuo <em>viaggio nel bush</em></h2>
+
+        <div className="contact-grid">
+          <div className="contact-info rv-left">
+            <p>
+              Hai domande sul volontariato, sugli chalet, sul Cheetah Run o su come
+              diventare parte della Coalition? Kim risponde personalmente a ogni messaggio.
+            </p>
+
+            <div className="contact-item">
+              <span className="contact-icon">📧</span>
+              <div>
+                <div className="contact-label">Email</div>
+                <div className="contact-value">
+                  <a href="mailto:kim@novaslegacy.co.za">kim@novaslegacy.co.za</a>
+                </div>
               </div>
             </div>
-            <div className="contact-form reveal reveal-d1">
-              <input type="text" placeholder="Your Name" />
-              <input type="email" placeholder="Email Address" />
-              <select defaultValue="">
-                <option value="" disabled>I&apos;m interested in...</option>
-                <option>Volunteering</option>
-                <option>University Internship</option>
-                <option>Visiting / Accommodation</option>
-                <option>Adopting an Animal</option>
-                <option>Merchandise</option>
-                <option>Other</option>
-              </select>
-              <textarea placeholder="Your Message..."></textarea>
-              <button className="btn btn-primary" style={{ alignSelf: 'flex-start' }}>Send Message</button>
+
+            <div className="contact-item">
+              <span className="contact-icon">📞</span>
+              <div>
+                <div className="contact-label">Telefono / WhatsApp</div>
+                <div className="contact-value">
+                  <a href="tel:+27823520940">+27 82 352 0940</a>
+                </div>
+              </div>
+            </div>
+
+            <div className="contact-item">
+              <span className="contact-icon">📍</span>
+              <div>
+                <div className="contact-label">Indirizzo</div>
+                <div className="contact-value">
+                  431 Diepdrift, Bela-Bela, 0480<br />Limpopo, South Africa
+                </div>
+              </div>
+            </div>
+
+            <div className="contact-socials">
+              <a className="social-link" href="https://facebook.com/Feracare" target="_blank" rel="noreferrer">f Facebook</a>
+              <a className="social-link" href="https://instagram.com/novaslegacycheetahproject" target="_blank" rel="noreferrer">📸 Instagram</a>
             </div>
           </div>
+
+          <form
+            className="contact-form rv-right"
+            onSubmit={e => { e.preventDefault(); alert('Messaggio inviato! Kim ti risponderà presto.') }}
+          >
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <input placeholder="Nome" required />
+              <input placeholder="Cognome" required />
+            </div>
+            <input type="email" placeholder="Email" required />
+            <input type="tel" placeholder="Telefono / WhatsApp (opzionale)" />
+            <select defaultValue="">
+              <option value="" disabled>Motivo del Contatto</option>
+              <option>Volontariato</option>
+              <option>Internship / Stage</option>
+              <option>Soggiorno in Chalet</option>
+              <option>Cheetah Run</option>
+              <option>Adozione Animale</option>
+              <option>Donazione</option>
+              <option>Altro</option>
+            </select>
+            <textarea placeholder="Il tuo messaggio..." rows={5} />
+            <button type="submit" className="btn btn-dark">Invia il Messaggio →</button>
+          </form>
         </div>
       </section>
     </>

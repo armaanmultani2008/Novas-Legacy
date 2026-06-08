@@ -1,42 +1,127 @@
 const ANIMALS = [
-  { emoji: '🐆', name: 'Nova', species: 'Cheetah', desc: 'The one who started it all. Your adoption supports his legacy and the entire breeding programme.', price: 'From €15/month', bg: 'linear-gradient(160deg,#8B6B3D,#3D2B1F)' },
-  { emoji: '🦁', name: 'Shira', species: 'Lion', desc: 'Rescued as a cub, Shira has grown into a magnificent lioness. Your support keeps her safe.', price: 'From €20/month', bg: 'linear-gradient(160deg,#7B5B2A,#2A1A0A)' },
-  { emoji: '🐕', name: 'Ghost Pack', species: 'African Wild Dogs', desc: 'Our painted wolves are endangered and extraordinary. Help keep the pack together.', price: 'From €25/month', bg: 'linear-gradient(160deg,#5B7B4A,#1A2A0F)' },
-  { emoji: '🐎', name: 'Spirit', species: 'Horse', desc: 'Rescued from neglect, Spirit is living proof that second chances work.', price: 'From €10/month', bg: 'linear-gradient(160deg,#7B6B5A,#2A1D14)' },
-  { emoji: '🦊', name: 'Sandy', species: 'Bat-Eared Fox', desc: 'Tiny, curious, and full of personality. Sandy needs your help to thrive.', price: 'From €8/month', bg: 'linear-gradient(160deg,#6B4B3A,#2A1A10)' },
-  { emoji: '🐈', name: 'Shadow', species: 'Serval', desc: 'A nocturnal hunter with golden fur and incredible hearing. Quiet but unforgettable.', price: 'From €12/month', bg: 'linear-gradient(160deg,#5B4B3A,#1A1510)' },
+  {
+    emoji: '🐆',
+    name: 'Nova',
+    species: 'Gheparda',
+    price: 'Da €15/mese',
+    desc: 'Quella che ha dato inizio a tutto. Tre zampe, cuore immenso. La tua adozione sostiene l\'intero programma di riproduzione.',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-28.jpg',
+  },
+  {
+    emoji: '🦁',
+    name: 'Shira',
+    species: 'Leonessa',
+    price: 'Da €20/mese',
+    desc: 'Salvata da cucciola, Shira è cresciuta in una magnifica leonessa. La tua adozione la tiene al sicuro ogni giorno.',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-3.jpg',
+  },
+  {
+    emoji: '🐕',
+    name: 'Ghost Pack',
+    species: 'Cani Selvatici Africani',
+    price: 'Da €25/mese',
+    desc: 'I cani dipinti sono tra gli animali più minacciati dell\'Africa. Adotta il branco e aiutaci a mantenerlo unito.',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-4.jpg',
+  },
+  {
+    emoji: '🐎',
+    name: 'Spirit',
+    species: 'Cavallo',
+    price: 'Da €10/mese',
+    desc: 'Salvato dall\'abbandono, Spirit è la prova vivente che le seconde possibilità funzionano.',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/vol-4-1024x768.jpg',
+  },
+  {
+    emoji: '🦊',
+    name: 'Sandy',
+    species: 'Volpe dalle Orecchie a Pipistrello',
+    price: 'Da €8/mese',
+    desc: 'Piccola, curiosa e piena di personalità. Sandy ha bisogno di cure quotidiane e del tuo sostegno.',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-42.jpg',
+  },
+  {
+    emoji: '🐱',
+    name: 'Shadow',
+    species: 'Serval',
+    price: 'Da €12/mese',
+    desc: 'Cacciatore notturno con il manto dorato e un udito straordinario. Tranquillo ma indimenticabile.',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-49.jpg',
+  },
 ]
 
 function Adopt({ goTo }) {
   return (
     <>
-      <div className="page-hero page-hero-dark" style={{ background: 'linear-gradient(135deg, var(--earth-mid), var(--earth-deep))' }}>
-        <p className="section-tag" style={{ color: 'var(--sunset-glow)' }}>~ Make It Personal ~</p>
-        <h2 className="section-title">Adopt an <em>Animal</em></h2>
-        <p className="intro">Choose a resident to sponsor. Receive their story, photo updates, and know that your support covers their food, medical care, and enrichment.</p>
+      <div className="page-hero-img">
+        <img
+          src="https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-2.jpg"
+          alt="Adotta un animale"
+        />
+        <div className="page-hero-img-overlay" />
+        <div className="page-hero-text">
+          <span className="label label-light">~ Adozione Simbolica ~</span>
+          <h1>Adotta un <em>Animale</em></h1>
+          <p>
+            Non puoi venire fisicamente? Puoi comunque fare la differenza.
+            Adotta simbolicamente uno dei nostri animali e ricevi aggiornamenti diretti.
+          </p>
+        </div>
       </div>
 
-      <div className="page-body">
-        <div className="container" style={{ maxWidth: '1000px' }}>
-          <span className="back-link" onClick={() => goTo('home')}>← Back to Home</span>
+      <div className="page-content">
+        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 3rem' }}>
+          <span className="back-btn" onClick={() => goTo('home')}>← Torna alla Home</span>
 
-          <div className="adoption-grid">
+          <p style={{ fontSize: '1rem', lineHeight: '1.85', color: '#555', fontWeight: 300, maxWidth: '680px', marginBottom: '2.5rem' }}>
+            Con l&apos;adozione simbolica ricevi: un certificato ufficiale con la foto e la storia
+            dell&apos;animale adottato, aggiornamenti mensili via email, e la certezza che
+            il tuo contributo arriva direttamente alle cure quotidiane.
+          </p>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '1.5rem',
+          }}>
             {ANIMALS.map(a => (
-              <div key={a.name} className="adoption-card">
-                <div className="adoption-img" style={{ background: a.bg }}>{a.emoji}</div>
-                <div className="adoption-body">
-                  <h4>{a.name}</h4>
-                  <div className="species">{a.species}</div>
-                  <p>{a.desc}</p>
-                  <div className="price">{a.price}</div>
-                  <a className="btn btn-primary" style={{ padding: '0.6rem 1.5rem', fontSize: '0.75rem' }}>Adopt {a.name}</a>
+              <div
+                key={a.name}
+                style={{
+                  background: 'var(--off-white)',
+                  border: '1px solid #EDE5D8',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.07)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+              >
+                <div style={{ height: '200px', overflow: 'hidden' }}>
+                  <img src={a.img} alt={a.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div style={{ padding: '1.5rem' }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.3rem' }}>{a.species}</div>
+                  <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--dark)' }}>{a.name}</h3>
+                  <p style={{ fontSize: '0.84rem', color: '#777', lineHeight: '1.65', fontWeight: 300, marginBottom: '1.2rem' }}>{a.desc}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontFamily: 'var(--serif)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--dark)' }}>{a.price}</span>
+                    <a
+                      href="mailto:kim@novaslegacy.co.za"
+                      className="btn btn-dark btn-sm"
+                    >
+                      Adotta
+                    </a>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="highlight-box" style={{ marginTop: '3rem' }}>
-            <p><strong>What you receive:</strong> A personalised adoption certificate, your animal&apos;s story, quarterly photo and video updates via email, and the knowledge that you&apos;re making a real, tangible difference in their life.</p>
+          <div className="highlight" style={{ marginTop: '3rem' }}>
+            <p>
+              Per adottare scrivi a <strong>kim@novaslegacy.co.za</strong> indicando l&apos;animale scelto.
+              Ti risponderemo entro 48 ore con le istruzioni per il pagamento e il tuo certificato di adozione personalizzato.
+            </p>
           </div>
         </div>
       </div>

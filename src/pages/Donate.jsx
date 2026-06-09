@@ -1,19 +1,17 @@
 import { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
 
 const PAYPAL_CLIENT_ID = 'BAACTG0ukeM8dKAjsLDCpumLq64_3LVg7oH1hbbQ5tot-aLGXbF4FbP34W4ehWgbRxVtrOerg-NmxlclvY'
 const B = 'https://novaslegacy.com/wp-content/uploads/2022/08/'
 const AMOUNTS = [10, 25, 50, 100]
 
-const IMPACT = [
-  { icon: '🐆', amount: '€10', desc: 'Nutre un ghepardo per una settimana' },
-  { icon: '💊', amount: '€25', desc: 'Finanzia le cure veterinarie mensili' },
-  { icon: '🏠', amount: '€50', desc: 'Contribuisce al mantenimento del rifugio' },
-  { icon: '🌿', amount: '€100', desc: 'Sostiene un programma di conservazione' },
-]
-
 function Donate({ goTo }) {
   useScrollReveal()
+  const { t, i18n } = useTranslation()
+  const impact = t('donate.impact', { returnObjects: true })
+  const lang = i18n.language
+
   const [amount, setAmount] = useState(25)
   const [custom, setCustom] = useState('')
   const [sdkReady, setSdkReady] = useState(false)
@@ -25,15 +23,17 @@ function Donate({ goTo }) {
   amountRef.current = finalAmount
 
   useEffect(() => {
+    setSdkReady(false)
     const existing = document.getElementById('paypal-sdk')
     if (existing) existing.remove()
+    const locale = lang === 'it' ? 'it_IT' : 'en_US'
     const script = document.createElement('script')
     script.id = 'paypal-sdk'
-    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR&intent=capture&components=buttons`
+    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR&intent=capture&components=buttons&locale=${locale}`
     script.onload = () => setSdkReady(true)
     document.body.appendChild(script)
     return () => script.remove()
-  }, [])
+  }, [lang])
 
   useEffect(() => {
     if (!sdkReady || !btnRef.current || !window.paypal) return
@@ -42,11 +42,11 @@ function Donate({ goTo }) {
       style: { layout: 'vertical', color: 'gold', shape: 'pill', label: 'donate' },
       createOrder: (_data, actions) => {
         const val = amountRef.current
-        if (!val || val < 1) return Promise.reject(new Error('Importo non valido'))
+        if (!val || val < 1) return Promise.reject(new Error('Invalid amount'))
         return actions.order.create({
           purchase_units: [{
             amount: { value: val.toFixed(2) },
-            description: "Donazione Nova's Legacy — Conservazione Animali",
+            description: "Donation Nova's Legacy — Wildlife Conservation",
           }],
         })
       },
@@ -61,9 +61,9 @@ function Donate({ goTo }) {
         <div style={{ maxWidth: '820px', margin: '0 auto' }}>
           <div className="donate-success rv">
             <div className="donate-success-icon">💚</div>
-            <h2>Grazie per il tuo supporto!</h2>
-            <p>La tua donazione di <strong>€{finalAmount.toFixed(2)}</strong> aiuterà direttamente gli animali di Nova&apos;s Legacy.</p>
-            <button className="btn btn-dark" onClick={() => { setStatus(null); setCustom('') }}>Dona ancora</button>
+            <h2>{t('donate.success_title')}</h2>
+            <p>{t('donate.success_desc')}</p>
+            <button className="btn btn-dark" onClick={() => { setStatus(null); setCustom('') }}>{t('donate.donate_again')}</button>
           </div>
         </div>
       </div>
@@ -76,20 +76,20 @@ function Donate({ goTo }) {
         <img src={B + 'IMG-20210120-WA0031-1170x600.jpg'} alt="Donazioni Nova's Legacy" />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
-          <span className="label label-light">~ Fai la Differenza ~</span>
-          <h1>Supporta <em>la Missione</em></h1>
-          <p>La tua donazione finanzia direttamente le cure degli animali e il programma di conservazione.</p>
+          <span className="label label-light">{t('donate.hero_label')}</span>
+          <h1>{t('donate.hero_title')}</h1>
+          <p>{t('donate.hero_sub')}</p>
         </div>
       </div>
 
       <div className="donate-page">
         <div style={{ maxWidth: '820px', margin: '0 auto' }}>
-          <span className="back-btn" onClick={() => goTo('home')}>← Torna alla Home</span>
+          <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
           <div className="rv" style={{ marginBottom: '2.5rem', textAlign: 'center' }}>
-            <span className="label">~ Il Tuo Contributo ~</span>
+            <span className="label">{t('donate.section_label')}</span>
             <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(1.8rem,3vw,2.4rem)', color: 'var(--dark)', lineHeight: 1.15 }}>
-              Ogni euro conta per <em style={{ fontStyle: 'italic', color: 'var(--gold)', fontWeight: 400 }}>la conservazione</em>
+              {t('donate.section_title')}
             </h2>
           </div>
 
@@ -107,32 +107,32 @@ function Donate({ goTo }) {
             </div>
 
             <div className="donate-custom">
-              <label>Importo personalizzato (€)</label>
+              <label>{t('donate.custom_label')}</label>
               <input
                 type="number"
                 min="1"
-                placeholder="es. 75"
+                placeholder={t('donate.custom_placeholder')}
                 value={custom}
                 onChange={e => setCustom(e.target.value)}
               />
             </div>
 
             <div className="donate-summary">
-              Stai donando <strong>€{finalAmount > 0 ? finalAmount.toFixed(2) : '—'}</strong> a Nova&apos;s Legacy
+              {t('donate.summary')} <strong>€{finalAmount > 0 ? finalAmount.toFixed(2) : '—'}</strong> {t('donate.summary_to')}
             </div>
 
             <div ref={btnRef} className="paypal-btn-wrap" />
 
             {status === 'error' && (
               <p style={{ color: 'var(--red-alert)', textAlign: 'center', fontSize: '0.85rem', marginTop: '1rem' }}>
-                Si è verificato un errore. Riprova o contatta{' '}
+                {t('donate.error_text')}{' '}
                 <a href="mailto:kim@novaslegacy.co.za" style={{ color: 'var(--gold)' }}>kim@novaslegacy.co.za</a>
               </p>
             )}
           </div>
 
           <div className="donate-impact rv rv-d2">
-            {IMPACT.map(i => (
+            {impact.map(i => (
               <div key={i.amount} className="impact-item">
                 <span className="impact-icon">{i.icon}</span>
                 <strong>{i.amount}</strong>

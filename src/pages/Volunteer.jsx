@@ -1,78 +1,49 @@
-const SCHEDULE = [
-  { time: '06:00', title: 'Alba nel Bush', desc: 'Sveglia con i suoni della savana. Preparazione del cibo e degli arricchimenti per tutti gli animali.' },
-  { time: '07:00', title: 'Alimentazione', desc: 'Dai da mangiare a ghepardi, cani selvatici, caracal e tutti gli ospiti della riserva. Impara le loro personalità.' },
-  { time: '09:00', title: 'Lavoro agli Enclosure', desc: 'Manutenzione, pulizia e miglioramento degli habitat. Lavoro fisico con uno scopo preciso.' },
-  { time: '12:00', title: 'Pranzo & Riposo', desc: 'Pasto condiviso con vista sulle montagne del Waterberg. Un momento di comunità.' },
-  { time: '14:00', title: 'Attività Pomeridiane', desc: 'Sessioni educative, arricchimenti, progetto cavalli, o game drives nella riserva.' },
-  { time: '17:00', title: 'Pasto Serale & Tramonto', desc: 'Ultimi giri, cena insieme, e i tramonti più spettacolari che tu abbia mai visto.' },
-]
+import { useTranslation } from 'react-i18next'
 
 const B = 'https://novaslegacy.com/wp-content/uploads/2022/08/'
 
-const VOL_PHOTOS = [
-  { src: B + 'IMG-20210830-WA0148-1.jpg',      cap: 'Cura degli animali' },
-  { src: B + 'IMG_20200605_110224_811.jpg',     cap: 'Lavoro quotidiano' },
-  { src: B + 'IMG-20210312-WA0032.jpg',         cap: 'Con i ghepardi' },
-  { src: B + 'IMG_20200927_132938_928.jpg',     cap: 'Nel bush' },
-  { src: B + '20210906_112700-scaled.jpg',      cap: 'Alimentazione' },
-  { src: B + 'IMG-20210203-WA0023.jpg',         cap: 'Team in azione' },
-]
-
-const TASKS = [
-  'Cura e alimentazione quotidiana degli animali',
-  'Pulizia e manutenzione degli enclosure',
-  'Costruzione di arricchimenti ambientali',
-  'Progetto cavalli e equitazione',
-  'Game drives e monitoraggio della riserva',
-  'Attività educative e outreach',
-  'Manutenzione generale della fattoria',
-  'Raccolta dati scientifici',
+const VOL_PHOTO_SRCS = [
+  B + 'IMG-20210830-WA0148-1.jpg',
+  B + 'IMG_20200605_110224_811.jpg',
+  B + 'IMG-20210312-WA0032.jpg',
+  B + 'IMG_20200927_132938_928.jpg',
+  B + '20210906_112700-scaled.jpg',
+  B + 'IMG-20210203-WA0023.jpg',
 ]
 
 function Volunteer({ goTo }) {
+  const { t } = useTranslation()
+  const schedule  = t('volunteer.schedule',   { returnObjects: true })
+  const tasks     = t('volunteer.tasks',      { returnObjects: true })
+  const photoCaps = t('volunteer.photo_caps', { returnObjects: true })
+
   return (
     <>
       <div className="page-hero-img">
-        <img
-          src="https://novaslegacy.com/wp-content/uploads/2022/08/IMG-20210830-WA0148-1.jpg"
-          alt="Volontari a Nova's Legacy"
-        />
+        <img src={B + 'IMG-20210830-WA0148-1.jpg'} alt="Volontari a Nova's Legacy" />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
-          <span className="label label-light">~ Join the Coalition ~</span>
-          <h1>Vivi la <em>Conservazione</em></h1>
-          <p>
-            Non una vacanza con gli animali. Un lavoro vero, accanto a un team appassionato,
-            in uno dei luoghi più belli del Sudafrica.
-          </p>
+          <span className="label label-light">{t('volunteer.hero_label')}</span>
+          <h1>{t('volunteer.hero_title')}</h1>
+          <p>{t('volunteer.hero_sub')}</p>
         </div>
       </div>
 
       <div className="page-content">
         <div className="container">
-          <span className="back-btn" onClick={() => goTo('home')}>← Torna alla Home</span>
+          <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
-          <h2>Cosa <em>significa</em> fare volontariato qui</h2>
-          <p>
-            Il volontariato a Nova&apos;s Legacy non è un&apos;esperienza turistica.
-            È un lavoro vero: ti alzerai presto, lavorerai sodo, ti sporcherai le mani
-            e ti addormenterai con i suoni del bush africano. Ogni giorno avrai
-            un impatto diretto sulla vita degli animali che curiamo.
-          </p>
-          <p>
-            In cambio ricevi: alloggio nel bush (chalet o tenda, secondo disponibilità),
-            tre pasti al giorno cucinati in comune, mentoring del team professionale
-            e la soddisfazione di fare qualcosa che conta davvero.
-          </p>
+          <h2>{t('volunteer.what_title')}</h2>
+          <p>{t('volunteer.what_p1')}</p>
+          <p>{t('volunteer.what_p2')}</p>
 
-          {/* ── Photo grid ── */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
             gap: '5px',
             margin: '2rem 0 2.5rem',
           }}>
-            {VOL_PHOTOS.map((p, i) => (
+            {VOL_PHOTO_SRCS.map((src, i) => (
               <div
                 key={i}
                 style={{
@@ -83,8 +54,8 @@ function Volunteer({ goTo }) {
                 }}
               >
                 <img
-                  src={p.src}
-                  alt={p.cap}
+                  src={src}
+                  alt={photoCaps[i]}
                   style={{
                     width: '100%', height: '100%',
                     objectFit: 'cover',
@@ -104,29 +75,25 @@ function Volunteer({ goTo }) {
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
                   pointerEvents: 'none',
-                }}>{p.cap}</div>
+                }}>{photoCaps[i]}</div>
               </div>
             ))}
           </div>
 
           <div className="highlight">
-            <p>
-              <strong>Durata minima: 2 settimane.</strong> Il tempo ideale è 4–8 settimane —
-              abbastanza per diventare parte del team e vedere i progressi veri degli animali.
-              Soggiorno più lungo? Contattaci, troviamo una soluzione.
-            </p>
+            <p>{t('volunteer.highlight')}</p>
           </div>
 
-          <h2>Cosa <em>farai</em> ogni giorno</h2>
+          <h2>{t('volunteer.daily_title')}</h2>
           <div className="vol-tasks" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem 2rem', margin: '1.5rem 0 2.5rem' }}>
-            {TASKS.map(t => (
-              <div key={t} className="vol-task">{t}</div>
+            {tasks.map(task => (
+              <div key={task} className="vol-task">{task}</div>
             ))}
           </div>
 
-          <h2>La tua <em>giornata tipo</em></h2>
+          <h2>{t('volunteer.schedule_title')}</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0', margin: '1.5rem 0 2.5rem', borderLeft: '2px solid #EDE5D8' }}>
-            {SCHEDULE.map((s, i) => (
+            {schedule.map((s, i) => (
               <div key={i} style={{ display: 'flex', gap: '1.5rem', padding: '1.2rem 0 1.2rem 2rem' }}>
                 <div style={{ fontFamily: 'var(--serif)', fontWeight: 700, color: 'var(--gold)', fontSize: '0.9rem', whiteSpace: 'nowrap', flexShrink: 0 }}>{s.time}</div>
                 <div>
@@ -137,20 +104,21 @@ function Volunteer({ goTo }) {
             ))}
           </div>
 
-          <h2>Come <em>candidarsi</em></h2>
+          <h2>{t('volunteer.apply_title')}</h2>
           <p>
-            Scrivici una email a <a href="mailto:kim@novaslegacy.co.za" style={{ color: 'var(--gold)' }}>kim@novaslegacy.co.za</a> o
-            manda un messaggio WhatsApp al <a href="tel:+27823520940" style={{ color: 'var(--gold)' }}>+27 82 352 0940</a>.
-            Presentati, raccontaci dei tuoi interessi e indicaci le date preferite.
-            Ti risponderemo con disponibilità, prezzi e un information pack completo.
+            {t('volunteer.apply_text').split('kim@novaslegacy.co.za')[0]}
+            <a href="mailto:kim@novaslegacy.co.za" style={{ color: 'var(--gold)' }}>kim@novaslegacy.co.za</a>
+            {t('volunteer.apply_text').split('kim@novaslegacy.co.za')[1].split('+27 82 352 0940')[0]}
+            <a href="tel:+27823520940" style={{ color: 'var(--gold)' }}>+27 82 352 0940</a>
+            {t('volunteer.apply_text').split('+27 82 352 0940')[1]}
           </p>
 
           <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <a href="mailto:kim@novaslegacy.co.za" className="btn btn-dark">
-              Scrivici ora
+              {t('volunteer.btn_write')}
             </a>
             <button className="btn btn-outline-dark" onClick={() => goTo('internship')}>
-              Vedi anche: Internship
+              {t('volunteer.btn2')}
             </button>
           </div>
         </div>

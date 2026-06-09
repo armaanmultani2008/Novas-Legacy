@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { detectLocationAndLanguage} from "./i18n.js";
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -39,7 +38,6 @@ function App() {
 
   useEffect(() => {
     if (window.location.hash === '#admin') setCurrentPage('admin')
-    detectLocationAndLanguage();
   }, [])
 
   const goTo = (page, section = null) => {

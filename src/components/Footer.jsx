@@ -1,4 +1,8 @@
+import { useTranslation } from 'react-i18next'
+
 function Footer({ goTo }) {
+  const { t } = useTranslation()
+
   return (
     <footer>
       <div className="footer-top">
@@ -6,11 +10,7 @@ function Footer({ goTo }) {
           <div className="nav-logo" onClick={() => goTo('home')} style={{ cursor: 'pointer' }}>
             Nova&apos;s <em>Legacy</em>
           </div>
-          <p>
-            Progetto di allevamento e conservazione dei ghepardi nel cuore del Waterberg,
-            Sudafrica. Fondata da Kim Hiltrop — infermiera veterinaria che ha allevato a mano
-            Nova, una gheparda a tre zampe.
-          </p>
+          <p>{t('footer.brand_desc')}</p>
           <div className="contact-small">
             <a href="mailto:kim@novaslegacy.co.za">kim@novaslegacy.co.za</a>
             <a href="tel:+27823520940">+27 82 352 0940</a>
@@ -21,35 +21,35 @@ function Footer({ goTo }) {
         </div>
 
         <div className="footer-col">
-          <h5>Il Progetto</h5>
-          <a onClick={() => goTo('nova-story')}>Storia di Nova</a>
-          <a onClick={() => goTo('cheetah-run')}>Cheetah Run</a>
-          <a onClick={() => goTo('conservation')}>Conservazione</a>
-          <a onClick={() => goTo('horses')}>Cavalli</a>
-          <a onClick={() => goTo('blog')}>News &amp; Blog</a>
+          <h5>{t('footer.col_project')}</h5>
+          <a onClick={() => goTo('nova-story')}>{t('nav.nova_story')}</a>
+          <a onClick={() => goTo('cheetah-run')}>{t('nav.cheetah_run')}</a>
+          <a onClick={() => goTo('conservation')}>{t('footer.conservation')}</a>
+          <a onClick={() => goTo('horses')}>{t('footer.horses')}</a>
+          <a onClick={() => goTo('blog')}>{t('footer.blog')}</a>
         </div>
 
         <div className="footer-col">
-          <h5>Partecipa</h5>
-          <a onClick={() => goTo('volunteer')}>Volontariato</a>
-          <a onClick={() => goTo('internship')}>Internship</a>
-          <a onClick={() => goTo('visit')}>Soggiorno</a>
-          <a onClick={() => goTo('adopt')}>Adotta un Animale</a>
+          <h5>{t('footer.col_involved')}</h5>
+          <a onClick={() => goTo('volunteer')}>{t('footer.volunteer')}</a>
+          <a onClick={() => goTo('internship')}>{t('footer.internship')}</a>
+          <a onClick={() => goTo('visit')}>{t('footer.stay')}</a>
+          <a onClick={() => goTo('adopt')}>{t('footer.adopt')}</a>
         </div>
 
         <div className="footer-col">
-          <h5>Social</h5>
+          <h5>{t('footer.col_social')}</h5>
           <a href="https://facebook.com/Feracare" target="_blank" rel="noreferrer">Facebook</a>
           <a href="https://instagram.com/novaslegacycheetahproject" target="_blank" rel="noreferrer">Instagram</a>
           <a href="https://youtube.com" target="_blank" rel="noreferrer">YouTube</a>
-          <a onClick={() => goTo('merch')}>Shop</a>
-          <a onClick={() => goTo('donate')}>Donazioni</a>
+          <a onClick={() => goTo('merch')}>{t('footer.shop')}</a>
+          <a onClick={() => goTo('donate')}>{t('footer.donations')}</a>
         </div>
       </div>
 
       <div className="footer-bottom">
-        <span>&copy; 2026 Nova&apos;s Legacy · Feracare Wildlife Centre · Bela-Bela, Limpopo</span>
-        <span>PBO No. 930069839 · Reg. No. 2018/463513/08</span>
+        <span>{t('footer.copyright')}</span>
+        <span>{t('footer.reg')}</span>
         <span
           onClick={() => goTo('admin')}
           style={{ cursor: 'pointer', opacity: 0.12, fontSize: '0.6rem', userSelect: 'none' }}

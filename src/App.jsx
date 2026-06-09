@@ -11,6 +11,8 @@ import Visit from './pages/Visit'
 import Blog from './pages/Blog'
 import Adopt from './pages/Adopt'
 import Merch from './pages/Merch'
+import Donate from './pages/Donate'
+import Admin from './pages/Admin'
 
 const pages = {
   home: Home,
@@ -23,11 +25,16 @@ const pages = {
   blog: Blog,
   adopt: Adopt,
   merch: Merch,
+  donate: Donate,
 }
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
   const [pendingSection, setPendingSection] = useState(null)
+
+  useEffect(() => {
+    if (window.location.hash === '#admin') setCurrentPage('admin')
+  }, [])
 
   const goTo = (page, section = null) => {
     setCurrentPage(page)
@@ -44,6 +51,10 @@ function App() {
     }, 200)
     return () => clearTimeout(timer)
   }, [pendingSection, currentPage])
+
+  if (currentPage === 'admin') {
+    return <Admin goTo={goTo} />
+  }
 
   const PageComponent = pages[currentPage] || Home
 

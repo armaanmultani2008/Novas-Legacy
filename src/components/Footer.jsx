@@ -42,12 +42,18 @@ function Footer({ goTo }) {
           <a href="https://instagram.com/novaslegacycheetahproject" target="_blank" rel="noreferrer">Instagram</a>
           <a href="https://youtube.com" target="_blank" rel="noreferrer">YouTube</a>
           <a onClick={() => goTo('merch')}>Shop</a>
+          <a onClick={() => goTo('donate')}>Donazioni</a>
         </div>
       </div>
 
       <div className="footer-bottom">
         <span>&copy; 2026 Nova&apos;s Legacy · Feracare Wildlife Centre · Bela-Bela, Limpopo</span>
         <span>PBO No. 930069839 · Reg. No. 2018/463513/08</span>
+        <span
+          onClick={() => goTo('admin')}
+          style={{ cursor: 'pointer', opacity: 0.12, fontSize: '0.6rem', userSelect: 'none' }}
+          title="Admin"
+        >●</span>
       </div>
     </footer>
   )

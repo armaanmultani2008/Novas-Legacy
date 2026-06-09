@@ -30,6 +30,7 @@ const NAV = [
   },
   { label: 'Blog', page: 'blog' },
   { label: 'Shop', page: 'merch' },
+  { label: 'Donazioni', page: 'donate' },
 ]
 
 function Navbar({ goTo }) {

@@ -14,7 +14,7 @@ const ITEMS = [
   { name: 'Sticker Pack',     price: '€5',  priceZar: 'R 80',  sizes: null,                          photo: B + '20210512_112828-scaled.jpg' },
 ]
 
-async function startCheckout(name, priceStr) {
+async function startCheckout(name, priceStr, errCheckout, errBackend) {
   const price = parseFloat(priceStr.replace('€', ''))
   try {
     const r = await fetch(`${API}/api/stripe/checkout`, {
@@ -24,9 +24,9 @@ async function startCheckout(name, priceStr) {
     })
     const data = await r.json()
     if (data.url) window.location.href = data.url
-    else alert('Errore nel checkout. Riprova.')
+    else alert(errCheckout)
   } catch {
-    alert('Backend non raggiungibile. Assicurati che il server sia avviato.')
+    alert(errBackend)
   }
 }
 
@@ -40,7 +40,7 @@ function Merch({ goTo }) {
 
   const handleBuy = async (item) => {
     setLoading(item.name)
-    await startCheckout(item.name, item.price)
+    await startCheckout(item.name, item.price, t('common.error_checkout'), t('common.error_backend'))
     setLoading(null)
   }
 

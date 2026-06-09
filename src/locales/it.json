@@ -7,7 +7,9 @@
     "adopt": "Adotta",
     "send_message": "Invia il Messaggio →",
     "write_us": "Scrivici ora",
-    "book_now": "Prenota ora"
+    "book_now": "Prenota ora",
+    "error_checkout": "Errore nel checkout. Riprova.",
+    "error_backend": "Backend non raggiungibile. Assicurati che il server sia avviato."
   },
   "nav": {
     "home": "Home",
@@ -112,10 +114,44 @@
     "form_reason_other": "Altro",
     "form_message": "Il tuo messaggio...",
     "form_success": "Messaggio inviato! Kim ti risponderà presto.",
-    "gallery_captions": ["La Riserva","I Ghepardi","Nel Bush","Alba sul Waterberg","Vita Selvatica","I Volontari","Mattina al Recinto","Cura Quotidiana","Tramonto","Nova"],
-    "animal_roles": ["Gheparda · La Fondatrice","Leonessa · Salvata da cucciola","Cani Selvatici Africani","Giraffa · Libera nella Riserva","Cavallo · Riabilitato","Volpe dalle Orecchie a Pipistrello","Lince del Deserto","Cacciatore Notturno"],
-    "prog_tags": ["Esperienza","Volontariato","Soggiorno","Formazione","Adozione","Conservazione"],
-    "prog_titles": ["Cheetah Run","Join the Coalition","Chalet nel Bush","Internship","Adotta un Animale","Breeding Program"],
+    "gallery_captions": [
+      "La Riserva",
+      "I Ghepardi",
+      "Nel Bush",
+      "Alba sul Waterberg",
+      "Vita Selvatica",
+      "I Volontari",
+      "Mattina al Recinto",
+      "Cura Quotidiana",
+      "Tramonto",
+      "Nova"
+    ],
+    "animal_roles": [
+      "Gheparda · La Fondatrice",
+      "Leonessa · Salvata da cucciola",
+      "Cani Selvatici Africani",
+      "Giraffa · Libera nella Riserva",
+      "Cavallo · Riabilitato",
+      "Volpe dalle Orecchie a Pipistrello",
+      "Lince del Deserto",
+      "Cacciatore Notturno"
+    ],
+    "prog_tags": [
+      "Esperienza",
+      "Volontariato",
+      "Soggiorno",
+      "Formazione",
+      "Adozione",
+      "Conservazione"
+    ],
+    "prog_titles": [
+      "Cheetah Run",
+      "Join the Coalition",
+      "Chalet nel Bush",
+      "Internship",
+      "Adotta un Animale",
+      "Breeding Program"
+    ],
     "prog_descs": [
       "Corri 60 metri accanto al ghepardo più veloce del mondo. Un'esperienza che dura secondi ma rimane per sempre.",
       "Vitto, alloggio e un lavoro che conta. Lavora fianco a fianco con il team. Minimo 2 settimane.",
@@ -124,22 +160,54 @@
       "Adotta simbolicamente uno dei nostri animali. Ricevi aggiornamenti mensili e il certificato ufficiale.",
       "Il programma di riproduzione contribuisce al gene pool globale. Collaboriamo con zoo e riserve internazionali."
     ],
-    "vol_task_list": ["Cura e alimentazione animali","Pulizia enclosure","Arricchimento ambientale","Manutenzione strutture","Educazione visitatori","Game drives","Raccolta dati scientifici","Progetto cavalli"],
+    "vol_task_list": [
+      "Cura e alimentazione animali",
+      "Pulizia enclosure",
+      "Arricchimento ambientale",
+      "Manutenzione strutture",
+      "Educazione visitatori",
+      "Game drives",
+      "Raccolta dati scientifici",
+      "Progetto cavalli"
+    ],
     "testi_quotes": [
       "Un'esperienza che ha cambiato la mia prospettiva sulla vita. Vedere Nova correre libera è qualcosa che non dimenticherò mai.",
       "Kim e il suo team sono incredibili. Ho imparato più in tre settimane qui che in un anno di università.",
       "Gli chalet sono confortevoli, il cibo ottimo. Ma la cosa più bella è svegliarsi a contatto con questi animali straordinari."
     ],
-    "testi_names": ["Giulia M.","Thomas W.","Ana R."],
-    "testi_locations": ["Milano, Italia","Berlin, Germany","Madrid, Spain"],
-    "accom_titles": ["3 Chalet Indipendenti","Immersi nella Natura","Colazione Inclusa","WiFi & Comodità"],
+    "testi_names": [
+      "Giulia M.",
+      "Thomas W.",
+      "Ana R."
+    ],
+    "testi_locations": [
+      "Milano, Italia",
+      "Berlin, Germany",
+      "Madrid, Spain"
+    ],
+    "accom_titles": [
+      "3 Chalet Indipendenti",
+      "Immersi nella Natura",
+      "Colazione Inclusa",
+      "WiFi & Comodità"
+    ],
     "accom_descs": [
       "Self-catering, completamente attrezzati. Cucina, bagno privato, letto matrimoniale o twin.",
       "A pochi passi dagli enclosure degli animali. Di notte si sentono i ghepardi.",
       "Ogni mattina prima di andare agli animali. Pranzo e cena su richiesta.",
       "Acqua calda, elettricità. Tutto il necessario, niente di superfluo."
     ],
-    "accom_icons": ["🏡","🌿","🍽","📶"]
+    "accom_icons": [
+      "🏡",
+      "🌿",
+      "🍽",
+      "📶"
+    ],
+    "alert_body_1": "Meno di ",
+    "alert_body_strong1": "7.000 ghepardi",
+    "alert_body_2": " vivono ancora allo stato selvatico. Negli ultimi 100 anni ne abbiamo persi il ",
+    "alert_body_strong2": "90%",
+    "alert_body_3": ". Senza intervento, questa specie non sopravviverà."
   },
   "cheetah": {
     "hero_label": "~ Il Progetto Ghepardi ~",
@@ -207,12 +275,36 @@
     "btn_write": "Scrivici ora",
     "btn2": "Vedi anche: Internship",
     "schedule": [
-      {"time":"06:00","title":"Alba nel Bush","desc":"Sveglia con i suoni della savana. Preparazione del cibo e degli arricchimenti per tutti gli animali."},
-      {"time":"07:00","title":"Alimentazione","desc":"Dai da mangiare a ghepardi, cani selvatici, caracal e tutti gli ospiti della riserva. Impara le loro personalità."},
-      {"time":"09:00","title":"Lavoro agli Enclosure","desc":"Manutenzione, pulizia e miglioramento degli habitat. Lavoro fisico con uno scopo preciso."},
-      {"time":"12:00","title":"Pranzo & Riposo","desc":"Pasto condiviso con vista sulle montagne del Waterberg. Un momento di comunità."},
-      {"time":"14:00","title":"Attività Pomeridiane","desc":"Sessioni educative, arricchimenti, progetto cavalli, o game drives nella riserva."},
-      {"time":"17:00","title":"Pasto Serale & Tramonto","desc":"Ultimi giri, cena insieme, e i tramonti più spettacolari che tu abbia mai visto."}
+      {
+        "time": "06:00",
+        "title": "Alba nel Bush",
+        "desc": "Sveglia con i suoni della savana. Preparazione del cibo e degli arricchimenti per tutti gli animali."
+      },
+      {
+        "time": "07:00",
+        "title": "Alimentazione",
+        "desc": "Dai da mangiare a ghepardi, cani selvatici, caracal e tutti gli ospiti della riserva. Impara le loro personalità."
+      },
+      {
+        "time": "09:00",
+        "title": "Lavoro agli Enclosure",
+        "desc": "Manutenzione, pulizia e miglioramento degli habitat. Lavoro fisico con uno scopo preciso."
+      },
+      {
+        "time": "12:00",
+        "title": "Pranzo & Riposo",
+        "desc": "Pasto condiviso con vista sulle montagne del Waterberg. Un momento di comunità."
+      },
+      {
+        "time": "14:00",
+        "title": "Attività Pomeridiane",
+        "desc": "Sessioni educative, arricchimenti, progetto cavalli, o game drives nella riserva."
+      },
+      {
+        "time": "17:00",
+        "title": "Pasto Serale & Tramonto",
+        "desc": "Ultimi giri, cena insieme, e i tramonti più spettacolari che tu abbia mai visto."
+      }
     ],
     "tasks": [
       "Cura e alimentazione quotidiana degli animali",
@@ -224,7 +316,14 @@
       "Manutenzione generale della fattoria",
       "Raccolta dati scientifici"
     ],
-    "photo_caps": ["Cura degli animali","Lavoro quotidiano","Con i ghepardi","Nel bush","Alimentazione","Team in azione"]
+    "photo_caps": [
+      "Cura degli animali",
+      "Lavoro quotidiano",
+      "Con i ghepardi",
+      "Nel bush",
+      "Alimentazione",
+      "Team in azione"
+    ]
   },
   "internship": {
     "hero_label": "~ Formazione Accademica ~",
@@ -265,9 +364,21 @@
     "btn_book": "Prenota ora",
     "btn2": "Scopri il Cheetah Run",
     "chalets": [
-      {"name":"Chalet Nova","size":"Per 2 persone","desc":"Il chalet principale, dedicato alla nostra fondatrice. Vista sugli enclosure dei ghepardi. Camera matrimoniale, bagno privato, cucina attrezzata."},
-      {"name":"Chalet Bush","size":"Per 2–4 persone","desc":"Immerso nella vegetazione del Waterberg. Letti twin o matrimoniale, spazio esterno privato, braai (barbecue africano) incluso."},
-      {"name":"Chalet Waterberg","size":"Per 2–4 persone","desc":"Il più panoramico. Terrazza con vista sulle montagne, perfetto per famiglie o coppie che cercano privacy assoluta nella natura."}
+      {
+        "name": "Chalet Nova",
+        "size": "Per 2 persone",
+        "desc": "Il chalet principale, dedicato alla nostra fondatrice. Vista sugli enclosure dei ghepardi. Camera matrimoniale, bagno privato, cucina attrezzata."
+      },
+      {
+        "name": "Chalet Bush",
+        "size": "Per 2–4 persone",
+        "desc": "Immerso nella vegetazione del Waterberg. Letti twin o matrimoniale, spazio esterno privato, braai (barbecue africano) incluso."
+      },
+      {
+        "name": "Chalet Waterberg",
+        "size": "Per 2–4 persone",
+        "desc": "Il più panoramico. Terrazza con vista sulle montagne, perfetto per famiglie o coppie che cercano privacy assoluta nella natura."
+      }
     ]
   },
   "blog": {
@@ -276,12 +387,42 @@
     "hero_sub": "Aggiornamenti, notizie e storie dal cuore del Waterberg.",
     "read_all": "Leggi tutto →",
     "posts": [
-      {"tag":"Notizie","date":"15 Maggio 2025","title":"Nuovi cuccioli di ghepardo nati a Nova's Legacy","excerpt":"Grande gioia nella riserva: la nostra femmina Amira ha dato alla luce tre cuccioli sani. Il team veterinario li monitora 24 ore su 24. Aggiornamenti in arrivo."},
-      {"tag":"Volontariato","date":"3 Aprile 2025","title":"Testimonianza: sei settimane nel bush con i ghepardi","excerpt":"Marco, 24 anni, studente di biologia da Torino, ci racconta la sua esperienza di volontariato. \"Ho imparato cose che non troverò mai in un libro di testo.\""},
-      {"tag":"Conservazione","date":"18 Marzo 2025","title":"Perché il ghepardo è più a rischio del leone","excerpt":"Un approfondimento sui fattori che rendono il ghepardo particolarmente vulnerabile: dalla bassa diversità genetica al conflitto con gli allevatori."},
-      {"tag":"Progetto Cavalli","date":"7 Febbraio 2025","title":"Spirit trova casa: la storia di un cavallo salvato","excerpt":"Spirit è arrivato da noi in condizioni precarie. Sei mesi dopo, trotta libero nella riserva. La storia della sua riabilitazione."},
-      {"tag":"Educazione","date":"22 Gennaio 2025","title":"200 bambini in visita dalla scuola di Bela-Bela","excerpt":"Il nostro programma educativo ha accolto 200 studenti locali. Per molti di loro, era la prima volta che vedevano un ghepardo da vicino."},
-      {"tag":"Cheetah Run","date":"10 Gennaio 2025","title":"Il Cheetah Run: come funziona e come prepararsi","excerpt":"Tutto quello che devi sapere prima di correre accanto al ghepardo più veloce del mondo. Consigli, FAQ e prenotazione."}
+      {
+        "tag": "Notizie",
+        "date": "15 Maggio 2025",
+        "title": "Nuovi cuccioli di ghepardo nati a Nova's Legacy",
+        "excerpt": "Grande gioia nella riserva: la nostra femmina Amira ha dato alla luce tre cuccioli sani. Il team veterinario li monitora 24 ore su 24. Aggiornamenti in arrivo."
+      },
+      {
+        "tag": "Volontariato",
+        "date": "3 Aprile 2025",
+        "title": "Testimonianza: sei settimane nel bush con i ghepardi",
+        "excerpt": "Marco, 24 anni, studente di biologia da Torino, ci racconta la sua esperienza di volontariato. \"Ho imparato cose che non troverò mai in un libro di testo.\""
+      },
+      {
+        "tag": "Conservazione",
+        "date": "18 Marzo 2025",
+        "title": "Perché il ghepardo è più a rischio del leone",
+        "excerpt": "Un approfondimento sui fattori che rendono il ghepardo particolarmente vulnerabile: dalla bassa diversità genetica al conflitto con gli allevatori."
+      },
+      {
+        "tag": "Progetto Cavalli",
+        "date": "7 Febbraio 2025",
+        "title": "Spirit trova casa: la storia di un cavallo salvato",
+        "excerpt": "Spirit è arrivato da noi in condizioni precarie. Sei mesi dopo, trotta libero nella riserva. La storia della sua riabilitazione."
+      },
+      {
+        "tag": "Educazione",
+        "date": "22 Gennaio 2025",
+        "title": "200 bambini in visita dalla scuola di Bela-Bela",
+        "excerpt": "Il nostro programma educativo ha accolto 200 studenti locali. Per molti di loro, era la prima volta che vedevano un ghepardo da vicino."
+      },
+      {
+        "tag": "Cheetah Run",
+        "date": "10 Gennaio 2025",
+        "title": "Il Cheetah Run: come funziona e come prepararsi",
+        "excerpt": "Tutto quello che devi sapere prima di correre accanto al ghepardo più veloce del mondo. Consigli, FAQ e prenotazione."
+      }
     ]
   },
   "adopt": {
@@ -292,13 +433,56 @@
     "highlight": "Per adottare scrivi a kim@novaslegacy.co.za indicando l'animale scelto. Ti risponderemo entro 48 ore con le istruzioni per il pagamento e il tuo certificato di adozione personalizzato.",
     "adopt_btn": "Adotta",
     "animals": [
-      {"species":"Gheparda","name":"Nova","price":"Da €15/mese","desc":"Quella che ha dato inizio a tutto. Tre zampe, cuore immenso. La tua adozione sostiene l'intero programma di riproduzione."},
-      {"species":"Leonessa","name":"Shira","price":"Da €20/mese","desc":"Salvata da cucciola, Shira è cresciuta in una magnifica leonessa. La tua adozione la tiene al sicuro ogni giorno."},
-      {"species":"Cani Selvatici Africani","name":"Ghost Pack","price":"Da €25/mese","desc":"I cani dipinti sono tra gli animali più minacciati dell'Africa. Adotta il branco e aiutaci a mantenerlo unito."},
-      {"species":"Cavallo","name":"Spirit","price":"Da €10/mese","desc":"Salvato dall'abbandono, Spirit è la prova vivente che le seconde possibilità funzionano."},
-      {"species":"Volpe dalle Orecchie a Pipistrello","name":"Sandy","price":"Da €8/mese","desc":"Piccola, curiosa e piena di personalità. Sandy ha bisogno di cure quotidiane e del tuo sostegno."},
-      {"species":"Serval","name":"Shadow","price":"Da €12/mese","desc":"Cacciatore notturno con il manto dorato e un udito straordinario. Tranquillo ma indimenticabile."}
-    ]
+      {
+        "species": "Gheparda",
+        "name": "Nova",
+        "price": "Da €15/mese",
+        "desc": "Quella che ha dato inizio a tutto. Tre zampe, cuore immenso. La tua adozione sostiene l'intero programma di riproduzione."
+      },
+      {
+        "species": "Leonessa",
+        "name": "Shira",
+        "price": "Da €20/mese",
+        "desc": "Salvata da cucciola, Shira è cresciuta in una magnifica leonessa. La tua adozione la tiene al sicuro ogni giorno."
+      },
+      {
+        "species": "Cani Selvatici Africani",
+        "name": "Ghost Pack",
+        "price": "Da €25/mese",
+        "desc": "I cani dipinti sono tra gli animali più minacciati dell'Africa. Adotta il branco e aiutaci a mantenerlo unito."
+      },
+      {
+        "species": "Cavallo",
+        "name": "Spirit",
+        "price": "Da €10/mese",
+        "desc": "Salvato dall'abbandono, Spirit è la prova vivente che le seconde possibilità funzionano."
+      },
+      {
+        "species": "Volpe dalle Orecchie a Pipistrello",
+        "name": "Sandy",
+        "price": "Da €8/mese",
+        "desc": "Piccola, curiosa e piena di personalità. Sandy ha bisogno di cure quotidiane e del tuo sostegno."
+      },
+      {
+        "species": "Serval",
+        "name": "Shadow",
+        "price": "Da €12/mese",
+        "desc": "Cacciatore notturno con il manto dorato e un udito straordinario. Tranquillo ma indimenticabile."
+      }
+    ],
+    "per_month": "mese",
+    "loading": "Caricamento...",
+    "what_you_get_title": "Cosa ricevi",
+    "what_you_get_text": "certificato digitale personalizzato ◆ aggiornamenti mensili con foto e video ◆ accesso prioritario alle notizie dalla riserva ◆ possibilità di dedicare l'adozione a qualcuno come regalo",
+    "portal_title": "Gestisci il tuo",
+    "portal_title_em": "abbonamento",
+    "portal_desc": "Inserisci l'email usata al momento dell'adozione per accedere al portale dove puoi aggiornare la carta di pagamento, cambiare importo o disdire in qualsiasi momento.",
+    "portal_email_placeholder": "La tua email di adozione",
+    "portal_btn": "Accedi al portale →",
+    "portal_loading": "Caricamento...",
+    "portal_error_not_found": "Nessun abbonamento trovato per questa email.",
+    "portal_error_backend": "Backend non raggiungibile. Riprova più tardi.",
+    "error_checkout": "Errore nel checkout. Riprova."
   },
   "merch": {
     "hero_label": "~ Support the Mission ~",
@@ -310,17 +494,59 @@
     "zar_label": "in ZAR",
     "custom_orders": "Ordini personalizzati o all'ingrosso →",
     "info": [
-      {"icon":"📦","title":"Spedizione Mondiale","desc":"Oltre 40 paesi, 5–14 giorni lavorativi."},
-      {"icon":"💳","title":"Pagamento Sicuro","desc":"PayPal, bonifico, carta. Ricevuta inclusa."},
-      {"icon":"🌿","title":"Impatto Diretto","desc":"100% dei proventi → cure animali e conservazione."}
+      {
+        "icon": "📦",
+        "title": "Spedizione Mondiale",
+        "desc": "Oltre 40 paesi, 5–14 giorni lavorativi."
+      },
+      {
+        "icon": "💳",
+        "title": "Pagamento Sicuro",
+        "desc": "PayPal, bonifico, carta. Ricevuta inclusa."
+      },
+      {
+        "icon": "🌿",
+        "title": "Impatto Diretto",
+        "desc": "100% dei proventi → cure animali e conservazione."
+      }
     ],
     "items": [
-      {"category":"Abbigliamento","name":"Classic Tee","desc":"100% cotone premium, logo Nova's Legacy. Colori: sabbia, oliva, carbone.","badge":"Bestseller"},
-      {"category":"Abbigliamento","name":"Coalition Hoodie","desc":"Felpa foderata in pile con logo \"Join the Coalition\" sul retro. Carbone, foresta.","badge":"Nuovo"},
-      {"category":"Accessori","name":"Bush Cap","desc":"Logo ghepardo ricamato. Taglia unica regolabile. Perfetto per il sole africano.","badge":null},
-      {"category":"Accessori","name":"Field Tote Bag","desc":"Canvas resistente, stampa \"Join the Coalition\". Manici lunghi, tasca interna.","badge":null},
-      {"category":"Casa","name":"Safari Mug","desc":"Ceramica con illustrazione del ghepardo. Lavabile in lavastoviglie. 350ml.","badge":null},
-      {"category":"Collezione","name":"Sticker Pack","desc":"6 adesivi vinile impermeabile con i nostri animali. Per laptop, borracce, caschi.","badge":"Idea Regalo"}
+      {
+        "category": "Abbigliamento",
+        "name": "Classic Tee",
+        "desc": "100% cotone premium, logo Nova's Legacy. Colori: sabbia, oliva, carbone.",
+        "badge": "Bestseller"
+      },
+      {
+        "category": "Abbigliamento",
+        "name": "Coalition Hoodie",
+        "desc": "Felpa foderata in pile con logo \"Join the Coalition\" sul retro. Carbone, foresta.",
+        "badge": "Nuovo"
+      },
+      {
+        "category": "Accessori",
+        "name": "Bush Cap",
+        "desc": "Logo ghepardo ricamato. Taglia unica regolabile. Perfetto per il sole africano.",
+        "badge": null
+      },
+      {
+        "category": "Accessori",
+        "name": "Field Tote Bag",
+        "desc": "Canvas resistente, stampa \"Join the Coalition\". Manici lunghi, tasca interna.",
+        "badge": null
+      },
+      {
+        "category": "Casa",
+        "name": "Safari Mug",
+        "desc": "Ceramica con illustrazione del ghepardo. Lavabile in lavastoviglie. 350ml.",
+        "badge": null
+      },
+      {
+        "category": "Collezione",
+        "name": "Sticker Pack",
+        "desc": "6 adesivi vinile impermeabile con i nostri animali. Per laptop, borracce, caschi.",
+        "badge": "Idea Regalo"
+      }
     ]
   },
   "nova_story": {
@@ -331,7 +557,12 @@
     "origins_p1": "Nova non è nata per caso. È il risultato di un'unione scientificamente pianificata tra due ghepardi senza alcun legame di sangue — una scelta precisa, basata sull'analisi genetica, con un obiettivo chiaro: preservare ciò che rimane della diversità genetica di una specie già gravemente compromessa.",
     "origins_p2": "I suoi genitori furono selezionati tra gli esemplari disponibili proprio perché non condividevano alcuna linea di discendenza comune. Questo tipo di accoppiamento — chiamato outbreeding — è la pratica fondamentale di Nova's Legacy per combattere la consanguineità nei ghepardi in cattività.",
     "highlight": "Nova è la prova che il metodo funziona. Sana, vivace, con un sistema immunitario forte e una vitalità straordinaria — ogni caratteristica che la contraddistingue è figlia di quella scelta genetica fatta prima ancora che nascesse.",
-    "photo_caps": ["Nova — il suo sguardo","Il futuro della specie","Nova nella riserva","I ghepardi di Nova's Legacy"],
+    "photo_caps": [
+      "Nova — il suo sguardo",
+      "Il futuro della specie",
+      "Nova nella riserva",
+      "I ghepardi di Nova's Legacy"
+    ],
     "genetics_title": "Perché la diversità genetica è vitale",
     "genetics_p1": "Circa 10.000 anni fa, un evento catastrofico — probabilmente una glaciazione — ha ridotto l'intera popolazione mondiale di ghepardi a pochissimi individui. Da quel \"collo di bottiglia\" genetico, tutti i ghepardi viventi oggi discendono. Il risultato: il 99% del loro DNA è identico. Fratelli e individui non imparentati sono quasi indistinguibili a livello genetico.",
     "genetics_p2": "Le conseguenze pratiche sono gravi: sistema immunitario indebolito, fertilità maschile ridotta (oltre il 70% degli spermatozoi ha morfologia anomala), alta vulnerabilità alle malattie e ridotta resistenza agli stress ambientali. Accoppiare individui già geneticamente simili peggiora ulteriormente questa situazione.",
@@ -352,7 +583,12 @@
     "how_title": "Come funziona",
     "how_p1": "L'esperienza si svolge in un'area dedicata all'interno della riserva. Un ghepardo adulto, abituato alla presenza umana, viene portato nella zona di partenza. Al segnale, l'animale inizia a correre seguendo uno stimolo visivo — e tu corri con lui. La distanza è di 60 metri: abbastanza per sentire il vento, abbastanza per non dimenticare mai.",
     "how_p2": "Disponibile per visitatori, gruppi e volontari. Durata totale circa 15–20 minuti incluso il briefing di sicurezza.",
-    "stat_labels": ["Velocità massima del ghepardo","Per passare da 0 a 96 km/h","La pista del Cheetah Run","Falcata massima durante la corsa"],
+    "stat_labels": [
+      "Velocità massima del ghepardo",
+      "Per passare da 0 a 96 km/h",
+      "La pista del Cheetah Run",
+      "Falcata massima durante la corsa"
+    ],
     "practical_title": "Cose pratiche",
     "practical_p": "Indossa scarpe da corsa e abbigliamento comodo. Porta la macchina fotografica — ma assicurati che sia al sicuro con una cinghia o in un marsupio. Età minima: 12 anni. Non è richiesta esperienza atletica particolare: l'importante è essere in forma per una corsa breve e intensa.",
     "booking_highlight": "Per prenotare scrivi a kim@novaslegacy.co.za o chiama il +27 82 352 0940. Disponibile tutti i giorni, mattina e pomeriggio, su prenotazione. Si consiglia di prenotare con almeno 48 ore di anticipo.",
@@ -375,10 +611,18 @@
     "error_text": "Si è verificato un errore. Riprova o contatta",
     "unavailable": "Donazione temporaneamente non disponibile. Riprova più tardi.",
     "impact": [
-      { "desc": "Nutre un ghepardo per una settimana" },
-      { "desc": "Finanzia le cure veterinarie mensili" },
-      { "desc": "Contribuisce al mantenimento del rifugio" },
-      { "desc": "Sostiene un programma di conservazione" }
+      {
+        "desc": "Nutre un ghepardo per una settimana"
+      },
+      {
+        "desc": "Finanzia le cure veterinarie mensili"
+      },
+      {
+        "desc": "Contribuisce al mantenimento del rifugio"
+      },
+      {
+        "desc": "Sostiene un programma di conservazione"
+      }
     ],
     "wishlist": {
       "sub_label": "~ Supporta i nostri animali: aiutaci a fare la differenza ~",

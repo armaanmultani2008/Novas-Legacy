@@ -35,9 +35,9 @@ function Adopt({ goTo }) {
       })
       const data = await r.json()
       if (data.url) window.location.href = data.url
-      else alert('Errore nel checkout. Riprova.')
+      else alert(t('common.error_checkout'))
     } catch {
-      alert('Backend non raggiungibile. Assicurati che il server sia avviato.')
+      alert(t('common.error_backend'))
     }
     setLoading(null)
   }
@@ -54,9 +54,9 @@ function Adopt({ goTo }) {
       })
       const data = await r.json()
       if (data.url) window.location.href = data.url
-      else setPortalError(data.error || 'Nessun abbonamento trovato per questa email.')
+      else setPortalError(data.error || t('adopt.portal_error_not_found'))
     } catch {
-      setPortalError('Backend non raggiungibile. Assicurati che il server sia avviato.')
+      setPortalError(t('common.error_backend'))
     }
     setPortalLoading(false)
   }
@@ -99,7 +99,7 @@ function Adopt({ goTo }) {
                   <div style={{ height: '200px', overflow: 'hidden', position: 'relative' }}>
                     <img src={a.img} alt={a.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', background: 'var(--gold)', color: '#fff', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.1em', padding: '0.25rem 0.65rem', textTransform: 'uppercase' }}>
-                      €{a.price}/mese
+                      €{a.price}/{t('adopt.per_month')}
                     </div>
                   </div>
                   <div style={{ padding: '1.5rem' }}>
@@ -112,7 +112,7 @@ function Adopt({ goTo }) {
                       onClick={() => handleAdopt(a)}
                       disabled={loading === a.name}
                     >
-                      {loading === a.name ? 'Caricamento...' : `${t('adopt.adopt_btn')} ${a.name} — €${a.price}/mese`}
+                      {loading === a.name ? t('adopt.loading') : `${t('adopt.adopt_btn')} ${a.name} — €${a.price}/${t('adopt.per_month')}`}
                     </button>
                   </div>
                 </div>
@@ -122,25 +122,22 @@ function Adopt({ goTo }) {
 
           <div className="highlight" style={{ marginTop: '3rem' }}>
             <p>
-              <strong>Cosa ricevi:</strong> certificato digitale personalizzato ◆ aggiornamenti mensili
-              con foto e video ◆ accesso prioritario alle notizie dalla riserva ◆ possibilità
-              di dedicare l&apos;adozione a qualcuno come regalo.
+              <strong>{t('adopt.what_you_get_title')}:</strong> {t('adopt.what_you_get_text')}
             </p>
           </div>
 
           <div style={{ marginTop: '4rem', padding: '2.5rem', background: '#F7F3EE', border: '1px solid #EDE5D8' }}>
             <h2 style={{ fontFamily: 'var(--serif)', fontSize: '1.5rem', marginBottom: '0.5rem', color: 'var(--dark)' }}>
-              Gestisci il tuo <em>abbonamento</em>
+              {t('adopt.portal_title')} <em>{t('adopt.portal_title_em')}</em>
             </h2>
             <p style={{ fontSize: '0.88rem', color: '#777', marginBottom: '1.5rem', fontWeight: 300 }}>
-              Inserisci l&apos;email usata al momento dell&apos;adozione per accedere al portale
-              dove puoi aggiornare la carta di pagamento, cambiare importo o disdire in qualsiasi momento.
+              {t('adopt.portal_desc')}
             </p>
             <form onSubmit={handlePortal} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
               <input
                 type="email"
                 required
-                placeholder="La tua email di adozione"
+                placeholder={t('adopt.portal_email_placeholder')}
                 value={portalEmail}
                 onChange={e => { setPortalEmail(e.target.value); setPortalError(null) }}
                 style={{
@@ -156,7 +153,7 @@ function Adopt({ goTo }) {
                 disabled={portalLoading}
                 style={{ opacity: portalLoading ? 0.6 : 1 }}
               >
-                {portalLoading ? 'Caricamento...' : 'Accedi al portale →'}
+                {portalLoading ? t('adopt.portal_loading') : t('adopt.portal_btn')}
               </button>
             </form>
             {portalError && (

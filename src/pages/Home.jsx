@@ -156,9 +156,7 @@ function Home({ goTo }) {
       <div className="alert-bar">
         <span className="alert-tag">{t('home.alert_tag')}</span>
         <p>
-          Meno di <strong>7.000 ghepardi</strong> vivono ancora allo stato selvatico.
-          Negli ultimi 100 anni ne abbiamo persi il <strong>90%</strong>.
-          Senza intervento, questa specie non sopravviverà.
+          {t('home.alert_body_1')}<strong>{t('home.alert_body_strong1')}</strong>{t('home.alert_body_2')}<strong>{t('home.alert_body_strong2')}</strong>{t('home.alert_body_3')}
         </p>
         <button className="btn btn-outline btn-sm" onClick={() => goTo('conservation')}>
           {t('home.alert_btn')}

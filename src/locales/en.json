@@ -7,7 +7,9 @@
     "adopt": "Adopt",
     "send_message": "Send Message →",
     "write_us": "Write to us now",
-    "book_now": "Book now"
+    "book_now": "Book now",
+    "error_checkout": "Checkout error. Please try again.",
+    "error_backend": "Backend unreachable. Please try again later."
   },
   "nav": {
     "home": "Home",
@@ -112,10 +114,44 @@
     "form_reason_other": "Other",
     "form_message": "Your message...",
     "form_success": "Message sent! Kim will reply soon.",
-    "gallery_captions": ["The Reserve","The Cheetahs","In the Bush","Waterberg Dawn","Wildlife","The Volunteers","Morning at the Enclosure","Daily Care","Sunset","Nova"],
-    "animal_roles": ["Cheetah · The Founder","Lioness · Rescued as a cub","African Wild Dogs","Giraffe · Free in the Reserve","Horse · Rehabilitated","Bat-Eared Fox","Desert Lynx","Nocturnal Hunter"],
-    "prog_tags": ["Experience","Volunteering","Stay","Training","Adoption","Conservation"],
-    "prog_titles": ["Cheetah Run","Join the Coalition","Bush Chalet","Internship","Adopt an Animal","Breeding Program"],
+    "gallery_captions": [
+      "The Reserve",
+      "The Cheetahs",
+      "In the Bush",
+      "Waterberg Dawn",
+      "Wildlife",
+      "The Volunteers",
+      "Morning at the Enclosure",
+      "Daily Care",
+      "Sunset",
+      "Nova"
+    ],
+    "animal_roles": [
+      "Cheetah · The Founder",
+      "Lioness · Rescued as a cub",
+      "African Wild Dogs",
+      "Giraffe · Free in the Reserve",
+      "Horse · Rehabilitated",
+      "Bat-Eared Fox",
+      "Desert Lynx",
+      "Nocturnal Hunter"
+    ],
+    "prog_tags": [
+      "Experience",
+      "Volunteering",
+      "Stay",
+      "Training",
+      "Adoption",
+      "Conservation"
+    ],
+    "prog_titles": [
+      "Cheetah Run",
+      "Join the Coalition",
+      "Bush Chalet",
+      "Internship",
+      "Adopt an Animal",
+      "Breeding Program"
+    ],
     "prog_descs": [
       "Run 60 metres alongside the fastest cheetah in the world. An experience that lasts seconds but stays forever.",
       "Board, lodging and work that matters. Work side by side with the team. Minimum 2 weeks.",
@@ -124,22 +160,54 @@
       "Symbolically adopt one of our animals. Receive monthly updates and the official certificate.",
       "The breeding programme contributes to the global gene pool. We collaborate with international zoos and reserves."
     ],
-    "vol_task_list": ["Animal care and feeding","Enclosure cleaning","Environmental enrichment","Facility maintenance","Visitor education","Game drives","Scientific data collection","Horse project"],
+    "vol_task_list": [
+      "Animal care and feeding",
+      "Enclosure cleaning",
+      "Environmental enrichment",
+      "Facility maintenance",
+      "Visitor education",
+      "Game drives",
+      "Scientific data collection",
+      "Horse project"
+    ],
     "testi_quotes": [
       "An experience that changed my perspective on life. Seeing Nova run free is something I will never forget.",
       "Kim and her team are incredible. I learned more in three weeks here than in a year of university.",
       "The chalets are comfortable, the food excellent. But the best thing is waking up in contact with these extraordinary animals."
     ],
-    "testi_names": ["Giulia M.","Thomas W.","Ana R."],
-    "testi_locations": ["Milan, Italy","Berlin, Germany","Madrid, Spain"],
-    "accom_titles": ["3 Independent Chalets","Immersed in Nature","Breakfast Included","WiFi & Comfort"],
+    "testi_names": [
+      "Giulia M.",
+      "Thomas W.",
+      "Ana R."
+    ],
+    "testi_locations": [
+      "Milan, Italy",
+      "Berlin, Germany",
+      "Madrid, Spain"
+    ],
+    "accom_titles": [
+      "3 Independent Chalets",
+      "Immersed in Nature",
+      "Breakfast Included",
+      "WiFi & Comfort"
+    ],
     "accom_descs": [
       "Self-catering, fully equipped. Kitchen, private bathroom, double or twin bed.",
       "A few steps from the animal enclosures. At night you can hear the cheetahs.",
       "Every morning before heading to the animals. Lunch and dinner on request.",
       "Hot water, electricity. Everything you need, nothing superfluous."
     ],
-    "accom_icons": ["🏡","🌿","🍽","📶"]
+    "accom_icons": [
+      "🏡",
+      "🌿",
+      "🍽",
+      "📶"
+    ],
+    "alert_body_1": "Fewer than ",
+    "alert_body_strong1": "7,000 cheetahs",
+    "alert_body_2": " still live in the wild. In the last 100 years we have lost ",
+    "alert_body_strong2": "90%",
+    "alert_body_3": " of them. Without intervention, this species will not survive."
   },
   "cheetah": {
     "hero_label": "~ The Cheetah Project ~",
@@ -207,12 +275,36 @@
     "btn_write": "Write to us now",
     "btn2": "See also: Internship",
     "schedule": [
-      {"time":"06:00","title":"Bush Sunrise","desc":"Wake up to the sounds of the savanna. Prepare food and enrichments for all the animals."},
-      {"time":"07:00","title":"Feeding","desc":"Feed the cheetahs, wild dogs, caracals and all the reserve's residents. Learn their personalities."},
-      {"time":"09:00","title":"Enclosure Work","desc":"Maintenance, cleaning and habitat improvement. Physical work with a clear purpose."},
-      {"time":"12:00","title":"Lunch & Rest","desc":"Shared meal with views of the Waterberg mountains. A moment of community."},
-      {"time":"14:00","title":"Afternoon Activities","desc":"Educational sessions, enrichments, horse project, or game drives in the reserve."},
-      {"time":"17:00","title":"Evening Meal & Sunset","desc":"Final rounds, dinner together, and the most spectacular sunsets you have ever seen."}
+      {
+        "time": "06:00",
+        "title": "Bush Sunrise",
+        "desc": "Wake up to the sounds of the savanna. Prepare food and enrichments for all the animals."
+      },
+      {
+        "time": "07:00",
+        "title": "Feeding",
+        "desc": "Feed the cheetahs, wild dogs, caracals and all the reserve's residents. Learn their personalities."
+      },
+      {
+        "time": "09:00",
+        "title": "Enclosure Work",
+        "desc": "Maintenance, cleaning and habitat improvement. Physical work with a clear purpose."
+      },
+      {
+        "time": "12:00",
+        "title": "Lunch & Rest",
+        "desc": "Shared meal with views of the Waterberg mountains. A moment of community."
+      },
+      {
+        "time": "14:00",
+        "title": "Afternoon Activities",
+        "desc": "Educational sessions, enrichments, horse project, or game drives in the reserve."
+      },
+      {
+        "time": "17:00",
+        "title": "Evening Meal & Sunset",
+        "desc": "Final rounds, dinner together, and the most spectacular sunsets you have ever seen."
+      }
     ],
     "tasks": [
       "Daily care and feeding of the animals",
@@ -224,7 +316,14 @@
       "General farm maintenance",
       "Scientific data collection"
     ],
-    "photo_caps": ["Animal care","Daily work","With the cheetahs","In the bush","Feeding","Team in action"]
+    "photo_caps": [
+      "Animal care",
+      "Daily work",
+      "With the cheetahs",
+      "In the bush",
+      "Feeding",
+      "Team in action"
+    ]
   },
   "internship": {
     "hero_label": "~ Academic Training ~",
@@ -265,9 +364,21 @@
     "btn_book": "Book now",
     "btn2": "Discover the Cheetah Run",
     "chalets": [
-      {"name":"Chalet Nova","size":"For 2 people","desc":"The main chalet, dedicated to our founder. Views of the cheetah enclosures. Double bedroom, private bathroom, equipped kitchen."},
-      {"name":"Chalet Bush","size":"For 2–4 people","desc":"Immersed in the Waterberg vegetation. Twin or double beds, private outdoor space, braai (African barbecue) included."},
-      {"name":"Chalet Waterberg","size":"For 2–4 people","desc":"The most panoramic. Terrace with mountain views, perfect for families or couples seeking absolute privacy in nature."}
+      {
+        "name": "Chalet Nova",
+        "size": "For 2 people",
+        "desc": "The main chalet, dedicated to our founder. Views of the cheetah enclosures. Double bedroom, private bathroom, equipped kitchen."
+      },
+      {
+        "name": "Chalet Bush",
+        "size": "For 2–4 people",
+        "desc": "Immersed in the Waterberg vegetation. Twin or double beds, private outdoor space, braai (African barbecue) included."
+      },
+      {
+        "name": "Chalet Waterberg",
+        "size": "For 2–4 people",
+        "desc": "The most panoramic. Terrace with mountain views, perfect for families or couples seeking absolute privacy in nature."
+      }
     ]
   },
   "blog": {
@@ -276,12 +387,42 @@
     "hero_sub": "Updates, news and stories from the heart of the Waterberg.",
     "read_all": "Read more →",
     "posts": [
-      {"tag":"News","date":"May 15, 2025","title":"New cheetah cubs born at Nova's Legacy","excerpt":"Great joy in the reserve: our female Amira has given birth to three healthy cubs. The veterinary team is monitoring them 24 hours a day. Updates to follow."},
-      {"tag":"Volunteering","date":"April 3, 2025","title":"Testimonial: six weeks in the bush with the cheetahs","excerpt":"Marco, 24, a biology student from Turin, tells us about his volunteering experience. \"I learned things I will never find in a textbook.\""},
-      {"tag":"Conservation","date":"March 18, 2025","title":"Why the cheetah is more at risk than the lion","excerpt":"An in-depth look at the factors that make the cheetah particularly vulnerable: from low genetic diversity to conflict with farmers."},
-      {"tag":"Horse Project","date":"February 7, 2025","title":"Spirit finds a home: the story of a rescued horse","excerpt":"Spirit arrived with us in poor condition. Six months later, he trots freely in the reserve. The story of his rehabilitation."},
-      {"tag":"Education","date":"January 22, 2025","title":"200 children visit from the Bela-Bela school","excerpt":"Our educational programme welcomed 200 local students. For many of them, it was the first time they had ever seen a cheetah up close."},
-      {"tag":"Cheetah Run","date":"January 10, 2025","title":"The Cheetah Run: how it works and how to prepare","excerpt":"Everything you need to know before running alongside the fastest cheetah in the world. Tips, FAQ and booking."}
+      {
+        "tag": "News",
+        "date": "May 15, 2025",
+        "title": "New cheetah cubs born at Nova's Legacy",
+        "excerpt": "Great joy in the reserve: our female Amira has given birth to three healthy cubs. The veterinary team is monitoring them 24 hours a day. Updates to follow."
+      },
+      {
+        "tag": "Volunteering",
+        "date": "April 3, 2025",
+        "title": "Testimonial: six weeks in the bush with the cheetahs",
+        "excerpt": "Marco, 24, a biology student from Turin, tells us about his volunteering experience. \"I learned things I will never find in a textbook.\""
+      },
+      {
+        "tag": "Conservation",
+        "date": "March 18, 2025",
+        "title": "Why the cheetah is more at risk than the lion",
+        "excerpt": "An in-depth look at the factors that make the cheetah particularly vulnerable: from low genetic diversity to conflict with farmers."
+      },
+      {
+        "tag": "Horse Project",
+        "date": "February 7, 2025",
+        "title": "Spirit finds a home: the story of a rescued horse",
+        "excerpt": "Spirit arrived with us in poor condition. Six months later, he trots freely in the reserve. The story of his rehabilitation."
+      },
+      {
+        "tag": "Education",
+        "date": "January 22, 2025",
+        "title": "200 children visit from the Bela-Bela school",
+        "excerpt": "Our educational programme welcomed 200 local students. For many of them, it was the first time they had ever seen a cheetah up close."
+      },
+      {
+        "tag": "Cheetah Run",
+        "date": "January 10, 2025",
+        "title": "The Cheetah Run: how it works and how to prepare",
+        "excerpt": "Everything you need to know before running alongside the fastest cheetah in the world. Tips, FAQ and booking."
+      }
     ]
   },
   "adopt": {
@@ -292,13 +433,56 @@
     "highlight": "To adopt, write to kim@novaslegacy.co.za indicating the animal chosen. We will reply within 48 hours with payment instructions and your personalised adoption certificate.",
     "adopt_btn": "Adopt",
     "animals": [
-      {"species":"Cheetah","name":"Nova","price":"From €15/month","desc":"The one who started it all. Three legs, an immense heart. Your adoption supports the entire breeding programme."},
-      {"species":"Lioness","name":"Shira","price":"From €20/month","desc":"Rescued as a cub, Shira has grown into a magnificent lioness. Your adoption keeps her safe every day."},
-      {"species":"African Wild Dogs","name":"Ghost Pack","price":"From €25/month","desc":"Painted dogs are among the most threatened animals in Africa. Adopt the pack and help us keep it together."},
-      {"species":"Horse","name":"Spirit","price":"From €10/month","desc":"Rescued from abandonment, Spirit is living proof that second chances work."},
-      {"species":"Bat-Eared Fox","name":"Sandy","price":"From €8/month","desc":"Small, curious and full of personality. Sandy needs daily care and your support."},
-      {"species":"Serval","name":"Shadow","price":"From €12/month","desc":"Nocturnal hunter with a golden coat and extraordinary hearing. Quiet but unforgettable."}
-    ]
+      {
+        "species": "Cheetah",
+        "name": "Nova",
+        "price": "From €15/month",
+        "desc": "The one who started it all. Three legs, an immense heart. Your adoption supports the entire breeding programme."
+      },
+      {
+        "species": "Lioness",
+        "name": "Shira",
+        "price": "From €20/month",
+        "desc": "Rescued as a cub, Shira has grown into a magnificent lioness. Your adoption keeps her safe every day."
+      },
+      {
+        "species": "African Wild Dogs",
+        "name": "Ghost Pack",
+        "price": "From €25/month",
+        "desc": "Painted dogs are among the most threatened animals in Africa. Adopt the pack and help us keep it together."
+      },
+      {
+        "species": "Horse",
+        "name": "Spirit",
+        "price": "From €10/month",
+        "desc": "Rescued from abandonment, Spirit is living proof that second chances work."
+      },
+      {
+        "species": "Bat-Eared Fox",
+        "name": "Sandy",
+        "price": "From €8/month",
+        "desc": "Small, curious and full of personality. Sandy needs daily care and your support."
+      },
+      {
+        "species": "Serval",
+        "name": "Shadow",
+        "price": "From €12/month",
+        "desc": "Nocturnal hunter with a golden coat and extraordinary hearing. Quiet but unforgettable."
+      }
+    ],
+    "per_month": "month",
+    "loading": "Loading...",
+    "what_you_get_title": "What you receive",
+    "what_you_get_text": "personalised digital certificate ◆ monthly photo and video updates ◆ priority access to reserve news ◆ option to dedicate the adoption as a gift",
+    "portal_title": "Manage your",
+    "portal_title_em": "subscription",
+    "portal_desc": "Enter the email used at the time of adoption to access the portal where you can update your payment card, change the amount or cancel at any time.",
+    "portal_email_placeholder": "Your adoption email",
+    "portal_btn": "Access portal →",
+    "portal_loading": "Loading...",
+    "portal_error_not_found": "No subscription found for this email.",
+    "portal_error_backend": "Backend unreachable. Please try again later.",
+    "error_checkout": "Checkout error. Please try again."
   },
   "merch": {
     "hero_label": "~ Support the Mission ~",
@@ -310,17 +494,59 @@
     "zar_label": "in ZAR",
     "custom_orders": "Custom or wholesale orders →",
     "info": [
-      {"icon":"📦","title":"Worldwide Shipping","desc":"Over 40 countries, 5–14 working days."},
-      {"icon":"💳","title":"Secure Payment","desc":"PayPal, bank transfer, card. Receipt included."},
-      {"icon":"🌿","title":"Direct Impact","desc":"100% of proceeds → animal care and conservation."}
+      {
+        "icon": "📦",
+        "title": "Worldwide Shipping",
+        "desc": "Over 40 countries, 5–14 working days."
+      },
+      {
+        "icon": "💳",
+        "title": "Secure Payment",
+        "desc": "PayPal, bank transfer, card. Receipt included."
+      },
+      {
+        "icon": "🌿",
+        "title": "Direct Impact",
+        "desc": "100% of proceeds → animal care and conservation."
+      }
     ],
     "items": [
-      {"category":"Clothing","name":"Classic Tee","desc":"100% premium cotton, Nova's Legacy logo. Colours: sand, olive, charcoal.","badge":"Bestseller"},
-      {"category":"Clothing","name":"Coalition Hoodie","desc":"Fleece-lined sweatshirt with \"Join the Coalition\" logo on the back. Charcoal, forest.","badge":"New"},
-      {"category":"Accessories","name":"Bush Cap","desc":"Embroidered cheetah logo. One size adjustable. Perfect for the African sun.","badge":null},
-      {"category":"Accessories","name":"Field Tote Bag","desc":"Durable canvas, \"Join the Coalition\" print. Long handles, inner pocket.","badge":null},
-      {"category":"Home","name":"Safari Mug","desc":"Ceramic with cheetah illustration. Dishwasher safe. 350ml.","badge":null},
-      {"category":"Collection","name":"Sticker Pack","desc":"6 waterproof vinyl stickers featuring our animals. For laptops, water bottles, helmets.","badge":"Gift Idea"}
+      {
+        "category": "Clothing",
+        "name": "Classic Tee",
+        "desc": "100% premium cotton, Nova's Legacy logo. Colours: sand, olive, charcoal.",
+        "badge": "Bestseller"
+      },
+      {
+        "category": "Clothing",
+        "name": "Coalition Hoodie",
+        "desc": "Fleece-lined sweatshirt with \"Join the Coalition\" logo on the back. Charcoal, forest.",
+        "badge": "New"
+      },
+      {
+        "category": "Accessories",
+        "name": "Bush Cap",
+        "desc": "Embroidered cheetah logo. One size adjustable. Perfect for the African sun.",
+        "badge": null
+      },
+      {
+        "category": "Accessories",
+        "name": "Field Tote Bag",
+        "desc": "Durable canvas, \"Join the Coalition\" print. Long handles, inner pocket.",
+        "badge": null
+      },
+      {
+        "category": "Home",
+        "name": "Safari Mug",
+        "desc": "Ceramic with cheetah illustration. Dishwasher safe. 350ml.",
+        "badge": null
+      },
+      {
+        "category": "Collection",
+        "name": "Sticker Pack",
+        "desc": "6 waterproof vinyl stickers featuring our animals. For laptops, water bottles, helmets.",
+        "badge": "Gift Idea"
+      }
     ]
   },
   "nova_story": {
@@ -331,7 +557,12 @@
     "origins_p1": "Nova was not born by chance. She is the result of a scientifically planned union between two cheetahs with no blood relationship — a deliberate choice, based on genetic analysis, with a clear objective: to preserve what remains of the genetic diversity of an already severely compromised species.",
     "origins_p2": "Her parents were selected from available individuals precisely because they shared no common line of descent. This type of pairing — called outbreeding — is the fundamental practice of Nova's Legacy for combating inbreeding in captive cheetahs.",
     "highlight": "Nova is proof that the method works. Healthy, lively, with a strong immune system and extraordinary vitality — every characteristic that defines her is the result of that genetic choice made before she was even born.",
-    "photo_caps": ["Nova — her gaze","The future of the species","Nova in the reserve","The cheetahs of Nova's Legacy"],
+    "photo_caps": [
+      "Nova — her gaze",
+      "The future of the species",
+      "Nova in the reserve",
+      "The cheetahs of Nova's Legacy"
+    ],
     "genetics_title": "Why genetic diversity is vital",
     "genetics_p1": "About 10,000 years ago, a catastrophic event — probably an ice age — reduced the entire world population of cheetahs to very few individuals. From that genetic \"bottleneck,\" all living cheetahs today are descended. The result: 99% of their DNA is identical. Siblings and unrelated individuals are almost indistinguishable at a genetic level.",
     "genetics_p2": "The practical consequences are severe: a weakened immune system, reduced male fertility (over 70% of sperm have abnormal morphology), high vulnerability to disease and reduced resistance to environmental stress. Mating individuals who are already genetically similar makes this situation even worse.",
@@ -352,7 +583,12 @@
     "how_title": "How it works",
     "how_p1": "The experience takes place in a dedicated area within the reserve. An adult cheetah, accustomed to human presence, is brought to the starting zone. At the signal, the animal begins to run following a visual stimulus — and you run with it. The distance is 60 metres: enough to feel the wind, enough to never forget.",
     "how_p2": "Available for visitors, groups and volunteers. Total duration approximately 15–20 minutes including the safety briefing.",
-    "stat_labels": ["Top speed of the cheetah","To go from 0 to 96 km/h","The Cheetah Run track","Maximum stride during the run"],
+    "stat_labels": [
+      "Top speed of the cheetah",
+      "To go from 0 to 96 km/h",
+      "The Cheetah Run track",
+      "Maximum stride during the run"
+    ],
     "practical_title": "Practical information",
     "practical_p": "Wear running shoes and comfortable clothing. Bring a camera — but make sure it is secure with a strap or in a pouch. Minimum age: 12 years. No particular athletic experience required: what matters is being fit for a short, intense run.",
     "booking_highlight": "To book write to kim@novaslegacy.co.za or call +27 82 352 0940. Available every day, morning and afternoon, by appointment. We recommend booking at least 48 hours in advance.",
@@ -375,10 +611,18 @@
     "error_text": "An error occurred. Please try again or contact",
     "unavailable": "Donations temporarily unavailable. Please try again later.",
     "impact": [
-      { "desc": "Feeds a cheetah for one week" },
-      { "desc": "Funds monthly veterinary care" },
-      { "desc": "Contributes to sanctuary maintenance" },
-      { "desc": "Supports a conservation programme" }
+      {
+        "desc": "Feeds a cheetah for one week"
+      },
+      {
+        "desc": "Funds monthly veterinary care"
+      },
+      {
+        "desc": "Contributes to sanctuary maintenance"
+      },
+      {
+        "desc": "Supports a conservation programme"
+      }
     ],
     "wishlist": {
       "sub_label": "~ Support our animals: join us in making a difference ~",

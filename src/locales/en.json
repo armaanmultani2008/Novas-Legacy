@@ -375,10 +375,37 @@
     "error_text": "An error occurred. Please try again or contact",
     "unavailable": "Donations temporarily unavailable. Please try again later.",
     "impact": [
-      {"icon":"🐆","amount":"€10","desc":"Feeds a cheetah for one week"},
-      {"icon":"💊","amount":"€25","desc":"Funds monthly veterinary care"},
-      {"icon":"🏠","amount":"€50","desc":"Contributes to sanctuary maintenance"},
-      {"icon":"🌿","amount":"€100","desc":"Supports a conservation programme"}
-    ]
+      { "desc": "Feeds a cheetah for one week" },
+      { "desc": "Funds monthly veterinary care" },
+      { "desc": "Contributes to sanctuary maintenance" },
+      { "desc": "Supports a conservation programme" }
+    ],
+    "wishlist": {
+      "sub_label": "~ Support our animals: join us in making a difference ~",
+      "title_start": "How can you ",
+      "title_em": "help?",
+      "p1": "If that is a question you have asked yourself, then this page is for you! Please read below and we will explain what is needed both urgently and long term and how you can help us to reach our goals.",
+      "p2": "Below, you’ll find our Wishlist. This is a list of products we would love to add and that would make a huge difference in the way we keep the animals in our care safe and healthy or to maintain the enclosures or facilities we need to look after them.",
+      "urgent_title": "Urgent items on this list right now",
+      "urgent_text": "are rolls of shade netting, materials to extend the electric fence and extra cameras. These items are all for our breeding camp to help us keep our moms and cubs safe from the snake who targeted our cubs last year.",
+      "list_title": "Nova’s Legacy Wishlist:",
+      "disclaimer_1": "Our wishlist is designed to make it easier for you to select and donate items we need instead of donating the funds directly. Some items will be brand specific (like our wifi cameras or animal supplements and medications) where other items (like tools, food, etc) does not need the specific brand we selected. If you doubt, please feel free to contact us at any time. This list is updated on a regular basis.",
+      "disclaimer_2": "We appreciate any donation, no matter how big or small!!",
+      "need_start": "What we need ",
+      "need_em": "the most",
+      "footer_text": "Questions about the wishlist? →",
+      "items": [
+        "Shade netting to cover fences and provide protection. (1 roll of netting is R4200 for 50m by 3m high, we are needing 10 rolls to finish the female lanes).",
+        "Cameras to monitor and document activities (Takealot Wishlist).",
+        "Supplements specially formulated for cheetahs. (1 bag of supplements is R1200 and lasts us 1 week for all our cats).",
+        "Materials for electric fences to enhance safety and security.",
+        "Tools such as wheelbarrows, shovels, rakes, knives, and more (Takealot Wishlist).",
+        "Deworming treatments for carnivores.",
+        "Vaccines for cats to ensure their health.",
+        "Chicken or fresh red meat for feeding.",
+        "Grass (teff) to nourish our horses.",
+        "Game or horse feed to sustain their diets."
+      ]
+    }
   }
 }

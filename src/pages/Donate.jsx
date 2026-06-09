@@ -15,7 +15,7 @@ const IMPACT = [
 
 function Donate({ goTo }) {
   useScrollReveal()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [amount, setAmount] = useState(25)
   const [custom, setCustom] = useState('')
   const [sdkReady, setSdkReady] = useState(false)
@@ -26,18 +26,22 @@ function Donate({ goTo }) {
   const finalAmount = custom ? (parseFloat(custom) || 0) : amount
   amountRef.current = finalAmount
 
-  const impactDescs = t('donate.impact', { returnObjects: true })
+  const impactDescs = t('donate.impact', { returnObjects: true }) || []
+  const wishlistItems = t('donate.wishlist.items', { returnObjects: true }) || []
+  const lang = i18n.language
 
   useEffect(() => {
+    setSdkReady(false)
     const existing = document.getElementById('paypal-sdk')
     if (existing) existing.remove()
+    const locale = lang === 'it' ? 'it_IT' : 'en_US'
     const script = document.createElement('script')
     script.id = 'paypal-sdk'
-    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR&intent=capture&components=buttons`
+    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR&intent=capture&components=buttons&locale=${locale}`
     script.onload = () => setSdkReady(true)
     document.body.appendChild(script)
     return () => script.remove()
-  }, [])
+  }, [lang])
 
   useEffect(() => {
     if (!sdkReady || !btnRef.current || !window.paypal) return
@@ -61,92 +65,174 @@ function Donate({ goTo }) {
 
   if (status === 'success') {
     return (
-      <div className="donate-page">
-        <div style={{ maxWidth: '820px', margin: '0 auto' }}>
-          <div className="donate-success rv">
-            <div className="donate-success-icon">◆</div>
-            <h2>{t('donate.success_title')}</h2>
-            <p>{t('donate.success_desc')}</p>
-            <button className="btn btn-dark" onClick={() => { setStatus(null); setCustom('') }}>{t('donate.donate_again')}</button>
+        <div className="donate-page">
+          <div style={{ maxWidth: '820px', margin: '0 auto' }}>
+            <div className="donate-success rv">
+              <div className="donate-success-icon">◆</div>
+              <h2>{t('donate.success_title')}</h2>
+              <p>{t('donate.success_desc')}</p>
+              <button className="btn btn-dark" onClick={() => { setStatus(null); setCustom('') }}>{t('donate.donate_again')}</button>
+            </div>
           </div>
         </div>
-      </div>
     )
   }
 
   return (
-    <>
-      <div className="page-hero-img" style={{ height: '52vh' }}>
-        <img src={B + 'IMG-20210120-WA0031-1170x600.jpg'} alt="Donazioni Nova's Legacy" />
-        <div className="page-hero-img-overlay" />
-        <div className="page-hero-text">
-          <span className="label label-light">{t('donate.hero_label')}</span>
-          <h1>{t('donate.hero_title').split(' ').slice(0,-2).join(' ')} <em>{t('donate.hero_title').split(' ').slice(-2).join(' ')}</em></h1>
-          <p>{t('donate.hero_sub')}</p>
-        </div>
-      </div>
-
-      <div className="donate-page">
-        <div style={{ maxWidth: '820px', margin: '0 auto' }}>
-          <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
-
-          <div className="rv" style={{ marginBottom: '2.5rem', textAlign: 'center' }}>
-            <span className="label">{t('donate.section_label')}</span>
-            <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(1.8rem,3vw,2.4rem)', color: 'var(--dark)', lineHeight: 1.15 }}>
-              {t('donate.section_title').split(' ').slice(0,-2).join(' ')} <em style={{ fontStyle: 'italic', color: 'var(--gold)', fontWeight: 400 }}>{t('donate.section_title').split(' ').slice(-2).join(' ')}</em>
-            </h2>
+      <>
+        {/* ── HERO ── */}
+        <div className="page-hero-img" style={{ height: '52vh' }}>
+          <img src={B + 'IMG-20210120-WA0031-1170x600.jpg'} alt="Donazioni Nova's Legacy" />
+          <div className="page-hero-img-overlay" />
+          <div className="page-hero-text">
+            <span className="label label-light">{t('donate.hero_label')}</span>
+            <h1>{t('donate.hero_title').split(' ').slice(0,-2).join(' ')} <em>{t('donate.hero_title').split(' ').slice(-2).join(' ')}</em></h1>
+            <p>{t('donate.hero_sub')}</p>
           </div>
+        </div>
 
-          <div className="donate-card rv rv-d1">
-            <div className="donate-amounts">
-              {AMOUNTS.map(a => (
-                <button
-                  key={a}
-                  className={`donate-amount-btn${amount === a && !custom ? ' active' : ''}`}
-                  onClick={() => { setAmount(a); setCustom('') }}
-                >
-                  €{a}
-                </button>
+        <div className="donate-page">
+          <div style={{ maxWidth: '820px', margin: '0 auto', padding: '0 1.5rem' }}>
+            <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
+
+            <div className="rv" style={{ marginBottom: '2.5rem', textAlign: 'center' }}>
+              <span className="label">{t('donate.section_label')}</span>
+              <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(1.8rem,3vw,2.4rem)', color: 'var(--dark)', lineHeight: 1.15 }}>
+                {t('donate.section_title').split(' ').slice(0,-2).join(' ')} <em style={{ fontStyle: 'italic', color: 'var(--gold)', fontWeight: 400 }}>{t('donate.section_title').split(' ').slice(-2).join(' ')}</em>
+              </h2>
+            </div>
+
+            {/* ── DONATION CARD ── */}
+            <div className="donate-card rv rv-d1">
+              <div className="donate-amounts">
+                {AMOUNTS.map(a => (
+                    <button
+                        key={a}
+                        className={`donate-amount-btn${amount === a && !custom ? ' active' : ''}`}
+                        onClick={() => { setAmount(a); setCustom('') }}
+                    >
+                      €{a}
+                    </button>
+                ))}
+              </div>
+
+              <div className="donate-custom">
+                <label>{t('donate.custom_label')}</label>
+                <input
+                    type="number"
+                    min="1"
+                    placeholder={t('donate.custom_placeholder')}
+                    value={custom}
+                    onChange={e => setCustom(e.target.value)}
+                />
+              </div>
+
+              <div className="donate-summary">
+                {t('donate.summary')} <strong>€{finalAmount > 0 ? finalAmount.toFixed(2) : '—'}</strong> {t('donate.summary_to')}
+              </div>
+
+              <div ref={btnRef} className="paypal-btn-wrap" />
+
+              {status === 'error' && (
+                  <p style={{ color: 'var(--red-alert)', textAlign: 'center', fontSize: '0.85rem', marginTop: '1rem' }}>
+                    {t('donate.error_text')}{' '}
+                    <a href="mailto:kim@novaslegacy.co.za" style={{ color: 'var(--gold)' }}>kim@novaslegacy.co.za</a>
+                  </p>
+              )}
+            </div>
+
+            {/* ── IMPACT LIST ── */}
+            <div className="donate-impact rv rv-d2" style={{ marginBottom: '5rem' }}>
+              {IMPACT.map((item, i) => (
+                  <div key={item.amount} className="impact-item">
+                    <span className="impact-icon">{item.icon}</span>
+                    <strong>{item.amount}</strong>
+                    <span>{impactDescs[i]?.desc || ''}</span>
+                  </div>
               ))}
             </div>
 
-            <div className="donate-custom">
-              <label>{t('donate.custom_label')}</label>
-              <input
-                type="number"
-                min="1"
-                placeholder={t('donate.custom_placeholder')}
-                value={custom}
-                onChange={e => setCustom(e.target.value)}
-              />
+            <hr style={{ border: 'none', borderTop: '1px solid #EDE5D8', margin: '4rem 0' }} />
+
+            {/* ── WISHLIST TEXTS ── */}
+            <div className="rv" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+              <span className="label">{t('donate.wishlist.sub_label')}</span>
+              <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(1.8rem,3vw,2.4rem)', color: 'var(--dark)' }}>
+                {t('donate.wishlist.title_start')} <em>{t('donate.wishlist.title_em')}</em>
+              </h2>
             </div>
 
-            <div className="donate-summary">
-              {t('donate.summary')} <strong>€{finalAmount > 0 ? finalAmount.toFixed(2) : '—'}</strong> {t('donate.summary_to')}
-            </div>
+            <div className="rv" style={{ color: '#555', lineHeight: '1.7', fontWeight: 300, fontSize: '0.95rem' }}>
+              <p style={{ marginBottom: '1rem' }}>{t('donate.wishlist.p1')}</p>
+              <p style={{ marginBottom: '1.5rem' }}>{t('donate.wishlist.p2')}</p>
 
-            <div ref={btnRef} className="paypal-btn-wrap" />
-
-            {status === 'error' && (
-              <p style={{ color: 'var(--red-alert)', textAlign: 'center', fontSize: '0.85rem', marginTop: '1rem' }}>
-                {t('donate.error_text')}{' '}
-                <a href="mailto:kim@novaslegacy.co.za" style={{ color: 'var(--gold)' }}>kim@novaslegacy.co.za</a>
-              </p>
-            )}
-          </div>
-
-          <div className="donate-impact rv rv-d2">
-            {IMPACT.map((item, i) => (
-              <div key={item.amount} className="impact-item">
-                <span className="impact-icon">{item.icon}</span>
-                <strong>{item.amount}</strong>
-                <span>{impactDescs[i]?.desc || ''}</span>
+              <div className="highlight" style={{ margin: '2rem 0' }}>
+                <p style={{ margin: 0 }}>
+                  ◆ <strong>{t('donate.wishlist.urgent_title')}</strong> {t('donate.wishlist.urgent_text')}
+                </p>
               </div>
-            ))}
+            </div>
+
+            {/* ── TAKEALOT CTA BUTTON ── */}
+            <div className="rv" style={{ textAlign: 'center', margin: '2.5rem 0' }}>
+              <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.3rem', marginBottom: '1rem', color: 'var(--dark)' }}>
+                {t('donate.wishlist.list_title')}
+              </h3>
+              <a
+                  href="https://www.takealot.com/wishlist/shared/1:820977a428b5448cbe57cf6015024c7c"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-dark"
+                  style={{ padding: '1rem 2.5rem', letterSpacing: '0.1em' }}
+              >
+                TAKEALOT WISHLIST
+              </a>
+            </div>
+
+            <div className="rv" style={{ color: '#777', lineHeight: '1.65', fontWeight: 300, fontSize: '0.88rem', fontStyle: 'italic', textAlign: 'center', maxWidth: '700px', margin: '0 auto 4rem' }}>
+              <p>{t('donate.wishlist.disclaimer_1')}</p>
+              <p style={{ fontWeight: 600, color: 'var(--dark)', marginTop: '1rem' }}>
+                {t('donate.wishlist.disclaimer_2')}
+              </p>
+            </div>
+
+            {/* ── WHAT WE NEED THE MOST (GRID) ── */}
+            <div className="rv" style={{ marginBottom: '2rem' }}>
+              <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.6rem', color: 'var(--dark)', borderBottom: '2px solid #EDE5D8', paddingBottom: '0.5rem', marginBottom: '1.5rem' }}>
+                {t('donate.wishlist.need_start')} <em>{t('donate.wishlist.need_em')}</em>
+              </h3>
+
+              <div className="programs-grid" style={{ display: 'grid', gap: '1.2rem', marginTop: '1rem' }}>
+                {wishlistItems.map((item, idx) => (
+                    <div
+                        key={idx}
+                        style={{
+                          background: 'var(--off-white)',
+                          border: '1px solid #EDE5D8',
+                          padding: '1.2rem 1.5rem',
+                          borderRadius: '4px',
+                          display: 'flex',
+                          gap: '1rem',
+                          alignItems: 'flex-start'
+                        }}
+                    >
+                  <span style={{ fontSize: '0.9rem', color: 'var(--dark)', lineHeight: '1.5', fontWeight: 300 }}>
+                    ◆ {item}
+                  </span>
+                    </div>
+                ))}
+              </div>
+            </div>
+
+            <p style={{ textAlign: 'center', marginTop: '4rem', fontSize: '0.85rem', color: 'var(--gray)', fontWeight: 300 }}>
+              {t('donate.wishlist.footer_text')}{' '}
+              <a href="mailto:kim@novaslegacy.co.za" style={{ color: 'var(--gold)', fontWeight: 600 }}>
+                kim@novaslegacy.co.za
+              </a>
+            </p>
           </div>
         </div>
-      </div>
-    </>
+      </>
   )
 }
 

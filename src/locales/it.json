@@ -375,10 +375,37 @@
     "error_text": "Si è verificato un errore. Riprova o contatta",
     "unavailable": "Donazione temporaneamente non disponibile. Riprova più tardi.",
     "impact": [
-      {"icon":"🐆","amount":"€10","desc":"Nutre un ghepardo per una settimana"},
-      {"icon":"💊","amount":"€25","desc":"Finanzia le cure veterinarie mensili"},
-      {"icon":"🏠","amount":"€50","desc":"Contribuisce al mantenimento del rifugio"},
-      {"icon":"🌿","amount":"€100","desc":"Sostiene un programma di conservazione"}
-    ]
+      { "desc": "Nutre un ghepardo per una settimana" },
+      { "desc": "Finanzia le cure veterinarie mensili" },
+      { "desc": "Contribuisce al mantenimento del rifugio" },
+      { "desc": "Sostiene un programma di conservazione" }
+    ],
+    "wishlist": {
+      "sub_label": "~ Supporta i nostri animali: aiutaci a fare la differenza ~",
+      "title_start": "Come puoi ",
+      "title_em": "aiutarci?",
+      "p1": "Se questa è una domanda che ti sei posto, allora questa pagina fa al caso tuo! Di seguito spieghiamo di cosa abbiamo bisogno sia nell'immediato che a lungo termine per aiutarci a raggiungere i nostri obiettivi.",
+      "p2": "Qui sotto trovi la nostra Wishlist. Si tratta di una lista di prodotti che desideriamo aggiungere e che farebbero un'enorme differenza nel modo in cui teniamo gli animali al sicuro e in salute, o per la manutenzione dei recinti e delle strutture necessarie ad accudirli.",
+      "urgent_title": "Gli articoli più urgenti in questo elenco in questo momento",
+      "urgent_text": "sono rotoli di rete ombreggiante, materiali per estendere la recinzione elettrica e telecamere extra. Questi elementi servono tutti per il nostro campo di riproduzione per aiutarci a tenere al sicuro mamme e cuccioli dal serpente che ha preso di mira i nostri piccoli l'anno scorso.",
+      "list_title": "Wishlist di Nova’s Legacy:",
+      "disclaimer_1": "La nostra wishlist è progettata per rendere più semplice la selezione e la donazione diretta di beni materiali di cui abbiamo bisogno invece di donare fondi. Alcuni articoli indicano marche specifiche (come le telecamere Wi-Fi o gli integratori e i farmaci per animali), mentre altri (come utensili, cibo, ecc.) non richiedono il marchio selezionato. In caso di dubbi, non esitate a contattarci. Questa lista viene aggiornata regolarmente.",
+      "disclaimer_2": "Apprezziamo qualsiasi donazione, non importa quanto grande o piccola!!",
+      "need_start": "Di cosa abbiamo più ",
+      "need_em": "bisogno",
+      "footer_text": "Domande sulla wishlist? →",
+      "items": [
+        "Rete ombreggiante per coprire le recinzioni e garantire protezione (1 rotolo di rete costa R4200 per 50m x 3m di altezza, ce ne servono 10 per ultimare le corsie delle femmine).",
+        "Telecamere per monitorare e documentare le attività (Wishlist Takealot).",
+        "Integratori appositamente formulati per ghepardi (1 sacco di integratori costa R1200 e dura 1 settimana per tutti i nostri felini).",
+        "Materiali per recinzioni elettriche per aumentare la sicurezza.",
+        "Utensili come carriole, pale, rastrelli, coltelli e altro (Wishlist Takealot).",
+        "Trattamenti di sverminazione per carnivori.",
+        "Vaccini per gatti e felini per garantire la loro salute.",
+        "Pollo o carne rossa fresca per l'alimentazione.",
+        "Erba (teff) per nutrire i nostri cavalli.",
+        "Mangime per selvaggina o cavalli per sostenere la loro dieta."
+      ]
+    }
   }
 }

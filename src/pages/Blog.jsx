@@ -45,63 +45,65 @@ const POSTS = [
 
 function Blog({ goTo }) {
   return (
-    <>
-      <div className="page-hero-img">
-        <img
-          src="https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-28.jpg"
-          alt="Blog Nova's Legacy"
-        />
-        <div className="page-hero-img-overlay" />
-        <div className="page-hero-text">
-          <span className="label label-light">~ Dal Campo ~</span>
-          <h1>News &amp; <em>Storie</em></h1>
-          <p>Aggiornamenti, notizie e storie dal cuore del Waterberg.</p>
-        </div>
-      </div>
-
-      <div className="page-content">
-        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 3rem' }}>
-          <span className="back-btn" onClick={() => goTo('home')}>← Torna alla Home</span>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '2rem',
-            marginTop: '0.5rem',
-          }}>
-            {POSTS.map(p => (
-              <div
-                key={p.title}
-                style={{
-                  background: 'var(--off-white)',
-                  border: '1px solid #EDE5D8',
-                  overflow: 'hidden',
-                  cursor: 'pointer',
-                  transition: 'transform 0.3s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-4px)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'none'}
-              >
-                <div style={{ height: '200px', overflow: 'hidden' }}>
-                  <img src={p.img} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
-                <div style={{ padding: '1.5rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.7rem' }}>
-                    <span style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)' }}>{p.tag}</span>
-                    <span style={{ fontSize: '0.72rem', color: '#AAA' }}>{p.date}</span>
-                  </div>
-                  <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.15rem', lineHeight: '1.3', marginBottom: '0.6rem', color: 'var(--dark)' }}>{p.title}</h3>
-                  <p style={{ fontSize: '0.83rem', color: '#777', lineHeight: '1.65', fontWeight: 300, marginBottom: '1rem' }}>{p.excerpt}</p>
-                  <span style={{ fontSize: '0.73rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--dark)' }}>
-                    Leggi tutto →
-                  </span>
-                </div>
-              </div>
-            ))}
+      <>
+        <div className="page-hero-img">
+          <img
+              src="https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-28.jpg"
+              alt="Blog Nova's Legacy"
+          />
+          <div className="page-hero-img-overlay" />
+          <div className="page-hero-text">
+            <span className="label label-light">~ Dal Campo ~</span>
+            <h1>News &amp; <em>Storie</em></h1>
+            <p>Aggiornamenti, notizie e storie dal cuore del Waterberg.</p>
           </div>
         </div>
-      </div>
-    </>
+
+        <div className="page-content">
+          <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 3rem' }}>
+            <span className="back-btn" onClick={() => goTo('home')}>← Torna alla Home</span>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '2rem',
+              marginTop: '0.5rem',
+            }}>
+              {POSTS.map(p => (
+                  <div
+                      key={p.title}
+                      style={{
+                        background: 'var(--off-white)',
+                        border: '1px solid #EDE5D8',
+                        overflow: 'hidden',
+                        cursor: 'pointer',
+                        transition: 'transform 0.3s',
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-4px)'}
+                      onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+                  >
+                    <div style={{ width: '100%', aspectRatio: '16 / 10', overflow: 'hidden' }}>
+                      <img src={p.img} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+                    </div>
+                    <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.7rem' }}>
+                        <span style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)' }}>{p.tag}</span>
+                        <span style={{ fontSize: '0.72rem', color: '#AAA' }}>{p.date}</span>
+                      </div>
+                      <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.15rem', lineHeight: '1.3', marginBottom: '0.6rem', color: 'var(--dark)' }}>{p.title}</h3>
+                      <p style={{ fontSize: '0.88rem', color: '#555', lineHeight: '1.6', fontWeight: 300, marginBottom: '1.5rem', flexGrow: 1 }}>{p.excerpt}</p>
+                      <span style={{ fontSize: '0.73rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--dark)', marginTop: 'auto' }}>
+                    Leggi tutto →
+                  </span>
+                    </div>
+                  </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </>
   )
 }
 

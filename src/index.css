@@ -1917,6 +1917,101 @@ footer {
 .admin-msg.success { background: #F0FFF4; color: #276749; border: 1px solid #C6F6D5; }
 .admin-msg.error   { background: #FFF5F5; color: #C53030; border: 1px solid #FED7D7; }
 
+/* ======================================================
+   INTERNSHIP FORM
+   ====================================================== */
+.internship-form-wrap {
+  border-top: 1px solid #EDE5D8;
+  padding-top: 3rem;
+}
+
+.internship-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  max-width: 640px;
+}
+
+.iform-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.iform-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.iform-group label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+
+.iform-group input,
+.iform-group textarea {
+  padding: 0.85rem 1rem;
+  border: 1.5px solid #DDD;
+  background: var(--off-white);
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  color: var(--dark);
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.iform-group input:focus,
+.iform-group textarea:focus { border-color: var(--gold); }
+
+.iform-group textarea { resize: vertical; }
+
+@media (max-width: 560px) {
+  .iform-row { grid-template-columns: 1fr; }
+}
+
+.iform-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.iform-modal {
+  background: var(--white);
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2.5rem;
+  position: relative;
+  animation: fadeUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.iform-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.2rem;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--gray);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.iform-close:hover { color: var(--dark); }
+
 .admin-header {
   display: flex;
   align-items: center;

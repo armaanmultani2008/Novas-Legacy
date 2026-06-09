@@ -3,6 +3,8 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import Cheetah from './pages/Cheetah'
+import CheetahRun from './pages/CheetahRun'
+import NovaStory from './pages/NovaStory'
 import Conservation from './pages/Conservation'
 import Horses from './pages/Horses'
 import Volunteer from './pages/Volunteer'
@@ -15,6 +17,8 @@ import Merch from './pages/Merch'
 const pages = {
   home: Home,
   cheetah: Cheetah,
+  'cheetah-run': CheetahRun,
+  'nova-story': NovaStory,
   conservation: Conservation,
   horses: Horses,
   volunteer: Volunteer,

@@ -1,7 +1,5 @@
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
 
-const B = 'https://novaslegacy.com/wp-content/uploads/2022/08/'
-
 const ITEMS = [
   {
     emoji: '👕',
@@ -12,7 +10,7 @@ const ITEMS = [
     desc: '100% cotone premium, logo Nova\'s Legacy. Colori: sabbia, oliva, carbone.',
     sizes: ['XS','S','M','L','XL'],
     badge: 'Bestseller',
-    photo: B + 'Nova-2.jpg',
+    photo: '/img/nova-primo-piano.png',
   },
   {
     emoji: '🧥',
@@ -23,7 +21,7 @@ const ITEMS = [
     desc: 'Felpa foderata in pile con logo "Join the Coalition" sul retro. Carbone, foresta.',
     sizes: ['S','M','L','XL','XXL'],
     badge: 'Nuovo',
-    photo: B + '20201128_175257-1-scaled.jpg',
+    photo: '/img/due-ghepardi.png',
   },
   {
     emoji: '🧢',
@@ -34,7 +32,7 @@ const ITEMS = [
     desc: 'Logo ghepardo ricamato. Taglia unica regolabile. Perfetto per il sole africano.',
     sizes: ['UNICA'],
     badge: null,
-    photo: B + 'IMG_20200927_132938_928.jpg',
+    photo: '/img/ghepardo-erba-alta.png',
   },
   {
     emoji: '🎒',
@@ -45,7 +43,7 @@ const ITEMS = [
     desc: 'Canvas resistente, stampa "Join the Coalition". Manici lunghi, tasca interna.',
     sizes: null,
     badge: null,
-    photo: B + 'IMG-20210120-WA0031-1170x600.jpg',
+    photo: '/img/ghepardo-corsa-2.png',
   },
   {
     emoji: '☕',
@@ -56,7 +54,7 @@ const ITEMS = [
     desc: 'Ceramica con illustrazione del ghepardo. Lavabile in lavastoviglie. 350ml.',
     sizes: null,
     badge: null,
-    photo: B + 'IMG-20210918-WA0026.jpg',
+    photo: '/img/ghepardo-albero.png',
   },
   {
     emoji: '🏷️',
@@ -67,7 +65,7 @@ const ITEMS = [
     desc: '6 adesivi vinile impermeabile con i nostri animali. Per laptop, borracce, caschi.',
     sizes: null,
     badge: 'Idea Regalo',
-    photo: B + '20210512_112828-scaled.jpg',
+    photo: '/img/volpe-orecchie.png',
   },
 ]
 
@@ -77,7 +75,7 @@ function Merch({ goTo }) {
     <>
       {/* ── HERO ── */}
       <div className="page-hero-img" style={{ height: '52vh' }}>
-        <img src={B + '20201209_171109-scaled.jpg'} alt="Shop Nova's Legacy" />
+        <img src="/img/ghepardo-corsa.png" alt="Shop Nova's Legacy" />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">~ Support the Mission ~</span>

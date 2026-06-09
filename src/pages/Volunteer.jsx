@@ -7,15 +7,13 @@ const SCHEDULE = [
   { time: '17:00', title: 'Pasto Serale & Tramonto', desc: 'Ultimi giri, cena insieme, e i tramonti più spettacolari che tu abbia mai visto.' },
 ]
 
-const B = 'https://novaslegacy.com/wp-content/uploads/2022/08/'
-
 const VOL_PHOTOS = [
-  { src: B + 'IMG-20210830-WA0148-1.jpg',      cap: 'Cura degli animali' },
-  { src: B + 'IMG_20200605_110224_811.jpg',     cap: 'Lavoro quotidiano' },
-  { src: B + 'IMG-20210312-WA0032.jpg',         cap: 'Con i ghepardi' },
-  { src: B + 'IMG_20200927_132938_928.jpg',     cap: 'Nel bush' },
-  { src: B + '20210906_112700-scaled.jpg',      cap: 'Alimentazione' },
-  { src: B + 'IMG-20210203-WA0023.jpg',         cap: 'Team in azione' },
+  { src: '/img/volontari-lavoro.png',       cap: 'Cura degli animali' },
+  { src: '/img/volontarie-ghepardo.png',    cap: 'Con i ghepardi' },
+  { src: '/img/volontario-recinzione.png',  cap: 'Lavoro quotidiano' },
+  { src: '/img/volontari-gruppo.png',       cap: 'Nel bush' },
+  { src: '/img/ghepardo-visita-vet.png',    cap: 'Alimentazione' },
+  { src: '/img/ghepardo-cucciolo.png',      cap: 'Team in azione' },
 ]
 
 const TASKS = [
@@ -34,7 +32,7 @@ function Volunteer({ goTo }) {
     <>
       <div className="page-hero-img">
         <img
-          src="https://novaslegacy.com/wp-content/uploads/2022/08/IMG-20210830-WA0148-1.jpg"
+          src="/img/volontari-lavoro.png"
           alt="Volontari a Nova's Legacy"
         />
         <div className="page-hero-img-overlay" />

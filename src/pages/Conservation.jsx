@@ -3,7 +3,7 @@ function Conservation({ goTo }) {
     <>
       <div className="page-hero-img">
         <img
-          src="https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-41.jpg"
+          src="/img/due-ghepardi.png"
           alt="Conservazione"
         />
         <div className="page-hero-img-overlay" />

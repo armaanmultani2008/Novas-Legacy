@@ -3,7 +3,7 @@ function Cheetah({ goTo }) {
     <>
       <div className="page-hero-img">
         <img
-          src="https://novaslegacy.com/wp-content/uploads/2022/08/IMG-20210120-WA0031-1170x600.jpg"
+          src="/img/nova-madre-cucciolo.png"
           alt="Ghepardo Nova's Legacy"
         />
         <div className="page-hero-img-overlay" />

@@ -22,7 +22,8 @@ function Footer({ goTo }) {
 
         <div className="footer-col">
           <h5>Il Progetto</h5>
-          <a onClick={() => goTo('cheetah')}>Ghepardi</a>
+          <a onClick={() => goTo('nova-story')}>Storia di Nova</a>
+          <a onClick={() => goTo('cheetah-run')}>Cheetah Run</a>
           <a onClick={() => goTo('conservation')}>Conservazione</a>
           <a onClick={() => goTo('horses')}>Cavalli</a>
           <a onClick={() => goTo('blog')}>News &amp; Blog</a>

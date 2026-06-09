@@ -4,10 +4,10 @@ const NAV = [
   { label: 'Home', page: 'home' },
   {
     label: 'I Ghepardi',
-    page: 'cheetah',
+    page: 'nova-story',
     children: [
-      { label: 'La Storia di Nova',  page: 'cheetah',      sym: '◆' },
-      { label: 'Cheetah Run',        page: 'cheetah',      sym: '→' },
+      { label: 'La Storia di Nova',  page: 'nova-story',   sym: '◆' },
+      { label: 'Cheetah Run',        page: 'cheetah-run',  sym: '→' },
       { label: 'Adotta un Animale',  page: 'adopt',        sym: '♡' },
     ],
   },

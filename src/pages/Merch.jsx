@@ -1,10 +1,13 @@
+import { useState } from 'react'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
+
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 const B = 'https://novaslegacy.com/wp-content/uploads/2022/08/'
 
 const ITEMS = [
   {
-    emoji: '👕',
+    emoji: '◆',
     name: 'Classic Tee',
     category: 'Abbigliamento',
     price: '€22',
@@ -15,7 +18,7 @@ const ITEMS = [
     photo: B + 'Nova-2.jpg',
   },
   {
-    emoji: '🧥',
+    emoji: '◆',
     name: 'Coalition Hoodie',
     category: 'Abbigliamento',
     price: '€40',
@@ -26,7 +29,7 @@ const ITEMS = [
     photo: B + '20201128_175257-1-scaled.jpg',
   },
   {
-    emoji: '🧢',
+    emoji: '◆',
     name: 'Bush Cap',
     category: 'Accessori',
     price: '€16',
@@ -37,7 +40,7 @@ const ITEMS = [
     photo: B + 'IMG_20200927_132938_928.jpg',
   },
   {
-    emoji: '🎒',
+    emoji: '◆',
     name: 'Field Tote Bag',
     category: 'Accessori',
     price: '€18',
@@ -48,7 +51,7 @@ const ITEMS = [
     photo: B + 'IMG-20210120-WA0031-1170x600.jpg',
   },
   {
-    emoji: '☕',
+    emoji: '◆',
     name: 'Safari Mug',
     category: 'Casa',
     price: '€12',
@@ -59,7 +62,7 @@ const ITEMS = [
     photo: B + 'IMG-20210918-WA0026.jpg',
   },
   {
-    emoji: '🏷️',
+    emoji: '◆',
     name: 'Sticker Pack',
     category: 'Collezione',
     price: '€5',
@@ -71,8 +74,32 @@ const ITEMS = [
   },
 ]
 
+async function startCheckout(name, priceStr) {
+  const price = parseFloat(priceStr.replace('€', ''))
+  try {
+    const r = await fetch(`${API}/api/stripe/checkout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, price }),
+    })
+    const data = await r.json()
+    if (data.url) window.location.href = data.url
+    else alert('Errore nel checkout. Riprova.')
+  } catch {
+    alert('Backend non raggiungibile. Assicurati che il server sia avviato.')
+  }
+}
+
 function Merch({ goTo }) {
   useScrollReveal()
+  const [loading, setLoading] = useState(null)
+
+  const handleBuy = async (item) => {
+    setLoading(item.name)
+    await startCheckout(item.name, item.price)
+    setLoading(null)
+  }
+
   return (
     <>
       {/* ── HERO ── */}
@@ -141,13 +168,14 @@ function Merch({ goTo }) {
                       {item.price}
                       <span>{item.priceZar} in ZAR</span>
                     </div>
-                    <a
-                      href="mailto:kim@novaslegacy.co.za"
+                    <button
                       className="btn btn-dark btn-sm"
-                      onClick={e => e.stopPropagation()}
+                      onClick={() => handleBuy(item)}
+                      disabled={loading === item.name}
+                      style={{ opacity: loading === item.name ? 0.6 : 1 }}
                     >
-                      Ordina →
-                    </a>
+                      {loading === item.name ? '...' : 'Acquista →'}
+                    </button>
                   </div>
                 </div>
               </article>
@@ -157,9 +185,9 @@ function Merch({ goTo }) {
           {/* ── INFO STRIP ── */}
           <div className="s-info-strip rv">
             {[
-              { icon: '📦', t: 'Spedizione Mondiale', d: 'Oltre 40 paesi, 5–14 giorni lavorativi.' },
-              { icon: '💳', t: 'Pagamento Sicuro',    d: 'PayPal, bonifico, carta. Ricevuta inclusa.' },
-              { icon: '🌿', t: 'Impatto Diretto',     d: '100% dei proventi → cure animali e conservazione.' },
+              { icon: '◆', t: 'Spedizione Mondiale', d: 'Oltre 40 paesi, 5–14 giorni lavorativi.' },
+              { icon: '◆', t: 'Pagamento Sicuro',    d: 'PayPal, bonifico, carta. Ricevuta inclusa.' },
+              { icon: '◆', t: 'Impatto Diretto',     d: '100% dei proventi → cure animali e conservazione.' },
             ].map(f => (
               <div key={f.t} className="s-info-item">
                 <span className="s-info-icon">{f.icon}</span>

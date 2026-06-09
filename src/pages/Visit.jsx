@@ -3,7 +3,7 @@ const CHALETS = [
     name: 'Chalet Nova',
     size: 'Per 2 persone',
     desc: 'Il chalet principale, dedicato alla nostra fondatrice. Vista sugli enclosure dei ghepardi. Camera matrimoniale, bagno privato, cucina attrezzata.',
-    img: '/img/chalet-esterno.png',
+    img: '/img/chalet-cucina.png',
   },
   {
     name: 'Chalet Bush',
@@ -66,6 +66,20 @@ function Visit({ goTo }) {
             ))}
           </div>
 
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', margin: '2.5rem 0' }}>
+            {[
+              { src: '/img/chalet-esterno-2.png', cap: 'Spazio esterno privato' },
+              { src: '/img/chalet-camera.png',    cap: 'Camera nel bush' },
+            ].map((p, i) => (
+              <div key={i} style={{ height: '260px', overflow: 'hidden', position: 'relative' }}>
+                <img src={p.src} alt={p.cap} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}
+                  onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
+                  onMouseLeave={e => e.target.style.transform = 'none'} />
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)', padding: '0.8rem', color: 'rgba(255,255,255,0.8)', fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', pointerEvents: 'none' }}>{p.cap}</div>
+              </div>
+            ))}
+          </div>
+
           <h2>Come <em>arrivare</em></h2>
           <p>
             Siamo a circa 130 km a nord di Pretoria, nel distretto di Bela-Bela (Warmbaths),
@@ -76,6 +90,19 @@ function Visit({ goTo }) {
             Possiamo organizzare un transfer su richiesta (costo aggiuntivo).
             Per i percorsi da seguire una volta in zona, ti mandiamo le istruzioni precise al momento della prenotazione.
           </p>
+
+          <div style={{ margin: '2rem 0' }}>
+            <iframe
+              src="https://maps.google.com/maps?q=-24.845059,28.240967&z=14&output=embed"
+              width="100%"
+              height="320"
+              style={{ border: 0, display: 'block' }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Nova's Legacy — Bela-Bela, South Africa"
+            />
+          </div>
 
           <div className="highlight">
             <p>

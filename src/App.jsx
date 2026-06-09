@@ -38,6 +38,17 @@ function App() {
 
   useEffect(() => {
     if (window.location.hash === '#admin') setCurrentPage('admin')
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('payment') === 'success') {
+      alert('Pagamento completato! Grazie per il tuo acquisto da Nova\'s Legacy.')
+      window.history.replaceState({}, '', '/')
+    } else if (params.get('adoption') === 'success') {
+      const animal = params.get('animal') || 'animale'
+      alert(`Benvenuto nella famiglia di ${animal}! Controlla la tua email — riceverai presto il certificato di adozione.`)
+      window.history.replaceState({}, '', '/')
+    } else if (params.get('payment') === 'cancel' || params.get('adoption') === 'cancel') {
+      window.history.replaceState({}, '', '/')
+    }
   }, [])
 
   const goTo = (page, section = null) => {

@@ -160,7 +160,7 @@ function Home({ goTo }) {
 
       {/* ── ALERT BAR ── */}
       <div className="alert-bar">
-        <span className="alert-tag">⚠ Emergenza</span>
+        <span className="alert-tag">▲ Emergenza</span>
         <p>
           Meno di <strong>7.000 ghepardi</strong> vivono ancora allo stato selvatico.
           Negli ultimi 100 anni ne abbiamo persi il <strong>90%</strong>.
@@ -391,10 +391,10 @@ function Home({ goTo }) {
           </div>
           <div className="accom-right">
             {[
-              { icon: '🏡', title: '3 Chalet Indipendenti', desc: 'Self-catering, completamente attrezzati. Cucina, bagno privato, letto matrimoniale o twin.' },
-              { icon: '🌿', title: 'Immersi nella Natura',   desc: 'A pochi passi dagli enclosure degli animali. Di notte si sentono i ghepardi.' },
-              { icon: '🍽',  title: 'Colazione Inclusa',     desc: 'Ogni mattina prima di andare agli animali. Pranzo e cena su richiesta.' },
-              { icon: '📶', title: 'WiFi & Comodità',        desc: 'Acqua calda, elettricità. Tutto il necessario, niente di superfluo.' },
+              { icon: '◆', title: '3 Chalet Indipendenti', desc: 'Self-catering, completamente attrezzati. Cucina, bagno privato, letto matrimoniale o twin.' },
+              { icon: '◆', title: 'Immersi nella Natura',   desc: 'A pochi passi dagli enclosure degli animali. Di notte si sentono i ghepardi.' },
+              { icon: '◆', title: 'Colazione Inclusa',      desc: 'Ogni mattina prima di andare agli animali. Pranzo e cena su richiesta.' },
+              { icon: '◆', title: 'WiFi & Comodità',        desc: 'Acqua calda, elettricità. Tutto il necessario, niente di superfluo.' },
             ].map((f, i) => (
               <div key={f.title} className={`accom-feature rv rv-d${i + 1}`}>
                 <div className="accom-feature-icon">{f.icon}</div>
@@ -444,7 +444,7 @@ function Home({ goTo }) {
             </p>
 
             <div className="contact-item">
-              <span className="contact-icon">📧</span>
+              <span className="contact-icon">@</span>
               <div>
                 <div className="contact-label">Email</div>
                 <div className="contact-value">
@@ -454,7 +454,7 @@ function Home({ goTo }) {
             </div>
 
             <div className="contact-item">
-              <span className="contact-icon">📞</span>
+              <span className="contact-icon">+</span>
               <div>
                 <div className="contact-label">Telefono / WhatsApp</div>
                 <div className="contact-value">
@@ -464,7 +464,7 @@ function Home({ goTo }) {
             </div>
 
             <div className="contact-item">
-              <span className="contact-icon">📍</span>
+              <span className="contact-icon">◆</span>
               <div>
                 <div className="contact-label">Indirizzo</div>
                 <div className="contact-value">
@@ -475,7 +475,7 @@ function Home({ goTo }) {
 
             <div className="contact-socials">
               <a className="social-link" href="https://facebook.com/Feracare" target="_blank" rel="noreferrer">f Facebook</a>
-              <a className="social-link" href="https://instagram.com/novaslegacycheetahproject" target="_blank" rel="noreferrer">📸 Instagram</a>
+              <a className="social-link" href="https://instagram.com/novaslegacycheetahproject" target="_blank" rel="noreferrer">◇ Instagram</a>
             </div>
           </div>
 
@@ -502,6 +502,19 @@ function Home({ goTo }) {
             <textarea placeholder="Il tuo messaggio..." rows={5} />
             <button type="submit" className="btn btn-dark">Invia il Messaggio →</button>
           </form>
+        </div>
+
+        <div className="rv" style={{ marginTop: '3rem' }}>
+          <iframe
+            src="https://maps.google.com/maps?q=-24.845059,28.240967&z=14&output=embed"
+            width="100%"
+            height="360"
+            style={{ border: 0, display: 'block' }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title="Nova's Legacy — Bela-Bela, South Africa"
+          />
         </div>
       </section>
     </>

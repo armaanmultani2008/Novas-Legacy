@@ -6,10 +6,10 @@ const B = 'https://novaslegacy.com/wp-content/uploads/2022/08/'
 const AMOUNTS = [10, 25, 50, 100]
 
 const IMPACT = [
-  { icon: '🐆', amount: '€10', desc: 'Nutre un ghepardo per una settimana' },
-  { icon: '💊', amount: '€25', desc: 'Finanzia le cure veterinarie mensili' },
-  { icon: '🏠', amount: '€50', desc: 'Contribuisce al mantenimento del rifugio' },
-  { icon: '🌿', amount: '€100', desc: 'Sostiene un programma di conservazione' },
+  { icon: '◆', amount: '€10', desc: 'Nutre un ghepardo per una settimana' },
+  { icon: '◆', amount: '€25', desc: 'Finanzia le cure veterinarie mensili' },
+  { icon: '◆', amount: '€50', desc: 'Contribuisce al mantenimento del rifugio' },
+  { icon: '◆', amount: '€100', desc: 'Sostiene un programma di conservazione' },
 ]
 
 function Donate({ goTo }) {
@@ -60,7 +60,7 @@ function Donate({ goTo }) {
       <div className="donate-page">
         <div style={{ maxWidth: '820px', margin: '0 auto' }}>
           <div className="donate-success rv">
-            <div className="donate-success-icon">💚</div>
+            <div className="donate-success-icon">◆</div>
             <h2>Grazie per il tuo supporto!</h2>
             <p>La tua donazione di <strong>€{finalAmount.toFixed(2)}</strong> aiuterà direttamente gli animali di Nova&apos;s Legacy.</p>
             <button className="btn btn-dark" onClick={() => { setStatus(null); setCustom('') }}>Dona ancora</button>

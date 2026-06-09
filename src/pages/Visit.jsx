@@ -1,39 +1,61 @@
-import { useTranslation } from 'react-i18next'
-
-const CHALET_IMGS = [
-  '/img/chalet-esterno.png',
-  '/img/chalet-esterno-2.png',
-  '/img/chalet-camera.png',
+const CHALETS = [
+  {
+    name: 'Chalet Nova',
+    size: 'Per 2 persone',
+    desc: 'Il chalet principale, dedicato alla nostra fondatrice. Vista sugli enclosure dei ghepardi. Camera matrimoniale, bagno privato, cucina attrezzata.',
+    img: '/img/chalet-cucina.png',
+  },
+  {
+    name: 'Chalet Bush',
+    size: 'Per 2–4 persone',
+    desc: 'Immerso nella vegetazione del Waterberg. Letti twin o matrimoniale, spazio esterno privato, braai (barbecue africano) incluso.',
+    img: '/img/chalet-esterno-2.png',
+  },
+  {
+    name: 'Chalet Waterberg',
+    size: 'Per 2–4 persone',
+    desc: 'Il più panoramico. Terrazza con vista sulle montagne, perfetto per famiglie o coppie che cercano privacy assoluta nella natura.',
+    img: '/img/chalet-camera.png',
+  },
 ]
 
 function Visit({ goTo }) {
-  const { t } = useTranslation()
-  const chalets = t('visit.chalets', { returnObjects: true })
-
   return (
     <>
       <div className="page-hero-img">
-        <img src="/img/chalet-esterno.png" alt="Soggiorno a Nova's Legacy" />
+        <img
+          src="/img/chalet-esterno.png"
+          alt="Soggiorno a Nova's Legacy"
+        />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
-          <span className="label label-light">{t('visit.hero_label')}</span>
-          <h1>{t('visit.hero_title')}</h1>
-          <p>{t('visit.hero_sub')}</p>
+          <span className="label label-light">~ Soggiorno &amp; Visite ~</span>
+          <h1>Dormire nel <em>Bush Africano</em></h1>
+          <p>
+            Tre chalet self-catering immersi nel Waterberg.
+            Colazione inclusa, animali selvatici a portata di sguardo,
+            e un silenzio che non trovi in nessun altro posto al mondo.
+          </p>
         </div>
       </div>
 
       <div className="page-content">
         <div className="container">
-          <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
+          <span className="back-btn" onClick={() => goTo('home')}>← Torna alla Home</span>
 
-          <h2>{t('visit.chalets_title')}</h2>
-          <p>{t('visit.chalets_p')}</p>
+          <h2>Tre chalet, <em>un&apos;esperienza unica</em></h2>
+          <p>
+            I nostri chalet self-catering sono progettati per chi vuole vivere
+            l&apos;Africa autentica senza rinunciare al comfort. Ogni chalet è dotato
+            di cucina attrezzata, bagno privato, acqua calda e WiFi.
+            La colazione è inclusa nel prezzo ogni mattina.
+          </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', margin: '2rem 0 3rem' }}>
-            {chalets.map((c, i) => (
+            {CHALETS.map(c => (
               <div key={c.name} style={{ border: '1px solid #EDE5D8', overflow: 'hidden', background: 'var(--off-white)' }}>
                 <div style={{ height: '200px', overflow: 'hidden' }}>
-                  <img src={CHALET_IMGS[i]} alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={c.img} alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
                 <div style={{ padding: '1.5rem' }}>
                   <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.4rem' }}>{c.size}</div>
@@ -44,23 +66,65 @@ function Visit({ goTo }) {
             ))}
           </div>
 
-          <h2>{t('visit.how_title')}</h2>
-          <p>{t('visit.how_p1')}</p>
-          <p>{t('visit.how_p2')}</p>
-
-          <div className="highlight">
-            <p>{t('visit.highlight')}</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', margin: '2.5rem 0' }}>
+            {[
+              { src: '/img/chalet-esterno-2.png', cap: 'Spazio esterno privato' },
+              { src: '/img/chalet-camera.png',    cap: 'Camera nel bush' },
+            ].map((p, i) => (
+              <div key={i} style={{ height: '260px', overflow: 'hidden', position: 'relative' }}>
+                <img src={p.src} alt={p.cap} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}
+                  onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
+                  onMouseLeave={e => e.target.style.transform = 'none'} />
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)', padding: '0.8rem', color: 'rgba(255,255,255,0.8)', fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', pointerEvents: 'none' }}>{p.cap}</div>
+              </div>
+            ))}
           </div>
 
-          <h2>{t('visit.add_run_title')}</h2>
-          <p>{t('visit.add_run_p')}</p>
+          <h2>Come <em>arrivare</em></h2>
+          <p>
+            Siamo a circa 130 km a nord di Pretoria, nel distretto di Bela-Bela (Warmbaths),
+            Limpopo. L&apos;indirizzo esatto è: <strong>431 Diepdrift, Bela-Bela, 0480, South Africa</strong>.
+          </p>
+          <p>
+            L&apos;aeroporto più vicino è OR Tambo (Johannesburg), a circa 2 ore di guida.
+            Possiamo organizzare un transfer su richiesta (costo aggiuntivo).
+            Per i percorsi da seguire una volta in zona, ti mandiamo le istruzioni precise al momento della prenotazione.
+          </p>
+
+          <div style={{ margin: '2rem 0' }}>
+            <iframe
+              src="https://maps.google.com/maps?q=-24.845059,28.240967&z=14&output=embed"
+              width="100%"
+              height="320"
+              style={{ border: 0, display: 'block' }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Nova's Legacy — Bela-Bela, South Africa"
+            />
+          </div>
+
+          <div className="highlight">
+            <p>
+              <strong>Periodi consigliati:</strong> aprile–ottobre (stagione secca, temperatura ideale,
+              animali più visibili). L&apos;estate (nov–mar) è calda e piovosa ma ugualmente magica.
+              Il Waterberg è una destinazione tutto l&apos;anno.
+            </p>
+          </div>
+
+          <h2>Aggiungi il <em>Cheetah Run</em></h2>
+          <p>
+            Tutti gli ospiti degli chalet possono prenotare il Cheetah Run durante il soggiorno.
+            È l&apos;esperienza che rende una vacanza un ricordo per tutta la vita.
+            Disponibile nei giorni feriali, mattina o pomeriggio.
+          </p>
 
           <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <a href="mailto:kim@novaslegacy.co.za" className="btn btn-dark">
-              {t('visit.btn_book')}
+              Prenota ora
             </a>
             <button className="btn btn-outline-dark" onClick={() => goTo('cheetah')}>
-              {t('visit.btn2')}
+              Scopri il Cheetah Run
             </button>
           </div>
         </div>

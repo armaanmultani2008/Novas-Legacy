@@ -1,14 +1,15 @@
+import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
 
 const B = 'https://novaslegacy.com/wp-content/uploads/2022/'
 
-const FIELDS = [
-  { sym: '◆', label: 'Biologia della Fauna Selvatica',   img: B + '08/20201128_175257-1-scaled.jpg' },
-  { sym: '◆', label: 'Medicina Veterinaria',              img: B + '08/IMG-20210312-WA0032.jpg' },
-  { sym: '◆', label: 'Ecologia e Conservazione',         img: B + '08/IMG_20200605_110224_811.jpg' },
-  { sym: '◆', label: 'Gestione delle Risorse Naturali',  img: B + '08/20210906_112700-scaled.jpg' },
-  { sym: '◆', label: 'Fotografia Naturalistica',          img: B + '08/IMG-20210918-WA0026.jpg' },
-  { sym: '◆', label: 'Genetica della Conservazione',     img: B + '08/IMG_20200927_132938_928.jpg' },
+const FIELD_IMGS = [
+  B + '08/20201128_175257-1-scaled.jpg',
+  B + '08/IMG-20210312-WA0032.jpg',
+  B + '08/IMG_20200605_110224_811.jpg',
+  B + '08/20210906_112700-scaled.jpg',
+  B + '08/IMG-20210918-WA0026.jpg',
+  B + '08/IMG_20200927_132938_928.jpg',
 ]
 
 const PHOTOS = [
@@ -20,42 +21,29 @@ const PHOTOS = [
 
 function Internship({ goTo }) {
   useScrollReveal()
+  const { t } = useTranslation()
+  const fieldLabels = t('internship.field_labels', { returnObjects: true })
+
   return (
     <>
       <div className="page-hero-img">
-        <img
-          src={B + '08/Vol-1-768x576.jpg'}
-          alt="Internship Nova's Legacy"
-        />
+        <img src={B + '08/Vol-1-768x576.jpg'} alt="Internship Nova's Legacy" />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
-          <span className="label label-light">~ Formazione Accademica ~</span>
-          <h1>Internship <em>Universitario</em></h1>
-          <p>
-            Esperienza pratica di conservazione per studenti di veterinaria,
-            zoologia, ecologia e gestione della fauna selvatica.
-          </p>
+          <span className="label label-light">{t('internship.hero_label')}</span>
+          <h1>{t('internship.hero_title')}</h1>
+          <p>{t('internship.hero_sub')}</p>
         </div>
       </div>
 
       <div className="page-content">
         <div className="container">
-          <span className="back-btn" onClick={() => goTo('home')}>← Torna alla Home</span>
+          <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
-          <h2>Impara <em>sul campo</em></h2>
-          <p>
-            L&apos;internship a Nova&apos;s Legacy è progettato per studenti universitari
-            che vogliono trasformare la teoria in pratica reale. Non simulate,
-            non osservazione passiva — lavori direttamente con gli animali,
-            sotto la supervisione di professionisti esperti.
-          </p>
-          <p>
-            Ogni tirocinante segue un programma personalizzato in base al suo
-            percorso accademico e agli obiettivi formativi concordati con l&apos;università.
-            Forniamo documentazione ufficiale per il riconoscimento dei crediti formativi.
-          </p>
+          <h2>{t('internship.learn_title')}</h2>
+          <p>{t('internship.learn_p1')}</p>
+          <p>{t('internship.learn_p2')}</p>
 
-          {/* Photo strip */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
@@ -85,25 +73,20 @@ function Internship({ goTo }) {
           </div>
 
           <div className="highlight">
-            <p>
-              Nova&apos;s Legacy collabora con università sudafricane, europee e americane.
-              Se la tua università non ha ancora un accordo formale con noi,
-              contattaci: lavoriamo per trovare una soluzione caso per caso.
-            </p>
+            <p>{t('internship.highlight')}</p>
           </div>
 
-          <h2>Aree di <em>specializzazione</em></h2>
+          <h2>{t('internship.fields_title')}</h2>
 
-          {/* Fields with images */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
             gap: '1rem',
             margin: '1.5rem 0 2.5rem',
           }}>
-            {FIELDS.map((f, i) => (
+            {fieldLabels.map((label, i) => (
               <div
-                key={f.label}
+                key={label}
                 className="rv"
                 style={{
                   background: 'var(--off-white)',
@@ -115,8 +98,8 @@ function Internship({ goTo }) {
               >
                 <div style={{ height: '130px', overflow: 'hidden', position: 'relative' }}>
                   <img
-                    src={f.img}
-                    alt={f.label}
+                    src={FIELD_IMGS[i]}
+                    alt={label}
                     style={{
                       width: '100%', height: '100%',
                       objectFit: 'cover',
@@ -132,34 +115,25 @@ function Internship({ goTo }) {
                   }} />
                 </div>
                 <div style={{ padding: '0.9rem 1rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--gold)', fontSize: '0.6rem', flexShrink: 0 }}>{f.sym}</span>
-                  <span style={{ fontSize: '0.83rem', fontWeight: 500, color: 'var(--dark)', lineHeight: 1.4 }}>{f.label}</span>
+                  <span style={{ color: 'var(--gold)', fontSize: '0.6rem', flexShrink: 0 }}>◆</span>
+                  <span style={{ fontSize: '0.83rem', fontWeight: 500, color: 'var(--dark)', lineHeight: 1.4 }}>{label}</span>
                 </div>
               </div>
             ))}
           </div>
 
-          <h2>Cosa <em>include</em></h2>
-          <p>
-            L&apos;internship include: alloggio nella riserva (chalet o sistemazione condivisa),
-            tre pasti al giorno, accesso a tutti i settori della riserva, partecipazione
-            alle riunioni operative, supporto nella raccolta dati per tesi o ricerche,
-            mentoring diretto di Kim Hiltrop e del team veterinario.
-          </p>
+          <h2>{t('internship.includes_title')}</h2>
+          <p>{t('internship.includes_p')}</p>
 
-          <h2>Durata e <em>costi</em></h2>
-          <p>
-            Durata minima: 4 settimane. Raccomandata: 8–12 settimane.
-            Il costo del programma copre alloggio, pasti e supervisione.
-            Scrivici per ricevere il preventivo dettagliato in base alla durata scelta.
-          </p>
+          <h2>{t('internship.duration_title')}</h2>
+          <p>{t('internship.duration_p')}</p>
 
           <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <a href="mailto:kim@novaslegacy.co.za" className="btn btn-dark">
-              Candidati ora
+              {t('internship.btn1')}
             </a>
             <button className="btn btn-outline-dark" onClick={() => goTo('volunteer')}>
-              Vedi anche: Volontariato
+              {t('internship.btn2')}
             </button>
           </div>
         </div>

@@ -1,67 +1,33 @@
-const POSTS = [
-  {
-    tag: 'Notizie',
-    date: '15 Maggio 2025',
-    title: 'Nuovi cuccioli di ghepardo nati a Nova\'s Legacy',
-    excerpt: 'Grande gioia nella riserva: la nostra femmina Amira ha dato alla luce tre cuccioli sani. Il team veterinario li monitora 24 ore su 24. Aggiornamenti in arrivo.',
-    img: '/img/nova-madre-cucciolo.png',
-  },
-  {
-    tag: 'Volontariato',
-    date: '3 Aprile 2025',
-    title: 'Testimonianza: sei settimane nel bush con i ghepardi',
-    excerpt: 'Marco, 24 anni, studente di biologia da Torino, ci racconta la sua esperienza di volontariato. "Ho imparato cose che non troverò mai in un libro di testo."',
-    img: '/img/volontari-lavoro.png',
-  },
-  {
-    tag: 'Conservazione',
-    date: '18 Marzo 2025',
-    title: 'Perché il ghepardo è più a rischio del leone',
-    excerpt: 'Un approfondimento sui fattori che rendono il ghepardo particolarmente vulnerabile: dalla bassa diversità genetica al conflitto con gli allevatori.',
-    img: '/img/due-ghepardi.png',
-  },
-  {
-    tag: 'Progetto Cavalli',
-    date: '7 Febbraio 2025',
-    title: 'Spirit trova casa: la storia di un cavallo salvato',
-    excerpt: 'Spirit è arrivato da noi in condizioni precarie. Sei mesi dopo, trotta libero nella riserva. La storia della sua riabilitazione.',
-    img: '/img/cavallo-puledro.png',
-  },
-  {
-    tag: 'Educazione',
-    date: '22 Gennaio 2025',
-    title: '200 bambini in visita dalla scuola di Bela-Bela',
-    excerpt: 'Il nostro programma educativo ha accolto 200 studenti locali. Per molti di loro, era la prima volta che vedevano un ghepardo da vicino.',
-    img: '/img/volontari-gruppo.png',
-  },
-  {
-    tag: 'Cheetah Run',
-    date: '10 Gennaio 2025',
-    title: 'Il Cheetah Run: come funziona e come prepararsi',
-    excerpt: 'Tutto quello che devi sapere prima di correre accanto al ghepardo più veloce del mondo. Consigli, FAQ e prenotazione.',
-    img: '/img/ghepardo-corsa-recinzione.png',
-  },
+import { useTranslation } from 'react-i18next'
+
+const POST_IMGS = [
+  '/img/nova-madre-cucciolo.png',
+  '/img/volontari-lavoro.png',
+  '/img/due-ghepardi.png',
+  '/img/cavallo-puledro.png',
+  '/img/volontari-gruppo.png',
+  '/img/ghepardo-corsa-recinzione.png',
 ]
 
 function Blog({ goTo }) {
+  const { t } = useTranslation()
+  const posts = t('blog.posts', { returnObjects: true })
+
   return (
     <>
       <div className="page-hero-img">
-        <img
-          src="/img/ghepardo-erba.png"
-          alt="Blog Nova's Legacy"
-        />
+        <img src="/img/ghepardo-erba.png" alt="Blog Nova's Legacy" />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
-          <span className="label label-light">~ Dal Campo ~</span>
-          <h1>News &amp; <em>Storie</em></h1>
-          <p>Aggiornamenti, notizie e storie dal cuore del Waterberg.</p>
+          <span className="label label-light">{t('blog.hero_label')}</span>
+          <h1>{t('blog.hero_title')}</h1>
+          <p>{t('blog.hero_sub')}</p>
         </div>
       </div>
 
       <div className="page-content">
         <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 3rem' }}>
-          <span className="back-btn" onClick={() => goTo('home')}>← Torna alla Home</span>
+          <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
           <div style={{
             display: 'grid',
@@ -69,7 +35,7 @@ function Blog({ goTo }) {
             gap: '2rem',
             marginTop: '0.5rem',
           }}>
-            {POSTS.map(p => (
+            {posts.map((p, i) => (
               <div
                 key={p.title}
                 style={{
@@ -83,7 +49,7 @@ function Blog({ goTo }) {
                 onMouseLeave={e => e.currentTarget.style.transform = 'none'}
               >
                 <div style={{ height: '200px', overflow: 'hidden' }}>
-                  <img src={p.img} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={POST_IMGS[i]} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
                 <div style={{ padding: '1.5rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.7rem' }}>
@@ -93,7 +59,7 @@ function Blog({ goTo }) {
                   <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.15rem', lineHeight: '1.3', marginBottom: '0.6rem', color: 'var(--dark)' }}>{p.title}</h3>
                   <p style={{ fontSize: '0.83rem', color: '#777', lineHeight: '1.65', fontWeight: 300, marginBottom: '1rem' }}>{p.excerpt}</p>
                   <span style={{ fontSize: '0.73rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--dark)' }}>
-                    Leggi tutto →
+                    {t('blog.read_all')}
                   </span>
                 </div>
               </div>

@@ -1,39 +1,43 @@
 import { useState, useEffect } from 'react'
-
-const NAV = [
-  { label: 'Home', page: 'home' },
-  {
-    label: 'I Ghepardi',
-    page: 'nova-story',
-    children: [
-      { label: 'La Storia di Nova',  page: 'nova-story',   sym: '◆' },
-      { label: 'Cheetah Run',        page: 'cheetah-run',  sym: '→' },
-      { label: 'Adotta un Animale',  page: 'adopt',        sym: '♡' },
-    ],
-  },
-  {
-    label: 'Conservazione',
-    page: 'conservation',
-    children: [
-      { label: 'La Nostra Missione', page: 'conservation', sym: '◆' },
-      { label: 'Progetto Cavalli',   page: 'horses',       sym: '◆' },
-    ],
-  },
-  {
-    label: 'Partecipa',
-    page: 'volunteer',
-    children: [
-      { label: 'Volontariato',       page: 'volunteer',    sym: '→' },
-      { label: 'Internship',         page: 'internship',   sym: '→' },
-      { label: 'Soggiorno',          page: 'visit',        sym: '→' },
-    ],
-  },
-  { label: 'Blog', page: 'blog' },
-  { label: 'Shop', page: 'merch' },
-  { label: 'Donazioni', page: 'donate' },
-]
+import { useTranslation } from 'react-i18next'
 
 function Navbar({ goTo }) {
+  const { t, i18n } = useTranslation()
+  const currentLang = i18n.language
+
+  const NAV = [
+    { label: t('nav.home'), page: 'home' },
+    {
+      label: t('nav.cheetahs'),
+      page: 'nova-story',
+      children: [
+        { label: t('nav.nova_story'),    page: 'nova-story',   sym: '◆' },
+        { label: t('nav.cheetah_run'),   page: 'cheetah-run',  sym: '→' },
+        { label: t('nav.adopt_animal'),  page: 'adopt',        sym: '♡' },
+      ],
+    },
+    {
+      label: t('nav.conservation'),
+      page: 'conservation',
+      children: [
+        { label: t('nav.our_mission'), page: 'conservation', sym: '◆' },
+        { label: t('nav.horses'),      page: 'horses',       sym: '◆' },
+      ],
+    },
+    {
+      label: t('nav.get_involved'),
+      page: 'volunteer',
+      children: [
+        { label: t('nav.volunteer'),   page: 'volunteer',  sym: '→' },
+        { label: t('nav.internship'),  page: 'internship', sym: '→' },
+        { label: t('nav.stay'),        page: 'visit',      sym: '→' },
+      ],
+    },
+    { label: t('nav.blog'),       page: 'blog' },
+    { label: t('nav.shop'),       page: 'merch' },
+    { label: t('nav.donations'),  page: 'donate' },
+  ]
+
   const [solid, setSolid] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState(null)
@@ -106,13 +110,25 @@ function Navbar({ goTo }) {
 
               <div className="nav-actions">
                 <button className="nav-cta" onClick={() => handleNav('volunteer')}>
-                  Diventa Volontario
+                  {t('nav.become_volunteer')}
                 </button>
               </div>
             </div>
 
           </div>
         </nav>
+
+        <div className="lang-switcher">
+          <button
+            className={`lang-btn${currentLang === 'it' ? ' lang-active' : ''}`}
+            onClick={() => i18n.changeLanguage('it')}
+          >IT</button>
+          <span className="lang-sep">|</span>
+          <button
+            className={`lang-btn${currentLang === 'en' ? ' lang-active' : ''}`}
+            onClick={() => i18n.changeLanguage('en')}
+          >EN</button>
+        </div>
 
         <style>{`
         .custom-navbar {
@@ -267,6 +283,44 @@ function Navbar({ goTo }) {
         .nav-actions {
           display: flex;
           align-items: center;
+          gap: 1rem;
+        }
+
+        .lang-switcher {
+          position: fixed;
+          top: 1.1rem;
+          right: 1.8rem;
+          z-index: 1100;
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+        }
+
+        .lang-btn {
+          background: transparent;
+          border: none;
+          color: rgba(255, 255, 255, 0.45);
+          font-size: 0.72rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          cursor: pointer;
+          padding: 0.25rem 0.1rem;
+          transition: color 0.2s ease;
+          line-height: 1;
+        }
+
+        .lang-btn:hover {
+          color: rgba(255, 255, 255, 0.85);
+        }
+
+        .lang-btn.lang-active {
+          color: var(--gold, #d4af37);
+        }
+
+        .lang-sep {
+          color: rgba(255, 255, 255, 0.2);
+          font-size: 0.65rem;
+          user-select: none;
         }
 
         .nav-cta {

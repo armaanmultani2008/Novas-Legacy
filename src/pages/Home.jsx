@@ -1,55 +1,52 @@
 import { useEffect, useRef, useState } from 'react'
 
-const BASE = 'https://novaslegacy.com/wp-content/uploads/2022/'
-
-// ── Image bank (no repeats within sections) ──
 const IMG = {
-  hero:        BASE + '08/Nova-2.jpg',
-  pillar1:     BASE + '08/20201209_171109-scaled.jpg',
-  pillar2:     BASE + '08/IMG_20200927_132938_928.jpg',
-  pillar3:     BASE + '08/IMG-20210918-WA0026.jpg',
-  cheetahRun:  BASE + '08/IMG-20210120-WA0031-1170x600.jpg',
-  progRun:     BASE + '08/IMG-20210312-WA0032.jpg',
-  progVol:     BASE + '08/IMG-20210830-WA0148-1.jpg',
-  progChalet:  BASE + '08/IMG_20200803_140430_917.jpg',
-  progInt:     BASE + '08/Vol-1-768x576.jpg',
-  progAdopt:   BASE + '08/20210906_112700-scaled.jpg',
-  progBreed:   BASE + '08/20210512_112828-scaled.jpg',
-  vol1:        BASE + '08/IMG_20200605_110224_811.jpg',
-  vol2:        BASE + '08/IMG-20210830-WA0148-1.jpg',
-  vol3:        BASE + '08/IMG-20210312-WA0032.jpg',
-  vol4:        BASE + '08/20210512_112828-scaled.jpg',
-  bigCta:      BASE + '08/IMG_20200430_113154_083-1.jpg',
-  accom:       BASE + '08/vol-4-1024x768.jpg',
-  accom2:      BASE + '08/IMG_20200803_140430_917.jpg',
+  hero:        '/img/ghepardo-erba.png',
+  pillar1:     '/img/nova-madre-cucciolo.png',
+  pillar2:     '/img/volontari-gruppo.png',
+  pillar3:     '/img/ghepardo-visita-vet.png',
+  cheetahRun:  '/img/ghepardo-corsa-recinzione.png',
+  progRun:     '/img/ghepardo-corsa-2.png',
+  progVol:     '/img/volontari-lavoro.png',
+  progChalet:  '/img/chalet-esterno.png',
+  progInt:     '/img/volontari-gruppo.png',
+  progAdopt:   '/img/ghepardo-cucciolo.png',
+  progBreed:   '/img/nova-madre-cucciolo.png',
+  vol1:        '/img/volontari-lavoro.png',
+  vol2:        '/img/volontarie-ghepardo.png',
+  vol3:        '/img/volontario-recinzione.png',
+  vol4:        '/img/volontari-gruppo.png',
+  bigCta:      '/img/ghepardo-corsa.png',
+  accom:       '/img/chalet-esterno.png',
+  accom2:      '/img/chalet-camera.png',
 }
 
 const GALLERY_IMGS = [
-  { src: BASE + '08/20201128_175257-1-scaled.jpg',   caption: 'La Riserva' },
-  { src: BASE + '08/IMG-20210219-WA0008.jpg',         caption: 'I Ghepardi' },
-  { src: BASE + '08/20201209_173407-scaled.jpg',      caption: 'Nel Bush' },
-  { src: BASE + '08/IMG_20210723_183151_565.jpg',     caption: 'Alba sul Waterberg' },
-  { src: BASE + '08/IMG-20210329-WA0010.jpg',         caption: 'Vita Selvatica' },
-  { src: BASE + '08/IMG-20210816-WA0006-2.jpg',       caption: 'I Volontari' },
-  { src: BASE + '08/20210123_161512-scaled.jpg',      caption: 'Mattina al Recinto' },
-  { src: BASE + '08/IMG_20200428_090037_903-1.jpg',   caption: 'Cura Quotidiana' },
-  { src: BASE + '08/IMG-20210925-WA0027-1.jpg',       caption: 'Tramonto' },
-  { src: BASE + '08/IMG_20200430_113154_083-1.jpg',   caption: 'Nova' },
+  { src: '/img/chalet-esterno.png',             caption: 'La Riserva' },
+  { src: '/img/due-ghepardi.png',               caption: 'I Ghepardi' },
+  { src: '/img/ghepardo-erba.png',              caption: 'Nel Bush' },
+  { src: '/img/ghepardo-albero.png',            caption: 'Alba sul Waterberg' },
+  { src: '/img/volpe-orecchie.png',             caption: 'Vita Selvatica' },
+  { src: '/img/volontarie-ghepardo.png',        caption: 'I Volontari' },
+  { src: '/img/volontario-recinzione.png',      caption: 'Mattina al Recinto' },
+  { src: '/img/ghepardo-visita-vet.png',        caption: 'Cura Quotidiana' },
+  { src: '/img/ghepardo-corsa-erba-gialla.png', caption: 'Tramonto' },
+  { src: '/img/nova-primo-piano.png',           caption: 'Nova' },
 ]
 
 const ANIMALS_MARQUEE = [
-  { name: 'Nova',       role: 'Gheparda · La Fondatrice',          src: BASE + '08/Nova-2.jpg' },
-  { name: 'Shira',      role: 'Leonessa · Salvata da cucciola',     src: BASE + '08/IMG-20210925-WA0024.jpg' },
-  { name: 'Ghost Pack', role: 'Cani Selvatici Africani',            src: BASE + '08/IMG-20210203-WA0020.jpg' },
-  { name: 'Tumelo',     role: 'Giraffa · Libera nella Riserva',    src: BASE + '08/IMG_20200428_090037_903-1.jpg' },
-  { name: 'Spirit',     role: 'Cavallo · Riabilitato',              src: BASE + '08/20210830_171758-scaled.jpg' },
-  { name: 'Sandy',      role: 'Volpe dalle Orecchie a Pipistrello', src: BASE + '08/IMG-20210203-WA0023.jpg' },
-  { name: 'Caracal',    role: 'Lince del Deserto',                  src: BASE + '08/IMG-20210223-WA0016.jpg' },
-  { name: 'Serval',     role: 'Cacciatore Notturno',                src: BASE + '08/IMG-20210308-WA0015.jpg' },
+  { name: 'Nova',       role: 'Gheparda · La Fondatrice',          src: '/img/nova-primo-piano.png' },
+  { name: 'Shira',      role: 'Leonessa · Salvata da cucciola',     src: '/img/leone-cucciolo-pneumatico.png' },
+  { name: 'Ghost Pack', role: 'Cani Selvatici Africani',            src: '/img/licaone.png' },
+  { name: 'Tumelo',     role: 'Giraffa · Libera nella Riserva',    src: '/img/ghepardo-erba-alta.png' },
+  { name: 'Spirit',     role: 'Cavallo · Riabilitato',              src: '/img/cavallo-puledro.png' },
+  { name: 'Sandy',      role: 'Volpe dalle Orecchie a Pipistrello', src: '/img/volpe-orecchie.png' },
+  { name: 'Caracal',    role: 'Lince del Deserto',                  src: '/img/baby-wild.png' },
+  { name: 'Serval',     role: 'Cacciatore Notturno',                src: '/img/serval.png' },
 ]
 
 const PROGRAMS = [
-  { tag: 'Esperienza',   title: 'Cheetah Run',         img: IMG.progRun,   page: 'cheetah',      desc: 'Corri 60 metri accanto al ghepardo più veloce del mondo. Un\'esperienza che dura secondi ma rimane per sempre.' },
+  { tag: 'Esperienza',   title: 'Cheetah Run',         img: IMG.progRun,   page: 'cheetah-run',  desc: 'Corri 60 metri accanto al ghepardo più veloce del mondo. Un\'esperienza che dura secondi ma rimane per sempre.' },
   { tag: 'Volontariato', title: 'Join the Coalition',  img: IMG.progVol,   page: 'volunteer',    desc: 'Vitto, alloggio e un lavoro che conta. Lavora fianco a fianco con il team. Minimo 2 settimane.' },
   { tag: 'Soggiorno',    title: 'Chalet nel Bush',      img: IMG.progChalet,page: 'visit',        desc: 'Tre chalet indipendenti immersi nella natura. Cucina, WiFi, acqua calda. Svegliati coi ghepardi.' },
   { tag: 'Formazione',   title: 'Internship',           img: IMG.progInt,   page: 'internship',   desc: 'Stage universitari in veterinaria, ecologia, biologia. Documentazione accademica e mentoring professionale.' },
@@ -84,6 +81,7 @@ function useScrollReveal() {
     return () => obs.disconnect()
   }, [])
 }
+
 
 function useCounter(target, active) {
   const [val, setVal] = useState(0)
@@ -146,7 +144,7 @@ function Home({ goTo }) {
             <button className="btn btn-gold" onClick={() => goTo('volunteer')}>
               Diventa Volontario
             </button>
-            <button className="btn btn-outline" onClick={() => goTo('cheetah')}>
+            <button className="btn btn-outline" onClick={() => goTo('nova-story')}>
               Scopri il Progetto
             </button>
           </div>
@@ -238,7 +236,7 @@ function Home({ goTo }) {
             <span className="num">112</span>
             <span className="txt">km/h<br />velocità massima<br />del ghepardo</span>
           </div>
-          <button className="btn btn-gold rv rv-d4" onClick={() => goTo('cheetah')}>
+          <button className="btn btn-gold rv rv-d4" onClick={() => goTo('cheetah-run')}>
             Prenota il Cheetah Run
           </button>
         </div>

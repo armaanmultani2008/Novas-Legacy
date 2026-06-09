@@ -3,7 +3,7 @@ function Horses({ goTo }) {
     <>
       <div className="page-hero-img">
         <img
-          src="https://novaslegacy.com/wp-content/uploads/2022/05/vol-4-1024x768.jpg"
+          src="/img/cavallo-puledro.png"
           alt="Progetto Cavalli"
         />
         <div className="page-hero-img-overlay" />

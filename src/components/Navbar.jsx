@@ -112,6 +112,17 @@ function Navbar({ goTo }) {
                 <button className="nav-cta" onClick={() => handleNav('volunteer')}>
                   {t('nav.become_volunteer')}
                 </button>
+                <div className="lang-switcher-mobile">
+                  <button
+                    className={`lang-btn${currentLang === 'it' ? ' lang-active' : ''}`}
+                    onClick={() => i18n.changeLanguage('it')}
+                  >IT</button>
+                  <span className="lang-sep">|</span>
+                  <button
+                    className={`lang-btn${currentLang === 'en' ? ' lang-active' : ''}`}
+                    onClick={() => i18n.changeLanguage('en')}
+                  >EN</button>
+                </div>
               </div>
             </div>
 
@@ -321,6 +332,10 @@ function Navbar({ goTo }) {
           color: rgba(255, 255, 255, 0.2);
           font-size: 0.65rem;
           user-select: none;
+        }
+
+        .lang-switcher-mobile {
+          display: none;
         }
 
         .nav-cta {

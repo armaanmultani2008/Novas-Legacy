@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const SLIDE_IMGS = [
   '/img/ghepardo-corsa.png',
@@ -8,12 +9,21 @@ const SLIDE_IMGS = [
   '/img/ghepardo-corsa-recinzione.png',
 ]
 
+const STATS = [
+  { num: '112', unit: ' km/h' },
+  { num: '3',   unit: ' sec'  },
+  { num: '60',  unit: ' m'    },
+  { num: '7',   unit: ' m'    },
+]
+
 function CheetahRun({ goTo }) {
   const [slide, setSlide] = useState(0)
+  const { t } = useTranslation()
+  const statLabels = t('cheetah_run.stat_labels', { returnObjects: true })
 
   useEffect(() => {
-    const t = setInterval(() => setSlide(s => (s + 1) % SLIDE_IMGS.length), 3000)
-    return () => clearInterval(t)
+    const timer = setInterval(() => setSlide(s => (s + 1) % SLIDE_IMGS.length), 3000)
+    return () => clearInterval(timer)
   }, [])
 
   return (
@@ -37,12 +47,9 @@ function CheetahRun({ goTo }) {
         ))}
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
-          <span className="label label-light">~ Esperienza Unica ~</span>
+          <span className="label label-light">{t('cheetah_run.hero_label')}</span>
           <h1>Cheetah <em>Run</em></h1>
-          <p>
-            Corri accanto al ghepardo più veloce del mondo.
-            Un&apos;esperienza che dura pochi secondi ma rimane per sempre.
-          </p>
+          <p>{t('cheetah_run.hero_sub')}</p>
         </div>
 
         <div style={{
@@ -75,45 +82,22 @@ function CheetahRun({ goTo }) {
 
       <div className="page-content">
         <div className="container">
-          <span className="back-btn" onClick={() => goTo('home')}>← Torna alla Home</span>
+          <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
-          <h2>Il <em>Cheetah Run</em></h2>
-          <p>
-            Il Cheetah Run è l&apos;esperienza più adrenalinica che puoi fare a Nova&apos;s Legacy.
-            Corri su una pista di 60 metri accanto a un ghepardo vivo, senti la sua
-            accelerazione esplosiva, guardalo toccare i 112 km/h. Non è uno spettacolo —
-            è una finestra sulla natura che ti cambia per sempre.
-          </p>
+          <h2>Il <em>{t('cheetah_run.title')}</em></h2>
+          <p>{t('cheetah_run.p1')}</p>
 
           <div className="highlight">
-            <p>
-              <strong>Il ghepardo è l&apos;animale terrestre più veloce del pianeta.</strong>
-              In soli tre secondi accelera da 0 a 96 km/h. Le sue zampe toccano terra
-              solo per metà del tempo di corsa — per l&apos;altra metà, vola letteralmente.
-            </p>
+            <p>{t('cheetah_run.highlight')}</p>
           </div>
 
-          <h2>Come <em>funziona</em></h2>
-          <p>
-            L&apos;esperienza si svolge in un&apos;area dedicata all&apos;interno della riserva.
-            Un ghepardo adulto, abituato alla presenza umana, viene portato nella zona
-            di partenza. Al segnale, l&apos;animale inizia a correre seguendo uno stimolo visivo —
-            e tu corri con lui. La distanza è di 60 metri: abbastanza per sentire il vento,
-            abbastanza per non dimenticare mai.
-          </p>
-          <p>
-            Disponibile per visitatori, gruppi e volontari. Durata totale circa
-            15–20 minuti incluso il briefing di sicurezza.
-          </p>
+          <h2>{t('cheetah_run.how_title').split(' ').slice(0,-1).join(' ')} <em>{t('cheetah_run.how_title').split(' ').slice(-1)}</em></h2>
+          <p>{t('cheetah_run.how_p1')}</p>
+          <p>{t('cheetah_run.how_p2')}</p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', margin: '2.5rem 0' }}>
-            {[
-              { num: '112', unit: ' km/h', label: 'Velocità massima del ghepardo' },
-              { num: '3',   unit: ' sec',  label: 'Per passare da 0 a 96 km/h' },
-              { num: '60',  unit: ' m',    label: 'La pista del Cheetah Run' },
-              { num: '7',   unit: ' m',    label: 'Falcata massima durante la corsa' },
-            ].map(s => (
-              <div key={s.label} style={{
+            {STATS.map((s, i) => (
+              <div key={i} style={{
                 background: 'var(--dark)',
                 color: 'white',
                 padding: '2rem',
@@ -123,7 +107,7 @@ function CheetahRun({ goTo }) {
                   {s.num}<span style={{ fontSize: '1rem', fontWeight: 400 }}>{s.unit}</span>
                 </div>
                 <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '0.5rem', color: 'rgba(255,255,255,0.6)' }}>
-                  {s.label}
+                  {statLabels[i]}
                 </div>
               </div>
             ))}
@@ -131,8 +115,8 @@ function CheetahRun({ goTo }) {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', margin: '2.5rem 0' }}>
             {[
-              { src: '/img/ghepardo-corsa-erba-gialla.png', cap: 'La velocità del ghepardo' },
-              { src: '/img/volontarie-ghepardo.png',        cap: "L'emozione dell'incontro" },
+              { src: '/img/ghepardo-corsa-erba-gialla.png', cap: t('cheetah_run.stat_labels', { returnObjects: true })[0] },
+              { src: '/img/volontarie-ghepardo.png',        cap: t('cheetah_run.hero_sub') },
             ].map((p, i) => (
               <div key={i} style={{ height: '280px', overflow: 'hidden', position: 'relative' }}>
                 <img src={p.src} alt={p.cap} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}
@@ -143,29 +127,19 @@ function CheetahRun({ goTo }) {
             ))}
           </div>
 
-          <h2>Cose <em>pratiche</em></h2>
-          <p>
-            Indossa scarpe da corsa e abbigliamento comodo. Porta la macchina fotografica —
-            ma assicurati che sia al sicuro con una cinghia o in un marsupio.
-            Età minima: 12 anni. Non è richiesta esperienza atletica particolare:
-            l&apos;importante è essere in forma per una corsa breve e intensa.
-          </p>
+          <h2>{t('cheetah_run.practical_title').split(' ').slice(0,-1).join(' ')} <em>{t('cheetah_run.practical_title').split(' ').slice(-1)}</em></h2>
+          <p>{t('cheetah_run.practical_p')}</p>
 
           <div className="highlight">
-            <p>
-              Per prenotare scrivi a <strong>kim@novaslegacy.co.za</strong> o
-              chiama il <strong>+27 82 352 0940</strong>.
-              Disponibile tutti i giorni, mattina e pomeriggio, su prenotazione.
-              Si consiglia di prenotare con almeno 48 ore di anticipo.
-            </p>
+            <p>{t('cheetah_run.booking_highlight')}</p>
           </div>
 
           <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <a href="mailto:kim@novaslegacy.co.za" className="btn btn-dark">
-              Prenota ora
+              {t('cheetah_run.btn1')}
             </a>
             <button className="btn btn-outline-dark" onClick={() => goTo('nova-story')}>
-              La storia di Nova →
+              {t('cheetah_run.btn2')}
             </button>
           </div>
         </div>

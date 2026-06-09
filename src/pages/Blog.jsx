@@ -26,15 +26,10 @@ function Blog({ goTo }) {
       </div>
 
       <div className="page-content">
-        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 3rem' }}>
+        <div className="container" style={{ maxWidth: '1100px' }}>
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '2rem',
-            marginTop: '0.5rem',
-          }}>
+          <div className="page-grid-3">
             {posts.map((p, i) => (
               <div
                 key={p.title}

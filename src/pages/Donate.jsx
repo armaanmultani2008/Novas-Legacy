@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
 
 const PAYPAL_CLIENT_ID = 'BAACTG0ukeM8dKAjsLDCpumLq64_3LVg7oH1hbbQ5tot-aLGXbF4FbP34W4ehWgbRxVtrOerg-NmxlclvY'
@@ -6,14 +7,15 @@ const B = 'https://novaslegacy.com/wp-content/uploads/2022/08/'
 const AMOUNTS = [10, 25, 50, 100]
 
 const IMPACT = [
-  { icon: '◆', amount: '€10', desc: 'Nutre un ghepardo per una settimana' },
-  { icon: '◆', amount: '€25', desc: 'Finanzia le cure veterinarie mensili' },
-  { icon: '◆', amount: '€50', desc: 'Contribuisce al mantenimento del rifugio' },
-  { icon: '◆', amount: '€100', desc: 'Sostiene un programma di conservazione' },
+  { icon: '◆', amount: '€10'  },
+  { icon: '◆', amount: '€25'  },
+  { icon: '◆', amount: '€50'  },
+  { icon: '◆', amount: '€100' },
 ]
 
 function Donate({ goTo }) {
   useScrollReveal()
+  const { t } = useTranslation()
   const [amount, setAmount] = useState(25)
   const [custom, setCustom] = useState('')
   const [sdkReady, setSdkReady] = useState(false)
@@ -23,6 +25,8 @@ function Donate({ goTo }) {
 
   const finalAmount = custom ? (parseFloat(custom) || 0) : amount
   amountRef.current = finalAmount
+
+  const impactDescs = t('donate.impact', { returnObjects: true })
 
   useEffect(() => {
     const existing = document.getElementById('paypal-sdk')
@@ -61,9 +65,9 @@ function Donate({ goTo }) {
         <div style={{ maxWidth: '820px', margin: '0 auto' }}>
           <div className="donate-success rv">
             <div className="donate-success-icon">◆</div>
-            <h2>Grazie per il tuo supporto!</h2>
-            <p>La tua donazione di <strong>€{finalAmount.toFixed(2)}</strong> aiuterà direttamente gli animali di Nova&apos;s Legacy.</p>
-            <button className="btn btn-dark" onClick={() => { setStatus(null); setCustom('') }}>Dona ancora</button>
+            <h2>{t('donate.success_title')}</h2>
+            <p>{t('donate.success_desc')}</p>
+            <button className="btn btn-dark" onClick={() => { setStatus(null); setCustom('') }}>{t('donate.donate_again')}</button>
           </div>
         </div>
       </div>
@@ -76,20 +80,20 @@ function Donate({ goTo }) {
         <img src={B + 'IMG-20210120-WA0031-1170x600.jpg'} alt="Donazioni Nova's Legacy" />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
-          <span className="label label-light">~ Fai la Differenza ~</span>
-          <h1>Supporta <em>la Missione</em></h1>
-          <p>La tua donazione finanzia direttamente le cure degli animali e il programma di conservazione.</p>
+          <span className="label label-light">{t('donate.hero_label')}</span>
+          <h1>{t('donate.hero_title').split(' ').slice(0,-2).join(' ')} <em>{t('donate.hero_title').split(' ').slice(-2).join(' ')}</em></h1>
+          <p>{t('donate.hero_sub')}</p>
         </div>
       </div>
 
       <div className="donate-page">
         <div style={{ maxWidth: '820px', margin: '0 auto' }}>
-          <span className="back-btn" onClick={() => goTo('home')}>← Torna alla Home</span>
+          <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
           <div className="rv" style={{ marginBottom: '2.5rem', textAlign: 'center' }}>
-            <span className="label">~ Il Tuo Contributo ~</span>
+            <span className="label">{t('donate.section_label')}</span>
             <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(1.8rem,3vw,2.4rem)', color: 'var(--dark)', lineHeight: 1.15 }}>
-              Ogni euro conta per <em style={{ fontStyle: 'italic', color: 'var(--gold)', fontWeight: 400 }}>la conservazione</em>
+              {t('donate.section_title').split(' ').slice(0,-2).join(' ')} <em style={{ fontStyle: 'italic', color: 'var(--gold)', fontWeight: 400 }}>{t('donate.section_title').split(' ').slice(-2).join(' ')}</em>
             </h2>
           </div>
 
@@ -107,36 +111,36 @@ function Donate({ goTo }) {
             </div>
 
             <div className="donate-custom">
-              <label>Importo personalizzato (€)</label>
+              <label>{t('donate.custom_label')}</label>
               <input
                 type="number"
                 min="1"
-                placeholder="es. 75"
+                placeholder={t('donate.custom_placeholder')}
                 value={custom}
                 onChange={e => setCustom(e.target.value)}
               />
             </div>
 
             <div className="donate-summary">
-              Stai donando <strong>€{finalAmount > 0 ? finalAmount.toFixed(2) : '—'}</strong> a Nova&apos;s Legacy
+              {t('donate.summary')} <strong>€{finalAmount > 0 ? finalAmount.toFixed(2) : '—'}</strong> {t('donate.summary_to')}
             </div>
 
             <div ref={btnRef} className="paypal-btn-wrap" />
 
             {status === 'error' && (
               <p style={{ color: 'var(--red-alert)', textAlign: 'center', fontSize: '0.85rem', marginTop: '1rem' }}>
-                Si è verificato un errore. Riprova o contatta{' '}
+                {t('donate.error_text')}{' '}
                 <a href="mailto:kim@novaslegacy.co.za" style={{ color: 'var(--gold)' }}>kim@novaslegacy.co.za</a>
               </p>
             )}
           </div>
 
           <div className="donate-impact rv rv-d2">
-            {IMPACT.map(i => (
-              <div key={i.amount} className="impact-item">
-                <span className="impact-icon">{i.icon}</span>
-                <strong>{i.amount}</strong>
-                <span>{i.desc}</span>
+            {IMPACT.map((item, i) => (
+              <div key={item.amount} className="impact-item">
+                <span className="impact-icon">{item.icon}</span>
+                <strong>{item.amount}</strong>
+                <span>{impactDescs[i]?.desc || ''}</span>
               </div>
             ))}
           </div>

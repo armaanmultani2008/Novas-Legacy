@@ -3,19 +3,19 @@ const CHALETS = [
     name: 'Chalet Nova',
     size: 'Per 2 persone',
     desc: 'Il chalet principale, dedicato alla nostra fondatrice. Vista sugli enclosure dei ghepardi. Camera matrimoniale, bagno privato, cucina attrezzata.',
-    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/vol-4-1024x768.jpg',
+    img: '/img/chalet-esterno.png',
   },
   {
     name: 'Chalet Bush',
     size: 'Per 2–4 persone',
     desc: 'Immerso nella vegetazione del Waterberg. Letti twin o matrimoniale, spazio esterno privato, braai (barbecue africano) incluso.',
-    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-42.jpg',
+    img: '/img/chalet-esterno-2.png',
   },
   {
     name: 'Chalet Waterberg',
     size: 'Per 2–4 persone',
     desc: 'Il più panoramico. Terrazza con vista sulle montagne, perfetto per famiglie o coppie che cercano privacy assoluta nella natura.',
-    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-41.jpg',
+    img: '/img/chalet-camera.png',
   },
 ]
 
@@ -24,7 +24,7 @@ function Visit({ goTo }) {
     <>
       <div className="page-hero-img">
         <img
-          src="https://novaslegacy.com/wp-content/uploads/2022/05/vol-4-1024x768.jpg"
+          src="/img/chalet-esterno.png"
           alt="Soggiorno a Nova's Legacy"
         />
         <div className="page-hero-img-overlay" />

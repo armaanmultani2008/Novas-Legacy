@@ -4,42 +4,42 @@ const POSTS = [
     date: '15 Maggio 2025',
     title: 'Nuovi cuccioli di ghepardo nati a Nova\'s Legacy',
     excerpt: 'Grande gioia nella riserva: la nostra femmina Amira ha dato alla luce tre cuccioli sani. Il team veterinario li monitora 24 ore su 24. Aggiornamenti in arrivo.',
-    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-28.jpg',
+    img: '/img/nova-madre-cucciolo.png',
   },
   {
     tag: 'Volontariato',
     date: '3 Aprile 2025',
     title: 'Testimonianza: sei settimane nel bush con i ghepardi',
     excerpt: 'Marco, 24 anni, studente di biologia da Torino, ci racconta la sua esperienza di volontariato. "Ho imparato cose che non troverò mai in un libro di testo."',
-    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Volunteer-04.jpg',
+    img: '/img/volontari-lavoro.png',
   },
   {
     tag: 'Conservazione',
     date: '18 Marzo 2025',
     title: 'Perché il ghepardo è più a rischio del leone',
     excerpt: 'Un approfondimento sui fattori che rendono il ghepardo particolarmente vulnerabile: dalla bassa diversità genetica al conflitto con gli allevatori.',
-    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-41.jpg',
+    img: '/img/due-ghepardi.png',
   },
   {
     tag: 'Progetto Cavalli',
     date: '7 Febbraio 2025',
     title: 'Spirit trova casa: la storia di un cavallo salvato',
     excerpt: 'Spirit è arrivato da noi in condizioni precarie. Sei mesi dopo, trotta libero nella riserva. La storia della sua riabilitazione.',
-    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/vol-4-1024x768.jpg',
+    img: '/img/cavallo-puledro.png',
   },
   {
     tag: 'Educazione',
     date: '22 Gennaio 2025',
     title: '200 bambini in visita dalla scuola di Bela-Bela',
     excerpt: 'Il nostro programma educativo ha accolto 200 studenti locali. Per molti di loro, era la prima volta che vedevano un ghepardo da vicino.',
-    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-49.jpg',
+    img: '/img/volontari-gruppo.png',
   },
   {
     tag: 'Cheetah Run',
     date: '10 Gennaio 2025',
     title: 'Il Cheetah Run: come funziona e come prepararsi',
     excerpt: 'Tutto quello che devi sapere prima di correre accanto al ghepardo più veloce del mondo. Consigli, FAQ e prenotazione.',
-    img: 'https://novaslegacy.com/wp-content/uploads/2022/08/IMG-20210120-WA0031-1170x600.jpg',
+    img: '/img/ghepardo-corsa-recinzione.png',
   },
 ]
 
@@ -48,7 +48,7 @@ function Blog({ goTo }) {
     <>
       <div className="page-hero-img">
         <img
-          src="https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-28.jpg"
+          src="/img/ghepardo-erba.png"
           alt="Blog Nova's Legacy"
         />
         <div className="page-hero-img-overlay" />

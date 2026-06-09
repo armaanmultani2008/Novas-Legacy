@@ -70,8 +70,10 @@ app.use(express.json());
 let adminPassword = "";
 
 app.get('/', (req, res) => {
-    res.json({ message: "Il backend di Nova's Legacy è online e funzionante! 🚀" });
+    res.json({ message: "Il backend di Nova's Legacy è online e funzionante!" });
 });
+
+app.get('/ping', (_req, res) => res.send('pong'));
 
 app.get('/api/paypal-config', (req, res) => {
     const needsSetup = adminPassword === "";

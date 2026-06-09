@@ -1,19 +1,21 @@
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
 
+const B = 'https://novaslegacy.com/wp-content/uploads/2022/'
+
 const FIELDS = [
-  { sym: '◆', label: 'Biologia della Fauna Selvatica',   img: '/img/ghepardo-erba.png' },
-  { sym: '◆', label: 'Medicina Veterinaria',              img: '/img/ghepardo-visita-vet.png' },
-  { sym: '◆', label: 'Ecologia e Conservazione',         img: '/img/due-ghepardi.png' },
-  { sym: '◆', label: 'Gestione delle Risorse Naturali',  img: '/img/volontario-recinzione.png' },
-  { sym: '◆', label: 'Fotografia Naturalistica',          img: '/img/volpe-orecchie.png' },
-  { sym: '◆', label: 'Genetica della Conservazione',     img: '/img/nova-madre-cucciolo.png' },
+  { sym: '◆', label: 'Biologia della Fauna Selvatica',   img: B + '08/20201128_175257-1-scaled.jpg' },
+  { sym: '◆', label: 'Medicina Veterinaria',              img: B + '08/IMG-20210312-WA0032.jpg' },
+  { sym: '◆', label: 'Ecologia e Conservazione',         img: B + '08/IMG_20200605_110224_811.jpg' },
+  { sym: '◆', label: 'Gestione delle Risorse Naturali',  img: B + '08/20210906_112700-scaled.jpg' },
+  { sym: '◆', label: 'Fotografia Naturalistica',          img: B + '08/IMG-20210918-WA0026.jpg' },
+  { sym: '◆', label: 'Genetica della Conservazione',     img: B + '08/IMG_20200927_132938_928.jpg' },
 ]
 
 const PHOTOS = [
-  '/img/ghepardo-visita-vet.png',
-  '/img/volontarie-ghepardo.png',
-  '/img/volontario-recinzione.png',
-  '/img/volontari-lavoro.png',
+  B + '08/IMG-20210830-WA0148-1.jpg',
+  B + '08/IMG_20200803_140430_917.jpg',
+  B + '08/20211025_163227-scaled.jpg',
+  B + '08/IMG-20210203-WA0023.jpg',
 ]
 
 function Internship({ goTo }) {
@@ -22,7 +24,7 @@ function Internship({ goTo }) {
     <>
       <div className="page-hero-img">
         <img
-          src="/img/volontari-gruppo.png"
+          src={B + '08/Vol-1-768x576.jpg'}
           alt="Internship Nova's Legacy"
         />
         <div className="page-hero-img-overlay" />

@@ -5,7 +5,7 @@ const ANIMALS = [
     species: 'Gheparda',
     price: 'Da €15/mese',
     desc: 'Quella che ha dato inizio a tutto. Tre zampe, cuore immenso. La tua adozione sostiene l\'intero programma di riproduzione.',
-    img: '/img/nova-primo-piano.png',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-28.jpg',
   },
   {
     emoji: '🦁',
@@ -13,7 +13,7 @@ const ANIMALS = [
     species: 'Leonessa',
     price: 'Da €20/mese',
     desc: 'Salvata da cucciola, Shira è cresciuta in una magnifica leonessa. La tua adozione la tiene al sicuro ogni giorno.',
-    img: '/img/leone-adulto.png',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-3.jpg',
   },
   {
     emoji: '🐕',
@@ -21,7 +21,7 @@ const ANIMALS = [
     species: 'Cani Selvatici Africani',
     price: 'Da €25/mese',
     desc: 'I cani dipinti sono tra gli animali più minacciati dell\'Africa. Adotta il branco e aiutaci a mantenerlo unito.',
-    img: '/img/licaone.png',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-4.jpg',
   },
   {
     emoji: '🐎',
@@ -29,7 +29,7 @@ const ANIMALS = [
     species: 'Cavallo',
     price: 'Da €10/mese',
     desc: 'Salvato dall\'abbandono, Spirit è la prova vivente che le seconde possibilità funzionano.',
-    img: '/img/cavallo-puledro.png',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/vol-4-1024x768.jpg',
   },
   {
     emoji: '🦊',
@@ -37,7 +37,7 @@ const ANIMALS = [
     species: 'Volpe dalle Orecchie a Pipistrello',
     price: 'Da €8/mese',
     desc: 'Piccola, curiosa e piena di personalità. Sandy ha bisogno di cure quotidiane e del tuo sostegno.',
-    img: '/img/volpe-orecchie.png',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-42.jpg',
   },
   {
     emoji: '🐱',
@@ -45,7 +45,7 @@ const ANIMALS = [
     species: 'Serval',
     price: 'Da €12/mese',
     desc: 'Cacciatore notturno con il manto dorato e un udito straordinario. Tranquillo ma indimenticabile.',
-    img: '/img/serval.png',
+    img: 'https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-49.jpg',
   },
 ]
 
@@ -54,7 +54,7 @@ function Adopt({ goTo }) {
     <>
       <div className="page-hero-img">
         <img
-          src="/img/ghepardo-cucciolo.png"
+          src="https://novaslegacy.com/wp-content/uploads/2022/05/Gallery-2.jpg"
           alt="Adotta un animale"
         />
         <div className="page-hero-img-overlay" />

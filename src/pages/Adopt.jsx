@@ -63,7 +63,7 @@ function Adopt({ goTo }) {
   return (
       <>
         <div className="page-hero-img">
-          <img src="/img/adotta-cheetah.png" alt="Adotta un animale" />
+          <img src="/img/ghepardo-corsa-erba-gialla.png" alt="Adotta un animale" style={{ objectPosition: 'center 40%' }} />
           <div className="page-hero-img-overlay" />
           <div className="page-hero-text">
             <span className="label label-light">{t('adopt.hero_label')}</span>

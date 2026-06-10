@@ -16,7 +16,7 @@ function Blog({ goTo }) {
   return (
     <>
       <div className="page-hero-img">
-        <img src="/img/ghepardo-erba.png" alt="Blog Nova's Legacy" />
+        <img src="/img/ghepardo-corsa-2.png" alt="Blog Nova's Legacy" style={{ objectPosition: 'center 40%' }} />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">{t('blog.hero_label')}</span>

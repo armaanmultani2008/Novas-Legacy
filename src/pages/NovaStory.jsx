@@ -19,9 +19,9 @@ function NovaStory({ goTo }) {
     <>
       <div className="page-hero-img">
         <img
-          src="/img/nova-primo-piano.png"
+          src="/img/nova-madre-cucciolo.png"
           alt="Nova — la gheparda fondatrice"
-          style={{ objectPosition: 'center 35%' }}
+          style={{ objectPosition: 'center 40%' }}
         />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">

@@ -2,27 +2,24 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 function Navbar({ goTo }) {
-  const { t, i18n } = useTranslation()
-  const currentLang = i18n.language
+  const { t } = useTranslation()
 
   const NAV = [
     { label: t('nav.home'), page: 'home' },
     {
-      label: t('nav.cheetahs'),
+      label: t('nav.about_us'),
       page: 'nova-story',
       children: [
         { label: t('nav.nova_story'),    page: 'nova-story',   sym: '◆' },
         { label: t('nav.kim_story'),     page: 'kim-story',    sym: '◆' },
-        { label: t('nav.cheetah_run'),   page: 'cheetah-run',  sym: '→' },
-        { label: t('nav.adopt_animal'),  page: 'adopt',        sym: '♡' },
       ],
     },
     {
-      label: t('nav.conservation'),
+      label: t('nav.our_mission'),
       page: 'conservation',
       children: [
-        { label: t('nav.our_mission'), page: 'conservation', sym: '◆' },
-        { label: t('nav.horses'),      page: 'horses',       sym: '◆' },
+        { label: t('nav.cheetah_project'), page: 'conservation', sym: '◆' },
+        { label: t('nav.horses'),          page: 'horses',       sym: '◆' },
       ],
     },
     {
@@ -32,12 +29,20 @@ function Navbar({ goTo }) {
         { label: t('nav.volunteer'),   page: 'volunteer',  sym: '→' },
         { label: t('nav.internship'),  page: 'internship', sym: '→' },
         { label: t('nav.stay'),        page: 'visit',      sym: '→' },
-        { label: t('nav.FAQ' ),        page: 'faq',        sym: '→' }
+        { label: t('nav.cheetah_run'), page: 'cheetah-run', sym: '→' },
       ],
     },
     { label: t('nav.blog'),       page: 'blog' },
     { label: t('nav.shop'),       page: 'merch' },
-    { label: t('nav.donations'),  page: 'donate' },
+    {
+      label: t('nav.support_us'),
+      page: 'donate',
+      children: [
+        { label: t('nav.donations'),   page: 'donate',    sym: '◆' },
+        { label: t('nav.wishlist'),    page: 'wishlist',  sym: '◆' },
+        { label: t('nav.adopt_animal'), page: 'adopt',   sym: '♡' },
+      ],
+    },
   ]
 
   const [solid, setSolid] = useState(false)
@@ -114,17 +119,6 @@ function Navbar({ goTo }) {
                 <button className="nav-cta" onClick={() => handleNav('volunteer')}>
                   {t('nav.become_volunteer')}
                 </button>
-                <div className="lang-switcher-mobile">
-                  <button
-                      className={`lang-btn${currentLang === 'it' ? ' lang-active' : ''}`}
-                      onClick={() => i18n.changeLanguage('it')}
-                  >IT</button>
-                  <span className="lang-sep">|</span>
-                  <button
-                      className={`lang-btn${currentLang === 'en' ? ' lang-active' : ''}`}
-                      onClick={() => i18n.changeLanguage('en')}
-                  >EN</button>
-                </div>
               </div>
             </div>
 
@@ -288,39 +282,6 @@ function Navbar({ goTo }) {
           flex-shrink: 0;
         }
 
-        .lang-btn {
-          background: transparent;
-          border: none;
-          color: rgba(255, 255, 255, 0.45);
-          font-size: 0.72rem;
-          font-weight: 700;
-          letter-spacing: 0.08em;
-          cursor: pointer;
-          padding: 0.25rem 0.1rem;
-          transition: color 0.2s ease;
-          line-height: 1;
-        }
-
-        .lang-btn:hover {
-          color: rgba(255, 255, 255, 0.85);
-        }
-
-        .lang-btn.lang-active {
-          color: var(--gold, #d4af37);
-        }
-
-        .lang-sep {
-          color: rgba(255, 255, 255, 0.2);
-          font-size: 0.65rem;
-          user-select: none;
-        }
-
-        .lang-switcher-mobile {
-          display: flex;
-          align-items: center;
-          gap: 0.25rem;
-        }
-
         .nav-cta {
           background-color: var(--gold, #d4af37);
           color: #111111;
@@ -405,11 +366,6 @@ function Navbar({ goTo }) {
           .nav-logo {
             font-size: 1.25rem;
           }
-          .lang-switcher-mobile {
-            margin-left: 0.5rem;
-            padding-left: 0.75rem;
-            border-left: 1px solid rgba(255, 255, 255, 0.15);
-          }
         }
 
         @media (max-width: 1050px) {
@@ -420,12 +376,6 @@ function Navbar({ goTo }) {
 
           .nav-logo {
             font-size: 1.35rem;
-          }
-
-          .lang-switcher-mobile {
-            margin-left: 0;
-            padding-left: 0;
-            border-left: none;
           }
 
           .menu-toggle {
@@ -454,8 +404,8 @@ function Navbar({ goTo }) {
             margin-left: 0;
             flex-direction: column;
             justify-content: flex-start;
-            padding: 110px 2rem 3rem 2rem;
-            overflow-y: auto;
+            padding: 110px 2rem 0 2rem;
+            overflow: hidden;
             box-sizing: border-box;
             transform: translateX(100%);
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -470,6 +420,9 @@ function Navbar({ goTo }) {
             width: 100%;
             gap: 0.5rem;
             display: flex;
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 1rem;
           }
 
           .nav-links li {
@@ -533,11 +486,13 @@ function Navbar({ goTo }) {
             width: 100%;
             flex-direction: row;
             flex-wrap: nowrap;
-            align-items: flex-start;
+            align-items: center;
             justify-content: center;
             gap: 1.2rem;
-            margin-top: auto;
-            padding-top: 2.5rem;
+            flex-shrink: 0;
+            margin-top: 0;
+            padding: 1.5rem 0 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
           }
 
           .nav-cta {
@@ -552,13 +507,6 @@ function Navbar({ goTo }) {
             white-space: nowrap;
           }
 
-          .lang-switcher-mobile {
-            display: flex;
-            align-items: center;
-            flex-shrink: 0;
-            margin-top: auto;
-            margin-bottom: auto;
-          }
         }
       `}</style>
       </>

@@ -1685,23 +1685,23 @@ footer {
 .back-btn:hover { color: var(--gold-mid); }
 
 /* ======================================================
-   SCROLL REVEAL — multiple directions
+   SCROLL REVEAL — multiple directions (cinematic timing)
    ====================================================== */
 .rv, .rv-left, .rv-right, .rv-scale, .rv-up {
   opacity: 0;
   transition:
-    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Starting transforms */
-.rv       { transform: translateY(44px); }
-.rv-up    { transform: translateY(56px); }
-.rv-left  { transform: translateX(-52px); }
-.rv-right { transform: translateX(52px); }
-.rv-scale { transform: scale(0.88) translateY(20px); }
+/* Starting transforms — larger distances = more impact */
+.rv       { transform: translateY(72px); }
+.rv-up    { transform: translateY(90px); }
+.rv-left  { transform: translateX(-72px); }
+.rv-right { transform: translateX(72px); }
+.rv-scale { transform: scale(0.88) translateY(28px); }
 
-/* End state — all resolve to natural position */
+/* End state */
 .rv.visible, .rv-left.visible, .rv-right.visible,
 .rv-scale.visible, .rv-up.visible {
   opacity: 1;
@@ -1710,23 +1710,30 @@ footer {
 
 /* Delay helpers */
 .rv-d1, .rv-left.rv-d1, .rv-right.rv-d1, .rv-scale.rv-d1 { transition-delay: 0.1s; }
-.rv-d2, .rv-left.rv-d2, .rv-right.rv-d2, .rv-scale.rv-d2 { transition-delay: 0.2s; }
-.rv-d3, .rv-left.rv-d3, .rv-right.rv-d3, .rv-scale.rv-d3 { transition-delay: 0.3s; }
-.rv-d4 { transition-delay: 0.4s; }
-.rv-d5 { transition-delay: 0.5s; }
+.rv-d2, .rv-left.rv-d2, .rv-right.rv-d2, .rv-scale.rv-d2 { transition-delay: 0.22s; }
+.rv-d3, .rv-left.rv-d3, .rv-right.rv-d3, .rv-scale.rv-d3 { transition-delay: 0.34s; }
+.rv-d4 { transition-delay: 0.46s; }
+.rv-d5 { transition-delay: 0.58s; }
 
-/* Legacy .reveal class — keep for compatibility */
-.reveal { opacity: 0; transform: translateY(36px); transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+/* Clip-path image reveal — wipe from left */
+.rv-img {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+}
+.rv-img.visible { clip-path: inset(0 0% 0 0); }
+
+/* Legacy .reveal class */
+.reveal { opacity: 0; transform: translateY(50px); transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1); }
 .reveal.visible { opacity: 1; transform: none; }
 .reveal-d1 { transition-delay: 0.1s; }
-.reveal-d2 { transition-delay: 0.2s; }
-.reveal-d3 { transition-delay: 0.3s; }
+.reveal-d2 { transition-delay: 0.22s; }
+.reveal-d3 { transition-delay: 0.34s; }
 
 /* ======================================================
    ANIMATIONS
    ====================================================== */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(28px); }
+  from { opacity: 0; transform: translateY(50px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -2271,3 +2278,170 @@ footer {
 }
 
 .admin-logout:hover { border-color: var(--red-alert); color: var(--red-alert); }
+
+/* ======================================================
+   CUSTOM CURSOR
+   ====================================================== */
+@media (hover: hover) and (pointer: fine) {
+  * { cursor: none !important; }
+}
+
+.cur-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 7px; height: 7px;
+  background: var(--gold-light);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  will-change: transform;
+  transition: opacity 0.25s ease, background 0.25s ease;
+}
+.cur-dot.cur--hover { opacity: 0; }
+
+.cur-ring {
+  position: fixed;
+  top: 0; left: 0;
+  width: 42px; height: 42px;
+  border: 1.5px solid rgba(255,255,255,0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  will-change: transform;
+  transition:
+    width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease,
+    background 0.35s ease;
+}
+.cur-ring.cur--hover {
+  width: 64px;
+  height: 64px;
+  border-color: var(--gold-light);
+  background: rgba(245, 184, 48, 0.07);
+}
+
+/* ======================================================
+   PAGE TRANSITION
+   ====================================================== */
+.page-wrap--in {
+  animation: pageFadeIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.page-wrap--out {
+  animation: pageFadeOut 0.22s ease both;
+}
+
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pageFadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-12px); }
+}
+
+/* ======================================================
+   HERO PARALLAX
+   ====================================================== */
+.hero-img {
+  will-change: transform;
+}
+
+/* ======================================================
+   PILLAR HOVER — text lift on hover
+   ====================================================== */
+.pillar .pillar-overlay h3,
+.pillar .pillar-overlay p,
+.pillar .pillar-link {
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pillar:hover .pillar-overlay h3 { transform: translateY(-6px); }
+.pillar:hover .pillar-overlay p  { transform: translateY(-4px); }
+.pillar:hover .pillar-link       { transform: translateY(-2px); }
+
+/* ======================================================
+   PROGRAM CARD — refined hover
+   ====================================================== */
+.program-card {
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+.program-card:hover {
+  transform: translateY(-10px) !important;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.12) !important;
+}
+.program-card .program-img img {
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+.program-card:hover .program-img img { transform: scale(1.08) !important; }
+
+/* ======================================================
+   SPEED BADGE — pulse on hover
+   ====================================================== */
+.speed-badge {
+  cursor: default;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+}
+.speed-badge:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 30px rgba(200,136,10,0.2);
+}
+
+/* ======================================================
+   HERO STAT NUMBERS — refined
+   ====================================================== */
+.strip-num {
+  transition: color 0.3s ease;
+}
+.hero-strip-item:hover .strip-num { color: #fff; }
+
+/* ======================================================
+   SECTION LABEL — subtle entrance
+   ====================================================== */
+.label {
+  display: inline-block;
+  position: relative;
+}
+
+/* ======================================================
+   CHEETAH RUN IMAGE — parallax container
+   ====================================================== */
+.cheetah-run-img {
+  overflow: hidden;
+}
+.cheetah-run-img img {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.cheetah-run-img:hover img { transform: scale(1.04); }
+
+/* ======================================================
+   MARQUEE — improved animal cards
+   ====================================================== */
+.animal-card {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.animal-card:hover { transform: translateY(-8px); }
+.animal-photo img {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.animal-card:hover .animal-photo img { transform: scale(1.06); }
+
+/* ======================================================
+   FOOTER LINKS — underline hover
+   ====================================================== */
+.footer-link {
+  position: relative;
+  display: inline-block;
+}
+.footer-link::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 1px;
+  background: var(--gold-light);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.footer-link:hover::after { transform: scaleX(1); }

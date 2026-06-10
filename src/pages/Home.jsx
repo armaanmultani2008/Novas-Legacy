@@ -84,13 +84,25 @@ function Home({ goTo }) {
   useScrollRevealLocal()
   const { t } = useTranslation()
 
-  const animalRoles     = t('home.animal_roles',     { returnObjects: true })
-  const progTags        = t('home.prog_tags',         { returnObjects: true })
-  const progTitles      = t('home.prog_titles',       { returnObjects: true })
-  const progDescs       = t('home.prog_descs',        { returnObjects: true })
+  const animalRoles = t('home.animal_roles',   { returnObjects: true })
+  const progTags    = t('home.prog_tags',       { returnObjects: true })
+  const progTitles  = t('home.prog_titles',     { returnObjects: true })
+  const progDescs   = t('home.prog_descs',      { returnObjects: true })
 
   const heroTitleWords = t('home.hero_title').split(' ')
   const cta2parts = t('home.cta_title').split('. ')
+
+  // Hero parallax
+  const heroImgRef = useRef(null)
+  useEffect(() => {
+    const onScroll = () => {
+      if (!heroImgRef.current) return
+      const y = window.scrollY * 0.35
+      heroImgRef.current.style.transform = `translateY(${y}px) scale(1.02)`
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const [contactForm, setContactForm] = useState({ name: '', surname: '', email: '', phone: '', reason: '', message: '' })
   const [contactStatus, setContactStatus] = useState(null)
@@ -116,7 +128,7 @@ function Home({ goTo }) {
     <>
       {/* ── HERO ── */}
       <section className="hero">
-        <img className="hero-img" src={IMG.hero} alt="Nova — la gheparda fondatrice" />
+        <img ref={heroImgRef} className="hero-img" src={IMG.hero} alt="Nova — la gheparda fondatrice" />
         <div className="hero-overlay" />
 
         <div className="hero-content">

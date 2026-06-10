@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import Cursor from './components/Cursor'
 import Home from './pages/Home'
 import Cheetah from './pages/Cheetah'
 import CheetahRun from './pages/CheetahRun'
@@ -42,6 +43,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('home')
   const [pendingSection, setPendingSection] = useState(null)
   const [postId, setPostId] = useState(0)
+  const [transitioning, setTransitioning] = useState(false)
 
   useEffect(() => {
     if (window.location.hash === '#admin') setCurrentPage('admin')
@@ -59,10 +61,14 @@ function App() {
   }, [])
 
   const goTo = (page, section = null, data = null) => {
-    if (page === 'blog-post' && data !== null) setPostId(data)
-    setCurrentPage(page)
-    window.scrollTo({ top: 0, behavior: 'instant' })
-    if (section) setPendingSection(section)
+    setTransitioning(true)
+    setTimeout(() => {
+      if (page === 'blog-post' && data !== null) setPostId(data)
+      setCurrentPage(page)
+      window.scrollTo({ top: 0, behavior: 'instant' })
+      if (section) setPendingSection(section)
+      setTransitioning(false)
+    }, 220)
   }
 
   useEffect(() => {
@@ -83,8 +89,11 @@ function App() {
 
   return (
     <>
+      <Cursor />
       <Navbar goTo={goTo} />
-      <PageComponent key={currentPage} goTo={goTo} postId={postId} />
+      <div className={`page-wrap ${transitioning ? 'page-wrap--out' : 'page-wrap--in'}`}>
+        <PageComponent key={currentPage} goTo={goTo} postId={postId} />
+      </div>
       <Footer goTo={goTo} />
     </>
   )

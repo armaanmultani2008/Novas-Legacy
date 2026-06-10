@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
 
 const PAYPAL_CLIENT_ID = 'BAACTG0ukeM8dKAjsLDCpumLq64_3LVg7oH1hbbQ5tot-aLGXbF4FbP34W4ehWgbRxVtrOerg-NmxlclvY'
-const B = 'https://novaslegacy.com/wp-content/uploads/2022/08/'
 const AMOUNTS = [10, 25, 50, 100]
 
 const IMPACT = [

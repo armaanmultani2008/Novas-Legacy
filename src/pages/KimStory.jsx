@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
 
-const KIM_PHOTO = 'https://novaslegacy.com/wp-content/uploads/2022/08/80070993_10215173161137784_2262507248758554624_n-600x600.jpg'
+const KIM_PHOTO = '/img/kim-portrait.jpg'
 const KIM_HERO_BG = '/img/kim-savana.svg'
 
 function KimStory({ goTo }) {

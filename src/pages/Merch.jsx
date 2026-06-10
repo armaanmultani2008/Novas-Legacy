@@ -3,15 +3,14 @@ import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-const B = 'https://novaslegacy.com/wp-content/uploads/2022/08/'
 
 const ITEMS = [
-  { name: 'Classic Tee',      price: '€22', priceZar: 'R 350', sizes: ['XS','S','M','L','XL'],      photo: B + 'Nova-2.jpg' },
-  { name: 'Coalition Hoodie', price: '€40', priceZar: 'R 650', sizes: ['S','M','L','XL','XXL'],      photo: B + '20201128_175257-1-scaled.jpg' },
-  { name: 'Bush Cap',         price: '€16', priceZar: 'R 250', sizes: ['UNICA'],                     photo: B + 'IMG_20200927_132938_928.jpg' },
-  { name: 'Field Tote Bag',   price: '€18', priceZar: 'R 280', sizes: null,                          photo: B + 'IMG-20210120-WA0031-1170x600.jpg' },
-  { name: 'Safari Mug',       price: '€12', priceZar: 'R 180', sizes: null,                          photo: B + 'IMG-20210918-WA0026.jpg' },
-  { name: 'Sticker Pack',     price: '€5',  priceZar: 'R 80',  sizes: null,                          photo: B + '20210512_112828-scaled.jpg' },
+  { name: 'Classic Tee',      price: '€22', priceZar: 'R 350', sizes: ['XS','S','M','L','XL'],      photo: '/img/merch-tee.jpg' },
+  { name: 'Coalition Hoodie', price: '€40', priceZar: 'R 650', sizes: ['S','M','L','XL','XXL'],      photo: '/img/merch-hoodie.jpg' },
+  { name: 'Bush Cap',         price: '€16', priceZar: 'R 250', sizes: ['UNICA'],                     photo: '/img/merch-cap.jpg' },
+  { name: 'Field Tote Bag',   price: '€18', priceZar: 'R 280', sizes: null,                          photo: '/img/merch-tote.jpg' },
+  { name: 'Safari Mug',       price: '€12', priceZar: 'R 180', sizes: null,                          photo: '/img/merch-mug.jpg' },
+  { name: 'Sticker Pack',     price: '€5',  priceZar: 'R 80',  sizes: null,                          photo: '/img/merch-sticker.jpg' },
 ]
 
 async function startCheckout(name, priceStr, errCheckout, errBackend) {
@@ -47,7 +46,7 @@ function Merch({ goTo }) {
   return (
     <>
       <div className="page-hero-img" style={{ height: '52vh' }}>
-        <img src={B + '20201209_171109-scaled.jpg'} alt="Shop Nova's Legacy" />
+        <img src="/img/merch-hero.jpg" alt="Shop Nova's Legacy" style={{ objectPosition: 'center 40%' }} />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">{t('merch.hero_label')}</span>

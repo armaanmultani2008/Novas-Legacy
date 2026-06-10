@@ -2,15 +2,13 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Lightbox from '../components/Lightbox'
 
-const B = 'https://novaslegacy.com/wp-content/uploads/2022/08/'
-
 const VOL_PHOTO_SRCS = [
-  B + 'IMG-20210830-WA0148-1.jpg',
-  B + 'IMG_20200605_110224_811.jpg',
-  B + 'IMG-20210312-WA0032.jpg',
-  B + 'IMG_20200927_132938_928.jpg',
-  B + '20210906_112700-scaled.jpg',
-  B + 'IMG-20210203-WA0023.jpg',
+  '/img/vol-volontari-1.jpg',
+  '/img/vol-volontari-2.jpg',
+  '/img/vol-volontari-3.jpg',
+  '/img/vol-volontari-4.jpg',
+  '/img/vol-volontari-5.jpg',
+  '/img/vol-volontari-6.jpg',
 ]
 
 function Volunteer({ goTo }) {
@@ -23,7 +21,7 @@ function Volunteer({ goTo }) {
   return (
     <>
       <div className="page-hero-img">
-        <img src={B + 'IMG-20210830-WA0148-1.jpg'} alt="Volontari a Nova's Legacy" />
+        <img src="/img/vol-volontari-1.jpg" alt="Volontari a Nova's Legacy" style={{ objectPosition: 'center 40%' }} />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">{t('volunteer.hero_label')}</span>

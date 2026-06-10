@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import Cursor from './components/Cursor'
 import Home from './pages/Home'
 import Cheetah from './pages/Cheetah'
 import CheetahRun from './pages/CheetahRun'
@@ -89,7 +88,6 @@ function App() {
 
   return (
     <>
-      <Cursor />
       <Navbar goTo={goTo} />
       <div className={`page-wrap ${transitioning ? 'page-wrap--out' : 'page-wrap--in'}`}>
         <PageComponent key={currentPage} goTo={goTo} postId={postId} />

@@ -502,15 +502,11 @@ function Navbar({ goTo }) {
         .ovmenu__socials a:hover { color: rgba(255,255,255,0.65); }
 
         /* ── RESPONSIVE ── */
-        /* Show hamburger on all sizes — hide desktop links + actions */
+        /* Desktop: horizontal links visible, hamburger hidden */
+        /* Mobile (<1050px): links hidden, hamburger + overlay active */
         @media (max-width: 1050px) {
           .nn__links, .nn__actions { display: none; }
           .hamburger { display: flex; }
-        }
-
-        /* On large screens, ALSO show the hamburger (optional: premium feel) */
-        @media (min-width: 1051px) {
-          .hamburger { display: flex; margin-left: 1.5rem; }
         }
 
         @media (max-width: 768px) {

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import Lightbox from '../components/Lightbox'
 
 const IMG = {
   hero:        '/img/ghepardo-erba.png',
@@ -14,27 +13,8 @@ const IMG = {
   progInt:     '/img/volontari-gruppo.png',
   progAdopt:   '/img/ghepardo-cucciolo.png',
   progBreed:   '/img/nova-madre-cucciolo.png',
-  vol1:        '/img/volontari-lavoro.png',
-  vol2:        '/img/volontarie-ghepardo.png',
-  vol3:        '/img/volontario-recinzione.png',
-  vol4:        '/img/volontari-gruppo.png',
   bigCta:      '/img/ghepardo-corsa.png',
-  accom:       '/img/chalet-esterno.png',
-  accom2:      '/img/chalet-camera.png',
 }
-
-const GALLERY_SRCS = [
-  '/img/chalet-esterno.png',
-  '/img/due-ghepardi.png',
-  '/img/ghepardo-erba.png',
-  '/img/ghepardo-albero.png',
-  '/img/volpe-orecchie.png',
-  '/img/volontarie-ghepardo.png',
-  '/img/volontario-recinzione.png',
-  '/img/ghepardo-visita-vet.png',
-  '/img/ghepardo-corsa-erba-gialla.png',
-  '/img/nova-primo-piano.png',
-]
 
 const ANIMALS_SRCS = [
   '/img/nova-primo-piano.png',
@@ -52,8 +32,6 @@ const ANIMALS_NAMES = ['Nova', 'Shira', 'Ghost Pack', 'Tumelo', 'Spirit', 'Sandy
 const PROG_PAGES = ['cheetah-run', 'volunteer', 'visit', 'internship', 'adopt', 'conservation']
 const PROG_IMGS  = [IMG.progRun, IMG.progVol, IMG.progChalet, IMG.progInt, IMG.progAdopt, IMG.progBreed]
 
-const TESTI_NAMES     = ['Giulia M.', 'Thomas W.', 'Ana R.']
-const TESTI_LOCATIONS = ['Milan, Italy', 'Berlin, Germany', 'Madrid, Spain']
 
 function useScrollRevealLocal() {
   useEffect(() => {
@@ -106,22 +84,13 @@ function Home({ goTo }) {
   useScrollRevealLocal()
   const { t } = useTranslation()
 
-  const galleryCaptions = t('home.gallery_captions', { returnObjects: true })
   const animalRoles     = t('home.animal_roles',     { returnObjects: true })
   const progTags        = t('home.prog_tags',         { returnObjects: true })
   const progTitles      = t('home.prog_titles',       { returnObjects: true })
   const progDescs       = t('home.prog_descs',        { returnObjects: true })
-  const volTasks        = t('home.vol_task_list',     { returnObjects: true })
-  const testiQuotes     = t('home.testi_quotes',      { returnObjects: true })
-  const testiNames      = t('home.testi_names',       { returnObjects: true })
-  const testiLocs       = t('home.testi_locations',   { returnObjects: true })
-  const accomTitles     = t('home.accom_titles',      { returnObjects: true })
-  const accomDescs      = t('home.accom_descs',       { returnObjects: true })
 
   const heroTitleWords = t('home.hero_title').split(' ')
   const cta2parts = t('home.cta_title').split('. ')
-
-  const [lightboxIdx, setLightboxIdx] = useState(null)
 
   const [contactForm, setContactForm] = useState({ name: '', surname: '', email: '', phone: '', reason: '', message: '' })
   const [contactStatus, setContactStatus] = useState(null)
@@ -436,62 +405,6 @@ function Home({ goTo }) {
         `}</style>
       </section>
 
-      {/* ── GALLERY ── */}
-      <section className="gallery-section" id="gallery">
-        <div>
-          <span className="label label-light rv">{t('home.gallery_label')}</span>
-          <h2 className="h2 h2-light rv rv-d1">
-            {t('home.gallery_title').split(' ').slice(0, -2).join(' ')} <em>{t('home.gallery_title').split(' ').slice(-2).join(' ')}</em>
-          </h2>
-        </div>
-
-        <div className="gallery-masonry">
-          {GALLERY_SRCS.map((src, i) => (
-            <div key={i} className="gm-item" onClick={() => setLightboxIdx(i)}>
-              <img src={src} alt={galleryCaptions[i]} loading="lazy" />
-              <div className="gm-caption">{galleryCaptions[i]}</div>
-            </div>
-          ))}
-        </div>
-
-        {lightboxIdx !== null && (
-          <Lightbox srcs={GALLERY_SRCS} captions={galleryCaptions} idx={lightboxIdx} setIdx={setLightboxIdx} />
-        )}
-      </section>
-
-      {/* ── VOLUNTEER ── */}
-      <section className="volunteer-section" id="volunteer">
-        <div className="volunteer-img-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '3px' }}>
-          {[IMG.vol1, IMG.vol2, IMG.vol3, IMG.vol4].map((src, i) => (
-            <div key={i} style={{ overflow: 'hidden' }}>
-              <img
-                src={src}
-                alt={`Volunteer ${i + 1}`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s cubic-bezier(0.22,1,0.36,1)' }}
-                onMouseEnter={e => { e.target.style.transform = 'scale(1.06)' }}
-                onMouseLeave={e => { e.target.style.transform = 'none' }}
-              />
-            </div>
-          ))}
-        </div>
-        <div className="vol-content">
-          <span className="label rv">{t('home.vol_label')}</span>
-          <h2 className="h2 rv rv-d1">
-            {t('home.vol_title').split('. ')[0]}. <em>{t('home.vol_title').split('. ')[1]}</em>
-          </h2>
-          <p className="rv rv-d2">{t('home.vol_desc1')}</p>
-          <p className="rv rv-d2">{t('home.vol_desc2')}</p>
-          <div className="vol-tasks rv rv-d3">
-            {volTasks.map(task => (
-              <div key={task} className="vol-task">{task}</div>
-            ))}
-          </div>
-          <button className="btn btn-dark rv rv-d4" onClick={() => goTo('volunteer')}>
-            {t('home.vol_btn')}
-          </button>
-        </div>
-      </section>
-
       {/* ── ANIMALS MARQUEE ── */}
       <section className="animals-section" id="animals">
         <div className="animals-header">
@@ -517,61 +430,6 @@ function Home({ goTo }) {
               ))
             )}
           </div>
-        </div>
-      </section>
-
-      {/* ── TESTIMONIALS ── */}
-      <section className="testimonials">
-        <span className="label rv">{t('home.testi_label')}</span>
-        <h2 className="h2 rv rv-d1">
-          {t('home.testi_title').split(' ').slice(0, -3).join(' ')} <em>{t('home.testi_title').split(' ').slice(-3).join(' ')}</em>
-        </h2>
-
-        <div className="testimonials-grid">
-          {testiQuotes.map((quote, i) => (
-            <div key={i} className={`testi-card rv rv-d${i + 1}`}>
-              <div className="testi-stars">{'★'.repeat(5)}</div>
-              <div className="testi-quote">{quote}</div>
-              <div className="testi-author">
-                <div className="testi-avatar">{TESTI_NAMES[i][0]}</div>
-                <div>
-                  <div className="testi-name">{testiNames[i]}</div>
-                  <div className="testi-location">{testiLocs[i]}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── ACCOMMODATION ── */}
-      <section className="accom-section" id="accommodation">
-        <span className="label label-light rv">{t('home.accom_label')}</span>
-        <h2 className="h2 h2-light rv rv-d1">
-          {t('home.accom_title').split(' ').slice(0, -1).join(' ')} <em>Waterberg</em>
-        </h2>
-
-        <div className="accom-grid">
-          <div style={{ animation: 'fadeUp 0.9s 0.2s both' }}>
-            <div className="accom-main-img">
-              <img src={IMG.accom} alt="Chalet Nova's Legacy" />
-            </div>
-          </div>
-          <div className="accom-right">
-            {accomTitles.map((title, i) => (
-              <div key={i} className={`accom-feature rv rv-d${i + 1}`}>
-                <div className="accom-feature-icon">◆</div>
-                <h4>{title}</h4>
-                <p>{accomDescs[i]}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div style={{ marginTop: '2.5rem', textAlign: 'center' }} className="rv">
-          <button className="btn btn-gold" onClick={() => goTo('visit')}>
-            {t('home.accom_btn')}
-          </button>
         </div>
       </section>
 

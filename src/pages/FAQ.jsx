@@ -21,7 +21,7 @@ function FAQ({ goTo }) {
         <>
             {/* ── HERO SECTION ── */}
             <div className="page-hero-img" style={{ height: '45vh' }}>
-                <img src="https://novaslegacy.com/wp-content/uploads/2022/08/IMG-20210120-WA0031-1170x600.jpg" alt="FAQ Nova's Legacy" />
+                <img src="/img/ghepardo-visita-vet.png" alt="FAQ Nova's Legacy" style={{ objectPosition: 'center 35%' }} />
                 <div className="page-hero-img-overlay" />
                 <div className="page-hero-text">
                     <span className="label label-light">{t('faq.hero_label')}</span>

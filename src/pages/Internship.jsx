@@ -3,22 +3,20 @@ import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
 import Lightbox from '../components/Lightbox'
 
-const B = 'https://novaslegacy.com/wp-content/uploads/2022/'
-
 const FIELD_IMGS = [
-  B + '08/20201128_175257-1-scaled.jpg',
-  B + '08/IMG-20210312-WA0032.jpg',
-  B + '08/IMG_20200605_110224_811.jpg',
-  B + '08/20210906_112700-scaled.jpg',
-  B + '08/IMG-20210918-WA0026.jpg',
-  B + '08/IMG_20200927_132938_928.jpg',
+  '/img/int-field-1.jpg',
+  '/img/int-field-2.jpg',
+  '/img/int-field-3.jpg',
+  '/img/int-field-4.jpg',
+  '/img/int-field-5.jpg',
+  '/img/int-field-6.jpg',
 ]
 
 const PHOTOS = [
-  B + '08/IMG-20210830-WA0148-1.jpg',
-  B + '08/IMG_20200803_140430_917.jpg',
-  B + '08/20211025_163227-scaled.jpg',
-  B + '08/IMG-20210203-WA0023.jpg',
+  '/img/int-photo-1.jpg',
+  '/img/int-photo-2.jpg',
+  '/img/int-photo-3.jpg',
+  '/img/int-photo-4.jpg',
 ]
 
 const ALL_IMGS = [...PHOTOS, ...FIELD_IMGS]
@@ -32,7 +30,7 @@ function Internship({ goTo }) {
   return (
     <>
       <div className="page-hero-img">
-        <img src={B + '08/Vol-1-768x576.jpg'} alt="Internship Nova's Legacy" />
+        <img src="/img/int-hero.jpg" alt="Internship Nova's Legacy" style={{ objectPosition: 'center 40%' }} />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">{t('internship.hero_label')}</span>

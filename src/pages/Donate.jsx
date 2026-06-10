@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
 
 const PAYPAL_CLIENT_ID = 'BAACTG0ukeM8dKAjsLDCpumLq64_3LVg7oH1hbbQ5tot-aLGXbF4FbP34W4ehWgbRxVtrOerg-NmxlclvY'
-const B = 'https://novaslegacy.com/wp-content/uploads/2022/08/'
 const AMOUNTS = [10, 25, 50, 100]
 
 const IMPACT = [
@@ -79,7 +78,7 @@ function Donate({ goTo }) {
       <>
         {/* ── HERO ── */}
         <div className="page-hero-img" style={{ height: '52vh' }}>
-          <img src={B + 'IMG-20210120-WA0031-1170x600.jpg'} alt="Donazioni Nova's Legacy" />
+          <img src="/img/ghepardo-albero.png" alt="Donazioni Nova's Legacy" style={{ objectPosition: 'center 30%' }} />
           <div className="page-hero-img-overlay" />
           <div className="page-hero-text">
             <span className="label label-light">{t('donate.hero_label')}</span>

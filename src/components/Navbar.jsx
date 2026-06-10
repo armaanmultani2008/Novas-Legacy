@@ -32,6 +32,7 @@ function Navbar({ goTo }) {
         { label: t('nav.volunteer'),   page: 'volunteer',  sym: '→' },
         { label: t('nav.internship'),  page: 'internship', sym: '→' },
         { label: t('nav.stay'),        page: 'visit',      sym: '→' },
+        { label: t('nav.FAQ' ),        page: 'faq',        sym: '→' }
       ],
     },
     { label: t('nav.blog'),       page: 'blog' },
@@ -115,13 +116,13 @@ function Navbar({ goTo }) {
                 </button>
                 <div className="lang-switcher-mobile">
                   <button
-                    className={`lang-btn${currentLang === 'it' ? ' lang-active' : ''}`}
-                    onClick={() => i18n.changeLanguage('it')}
+                      className={`lang-btn${currentLang === 'it' ? ' lang-active' : ''}`}
+                      onClick={() => i18n.changeLanguage('it')}
                   >IT</button>
                   <span className="lang-sep">|</span>
                   <button
-                    className={`lang-btn${currentLang === 'en' ? ' lang-active' : ''}`}
-                    onClick={() => i18n.changeLanguage('en')}
+                      className={`lang-btn${currentLang === 'en' ? ' lang-active' : ''}`}
+                      onClick={() => i18n.changeLanguage('en')}
                   >EN</button>
                 </div>
               </div>
@@ -129,7 +130,6 @@ function Navbar({ goTo }) {
 
           </div>
         </nav>
-
 
         <style>{`
         .custom-navbar {
@@ -243,7 +243,6 @@ function Navbar({ goTo }) {
           box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
         }
 
-        /* Crea un'area attiva continua per evitare che il dropdown si chiuda scorrendo con il mouse */
         .dropdown-menu::before {
           content: '';
           position: absolute;
@@ -365,7 +364,6 @@ function Navbar({ goTo }) {
           transform-origin: center;
         }
 
-        /* Fase 1: compressione leggera */
         @media (max-width: 1400px) {
           .nav-container {
             padding: 1rem 1.5rem;
@@ -386,7 +384,6 @@ function Navbar({ goTo }) {
           }
         }
 
-        /* Fase 2: compressione più intensa — tutto ancora visibile */
         @media (max-width: 1200px) {
           .nav-container {
             padding: 1rem 1.2rem;
@@ -415,7 +412,6 @@ function Navbar({ goTo }) {
           }
         }
 
-        /* Fase 3: hamburger menu */
         @media (max-width: 1050px) {
           .nav-container {
             padding: 1.2rem 1.5rem;
@@ -516,11 +512,6 @@ function Navbar({ goTo }) {
             width: 100%;
             border-radius: 6px;
             height: auto;
-          }
-
-          /* Rimuove lo pseudo-elemento su mobile in quanto non necessario */
-          .dropdown-menu::before {
-            display: none;
           }
 
           .dropdown-menu.mobile-show {

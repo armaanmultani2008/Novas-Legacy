@@ -28,7 +28,8 @@
     "blog": "Blog",
     "shop": "Shop",
     "donations": "Donations",
-    "become_volunteer": "Become a Volunteer"
+    "become_volunteer": "Become a Volunteer",
+    "FAQ": "FAQ"
   },
   "footer": {
     "brand_desc": "A cheetah breeding and conservation project in the heart of the Waterberg, South Africa. Founded by Kim Hiltrop — a veterinary nurse who hand-raised Nova, a three-legged cheetah.",
@@ -696,5 +697,88 @@
     "quote3": "Nova’s legacy will continue to fight for the species through captive breeding with the aim to give cheetahs a fighting chance in a world where they are running out of space.",
     "btn1": "Nova's Story",
     "btn2": "Adopt a Cheetah"
+  },
+  "faq": {
+    "hero_label": "~ Questions & Answers ~",
+    "hero_title_start": "Frequently Asked",
+    "hero_title_em": "Questions",
+    "hero_sub": "Find all the official details regarding volunteering, internships, accommodation on the reserve, and support channels.",
+    "footer_bold": "Still have doubts?",
+    "footer_text": "If you cannot find the answer to your question, please feel free to reach out directly to Kim at",
+    "categories": {
+      "volunteer": {
+        "title": "Volunteering",
+        "questions": [
+          {
+            "q": "What do volunteers do during a typical day?",
+            "a": "A normal working day runs from early morning to late afternoon to match our cats' active hours. Tasks begin at 8:00 AM with food preparation, followed by the feeding round at 9:00 AM. Depending on the length of your stay, duties include preparing raw game meat for carnivores, cleaning and maintaining enclosures, assisting with cheetah runs or daily training sessions, checking perimeter fences, and monitoring free-roaming game like giraffes and zebras."
+          },
+          {
+            "q": "What is the weekly schedule for volunteers?",
+            "a": "The official working week is from Monday to Friday. Saturdays are our cats' fasting day, making it the perfect day for volunteers to book external activities or excursions in the Bela-Bela area at their own expense. Sundays are reserved for resting, though you are welcome to assist with basic daily farm chores if you wish."
+          },
+          {
+            "q": "Are there any specific requirements or arrivals schedules?",
+            "a": "We look for dedicated, open-minded, nature and animal-loving individuals. Changeovers and airport pickups are coordinated strictly on Mondays. If your stay is complete, you will be taken to the airport on Monday morning; if you are staying longer, your new working week begins then."
+          }
+        ]
+      },
+      "internship": {
+        "title": "Internships",
+        "questions": [
+          {
+            "q": "Who can apply for an internship at Nova's Legacy?",
+            "a": "Our internship programmes are open to university students, researchers, and educational institutions looking for a structured curriculum in wildlife management, veterinary support, and predator conservation. We work on custom dedicated plans based on your field of study."
+          },
+          {
+            "q": "How does an internship differ from volunteering?",
+            "a": "While interns participate in daily sanctuary operations, internships focus heavily on educational research, gathering data from tracking or camera traps, giraffe identification, and deeper analytical elements of our breeding programme to preserve cheetah genetics."
+          }
+        ]
+      },
+      "accommodation": {
+        "title": "Accommodation",
+        "questions": [
+          {
+            "q": "Where do volunteers and interns stay on the reserve?",
+            "a": "Everyone stays at our main Volunteer House or adjacent chalets. Accommodation features shared bedrooms, shared bathrooms, a common living space, and a kitchen area. There is also a garden for stargazing, a pool table, a ping-pong table, and a dedicated lapa for evening traditional braais."
+          },
+          {
+            "q": "Is Wi-Fi available at the accommodation?",
+            "a": "Yes, the house and chalets offer free Wi-Fi. To preserve connection stability and promote team integration, internet access is accessible after working hours and throughout the entire weekend."
+          },
+          {
+            "q": "How are meals handled, and can you accommodate dietary needs?",
+            "a": "We provide 3 basic meals a day: breakfast, a light lunch, and supper, accompanied by water, coffee, tea, or juice. The cuisine is mainly South African. If you have any specific dietary requirements or allergies, please inform us well in advance so our kitchen team can adjust."
+          }
+        ]
+      },
+      "shop": {
+        "title": "Internal Shop",
+        "questions": [
+          {
+            "q": "Is there a shop on-site, and what does it stock?",
+            "a": "Yes, we run an on-site shop located 60km away from the main town. The shop stocks basic snacks, carbonated soft drinks, and typical sanctuary souvenirs. Shopping trips to town are conducted once a week by our staff."
+          },
+          {
+            "q": "Should I bring extra cash for my stay?",
+            "a": "We highly recommend bringing extra funds or 'emergency' pocket money if you are a selective eater, enjoy snacking between meals, prefer carbonated sodas, or wish to buy souvenirs from our shop during your stay."
+          }
+        ]
+      },
+      "donations": {
+        "title": "Donations",
+        "questions": [
+          {
+            "q": "Can I donate physical items instead of financial funds?",
+            "a": "Absolutely. Our specialized Wishlist via Takealot allows supporters to select and purchase exact products we urgently need (such as shade netting rolls, fence extensions, wifi cameras, or specific predator supplements) which are then delivered directly to the sanctuary."
+          },
+          {
+            "q": "How are symbolic animal adoptions and payments processed?",
+            "a": "All financial donations and monthly symbolic adoptions are secured safely via Stripe or PayPal. Subscriptions can be reviewed, adjusted, or cancelled at any time by requesting a direct link through our Customer Portal using your adoption email."
+          }
+        ]
+      }
+    }
   }
 }

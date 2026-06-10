@@ -17,6 +17,7 @@ import Adopt from './pages/Adopt'
 import Merch from './pages/Merch'
 import Donate from './pages/Donate'
 import Admin from './pages/Admin'
+import FAQ from './pages/FAQ'
 
 const pages = {
   home: Home,
@@ -34,6 +35,7 @@ const pages = {
   adopt: Adopt,
   merch: Merch,
   donate: Donate,
+  faq: FAQ
 }
 
 function App() {

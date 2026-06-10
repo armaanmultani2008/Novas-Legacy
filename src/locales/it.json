@@ -434,40 +434,29 @@
     "adopt_btn": "Adotta",
     "animals": [
       {
-        "species": "Gheparda",
-        "name": "Nova",
-        "price": "Da €15/mese",
-        "desc": "Quella che ha dato inizio a tutto. Tre zampe, cuore immenso. La tua adozione sostiene l'intero programma di riproduzione."
+        "species": "Tigre Tabby Dorata",
+        "name": "Storm",
+        "desc": "La nostra tigre dorata Storm, nata a ottobre 2020, è arrivata a Feracare alla tenera età di soli 5 mesi, principalmente per fare compagnia al suo compagno Quake."
       },
       {
-        "species": "Leonessa",
-        "name": "Shira",
-        "price": "Da €20/mese",
-        "desc": "Salvata da cucciola, Shira è cresciuta in una magnifica leonessa. La tua adozione la tiene al sicuro ogni giorno."
+        "species": "Ghepardo Reale",
+        "name": "Guinness",
+        "desc": "Guinness è un ghepardo reale, fratello di Gemma della stessa cucciolata. Nati il 21 febbraio 2023, è una vera e propria macchina da fusa continuamente in azione."
       },
       {
-        "species": "Cani Selvatici Africani",
-        "name": "Ghost Pack",
-        "price": "Da €25/mese",
-        "desc": "I cani dipinti sono tra gli animali più minacciati dell'Africa. Adotta il branco e aiutaci a mantenerlo unito."
+        "species": "Ghepardo",
+        "name": "Lyvia",
+        "desc": "Lyvia è nata il 1° marzo 2024 da mamma Spitfire e papà Brenin. È dolcissima, adora ricevere attenzioni e le piace sdraiarsi molto vicino alle persone."
       },
       {
-        "species": "Cavallo",
-        "name": "Spirit",
-        "price": "Da €10/mese",
-        "desc": "Salvato dall'abbandono, Spirit è la prova vivente che le seconde possibilità funzionano."
+        "species": "Ghepardo",
+        "name": "Oakley",
+        "desc": "Oakley fa parte della prima cucciolata sopravvissuta di Phoebe, e il papà è Zeno. Nata il 23 marzo 2024 in una cucciolata di due, è purtroppo l'unica sopravvissuta."
       },
       {
-        "species": "Volpe dalle Orecchie a Pipistrello",
-        "name": "Sandy",
-        "price": "Da €8/mese",
-        "desc": "Piccola, curiosa e piena di personalità. Sandy ha bisogno di cure quotidiane e del tuo sostegno."
-      },
-      {
-        "species": "Serval",
-        "name": "Shadow",
-        "price": "Da €12/mese",
-        "desc": "Cacciatore notturno con il manto dorato e un udito straordinario. Tranquillo ma indimenticabile."
+        "species": "Ghepardo",
+        "name": "Jagger",
+        "desc": "Jagger è il nostro piccolo guerriero speciale, figlio di Kara. Ci siamo accorti durante i pasti che qualcosa non andava: ha le zampe flesse e appare molto piccolo per la sua età."
       }
     ],
     "per_month": "mese",

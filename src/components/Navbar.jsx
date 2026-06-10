@@ -130,17 +130,6 @@ function Navbar({ goTo }) {
           </div>
         </nav>
 
-        <div className="lang-switcher">
-          <button
-            className={`lang-btn${currentLang === 'it' ? ' lang-active' : ''}`}
-            onClick={() => i18n.changeLanguage('it')}
-          >IT</button>
-          <span className="lang-sep">|</span>
-          <button
-            className={`lang-btn${currentLang === 'en' ? ' lang-active' : ''}`}
-            onClick={() => i18n.changeLanguage('en')}
-          >EN</button>
-        </div>
 
         <style>{`
         .custom-navbar {
@@ -225,6 +214,7 @@ function Navbar({ goTo }) {
           align-items: center;
           gap: 0.35rem;
           user-select: none;
+          white-space: nowrap;
         }
 
         .nav-link-main:hover {
@@ -296,16 +286,7 @@ function Navbar({ goTo }) {
           display: flex;
           align-items: center;
           gap: 1rem;
-        }
-
-        .lang-switcher {
-          position: fixed;
-          top: 1.1rem;
-          right: 1.8rem;
-          z-index: 1100;
-          display: flex;
-          align-items: center;
-          gap: 0.25rem;
+          flex-shrink: 0;
         }
 
         .lang-btn {
@@ -336,7 +317,9 @@ function Navbar({ goTo }) {
         }
 
         .lang-switcher-mobile {
-          display: none;
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
         }
 
         .nav-cta {
@@ -382,10 +365,71 @@ function Navbar({ goTo }) {
           transform-origin: center;
         }
 
-        @media (max-width: 1024px) {
+        /* Fase 1: compressione leggera */
+        @media (max-width: 1400px) {
           .nav-container {
-            padding: 1.2rem 2rem;
+            padding: 1rem 1.5rem;
+          }
+          .nav-menu-wrapper {
+            margin-left: 1.8rem;
+          }
+          .nav-links {
+            gap: 1.1rem;
+          }
+          .nav-link-main {
+            font-size: 0.83rem;
+            letter-spacing: 0.03em;
+          }
+          .nav-cta {
+            padding: 0.55rem 1rem;
+            font-size: 0.78rem;
+          }
+        }
+
+        /* Fase 2: compressione più intensa — tutto ancora visibile */
+        @media (max-width: 1200px) {
+          .nav-container {
+            padding: 1rem 1.2rem;
+          }
+          .nav-menu-wrapper {
+            margin-left: 1rem;
+          }
+          .nav-links {
+            gap: 0.65rem;
+          }
+          .nav-link-main {
+            font-size: 0.78rem;
+            letter-spacing: 0.02em;
+          }
+          .nav-cta {
+            padding: 0.5rem 0.85rem;
+            font-size: 0.74rem;
+          }
+          .nav-logo {
+            font-size: 1.25rem;
+          }
+          .lang-switcher-mobile {
+            margin-left: 0.5rem;
+            padding-left: 0.75rem;
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+          }
+        }
+
+        /* Fase 3: hamburger menu */
+        @media (max-width: 1050px) {
+          .nav-container {
+            padding: 1.2rem 1.5rem;
             justify-content: space-between;
+          }
+
+          .nav-logo {
+            font-size: 1.35rem;
+          }
+
+          .lang-switcher-mobile {
+            margin-left: 0;
+            padding-left: 0;
+            border-left: none;
           }
 
           .menu-toggle {
@@ -443,6 +487,7 @@ function Navbar({ goTo }) {
 
           .nav-link-main {
             font-size: 1.15rem;
+            letter-spacing: 0.05em;
             justify-content: center;
             width: 100%;
             padding: 0.8rem 0;
@@ -495,16 +540,33 @@ function Navbar({ goTo }) {
 
           .nav-actions {
             width: 100%;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: flex-start;
             justify-content: center;
+            gap: 1.2rem;
             margin-top: auto;
             padding-top: 2.5rem;
           }
 
           .nav-cta {
-            width: 100%;
-            max-width: 320px;
-            padding: 0.9rem;
-            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: auto;
+            flex-shrink: 0;
+            padding: 0.7rem 1rem;
+            font-size: 0.72rem;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+          }
+
+          .lang-switcher-mobile {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            margin-top: auto;
+            margin-bottom: auto;
           }
         }
       `}</style>

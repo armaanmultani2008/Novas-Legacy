@@ -436,40 +436,29 @@
     "adopt_btn": "Adopt",
     "animals": [
       {
+        "species": "Golden Tabby Tiger",
+        "name": "Storm",
+        "desc": "Our golden tabby tiger Storm, who was born in October 2020, was brought to Feracare at the young age of 5 months, mainly as a friend for her companion Quake."
+      },
+      {
+        "species": "King Cheetah",
+        "name": "Guinness",
+        "desc": "Guinness is the king cheetah and Gemma’s brother from the same litter. They were born on the 21st of February 2023. He is a little purring machine."
+      },
+      {
         "species": "Cheetah",
-        "name": "Nova",
-        "price": "From €15/month",
-        "desc": "The one who started it all. Three legs, an immense heart. Your adoption supports the entire breeding programme."
+        "name": "Lyvia",
+        "desc": "Lyvia was born on the 1st of March 2024 with mom Spitfire and dad Brenin. She is very sweet, likes attention and likes to lay down close by people."
       },
       {
-        "species": "Lioness",
-        "name": "Shira",
-        "price": "From €20/month",
-        "desc": "Rescued as a cub, Shira has grown into a magnificent lioness. Your adoption keeps her safe every day."
+        "species": "Cheetah",
+        "name": "Oakley",
+        "desc": "Oakley is Phoebe’s first surviving litter. Her dad is Zeno. She was born on the 23rd of March 2024 in a litter of two but she’s the only survivor."
       },
       {
-        "species": "African Wild Dogs",
-        "name": "Ghost Pack",
-        "price": "From €25/month",
-        "desc": "Painted dogs are among the most threatened animals in Africa. Adopt the pack and help us keep it together."
-      },
-      {
-        "species": "Horse",
-        "name": "Spirit",
-        "price": "From €10/month",
-        "desc": "Rescued from abandonment, Spirit is living proof that second chances work."
-      },
-      {
-        "species": "Bat-Eared Fox",
-        "name": "Sandy",
-        "price": "From €8/month",
-        "desc": "Small, curious and full of personality. Sandy needs daily care and your support."
-      },
-      {
-        "species": "Serval",
-        "name": "Shadow",
-        "price": "From €12/month",
-        "desc": "Nocturnal hunter with a golden coat and extraordinary hearing. Quiet but unforgettable."
+        "species": "Cheetah",
+        "name": "Jagger",
+        "desc": "Jagger is our special little boy and Kara’s son. We noticed during feeding that something was not okay with him. His legs were bent and for his age he looked very small."
       }
     ],
     "per_month": "month",

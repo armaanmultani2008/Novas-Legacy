@@ -14,7 +14,7 @@ const IMPACT = [
 
 function Donate({ goTo }) {
   useScrollReveal()
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [amount, setAmount] = useState(25)
   const [custom, setCustom] = useState('')
   const [sdkReady, setSdkReady] = useState(false)
@@ -26,21 +26,18 @@ function Donate({ goTo }) {
   amountRef.current = finalAmount
 
   const impactDescs = t('donate.impact', { returnObjects: true }) || []
-  const wishlistItems = t('donate.wishlist.items', { returnObjects: true }) || []
-  const lang = i18n.language
 
   useEffect(() => {
     setSdkReady(false)
     const existing = document.getElementById('paypal-sdk')
     if (existing) existing.remove()
-    const locale = lang === 'it' ? 'it_IT' : 'en_US'
     const script = document.createElement('script')
     script.id = 'paypal-sdk'
-    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR&intent=capture&components=buttons&locale=${locale}`
+    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR&intent=capture&components=buttons&locale=en_US`
     script.onload = () => setSdkReady(true)
     document.body.appendChild(script)
     return () => script.remove()
-  }, [lang])
+  }, [])
 
   useEffect(() => {
     if (!sdkReady || !btnRef.current || !window.paypal) return
@@ -150,85 +147,6 @@ function Donate({ goTo }) {
                   </div>
               ))}
             </div>
-
-            <hr style={{ border: 'none', borderTop: '1px solid #EDE5D8', margin: '4rem 0' }} />
-
-            {/* ── WISHLIST TEXTS ── */}
-            <div className="rv" style={{ textAlign: 'center', marginBottom: '2rem' }}>
-              <span className="label">{t('donate.wishlist.sub_label')}</span>
-              <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(1.8rem,3vw,2.4rem)', color: 'var(--dark)' }}>
-                {t('donate.wishlist.title_start')} <em>{t('donate.wishlist.title_em')}</em>
-              </h2>
-            </div>
-
-            <div className="rv" style={{ color: '#555', lineHeight: '1.7', fontWeight: 300, fontSize: '0.95rem' }}>
-              <p style={{ marginBottom: '1rem' }}>{t('donate.wishlist.p1')}</p>
-              <p style={{ marginBottom: '1.5rem' }}>{t('donate.wishlist.p2')}</p>
-
-              <div className="highlight" style={{ margin: '2rem 0' }}>
-                <p style={{ margin: 0 }}>
-                  ◆ <strong>{t('donate.wishlist.urgent_title')}</strong> {t('donate.wishlist.urgent_text')}
-                </p>
-              </div>
-            </div>
-
-            {/* ── TAKEALOT CTA BUTTON ── */}
-            <div className="rv" style={{ textAlign: 'center', margin: '2.5rem 0' }}>
-              <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.3rem', marginBottom: '1rem', color: 'var(--dark)' }}>
-                {t('donate.wishlist.list_title')}
-              </h3>
-              <a
-                  href="https://www.takealot.com/wishlist/shared/1:820977a428b5448cbe57cf6015024c7c"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-dark"
-                  style={{ padding: '1rem 2.5rem', letterSpacing: '0.1em' }}
-              >
-                TAKEALOT WISHLIST
-              </a>
-            </div>
-
-            <div className="rv" style={{ color: '#777', lineHeight: '1.65', fontWeight: 300, fontSize: '0.88rem', fontStyle: 'italic', textAlign: 'center', maxWidth: '700px', margin: '0 auto 4rem' }}>
-              <p>{t('donate.wishlist.disclaimer_1')}</p>
-              <p style={{ fontWeight: 600, color: 'var(--dark)', marginTop: '1rem' }}>
-                {t('donate.wishlist.disclaimer_2')}
-              </p>
-            </div>
-
-            {/* ── WHAT WE NEED THE MOST (GRID) ── */}
-            <div className="rv" style={{ marginBottom: '2rem' }}>
-              <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.6rem', color: 'var(--dark)', borderBottom: '2px solid #EDE5D8', paddingBottom: '0.5rem', marginBottom: '1.5rem' }}>
-                {t('donate.wishlist.need_start')} <em>{t('donate.wishlist.need_em')}</em>
-              </h3>
-
-              <div className="programs-grid" style={{ display: 'grid', gap: '1.2rem', marginTop: '1rem' }}>
-                {wishlistItems.map((item, idx) => (
-                    <div
-                        key={idx}
-                        style={{
-                          background: 'var(--off-white)',
-                          border: '1px solid #EDE5D8',
-                          padding: '1.2rem 1.5rem',
-                          borderRadius: '4px',
-                          display: 'flex',
-                          gap: '1rem',
-                          alignItems: 'flex-start'
-                        }}
-                    >
-                  <span style={{ fontSize: '0.9rem', color: 'var(--dark)', lineHeight: '1.5', fontWeight: 300 }}>
-                    ◆ {item}
-                  </span>
-                    </div>
-                ))}
-              </div>
-            </div>
-
-            <p style={{ textAlign: 'center', marginTop: '4rem', fontSize: '0.85rem', color: 'var(--gray)', fontWeight: 300 }}>
-              {t('donate.wishlist.footer_text')}{' '}
-              <a href="mailto:kim@novaslegacy.co.za" style={{ color: 'var(--gold)', fontWeight: 600 }}>
-                kim@novaslegacy.co.za
-              </a>
-            </p>
           </div>
         </div>
       </>

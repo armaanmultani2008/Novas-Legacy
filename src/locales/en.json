@@ -14,12 +14,14 @@
   "nav": {
     "home": "Home",
     "cheetahs": "Cheetahs",
+    "about_us": "About Us",
     "nova_story": "Nova's Story",
     "kim_story": "Kim's Story",
     "cheetah_run": "Cheetah Run",
     "adopt_animal": "Adopt an Animal",
     "conservation": "Conservation",
     "our_mission": "Our Mission",
+    "cheetah_project": "Cheetah Project",
     "horses": "Horse Project",
     "get_involved": "Get Involved",
     "volunteer": "Volunteering",
@@ -28,6 +30,8 @@
     "blog": "Blog",
     "shop": "Shop",
     "donations": "Donations",
+    "support_us": "Support Us",
+    "wishlist": "Wishlist",
     "become_volunteer": "Become a Volunteer",
     "FAQ": "FAQ"
   },
@@ -230,10 +234,10 @@
     "btn2": "Adopt a Cheetah"
   },
   "conservation": {
-    "hero_label": "~ Conservation & Education ~",
-    "hero_title": "Protecting the Future",
+    "hero_label": "~ Cheetah Project ~",
+    "hero_title": "Cheetah Project",
     "hero_sub": "We work every day to change the narrative around the cheetah — from feared predators to ambassadors of a healthy ecosystem.",
-    "mission_title": "Our Mission",
+    "mission_title": "Cheetah Project",
     "mission_p": "Nova's Legacy operates with a clear mandate: to prevent the extinction of the cheetah in South Africa through responsible breeding, education of local communities and scientific research. We are registered as a non-profit organisation (PBO No. 930069839) and collaborate with national and international institutions.",
     "highlight": "In a hundred years we have lost 90% of the world's cheetahs. Fewer than 7,000 survive in the wild. South Africa is home to approximately 1,300 individuals — one of the highest numbers on the continent, but still critical.",
     "edu_title": "Environmental Education",
@@ -641,6 +645,7 @@
     "donate_again": "Donate again",
     "error_text": "An error occurred. Please try again or contact",
     "unavailable": "Donations temporarily unavailable. Please try again later.",
+    "wishlist_cta_text": "Want to donate physical goods or see what we need most?",
     "impact": [
       {
         "desc": "Feeds a cheetah for one week"

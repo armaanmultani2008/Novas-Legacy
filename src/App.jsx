@@ -16,6 +16,7 @@ import BlogPost from './pages/BlogPost'
 import Adopt from './pages/Adopt'
 import Merch from './pages/Merch'
 import Donate from './pages/Donate'
+import Wishlist from './pages/Wishlist'
 import Admin from './pages/Admin'
 import FAQ from './pages/FAQ'
 
@@ -35,6 +36,7 @@ const pages = {
   adopt: Adopt,
   merch: Merch,
   donate: Donate,
+  wishlist: Wishlist,
   faq: FAQ
 }
 

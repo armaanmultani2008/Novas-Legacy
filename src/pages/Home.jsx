@@ -348,7 +348,7 @@ function Home({ goTo }) {
 
         <div className="testimonials-grid">
           {testiQuotes.map((quote, i) => (
-            <div key={TESTI_NAMES[i]} className={`testi-card rv rv-d${i + 1}`}>
+            <div key={i} className={`testi-card rv rv-d${i + 1}`}>
               <div className="testi-stars">{'★'.repeat(5)}</div>
               <div className="testi-quote">{quote}</div>
               <div className="testi-author">
@@ -371,21 +371,14 @@ function Home({ goTo }) {
         </h2>
 
         <div className="accom-grid">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', animation: 'fadeUp 0.9s 0.2s both' }}>
+          <div style={{ animation: 'fadeUp 0.9s 0.2s both' }}>
             <div className="accom-main-img">
               <img src={IMG.accom} alt="Chalet Nova's Legacy" />
-            </div>
-            <div style={{ height: '180px', overflow: 'hidden' }}>
-              <img
-                src={IMG.accom2}
-                alt="Vista sulla riserva"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%' }}
-              />
             </div>
           </div>
           <div className="accom-right">
             {accomTitles.map((title, i) => (
-              <div key={title} className={`accom-feature rv rv-d${i + 1}`}>
+              <div key={i} className={`accom-feature rv rv-d${i + 1}`}>
                 <div className="accom-feature-icon">◆</div>
                 <h4>{title}</h4>
                 <p>{accomDescs[i]}</p>

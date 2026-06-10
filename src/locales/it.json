@@ -28,7 +28,8 @@
     "blog": "Blog",
     "shop": "Shop",
     "donations": "Donazioni",
-    "become_volunteer": "Diventa Volontario"
+    "become_volunteer": "Diventa Volontario",
+    "FAQ": "FAQ"
   },
   "footer": {
     "brand_desc": "Progetto di allevamento e conservazione dei ghepardi nel cuore del Waterberg, Sudafrica. Fondata da Kim Hiltrop — infermiera veterinaria che ha allevato a mano Nova, una gheparda a tre zampe.",
@@ -657,5 +658,88 @@
     "quote3": "L'eredità di Nova continuerà a combattere per la specie attraverso l'allevamento in cattività, con l'obiettivo di dare ai ghepardi una possibilità di sopravvivenza in un mondo dove stanno esaurendo lo spazio.",
     "btn1": "La Storia di Nova",
     "btn2": "Adotta un Ghepardo"
+  },
+  "faq": {
+    "hero_label": "~ Domande e Risposte ~",
+    "hero_title_start": "Domande Frequenti",
+    "hero_title_em": "FAQ",
+    "hero_sub": "Trova tutti i dettagli ufficiali riguardanti il volontariato, i tirocini, gli alloggi nella riserva e i canali di supporto.",
+    "footer_bold": "Hai ancora dei dubbi?",
+    "footer_text": "Se non trovi la risposta alla tua domanda, non esitare a scrivere direttamente a Kim all'indirizzo",
+    "categories": {
+      "volunteer": {
+        "title": "Volontariato",
+        "questions": [
+          {
+            "q": "Cosa fanno i volontari durante una giornata tipo?",
+            "a": "Una giornata lavorativa normale va dalla mattina presto al tardo pomeriggio, in linea con gli orari di maggiore attività dei felini. Le attività iniziano alle 8:00 con la preparazione del cibo, seguita dal giro di alimentazione alle 9:00. In base alla durata del soggiorno, i compiti includono la preparazione della carne cruda per i carnivori, la pulizia dei recinti, il supporto nei cheetah run, il controllo delle recinzioni perimetrali e il monitoraggio degli animali liberi come giraffe e zebre."
+          },
+          {
+            "q": "Qual è il programma settimanale dei volontari?",
+            "a": "La settimana lavorativa ufficiale va dal lunedì al venerdì. Il sabato è il giorno di digiuno programmato per i nostri felini, ed è quindi la giornata ideale per i volontari per fare escursioni o attività nella zona di Bela-Bela (a proprie spese). La domenica è dedicata al riposo, ma chi lo desidera può unirsi alle piccole mansioni quotidiane della riserva."
+          },
+          {
+            "q": "Ci sono requisiti specifici o orari d'arrivo da rispettare?",
+            "a": "Cerchiamo persone dedicate, con una mente aperta e che amino la natura e gli animali. I trasferimenti e i pick-up dall'aeroporto vengono coordinati esclusivamente di lunedì. Se il tuo soggiorno è terminato, verrai riaccompagnato all'aeroporto il lunedì mattina; se rimani più a lungo, inizierai la nuova settimana di attività proprio in quel giorno."
+          }
+        ]
+      },
+      "internship": {
+        "title": "Tirocini",
+        "questions": [
+          {
+            "q": "Chi può fare domanda per un tirocinio a Nova's Legacy?",
+            "a": "I nostri programmi di tirocinio sono aperti a studenti universitari, ricercatori e istituti scolastici che cercano un percorso strutturato nella gestione della fauna selvatica, nel supporto veterinario e nella conservazione dei predatori. Sviluppiamo piani dedicati in base al tuo campo di studi."
+          },
+          {
+            "q": "In cosa differisce il tirocinio rispetto al volontariato?",
+            "a": "Mentre i tirocinanti partecipano alle operazioni quotidiane del rifugio, i tirocini si concentrano maggiormente sulla ricerca educativa, sulla raccolta dati tramite fototrappole, sull'identificazione delle giraffe e sugli aspetti scientifici del nostro programma di riproduzione per preservare il patrimonio genetico dei ghepardi."
+          }
+        ]
+      },
+      "accommodation": {
+        "title": "Alloggi",
+        "questions": [
+          {
+            "q": "Dove alloggiano i volontari e i tirocinanti nella riserva?",
+            "a": "Tutti soggiornano nella nostra Volunteer House principale o nei chalet adiacenti. La struttura include camere da letto condivise, bagni in comune, un'area soggiorno e una cucina comune. All'esterno è presente un giardino per osservare le stelle, un tavolo da biliardo, uno da ping-pong e un'area lapa per i tradizionali braai (barbecue) serali."
+          },
+          {
+            "q": "È disponibile il Wi-Fi negli alloggi?",
+            "a": "Sì, la casa e i chalet offrono la connessione Wi-Fi gratuita. Per preservare la stabilità della connessione e favorire l'integrazione del team, l'accesso a internet è disponibile dopo l'orario di lavoro e durante tutto il fine settimana."
+          },
+          {
+            "q": "Come sono gestiti i pasti? È possibile segnalare esigenze alimentari?",
+            "a": "Forniamo 3 pasti base al giorno: colazione, un pranzo leggero e la cena, accompagnati da acqua, caffè, tè o succhi. La cucina è principalmente sudafricana. Se hai esigenze alimentari particolari o allergie, ti preghiamo di comunicarcelo con largo anticipo in modo da organizzare la cucina."
+          }
+        ]
+      },
+      "shop": {
+        "title": "Shop Interno",
+        "questions": [
+          {
+            "q": "C'è uno shop nella struttura? Cosa vende?",
+            "a": "Sì, abbiamo uno shop interno situato all'interno della riserva (che si trova a 60 km dalla città più vicina). Lo shop è rifornito con snack di base, bevande gassate e i classici souvenir del rifugio. I rifornimenti e la spesa in città vengono effettuati dal nostro staff una volta alla settimana."
+          },
+          {
+            "q": "È necessario portare del denaro extra?",
+            "a": "Consigliamo vivamente di portare dei fondi extra o del denaro tascabile per le emergenze se sei molto selettivo con il cibo, se ti piace fare spuntini fuori dai pasti, se preferisci bibite gassate particolari o se vuoi acquistare souvenir ricordo dal nostro shop."
+          }
+        ]
+      },
+      "donations": {
+        "title": "Donazioni",
+        "questions": [
+          {
+            "q": "Posso donare beni materiali invece di denaro?",
+            "a": "Certamente. La nostra Wishlist ufficiale su Takealot permette ai sostenitori di selezionare e acquistare direttamente gli articoli urgenti di cui abbiamo bisogno (come rotoli di rete ombreggiante, estensioni per recinti, telecamere wifi o integratori specifici), che vengono poi recapitati direttamente alla riserva."
+          },
+          {
+            "q": "Come vengono elaborati i pagamenti e le adozioni simboliche?",
+            "a": "Tutte le donazioni e i piani di adozione simbolica mensile sono elaborati in totale sicurezza tramite Stripe o PayPal. Gli abbonamenti possono essere verificati, modificati o disdetti in qualsiasi momento richiedendo il link di accesso al Portale Clienti Stripe usando la stessa email inserita al momento dell'adozione."
+          }
+        ]
+      }
+    }
   }
 }

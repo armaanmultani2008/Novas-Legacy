@@ -214,7 +214,7 @@ function Home({ goTo }) {
           <div className="pillar rv" style={{
             position: 'relative',
             flex: '1 1 400px',
-            height: '480px',
+            height: '500px',
             overflow: 'hidden'
           }}>
             <img src={IMG.pillar1} alt="Breeding" style={{
@@ -242,7 +242,7 @@ function Home({ goTo }) {
           <div className="pillar rv rv-d1" style={{
             position: 'relative',
             flex: '1 1 400px',
-            height: '480px',
+            height: '500px',
             overflow: 'hidden'
           }}>
             <img src={IMG.pillar2} alt="Education" style={{
@@ -270,7 +270,7 @@ function Home({ goTo }) {
           <div className="pillar rv rv-d2" style={{
             position: 'relative',
             flex: '1 1 400px',
-            height: '480px',
+            height: '500px',
             overflow: 'hidden'
           }}>
             <img src={IMG.pillar3} alt="Rehabilitation" style={{

@@ -184,43 +184,113 @@ function Home({ goTo }) {
       </div>
 
       {/* ── WHAT WE DO ── */}
-      <section className="what-we-do">
-        <div className="top">
-          <div>
-            <span className="label rv">{t('home.work_label')}</span>
-            <h2 className="h2 rv rv-d1">
-              {t('home.work_title').split(' ').slice(0, -3).join(' ')} <em>{t('home.work_title').split(' ').slice(-3).join(' ')}</em>
-            </h2>
-          </div>
-          <p className="body-lg rv rv-d2">{t('home.work_desc')}</p>
+      <section className="what-we-do" style={{ width: '100%', maxWidth: '100%', padding: '5rem 0 0 0' }}>
+
+        {/* Intestazione allineata con font serif originale ripristinato tramite classe .h2 */}
+        <div className="what-we-do-content" style={{
+          maxWidth: '1200px',
+          margin: '0 auto 3.5rem auto',
+          padding: '0 2rem'
+        }}>
+          <span className="label rv">{t('home.work_label')}</span>
+          <h2 className="h2 rv rv-d1" style={{ fontSize: '2.6rem', lineHeight: '1.2', margin: '0 0 1.2rem 0' }}>
+            {t('home.work_title').split(' ').slice(0, -3).join(' ')} <em>{t('home.work_title').split(' ').slice(-3).join(' ')}</em>
+          </h2>
+          <p className="rv rv-d2" style={{ color: '#555', maxWidth: '850px', lineHeight: '1.65', margin: 0 }}>
+            {t('home.work_desc')}
+          </p>
         </div>
 
-        <div className="pillars">
-          <div className="pillar rv">
-            <img src={IMG.pillar1} alt="Breeding" />
-            <div className="pillar-overlay">
-              <div className="pillar-num">01</div>
-              <h3>{t('home.pillar1_title')}</h3>
-              <p>{t('home.pillar1_desc')}</p>
-              <span className="pillar-link" onClick={() => goTo('conservation')}>{t('common.learn_more')}</span>
+        {/* Griglia dei pilastri estesa a tutta larghezza (Full-Width) senza spaziature vuote */}
+        <div className="pillars" style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 0,
+          width: '100%',
+          margin: 0,
+          padding: 0
+        }}>
+          {/* PILASTRO 1 */}
+          <div className="pillar rv" style={{
+            position: 'relative',
+            flex: '1 1 400px',
+            height: '480px',
+            overflow: 'hidden'
+          }}>
+            <img src={IMG.pillar1} alt="Breeding" style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center 15%',
+              display: 'block'
+            }}/>
+            <div className="pillar-overlay" style={{
+              position: 'absolute',
+              bottom: 0, left: 0, right: 0,
+              background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 70%, transparent 100%)',
+              padding: '3rem 2rem 2.5rem 2rem',
+              color: '#fff'
+            }}>
+              <div className="pillar-num" style={{ opacity: 0.5, fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.5rem' }}>01</div>
+              <h3 style={{ fontSize: '1.6rem', margin: '0 0 0.6rem 0', fontFamily: 'var(--serif)' }}>{t('home.pillar1_title')}</h3>
+              <p style={{ fontSize: '0.9rem', opacity: 0.85, margin: '0 0 1.2rem 0', lineHeight: '1.5' }}>{t('home.pillar1_desc')}</p>
+              <span className="pillar-link" style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }} onClick={() => goTo('conservation')}>{t('common.learn_more')}</span>
             </div>
           </div>
-          <div className="pillar rv rv-d1">
-            <img src={IMG.pillar2} alt="Education" />
-            <div className="pillar-overlay">
+
+          {/* PILASTRO 2 */}
+          <div className="pillar rv rv-d1" style={{
+            position: 'relative',
+            flex: '1 1 400px',
+            height: '480px',
+            overflow: 'hidden'
+          }}>
+            <img src={IMG.pillar2} alt="Education" style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center 30%',
+              display: 'block'
+            }}/>
+            <div className="pillar-overlay" style={{
+              position: 'absolute',
+              bottom: 0, left: 0, right: 0,
+              background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 70%, transparent 100%)',
+              padding: '3rem 2rem 2.5rem 2rem',
+              color: '#fff'
+            }}>
               <div className="pillar-num">02</div>
-              <h3>{t('home.pillar2_title')}</h3>
-              <p>{t('home.pillar2_desc')}</p>
-              <span className="pillar-link" onClick={() => goTo('volunteer')}>{t('common.learn_more')}</span>
+              <h3 style={{ fontSize: '1.6rem', margin: '0 0 0.6rem 0', fontFamily: 'var(--serif)' }}>{t('home.pillar2_title')}</h3>
+              <p style={{ fontSize: '0.9rem', opacity: 0.85, margin: '0 0 1.2rem 0', lineHeight: '1.5' }}>{t('home.pillar2_desc')}</p>
+              <span className="pillar-link" style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }} onClick={() => goTo('volunteer')}>{t('common.learn_more')}</span>
             </div>
           </div>
-          <div className="pillar rv rv-d2">
-            <img src={IMG.pillar3} alt="Rehabilitation" />
-            <div className="pillar-overlay">
+
+          {/* PILASTRO 3 */}
+          <div className="pillar rv rv-d2" style={{
+            position: 'relative',
+            flex: '1 1 400px',
+            height: '480px',
+            overflow: 'hidden'
+          }}>
+            <img src={IMG.pillar3} alt="Rehabilitation" style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center 50%',
+              display: 'block'
+            }}/>
+            <div className="pillar-overlay" style={{
+              position: 'absolute',
+              bottom: 0, left: 0, right: 0,
+              background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 70%, transparent 100%)',
+              padding: '3rem 2rem 2.5rem 2rem',
+              color: '#fff'
+            }}>
               <div className="pillar-num">03</div>
-              <h3>{t('home.pillar3_title')}</h3>
-              <p>{t('home.pillar3_desc')}</p>
-              <span className="pillar-link" onClick={() => goTo('horses')}>{t('common.learn_more')}</span>
+              <h3 style={{ fontSize: '1.6rem', margin: '0 0 0.6rem 0', fontFamily: 'var(--serif)' }}>{t('home.pillar3_title')}</h3>
+              <p style={{ fontSize: '0.9rem', opacity: 0.85, margin: '0 0 1.2rem 0', lineHeight: '1.5' }}>{t('home.pillar3_desc')}</p>
+              <span className="pillar-link" style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }} onClick={() => goTo('horses')}>{t('common.learn_more')}</span>
             </div>
           </div>
         </div>

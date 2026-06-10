@@ -42,6 +42,7 @@ function Blog({ goTo }) {
                 }}
                 onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-4px)'}
                 onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+                onClick={() => goTo('blog-post', null, i)}
               >
                 <div style={{ height: '200px', overflow: 'hidden' }}>
                   <img src={POST_IMGS[i]} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

@@ -12,6 +12,7 @@ import Volunteer from './pages/Volunteer'
 import Internship from './pages/Internship'
 import Visit from './pages/Visit'
 import Blog from './pages/Blog'
+import BlogPost from './pages/BlogPost'
 import Adopt from './pages/Adopt'
 import Merch from './pages/Merch'
 import Donate from './pages/Donate'
@@ -29,6 +30,7 @@ const pages = {
   internship: Internship,
   visit: Visit,
   blog: Blog,
+  'blog-post': BlogPost,
   adopt: Adopt,
   merch: Merch,
   donate: Donate,
@@ -37,6 +39,7 @@ const pages = {
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
   const [pendingSection, setPendingSection] = useState(null)
+  const [postId, setPostId] = useState(0)
 
   useEffect(() => {
     if (window.location.hash === '#admin') setCurrentPage('admin')
@@ -53,7 +56,8 @@ function App() {
     }
   }, [])
 
-  const goTo = (page, section = null) => {
+  const goTo = (page, section = null, data = null) => {
+    if (page === 'blog-post' && data !== null) setPostId(data)
     setCurrentPage(page)
     window.scrollTo({ top: 0, behavior: 'instant' })
     if (section) setPendingSection(section)
@@ -78,7 +82,7 @@ function App() {
   return (
     <>
       <Navbar goTo={goTo} />
-      <PageComponent key={currentPage} goTo={goTo} />
+      <PageComponent key={currentPage} goTo={goTo} postId={postId} />
       <Footer goTo={goTo} />
     </>
   )

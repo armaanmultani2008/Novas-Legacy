@@ -388,42 +388,81 @@
     "hero_title": "News & Storie",
     "hero_sub": "Aggiornamenti, notizie e storie dal cuore del Waterberg.",
     "read_all": "Leggi tutto →",
+    "back_to_blog": "Torna al Blog",
+    "prev_post": "Articolo precedente",
+    "next_post": "Articolo successivo",
     "posts": [
       {
         "tag": "Notizie",
         "date": "15 Maggio 2025",
         "title": "Nuovi cuccioli di ghepardo nati a Nova's Legacy",
-        "excerpt": "Grande gioia nella riserva: la nostra femmina Amira ha dato alla luce tre cuccioli sani. Il team veterinario li monitora 24 ore su 24. Aggiornamenti in arrivo."
+        "excerpt": "Grande gioia nella riserva: la nostra femmina Amira ha dato alla luce tre cuccioli sani. Il team veterinario li monitora 24 ore su 24. Aggiornamenti in arrivo.",
+        "body": [
+          "La mattina del 12 maggio 2025, intorno alle 5:30, Kim ha notato i primi segnali del parto di Amira. Tre ore dopo, tre piccoli — due maschi e una femmina — aprivano gli occhi per la prima volta sul mondo.",
+          "La nascita di cuccioli di ghepardo è sempre un momento delicato. I cuccioli pesano tra i 200 e i 300 grammi alla nascita e nei primi giorni dipendono completamente dalla madre per il calore e il nutrimento. Il nostro team veterinario è presente 24 ore su 24 per monitorare i parametri vitali e intervenire in caso di necessità.",
+          "Amira è una madre attenta e protettiva. Ha già dimostrato nei giorni successivi al parto un istinto materno molto forte, allattando regolarmente tutti e tre i cuccioli. Il tasso di mortalità infantile nei ghepardi è purtroppo alto in natura — tra il 50% e il 70% nel primo anno — ma in un ambiente controllato come il nostro le probabilità di sopravvivenza aumentano significativamente.",
+          "Seguici sui nostri canali social per aggiornamenti settimanali su Amira e i suoi piccoli. Presto annunceremo anche i nomi — e tu potrai partecipare alla scelta!"
+        ]
       },
       {
         "tag": "Volontariato",
         "date": "3 Aprile 2025",
         "title": "Testimonianza: sei settimane nel bush con i ghepardi",
-        "excerpt": "Marco, 24 anni, studente di biologia da Torino, ci racconta la sua esperienza di volontariato. \"Ho imparato cose che non troverò mai in un libro di testo.\""
+        "excerpt": "Marco, 24 anni, studente di biologia da Torino, ci racconta la sua esperienza di volontariato. \"Ho imparato cose che non troverò mai in un libro di testo.\"",
+        "body": [
+          "\"Ero arrivato con uno zaino pieno di aspettative e qualche paura. La prima mattina, sveglia alle 6, e subito al lavoro: pulizia dei recinti, preparazione del cibo, osservazione comportamentale. Non c'era tempo per l'ansia.\"",
+          "Marco ha trascorso sei settimane a Nova's Legacy come parte del suo percorso di laurea magistrale in biologia della conservazione. Durante il soggiorno ha affiancato Kim nelle visite veterinarie, ha contribuito alla raccolta dati sul comportamento dei ghepardi e ha partecipato al programma di educazione ambientale per le scuole locali.",
+          "\"La cosa che mi ha colpito di più non erano i ghepardi — anche se correre accanto a Nova è un'esperienza che porterò per sempre. Era l'umanità del posto. Kim conosce ogni animale per nome, ne conosce la storia, le abitudini, il carattere. Non è una riserva, è una famiglia.\"",
+          "Marco tornerà a Nova's Legacy in autunno per completare la raccolta dati per la sua tesi. Nel frattempo, consigliamo la sua lettura a chiunque stia valutando un'esperienza di volontariato: le sue parole descrivono meglio di qualsiasi brochure cosa significa davvero fare parte della Coalition."
+        ]
       },
       {
         "tag": "Conservazione",
         "date": "18 Marzo 2025",
         "title": "Perché il ghepardo è più a rischio del leone",
-        "excerpt": "Un approfondimento sui fattori che rendono il ghepardo particolarmente vulnerabile: dalla bassa diversità genetica al conflitto con gli allevatori."
+        "excerpt": "Un approfondimento sui fattori che rendono il ghepardo particolarmente vulnerabile: dalla bassa diversità genetica al conflitto con gli allevatori.",
+        "body": [
+          "Il leone è l'animale simbolo dell'Africa, eppure è il ghepardo — con meno di 7.000 esemplari rimasti — ad essere classificato come vulnerabile dall'IUCN. Perché?",
+          "Il primo fattore è genetico. I ghepardi hanno attraversato uno o più colli di bottiglia evolutivi circa 10.000 anni fa, riducendo drasticamente la diversità genetica della specie. Questo li rende particolarmente vulnerabili alle malattie e ai cambiamenti ambientali: due individui geneticamente simili rispondono allo stesso modo a uno stesso patogeno.",
+          "Il secondo fattore è territoriale. A differenza di leoni e leopardi, i ghepardi hanno bisogno di grandi spazi aperti per cacciare e vivono in densità molto basse. L'espansione agricola ha ridotto e frammentato il loro habitat naturale, costringendoli a frequentare sempre più spesso zone abitate e allevamenti.",
+          "Il conflitto con gli allevatori è il terzo grande problema. Un ghepardo che uccide capre o vitelli viene spesso eliminato dal proprietario del terreno — e poiché i ghepardi vivono al 77% fuori dalle aree protette, questo tipo di conflitto è molto comune. Nova's Legacy lavora attivamente con le comunità locali per sviluppare strategie di coesistenza che proteggano sia gli animali sia i mezzi di sussistenza delle famiglie."
+        ]
       },
       {
         "tag": "Progetto Cavalli",
         "date": "7 Febbraio 2025",
         "title": "Spirit trova casa: la storia di un cavallo salvato",
-        "excerpt": "Spirit è arrivato da noi in condizioni precarie. Sei mesi dopo, trotta libero nella riserva. La storia della sua riabilitazione."
+        "excerpt": "Spirit è arrivato da noi in condizioni precarie. Sei mesi dopo, trotta libero nella riserva. La storia della sua riabilitazione.",
+        "body": [
+          "Spirit è arrivato a Nova's Legacy nel luglio 2024 segnalato da un veterinario locale. Era sottopeso, con problemi agli zoccoli e chiari segni di trascuratezza. Kim lo ha accolto senza esitazione.",
+          "Le prime settimane sono state le più difficili. Spirit era diffidente verso gli esseri umani e mostrava comportamenti ansiosi tipici di un animale che ha vissuto una storia difficile. Il team ha lavorato con pazienza, lasciandogli i suoi tempi, offrendogli cibo di qualità e cure veterinarie regolari.",
+          "Il punto di svolta è arrivato dopo circa un mese. Spirit ha cominciato ad avvicinarsi spontaneamente ai volontari durante i pasti del mattino. Da quel momento la sua fiducia è cresciuta rapidamente.",
+          "Oggi Spirit pesa 480 kg, ha il mantello lucido e i zoccoli sani. Ogni mattina percorre il perimetro della riserva in piccoli trotti, come se volesse controllare che tutto sia al suo posto. È diventato il preferito dei bambini che visitano la riserva con le scuole — e forse uno degli ambasciatori più efficaci del nostro programma di riabilitazione."
+        ]
       },
       {
         "tag": "Educazione",
         "date": "22 Gennaio 2025",
         "title": "200 bambini in visita dalla scuola di Bela-Bela",
-        "excerpt": "Il nostro programma educativo ha accolto 200 studenti locali. Per molti di loro, era la prima volta che vedevano un ghepardo da vicino."
+        "excerpt": "Il nostro programma educativo ha accolto 200 studenti locali. Per molti di loro, era la prima volta che vedevano un ghepardo da vicino.",
+        "body": [
+          "Il 20 gennaio 2025, Nova's Legacy ha aperto i cancelli a 200 studenti delle scuole primarie di Bela-Bela, dai 7 ai 12 anni. È stata la più grande giornata educativa della nostra storia.",
+          "Il programma prevedeva quattro stazioni: un'introduzione alla biologia del ghepardo tenuta da Kim, una dimostrazione di tracciamento nel bush, l'osservazione dei ghepardi nel recinto e un laboratorio pratico su come costruire un riparo per animali selvatici con materiali naturali.",
+          "Per molti bambini — in particolare quelli cresciuti in zone urbane — era la prima volta che si trovavano a pochi metri da un grande felino. Le reazioni variano sempre: chi si avvicina con curiosità, chi si ferma a distanza di sicurezza con gli occhi spalancati, chi fa domande a raffica che mettono alla prova anche Kim.",
+          "\"L'educazione è il fondamento di ogni progetto di conservazione\", dice Kim. \"Se questi bambini crescono con una comprensione reale di ciò che il ghepardo è — non l'immagine stilizzata su una maglietta, ma l'animale vero, con i suoi bisogni e le sue fragilità — allora il futuro della specie è in mani migliori.\""
+        ]
       },
       {
         "tag": "Cheetah Run",
         "date": "10 Gennaio 2025",
         "title": "Il Cheetah Run: come funziona e come prepararsi",
-        "excerpt": "Tutto quello che devi sapere prima di correre accanto al ghepardo più veloce del mondo. Consigli, FAQ e prenotazione."
+        "excerpt": "Tutto quello che devi sapere prima di correre accanto al ghepardo più veloce del mondo. Consigli, FAQ e prenotazione.",
+        "body": [
+          "Il Cheetah Run è l'esperienza più emozionante che offriamo a Nova's Legacy. Per 60 metri, corri accanto a un ghepardo a piena velocità. Dura circa 8 secondi. Si parla di questo per anni.",
+          "Come funziona: arrivi alla riserva almeno 30 minuti prima dell'orario prenotato. Kim o uno dei trainer ti spiega le regole di sicurezza e ti presenta il ghepardo con cui correrai. La pista è pianeggiante, delimitata da una recinzione bassa sul lato del ghepardo. Al segnale, partite entrambi. Il ghepardo viene guidato da un richiamo visivo e da un trainer esperto.",
+          "Cosa aspettarsi fisicamente: il ghepardo parte lento, poi accelera. Anche a velocità ridotta — non raggiunge mai i 112 km/h in questa configurazione — è un'esperienza sensoriale intensa. Il suono dei passi sul terreno secco, la polvere sollevata, la sensazione di correre accanto a qualcosa di molto, molto più veloce di te.",
+          "Consigli pratici: indossa scarpe da corsa chiuse e abiti comodi. Porta acqua. Non portare profumi forti. Se hai problemi alle ginocchia o alla schiena, consultaci prima di prenotare. Età minima: 12 anni. Non è richiesta preparazione atletica — il ritmo lo dà il ghepardo."
+        ]
       }
     ]
   },

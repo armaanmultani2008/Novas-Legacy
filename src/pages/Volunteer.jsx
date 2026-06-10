@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import Lightbox from '../components/Lightbox'
 
 const B = 'https://novaslegacy.com/wp-content/uploads/2022/08/'
 
@@ -16,6 +18,7 @@ function Volunteer({ goTo }) {
   const schedule  = t('volunteer.schedule',   { returnObjects: true })
   const tasks     = t('volunteer.tasks',      { returnObjects: true })
   const photoCaps = t('volunteer.photo_caps', { returnObjects: true })
+  const [lbIdx, setLbIdx] = useState(null)
 
   return (
     <>
@@ -52,6 +55,7 @@ function Volunteer({ goTo }) {
                   position: 'relative',
                   cursor: 'pointer',
                 }}
+                onClick={() => setLbIdx(i)}
               >
                 <img
                   src={src}
@@ -79,6 +83,10 @@ function Volunteer({ goTo }) {
               </div>
             ))}
           </div>
+
+          {lbIdx !== null && (
+            <Lightbox srcs={VOL_PHOTO_SRCS} captions={photoCaps} idx={lbIdx} setIdx={setLbIdx} />
+          )}
 
           <div className="highlight">
             <p>{t('volunteer.highlight')}</p>

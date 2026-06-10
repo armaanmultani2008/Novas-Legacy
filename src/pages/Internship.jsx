@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
+import Lightbox from '../components/Lightbox'
 
 const B = 'https://novaslegacy.com/wp-content/uploads/2022/'
 
@@ -19,10 +21,13 @@ const PHOTOS = [
   B + '08/IMG-20210203-WA0023.jpg',
 ]
 
+const ALL_IMGS = [...PHOTOS, ...FIELD_IMGS]
+
 function Internship({ goTo }) {
   useScrollReveal()
   const { t } = useTranslation()
   const fieldLabels = t('internship.field_labels', { returnObjects: true })
+  const [lbIdx, setLbIdx] = useState(null)
 
   return (
     <>
@@ -59,7 +64,9 @@ function Internship({ goTo }) {
                   overflow: 'hidden',
                   borderRadius: '4px',
                   transitionDelay: `${i * 0.08}s`,
+                  cursor: 'pointer',
                 }}
+                onClick={() => setLbIdx(i)}
               >
                 <img
                   src={src}
@@ -96,7 +103,10 @@ function Internship({ goTo }) {
                   transitionDelay: `${i * 0.07}s`,
                 }}
               >
-                <div style={{ height: '130px', overflow: 'hidden', position: 'relative' }}>
+                <div
+                  style={{ height: '130px', overflow: 'hidden', position: 'relative', cursor: 'pointer' }}
+                  onClick={() => setLbIdx(PHOTOS.length + i)}
+                >
                   <img
                     src={FIELD_IMGS[i]}
                     alt={label}
@@ -121,6 +131,10 @@ function Internship({ goTo }) {
               </div>
             ))}
           </div>
+
+          {lbIdx !== null && (
+            <Lightbox srcs={ALL_IMGS} idx={lbIdx} setIdx={setLbIdx} />
+          )}
 
           <h2>{t('internship.includes_title')}</h2>
           <p>{t('internship.includes_p')}</p>

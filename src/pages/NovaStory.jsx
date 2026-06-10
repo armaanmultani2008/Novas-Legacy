@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import Lightbox from '../components/Lightbox'
 
 const PHOTOS = [
   { src: '/img/nova-primo-piano.png' },
@@ -6,15 +8,21 @@ const PHOTOS = [
   { src: '/img/ghepardo-erba.png' },
   { src: '/img/due-ghepardi.png' },
 ]
+const PHOTO_SRCS = PHOTOS.map(p => p.src)
 
 function NovaStory({ goTo }) {
   const { t } = useTranslation()
   const photoCaps = t('nova_story.photo_caps', { returnObjects: true })
+  const [lbIdx, setLbIdx] = useState(null)
 
   return (
     <>
       <div className="page-hero-img">
-        <img src="/img/nova-primo-piano.png" alt="Nova — la gheparda fondatrice" />
+        <img
+          src="/img/nova-primo-piano.png"
+          alt="Nova — la gheparda fondatrice"
+          style={{ objectPosition: 'center 35%' }}
+        />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">{t('nova_story.hero_label')}</span>
@@ -42,7 +50,11 @@ function NovaStory({ goTo }) {
             margin: '2.5rem 0',
           }}>
             {PHOTOS.map((p, i) => (
-              <div key={i} style={{ height: '260px', overflow: 'hidden', position: 'relative' }}>
+              <div
+                key={i}
+                style={{ height: '260px', overflow: 'hidden', position: 'relative', cursor: 'pointer' }}
+                onClick={() => setLbIdx(i)}
+              >
                 <img
                   src={p.src}
                   alt={photoCaps[i]}
@@ -63,6 +75,10 @@ function NovaStory({ goTo }) {
               </div>
             ))}
           </div>
+
+          {lbIdx !== null && (
+            <Lightbox srcs={PHOTO_SRCS} captions={photoCaps} idx={lbIdx} setIdx={setLbIdx} />
+          )}
 
           <h2>{t('nova_story.genetics_title')}</h2>
           <p>{t('nova_story.genetics_p1')}</p>

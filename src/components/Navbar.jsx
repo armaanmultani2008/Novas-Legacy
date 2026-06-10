@@ -12,6 +12,7 @@ function Navbar({ goTo }) {
       page: 'nova-story',
       children: [
         { label: t('nav.nova_story'),    page: 'nova-story',   sym: '◆' },
+        { label: t('nav.kim_story'),     page: 'kim-story',    sym: '◆' },
         { label: t('nav.cheetah_run'),   page: 'cheetah-run',  sym: '→' },
         { label: t('nav.adopt_animal'),  page: 'adopt',        sym: '♡' },
       ],

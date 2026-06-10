@@ -15,6 +15,7 @@
     "home": "Home",
     "cheetahs": "I Ghepardi",
     "nova_story": "La Storia di Nova",
+    "kim_story": "La Storia di Kim",
     "cheetah_run": "Cheetah Run",
     "adopt_animal": "Adotta un Animale",
     "conservation": "Conservazione",
@@ -114,6 +115,7 @@
     "form_reason_other": "Altro",
     "form_message": "Il tuo messaggio...",
     "form_success": "Messaggio inviato! Kim ti risponderà presto.",
+    "form_error": "Errore nell'invio. Scrivi direttamente a kim@novaslegacy.co.za",
     "gallery_captions": [
       "La Riserva",
       "I Ghepardi",
@@ -640,5 +642,20 @@
         "Mangime per selvaggina o cavalli per sostenere la loro dieta."
       ]
     }
+  },
+  "kim_story": {
+    "hero_label": "Il Team",
+    "hero_title": "Il Cuore di",
+    "hero_title_em": "Nova's Legacy",
+    "hero_sub": "La donna che ha dato vita a tutto — infermiera veterinaria, conservazionista e custode dei ghepardi.",
+    "section_label": "Missione",
+    "section_title": "La Storia",
+    "section_title_em": "di Kim",
+    "p1": "Nata nell'84, subito dopo aver completato gli studi da infermiera veterinaria, si è trasferita in Sudafrica. Qui inizia un percorso di lavoro con gli animali e in particolare con la fauna selvatica. Kim ha cominciato a lavorare con gli uccelli, poi si è spostata verso i felini di piccola taglia e infine si è fermata sui grandi felini.",
+    "quote1": "Nova è stato il primissimo cucciolo di ghepardo che ho allevato a mano. Mi ha insegnato la bellezza dei ghepardi, il legame incredibile che possono formare con i loro custodi e tutti i problemi che affrontano come specie.",
+    "quote2": "Nova e io abbiamo trascorso quasi 11 anni insieme, un periodo in cui Nova mi ha spinto a lottare per la sopravvivenza dei ghepardi.",
+    "quote3": "L'eredità di Nova continuerà a combattere per la specie attraverso l'allevamento in cattività, con l'obiettivo di dare ai ghepardi una possibilità di sopravvivenza in un mondo dove stanno esaurendo lo spazio.",
+    "btn1": "La Storia di Nova",
+    "btn2": "Adotta un Ghepardo"
   }
 }

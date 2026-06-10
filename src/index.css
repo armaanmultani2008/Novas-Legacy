@@ -1766,24 +1766,34 @@ footer {
 }
 
 .donate-amount-btn {
-  padding: 0.7rem 1.6rem;
-  border: 1.5px solid #DDD;
-  background: transparent;
+  padding: 0.75rem 1.7rem;
+  border: 2px solid #DDD;
+  background: var(--white);
   font-family: var(--serif);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--dark);
   cursor: pointer;
   border-radius: 50px;
-  transition: all 0.2s;
+  transition: all 0.22s;
+  min-width: 78px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  letter-spacing: 0.01em;
 }
 
-.donate-amount-btn:hover { border-color: var(--gold); color: var(--gold); }
+.donate-amount-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: 0 6px 20px rgba(200,136,10,0.18);
+  transform: translateY(-2px);
+}
 
 .donate-amount-btn.active {
   background: var(--dark);
   color: var(--white);
   border-color: var(--dark);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  transform: translateY(-2px);
 }
 
 .donate-custom { margin-bottom: 1.5rem; }
@@ -1889,6 +1899,60 @@ footer {
   .donate-impact { grid-template-columns: repeat(2, 1fr); }
   .donate-page { padding: 4rem 1.5rem; }
   .donate-card { padding: 1.5rem; }
+}
+
+/* ======================================================
+   KIM STORY PAGE
+   ====================================================== */
+
+.kim-split {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 4rem;
+  align-items: start;
+  margin: 3rem 0 4rem;
+}
+
+.kim-photo-wrap {
+  position: sticky;
+  top: 6rem;
+}
+
+.kim-photo-wrap img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: top center;
+  border-radius: 2px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
+
+.kim-quotes {
+  display: flex;
+  flex-direction: column;
+  gap: 2.2rem;
+  margin: 1rem 0 3rem;
+  border-left: 3px solid var(--gold);
+  padding-left: 2.5rem;
+}
+
+.kim-quote {
+  margin: 0;
+  padding: 0;
+}
+
+.kim-quote p {
+  font-family: var(--serif);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-style: italic;
+  color: var(--dark);
+  line-height: 1.75;
+  font-weight: 400;
+}
+
+@media (max-width: 860px) {
+  .kim-split { grid-template-columns: 1fr; gap: 2rem; }
+  .kim-photo-wrap { position: static; max-width: 400px; }
 }
 
 /* ======================================================

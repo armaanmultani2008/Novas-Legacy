@@ -642,5 +642,20 @@
         "Game or horse feed to sustain their diets."
       ]
     }
+  },
+  "kim_story": {
+    "hero_label": "The Team",
+    "hero_title": "The Heart of",
+    "hero_title_em": "Nova's Legacy",
+    "hero_sub": "The woman who started it all — vet nurse, conservationist and cheetah caretaker.",
+    "section_label": "Mission",
+    "section_title": "The Story",
+    "section_title_em": "of Kim",
+    "p1": "Born in ’84, immediately after finishing her studies as a vet nurse, she moved to South Africa. Here begins a path of working with animals and wildlife in specific. Kim started working with birds, then moved over to small cat species and eventually settled on big cats.",
+    "quote1": "Nova was the very first cheetah cub I hand reared. He taught me the beauty in cheetahs, the incredible bond they can form with their carers and all the problems they face as a species.",
+    "quote2": "Nova and I spent nearly 11 years together, a time where Nova pushed me to fight for the cheetahs' survival.",
+    "quote3": "Nova’s legacy will continue to fight for the species through captive breeding with the aim to give cheetahs a fighting chance in a world where they are running out of space.",
+    "btn1": "Nova's Story",
+    "btn2": "Adopt a Cheetah"
   }
 }

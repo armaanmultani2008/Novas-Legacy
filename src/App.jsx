@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Cheetah from './pages/Cheetah'
 import CheetahRun from './pages/CheetahRun'
 import NovaStory from './pages/NovaStory'
+import KimStory from './pages/KimStory'
 import Conservation from './pages/Conservation'
 import Horses from './pages/Horses'
 import Volunteer from './pages/Volunteer'
@@ -21,6 +22,7 @@ const pages = {
   cheetah: Cheetah,
   'cheetah-run': CheetahRun,
   'nova-story': NovaStory,
+  'kim-story': KimStory,
   conservation: Conservation,
   horses: Horses,
   volunteer: Volunteer,

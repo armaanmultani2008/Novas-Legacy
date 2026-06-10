@@ -120,6 +120,26 @@ function Home({ goTo }) {
   const heroTitleWords = t('home.hero_title').split(' ')
   const cta2parts = t('home.cta_title').split('. ')
 
+  const [contactForm, setContactForm] = useState({ name: '', surname: '', email: '', phone: '', reason: '', message: '' })
+  const [contactStatus, setContactStatus] = useState(null) // null | 'sending' | 'ok' | 'error'
+
+  async function handleContactSubmit(e) {
+    e.preventDefault()
+    setContactStatus('sending')
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://novas-legacy-api.onrender.com'}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(contactForm),
+      })
+      if (!res.ok) throw new Error('server')
+      setContactStatus('ok')
+      setContactForm({ name: '', surname: '', email: '', phone: '', reason: '', message: '' })
+    } catch {
+      setContactStatus('error')
+    }
+  }
+
   return (
     <>
       {/* ── HERO ── */}
@@ -466,26 +486,65 @@ function Home({ goTo }) {
 
           <form
             className="contact-form rv-right"
-            onSubmit={e => { e.preventDefault(); alert(t('home.form_success')) }}
+            onSubmit={handleContactSubmit}
           >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <input placeholder={t('home.form_name')} required />
-              <input placeholder={t('home.form_surname')} required />
+              <input
+                placeholder={t('home.form_name')} required
+                value={contactForm.name}
+                onChange={e => setContactForm(f => ({ ...f, name: e.target.value }))}
+              />
+              <input
+                placeholder={t('home.form_surname')}
+                value={contactForm.surname}
+                onChange={e => setContactForm(f => ({ ...f, surname: e.target.value }))}
+              />
             </div>
-            <input type="email" placeholder={t('home.form_email')} required />
-            <input type="tel" placeholder={t('home.form_phone')} />
-            <select defaultValue="">
+            <input
+              type="email" placeholder={t('home.form_email')} required
+              value={contactForm.email}
+              onChange={e => setContactForm(f => ({ ...f, email: e.target.value }))}
+            />
+            <input
+              type="tel" placeholder={t('home.form_phone')}
+              value={contactForm.phone}
+              onChange={e => setContactForm(f => ({ ...f, phone: e.target.value }))}
+            />
+            <select
+              value={contactForm.reason}
+              onChange={e => setContactForm(f => ({ ...f, reason: e.target.value }))}
+            >
               <option value="" disabled>{t('home.form_reason')}</option>
-              <option>{t('home.form_reason_vol')}</option>
-              <option>{t('home.form_reason_int')}</option>
-              <option>{t('home.form_reason_stay')}</option>
-              <option>{t('home.form_reason_run')}</option>
-              <option>{t('home.form_reason_adopt')}</option>
-              <option>{t('home.form_reason_donate')}</option>
-              <option>{t('home.form_reason_other')}</option>
+              <option value={t('home.form_reason_vol')}>{t('home.form_reason_vol')}</option>
+              <option value={t('home.form_reason_int')}>{t('home.form_reason_int')}</option>
+              <option value={t('home.form_reason_stay')}>{t('home.form_reason_stay')}</option>
+              <option value={t('home.form_reason_run')}>{t('home.form_reason_run')}</option>
+              <option value={t('home.form_reason_adopt')}>{t('home.form_reason_adopt')}</option>
+              <option value={t('home.form_reason_donate')}>{t('home.form_reason_donate')}</option>
+              <option value={t('home.form_reason_other')}>{t('home.form_reason_other')}</option>
             </select>
-            <textarea placeholder={t('home.form_message')} rows={5} />
-            <button type="submit" className="btn btn-dark">{t('common.send_message')}</button>
+            <textarea
+              placeholder={t('home.form_message')} rows={5}
+              value={contactForm.message}
+              onChange={e => setContactForm(f => ({ ...f, message: e.target.value }))}
+            />
+            {contactStatus === 'ok' && (
+              <p style={{ color: '#3a7d44', fontFamily: 'Outfit,sans-serif', margin: '0 0 0.5rem' }}>
+                {t('home.form_success')}
+              </p>
+            )}
+            {contactStatus === 'error' && (
+              <p style={{ color: '#c0392b', fontFamily: 'Outfit,sans-serif', margin: '0 0 0.5rem' }}>
+                {t('home.form_error')}
+              </p>
+            )}
+            <button
+              type="submit"
+              className="btn btn-dark"
+              disabled={contactStatus === 'sending'}
+            >
+              {contactStatus === 'sending' ? '...' : t('common.send_message')}
+            </button>
           </form>
         </div>
 

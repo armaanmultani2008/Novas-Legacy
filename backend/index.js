@@ -231,6 +231,40 @@ app.post('/api/stripe/checkout', async (req, res) => {
     }
 });
 
+// ── Contact form → email a Kim ────────────────────────────────────────────────
+app.post('/api/contact', async (req, res) => {
+  const { name, surname, email, phone, reason, message } = req.body;
+  if (!name || !email) return res.status(400).json({ error: 'Nome ed email richiesti' });
+  if (!envVars.EMAIL_USER || !envVars.EMAIL_PASS) {
+    return res.status(503).json({ error: 'Email non configurata sul server' });
+  }
+  try {
+    await transporter.sendMail({
+      from: `"Nova's Legacy Form" <${envVars.EMAIL_USER}>`,
+      to: envVars.EMAIL_TO || 'kim@novaslegacy.co.za',
+      replyTo: email,
+      subject: `Nuovo contatto: ${reason || 'Richiesta generica'} — ${name} ${surname || ''}`.trim(),
+      html: `
+        <div style="font-family:sans-serif;max-width:520px;color:#111">
+          <h3 style="color:#C8880A">Nuovo messaggio dal sito Nova's Legacy</h3>
+          <table style="border-collapse:collapse;width:100%">
+            <tr><td style="padding:6px 12px;font-weight:bold">Nome</td><td style="padding:6px 12px">${name} ${surname || ''}</td></tr>
+            <tr style="background:#f5f5f5"><td style="padding:6px 12px;font-weight:bold">Email</td><td style="padding:6px 12px"><a href="mailto:${email}">${email}</a></td></tr>
+            <tr><td style="padding:6px 12px;font-weight:bold">Telefono</td><td style="padding:6px 12px">${phone || '—'}</td></tr>
+            <tr style="background:#f5f5f5"><td style="padding:6px 12px;font-weight:bold">Motivo</td><td style="padding:6px 12px">${reason || '—'}</td></tr>
+          </table>
+          <div style="margin-top:1rem;padding:1rem;background:#fafafa;border-left:3px solid #C8880A">
+            <p style="margin:0;white-space:pre-wrap">${message || '(nessun messaggio)'}</p>
+          </div>
+          <p style="margin-top:1.5rem;font-size:0.8rem;color:#999">Inviato tramite novaslegacy.co.za</p>
+        </div>`,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.listen(PORT, () => {
     console.log(`Server in esecuzione sulla porta ${PORT}`);
 });

@@ -15,6 +15,7 @@
     "home": "Home",
     "cheetahs": "Cheetahs",
     "nova_story": "Nova's Story",
+    "kim_story": "Kim's Story",
     "cheetah_run": "Cheetah Run",
     "adopt_animal": "Adopt an Animal",
     "conservation": "Conservation",
@@ -114,6 +115,7 @@
     "form_reason_other": "Other",
     "form_message": "Your message...",
     "form_success": "Message sent! Kim will reply soon.",
+    "form_error": "Sending failed. Please write directly to kim@novaslegacy.co.za",
     "gallery_captions": [
       "The Reserve",
       "The Cheetahs",

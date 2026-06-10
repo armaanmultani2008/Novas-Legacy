@@ -120,8 +120,21 @@ function Home({ goTo }) {
   const heroTitleWords = t('home.hero_title').split(' ')
   const cta2parts = t('home.cta_title').split('. ')
 
+  const [lightboxIdx, setLightboxIdx] = useState(null)
+
+  useEffect(() => {
+    if (lightboxIdx === null) return
+    function onKey(e) {
+      if (e.key === 'Escape') setLightboxIdx(null)
+      if (e.key === 'ArrowRight') setLightboxIdx(i => (i + 1) % GALLERY_SRCS.length)
+      if (e.key === 'ArrowLeft')  setLightboxIdx(i => (i - 1 + GALLERY_SRCS.length) % GALLERY_SRCS.length)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [lightboxIdx])
+
   const [contactForm, setContactForm] = useState({ name: '', surname: '', email: '', phone: '', reason: '', message: '' })
-  const [contactStatus, setContactStatus] = useState(null) // null | 'sending' | 'ok' | 'error'
+  const [contactStatus, setContactStatus] = useState(null)
 
   async function handleContactSubmit(e) {
     e.preventDefault()
@@ -444,12 +457,24 @@ function Home({ goTo }) {
 
         <div className="gallery-masonry">
           {GALLERY_SRCS.map((src, i) => (
-            <div key={i} className="gm-item">
+            <div key={i} className="gm-item" onClick={() => setLightboxIdx(i)}>
               <img src={src} alt={galleryCaptions[i]} loading="lazy" />
               <div className="gm-caption">{galleryCaptions[i]}</div>
             </div>
           ))}
         </div>
+
+        {lightboxIdx !== null && (
+          <div className="lb-overlay" onClick={() => setLightboxIdx(null)}>
+            <button className="lb-close" onClick={() => setLightboxIdx(null)}>✕</button>
+            <button className="lb-nav lb-prev" onClick={e => { e.stopPropagation(); setLightboxIdx(i => (i - 1 + GALLERY_SRCS.length) % GALLERY_SRCS.length) }}>‹</button>
+            <div className="lb-content" onClick={e => e.stopPropagation()}>
+              <img src={GALLERY_SRCS[lightboxIdx]} alt={galleryCaptions[lightboxIdx]} />
+              <p className="lb-caption">{galleryCaptions[lightboxIdx]}</p>
+            </div>
+            <button className="lb-nav lb-next" onClick={e => { e.stopPropagation(); setLightboxIdx(i => (i + 1) % GALLERY_SRCS.length) }}>›</button>
+          </div>
+        )}
       </section>
 
       {/* ── VOLUNTEER ── */}

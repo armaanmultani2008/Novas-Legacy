@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next'
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 const ANIMALS = [
-  { name: 'Storm',    species: 'Golden Tabby Tiger', price: 15, img: '/img/adotta-storm.png' },
-  { name: 'Guinness', species: 'King Cheetah',       price: 20, img: '/img/adotta-guiness.png' },
-  { name: 'Lyvia',    species: 'Cheetah',            price: 15, img: '/img/adotta-lyvia.png' },
-  { name: 'Oakley',   species: 'Cheetah',            price: 15, img: '/img/adotta-oakley.png' },
-  { name: 'Jagger',   species: 'Cheetah',            price: 12, img: '/img/adotta-jagger.png' },
+  { name: 'Storm',    species: 'Golden Tabby Tiger', price: 15, img: '/img/adopt-storm.png' },
+  { name: 'Guinness', species: 'King Cheetah',       price: 20, img: '/img/adopt-guinness.png' },
+  { name: 'Lyvia',    species: 'Cheetah',            price: 15, img: '/img/adopt-lyvia.png' },
+  { name: 'Oakley',   species: 'Cheetah',            price: 15, img: '/img/adopt-oakley.png' },
+  { name: 'Jagger',   species: 'Cheetah',            price: 12, img: '/img/adopt-jagger.png' },
 ]
 
 function Adopt({ goTo }) {

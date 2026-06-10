@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- Sky gradient: deep indigo-black → rich amber → gold horizon -->
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#0d0400"/>
+      <stop offset="28%"  stop-color="#3d1208"/>
+      <stop offset="58%"  stop-color="#8b3a0a"/>
+      <stop offset="80%"  stop-color="#c8880a"/>
+      <stop offset="100%" stop-color="#e8b84b"/>
+    </linearGradient>
+
+    <!-- Ground gradient -->
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#1e0e00"/>
+      <stop offset="100%" stop-color="#0a0600"/>
+    </linearGradient>
+
+    <!-- Sun glow radial -->
+    <radialGradient id="sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#fff4c2" stop-opacity="0.95"/>
+      <stop offset="18%"  stop-color="#f5c842" stop-opacity="0.85"/>
+      <stop offset="45%"  stop-color="#e8880a" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#c8880a" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Horizon glow -->
+    <radialGradient id="glow" cx="50%" cy="100%" r="60%">
+      <stop offset="0%"   stop-color="#e8b84b" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#c8880a" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Haze layer along horizon -->
+    <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#e8b84b" stop-opacity="0"/>
+      <stop offset="40%"  stop-color="#c8880a" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#c8880a" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── Sky ── -->
+  <rect width="1200" height="900" fill="url(#sky)"/>
+
+  <!-- Horizon atmospheric haze -->
+  <rect x="0" y="520" width="1200" height="160" fill="url(#haze)"/>
+
+  <!-- Sun glow disk -->
+  <ellipse cx="600" cy="645" rx="200" ry="200" fill="url(#sun)"/>
+
+  <!-- Sun hard circle -->
+  <circle cx="600" cy="645" r="26" fill="#fff8d6" opacity="0.96"/>
+  <circle cx="600" cy="645" r="18" fill="#fffbe8" opacity="1"/>
+
+  <!-- Horizon glow reflection -->
+  <ellipse cx="600" cy="660" rx="520" ry="60" fill="url(#glow)"/>
+
+  <!-- ── Subtle cheetah-spot bokeh in sky ── -->
+  <circle cx="180"  cy="160" r="28" fill="#c8880a" opacity="0.07"/>
+  <circle cx="340"  cy="95"  r="18" fill="#c8880a" opacity="0.06"/>
+  <circle cx="260"  cy="280" r="36" fill="#c8880a" opacity="0.05"/>
+  <circle cx="920"  cy="130" r="24" fill="#c8880a" opacity="0.07"/>
+  <circle cx="1040" cy="240" r="32" fill="#c8880a" opacity="0.06"/>
+  <circle cx="1100" cy="80"  r="16" fill="#c8880a" opacity="0.05"/>
+  <circle cx="470"  cy="60"  r="20" fill="#c8880a" opacity="0.05"/>
+  <circle cx="730"  cy="110" r="14" fill="#c8880a" opacity="0.07"/>
+  <circle cx="820"  cy="310" r="40" fill="#c8880a" opacity="0.04"/>
+
+  <!-- ── Ground ── -->
+  <rect x="0" y="648" width="1200" height="252" fill="url(#ground)"/>
+
+  <!-- Ground edge softening -->
+  <rect x="0" y="648" width="1200" height="8" fill="#e8b84b" opacity="0.08"/>
+
+  <!-- ── Tall grass silhouette along horizon ── -->
+  <!-- Left cluster -->
+  <ellipse cx="60"  cy="648" rx="35" ry="22" fill="#0d0500"/>
+  <ellipse cx="100" cy="645" rx="28" ry="18" fill="#0d0500"/>
+  <ellipse cx="30"  cy="652" rx="22" ry="14" fill="#0d0500"/>
+  <!-- Right cluster -->
+  <ellipse cx="1140" cy="648" rx="35" ry="22" fill="#0d0500"/>
+  <ellipse cx="1100" cy="645" rx="28" ry="18" fill="#0d0500"/>
+  <ellipse cx="1170" cy="652" rx="22" ry="14" fill="#0d0500"/>
+  <!-- Mid-left -->
+  <ellipse cx="370"  cy="650" rx="20" ry="12" fill="#0d0500"/>
+  <ellipse cx="400"  cy="648" rx="15" ry="9"  fill="#0d0500"/>
+  <!-- Mid-right -->
+  <ellipse cx="820"  cy="650" rx="20" ry="12" fill="#0d0500"/>
+  <ellipse cx="848"  cy="648" rx="16" ry="10" fill="#0d0500"/>
+
+  <!-- ──────────────────────────────────────────────
+       ACACIA TREES — flat-topped African silhouettes
+       ────────────────────────────────────────────── -->
+
+  <!-- ── Tree A — main center-left, tallest ── -->
+  <!-- trunk -->
+  <rect x="468" y="420" width="12" height="228" fill="#0d0500"/>
+  <!-- branch left -->
+  <line x1="474" y1="470" x2="400" y2="440" stroke="#0d0500" stroke-width="7" stroke-linecap="round"/>
+  <!-- branch right -->
+  <line x1="474" y1="455" x2="560" y2="428" stroke="#0d0500" stroke-width="7" stroke-linecap="round"/>
+  <!-- canopy — flat acacia top -->
+  <ellipse cx="474" cy="405" rx="115" ry="28" fill="#0d0500"/>
+  <ellipse cx="430" cy="415" rx="70"  ry="22" fill="#0d0500"/>
+  <ellipse cx="520" cy="412" rx="78"  ry="20" fill="#0d0500"/>
+  <ellipse cx="390" cy="422" rx="45"  ry="16" fill="#0d0500"/>
+  <ellipse cx="558" cy="420" rx="50"  ry="15" fill="#0d0500"/>
+  <!-- small canopy fill gaps -->
+  <ellipse cx="460" cy="420" rx="58"  ry="14" fill="#0d0500"/>
+
+  <!-- ── Tree B — right side ── -->
+  <rect x="768" y="460" width="10" height="188" fill="#0d0500"/>
+  <line x1="773" y1="505" x2="700" y2="475" stroke="#0d0500" stroke-width="6" stroke-linecap="round"/>
+  <line x1="773" y1="490" x2="850" y2="468" stroke="#0d0500" stroke-width="6" stroke-linecap="round"/>
+  <ellipse cx="773" cy="448" rx="96"  ry="24" fill="#0d0500"/>
+  <ellipse cx="730" cy="456" rx="60"  ry="19" fill="#0d0500"/>
+  <ellipse cx="818" cy="454" rx="65"  ry="18" fill="#0d0500"/>
+  <ellipse cx="695" cy="462" rx="38"  ry="14" fill="#0d0500"/>
+  <ellipse cx="855" cy="460" rx="42"  ry="13" fill="#0d0500"/>
+
+  <!-- ── Tree C — far left background, smaller ── -->
+  <rect x="210" y="520" width="7" height="128" fill="#0d0500" opacity="0.7"/>
+  <line x1="213" y1="555" x2="162" y2="536" stroke="#0d0500" stroke-width="5" opacity="0.7" stroke-linecap="round"/>
+  <line x1="213" y1="545" x2="268" y2="530" stroke="#0d0500" stroke-width="5" opacity="0.7" stroke-linecap="round"/>
+  <ellipse cx="213" cy="510" rx="70"  ry="18" fill="#0d0500" opacity="0.7"/>
+  <ellipse cx="178" cy="518" rx="44"  ry="14" fill="#0d0500" opacity="0.7"/>
+  <ellipse cx="250" cy="516" rx="48"  ry="13" fill="#0d0500" opacity="0.7"/>
+
+  <!-- ── Tree D — far right background, smaller ── -->
+  <rect x="988" y="505" width="7" height="143" fill="#0d0500" opacity="0.65"/>
+  <line x1="991" y1="540" x2="942" y2="520" stroke="#0d0500" stroke-width="5" opacity="0.65" stroke-linecap="round"/>
+  <line x1="991" y1="530" x2="1044" y2="514" stroke="#0d0500" stroke-width="5" opacity="0.65" stroke-linecap="round"/>
+  <ellipse cx="991" cy="493" rx="74"  ry="19" fill="#0d0500" opacity="0.65"/>
+  <ellipse cx="954" cy="501" rx="46"  ry="15" fill="#0d0500" opacity="0.65"/>
+  <ellipse cx="1028" cy="499" rx="50" ry="14" fill="#0d0500" opacity="0.65"/>
+
+  <!-- ── Distant tiny trees on horizon ── -->
+  <rect x="640" y="610" width="4" height="38" fill="#0d0500" opacity="0.5"/>
+  <ellipse cx="642" cy="606" rx="28" ry="9" fill="#0d0500" opacity="0.5"/>
+
+  <rect x="680" y="618" width="3" height="30" fill="#0d0500" opacity="0.4"/>
+  <ellipse cx="681" cy="615" rx="22" ry="7" fill="#0d0500" opacity="0.4"/>
+
+  <rect x="520" y="622" width="3" height="26" fill="#0d0500" opacity="0.4"/>
+  <ellipse cx="521" cy="619" rx="20" ry="6" fill="#0d0500" opacity="0.4"/>
+</svg>

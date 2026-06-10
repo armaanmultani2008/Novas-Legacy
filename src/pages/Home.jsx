@@ -322,31 +322,115 @@ function Home({ goTo }) {
       </section>
 
       {/* ── PROGRAMS GRID ── */}
-      <section className="programs" id="programs">
+      <section className="programs" id="programs" style={{ padding: '4rem 2rem', maxWidth: '1200px', margin: '0 auto' }}>
         <span className="label rv">{t('home.programs_label')}</span>
-        <h2 className="h2 rv rv-d1">
+        <h2 className="h2 rv rv-d1" style={{ margin: '0 0 2.5rem 0' }}>
           {t('home.programs_title').split(' ').slice(0, -3).join(' ')} <em>{t('home.programs_title').split(' ').slice(-3).join(' ')}</em>
         </h2>
 
-        <div className="programs-grid">
+        {/* Griglia ottimizzata: 3 colonne fisse su desktop, evita buchi e spazi vuoti asimmetrici */}
+        <div className="programs-grid" style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(var(--grid-cols, 3), 1fr)', /* Configurazione dinamica gestita via CSS o fallback */
+          gap: '1.5rem',
+          width: '100%'
+        }}>
           {PROG_PAGES.map((page, i) => (
-            <div
-              key={page}
-              className={`program-card rv rv-d${Math.min(i + 1, 5)}`}
-              onClick={() => goTo(page)}
-            >
-              <div className="program-img">
-                <img src={PROG_IMGS[i]} alt={progTitles[i]} />
+              <div
+                  key={page}
+                  className={`program-card rv rv-d${Math.min(i + 1, 5)}`}
+                  onClick={() => goTo(page)}
+                  style={{
+                    background: 'var(--off-white)',
+                    border: '1px solid #EDE5D8',
+                    overflow: 'hidden',
+                    transition: 'all 0.3s',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%' /* Forza tutte le schede ad avere la stessa identica altezza */
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = 'translateY(-5px)';
+                    e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.07)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'none';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+              >
+                {/* Contenitore immagine proporzionato con fuoco alto (280px) */}
+                <div className="program-img" style={{ height: '280px', overflow: 'hidden', position: 'relative', width: '100%' }}>
+                  <img
+                      src={PROG_IMGS[i]}
+                      alt={progTitles[i]}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        objectPosition: 'center 20%'
+                      }}
+                  />
+                </div>
+
+                {/* Corpo del testo spazioso con flex-grow per spingere i link tutti alla stessa altezza */}
+                <div className="program-body" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                  <div className="program-tag" style={{
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.15em',
+                    textTransform: 'uppercase',
+                    color: 'var(--gold)',
+                    marginBottom: '0.3rem'
+                  }}>
+                    {progTags[i]}
+                  </div>
+                  <h3 style={{
+                    fontFamily: 'var(--serif)',
+                    fontSize: '1.4rem',
+                    marginBottom: '0.5rem',
+                    color: 'var(--dark)',
+                    lineHeight: '1.3'
+                  }}>
+                    {progTitles[i]}
+                  </h3>
+                  <p style={{
+                    fontSize: '0.84rem',
+                    color: '#777',
+                    lineHeight: '1.65',
+                    fontWeight: 300,
+                    marginBottom: '1.4rem',
+                    flexGrow: 1 /* Satura lo spazio vuoto se il testo è più corto di un altro blocco */
+                  }}>
+                    {progDescs[i]}
+                  </p>
+                  <span className="program-link" style={{
+                    fontWeight: 600,
+                    fontSize: '0.85rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: 'var(--dark)',
+                    marginTop: 'auto' /* Allinea il link perfettamente sul fondo di ogni card */
+                  }}>
+                  {t('common.learn_more_arrow')}
+                </span>
+                </div>
               </div>
-              <div className="program-body">
-                <div className="program-tag">{progTags[i]}</div>
-                <h3>{progTitles[i]}</h3>
-                <p>{progDescs[i]}</p>
-                <span className="program-link">{t('common.learn_more_arrow')}</span>
-              </div>
-            </div>
           ))}
         </div>
+
+        {/* Piccolo blocco di stile inline per garantire il responsive perfetto senza toccare file CSS esterni */}
+        <style>{`
+          .programs-grid {
+            grid-template-columns: repeat(3, 1fr) !important;
+          }
+          @media (max-width: 992px) {
+            .programs-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          }
+          @media (max-width: 600px) {
+            .programs-grid { grid-template-columns: repeat(1, 1fr) !important; }
+          }
+        `}</style>
       </section>
 
       {/* ── GALLERY ── */}

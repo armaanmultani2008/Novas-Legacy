@@ -95,7 +95,6 @@ function Adopt({ goTo }) {
                         onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.07)' }}
                         onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none' }}
                     >
-                      {/* MODIFICATO: Altezza alzata a 280px per dare visibilità ai soggetti */}
                       <div style={{ height: '280px', overflow: 'hidden', position: 'relative' }}>
                         <img
                             src={a.img}

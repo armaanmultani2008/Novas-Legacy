@@ -208,22 +208,17 @@ function Home({ goTo }) {
       </section>
 
       {/* ── CHEETAH RUN ── */}
-      <section style={{ padding: '3.5rem 2rem', background: 'var(--sand-pale)' }}>
+      <section style={{ padding: '5rem 2rem', background: 'var(--sand-pale)' }}>
         <div className="cr-wrap">
-          {/* Immagine staccata su sfondo sabbia */}
-          <div style={{ padding: '2.5rem', display: 'flex', alignItems: 'center', background: 'var(--sand-pale)' }}>
-            <div style={{ borderRadius: '4px', overflow: 'hidden', width: '100%', boxShadow: '0 16px 48px rgba(0,0,0,0.22)' }}>
-              <img
-                src={IMG.cheetahRun}
-                alt="Cheetah Run"
-                style={{ width: '100%', height: '360px', objectFit: 'cover', display: 'block', transition: 'transform 0.6s cubic-bezier(0.22,1,0.36,1)' }}
-                onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.04)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'none'}
-              />
-            </div>
+          <div className="cr-img-col">
+            <img
+              src={IMG.cheetahRun}
+              alt="Cheetah Run"
+              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+            />
           </div>
-          {/* Testo: sfondo scuro solo sul pannello destro */}
-          <div className="cheetah-run-content" style={{ padding: '4rem 3.5rem' }}>
+          <div className="cheetah-run-content">
             <span className="label label-light rv">{t('home.run_label')}</span>
             <h2 className="rv rv-d1">
               {(() => {
@@ -247,15 +242,28 @@ function Home({ goTo }) {
             max-width: 1100px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            border-radius: 8px;
+            grid-template-columns: 1.15fr 1fr;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 20px 70px rgba(0,0,0,0.10);
+            box-shadow: 0 28px 90px rgba(0,0,0,0.18);
+            min-height: 480px;
+          }
+          .cr-img-col {
+            position: relative;
+            overflow: hidden;
+          }
+          .cr-img-col img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.7s cubic-bezier(0.22,1,0.36,1);
           }
           @media (max-width: 900px) {
-            .cr-wrap { grid-template-columns: 1fr; }
-            .cr-wrap > div:first-child { padding: 2rem; }
-            .cr-wrap > div:first-child img { height: 260px !important; }
+            .cr-wrap { grid-template-columns: 1fr; min-height: auto; }
+            .cr-img-col { height: 300px; position: relative; }
           }
         `}</style>
       </section>

@@ -536,7 +536,7 @@ nav.solid {
 
 .cheetah-run-content {
   background: var(--dark);
-  padding: 6rem 4rem;
+  padding: 4.5rem 3.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;

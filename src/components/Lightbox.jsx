@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 function Lightbox({ srcs, captions, idx, setIdx }) {
   const n = srcs.length
@@ -16,7 +17,7 @@ function Lightbox({ srcs, captions, idx, setIdx }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  return (
+  return createPortal(
     <div className="lb-overlay" onClick={close}>
       <button className="lb-close" onClick={close}>✕</button>
       <button className="lb-nav lb-prev" onClick={e => { e.stopPropagation(); prev() }}>‹</button>
@@ -25,7 +26,8 @@ function Lightbox({ srcs, captions, idx, setIdx }) {
         {captions?.[idx] && <p className="lb-caption">{captions[idx]}</p>}
       </div>
       <button className="lb-nav lb-next" onClick={e => { e.stopPropagation(); next() }}>›</button>
-    </div>
+    </div>,
+    document.body
   )
 }
 

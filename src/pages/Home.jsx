@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import Lightbox from '../components/Lightbox'
 
 const IMG = {
   hero:        '/img/ghepardo-erba.png',
@@ -103,6 +104,8 @@ function Home({ goTo }) {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  const [lbIdx, setLbIdx] = useState(null)
 
   const [contactForm, setContactForm] = useState({ name: '', surname: '', email: '', phone: '', reason: '', message: '' })
   const [contactStatus, setContactStatus] = useState(null)
@@ -430,7 +433,7 @@ function Home({ goTo }) {
           <div className="marquee-track">
             {[...Array(2)].flatMap((_, rep) =>
               ANIMALS_NAMES.map((name, i) => (
-                <div key={`${rep}-${name}`} className="animal-card">
+                <div key={`${rep}-${name}`} className="animal-card" onClick={() => setLbIdx(i)} style={{ cursor: 'pointer' }}>
                   <div className="animal-photo">
                     <img src={ANIMALS_SRCS[i]} alt={name} />
                   </div>
@@ -444,6 +447,10 @@ function Home({ goTo }) {
           </div>
         </div>
       </section>
+
+      {lbIdx !== null && (
+        <Lightbox srcs={ANIMALS_SRCS} captions={ANIMALS_NAMES} idx={lbIdx} setIdx={setLbIdx} />
+      )}
 
       {/* ── BIG CTA ── */}
       <section className="big-cta">

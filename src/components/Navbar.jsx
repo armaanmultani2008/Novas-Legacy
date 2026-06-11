@@ -169,7 +169,7 @@ function Navbar({ goTo }) {
           <div className="ovmenu__socials">
             <a href="https://instagram.com/novaslegacycheetahproject" target="_blank" rel="noreferrer">Instagram</a>
             <a href="https://facebook.com/Feracare" target="_blank" rel="noreferrer">Facebook</a>
-            <a href="https://www.tiktok.com/@novaslegacy" target="_blank" rel="noreferrer">TikTok</a>
+            <a href="https://www.tiktok.com/@novaslegacycheetahs" target="_blank" rel="noreferrer">TikTok</a>
           </div>
         </div>
 

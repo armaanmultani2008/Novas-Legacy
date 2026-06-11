@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Lightbox from '../components/Lightbox'
+import { useCMSImages } from '../CMSContext'
 
-const IMG = {
+const DEFAULTS = {
   hero:        '/img/ghepardo-erba.png',
   pillar1:     '/img/nova-madre-cucciolo.png',
   pillar2:     '/img/volontari-gruppo.png',
@@ -31,7 +32,7 @@ const ANIMALS_SRCS = [
 const ANIMALS_NAMES = ['Nova', 'Shira', 'Ghost Pack', 'Tumelo', 'Spirit', 'Sandy', 'Caracal', 'Serval']
 
 const PROG_PAGES = ['cheetah-run', 'volunteer', 'visit', 'internship', 'adopt', 'conservation']
-const PROG_IMGS  = [IMG.progRun, IMG.progVol, IMG.progChalet, IMG.progInt, IMG.progAdopt, IMG.progBreed]
+const PROG_IMGS  = [DEFAULTS.progRun, DEFAULTS.progVol, DEFAULTS.progChalet, DEFAULTS.progInt, DEFAULTS.progAdopt, DEFAULTS.progBreed]
 
 
 function useScrollRevealLocal() {
@@ -84,6 +85,8 @@ function StatItem({ num, suffix, label }) {
 function Home({ goTo }) {
   useScrollRevealLocal()
   const { t } = useTranslation()
+  const cmsImages = useCMSImages()
+  const IMG = { ...DEFAULTS, ...(cmsImages.home_hero ? { hero: cmsImages.home_hero } : {}) }
 
   const animalRoles = t('home.animal_roles',   { returnObjects: true })
   const progTags    = t('home.prog_tags',       { returnObjects: true })

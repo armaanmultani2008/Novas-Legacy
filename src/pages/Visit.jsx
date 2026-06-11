@@ -1,13 +1,15 @@
 import { useTranslation } from 'react-i18next'
+import { useCMSImages } from '../CMSContext'
 
 function Visit({ goTo }) {
   const { t } = useTranslation()
+  const cmsImages = useCMSImages()
   const chalets = t('visit.chalets', { returnObjects: true })
 
   return (
     <>
       <div className="page-hero-img">
-        <img src="/img/chalet-esterno.png" alt="Stay at Nova's Legacy" />
+        <img src={cmsImages.visit_hero || '/img/chalet-esterno.png'} alt="Stay at Nova's Legacy" />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">{t('visit.hero_label')}</span>

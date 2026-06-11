@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import i18n from './i18n'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -41,25 +40,11 @@ const pages = {
   faq: FAQ
 }
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
   const [pendingSection, setPendingSection] = useState(null)
   const [postId, setPostId] = useState(0)
   const [transitioning, setTransitioning] = useState(false)
-
-  // Carica il contenuto personalizzato dal backend e sovrascrive i18n
-  useEffect(() => {
-    fetch(`${API}/api/content`)
-      .then(r => r.json())
-      .then(d => {
-        if (d && Object.keys(d).length > 0) {
-          i18n.addResourceBundle('en', 'translation', d, true, true)
-        }
-      })
-      .catch(() => {})
-  }, [])
 
   useEffect(() => {
     if (window.location.hash === '#admin') setCurrentPage('admin')

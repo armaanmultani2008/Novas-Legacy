@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
+import { useCMSImages } from '../CMSContext'
 
 const KIM_PHOTO = '/img/kim-portrait.jpg'
 const KIM_HERO_BG = '/img/kim-savana.svg'
@@ -7,11 +8,12 @@ const KIM_HERO_BG = '/img/kim-savana.svg'
 function KimStory({ goTo }) {
   useScrollReveal()
   const { t } = useTranslation()
+  const cmsImages = useCMSImages()
 
   return (
     <>
       <div className="page-hero-img" style={{ height: '52vh' }}>
-        <img src={KIM_HERO_BG} alt="Savana al tramonto — Nova's Legacy" style={{ objectPosition: 'center 55%' }} />
+        <img src={cmsImages.kim_story_hero || KIM_HERO_BG} alt="Savana al tramonto — Nova's Legacy" style={{ objectPosition: 'center 55%' }} />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">{t('kim_story.hero_label')}</span>

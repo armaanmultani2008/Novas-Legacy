@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Lightbox from '../components/Lightbox'
+import { useCMSImages } from '../CMSContext'
 
 const VOL_PHOTO_SRCS = [
   '/img/vol-volontari-1.jpg',
@@ -13,6 +14,7 @@ const VOL_PHOTO_SRCS = [
 
 function Volunteer({ goTo }) {
   const { t } = useTranslation()
+  const cmsImages = useCMSImages()
   const schedule  = t('volunteer.schedule',   { returnObjects: true })
   const tasks     = t('volunteer.tasks',      { returnObjects: true })
   const photoCaps = t('volunteer.photo_caps', { returnObjects: true })
@@ -21,7 +23,7 @@ function Volunteer({ goTo }) {
   return (
     <>
       <div className="page-hero-img">
-        <img src="/img/vol-volontari-1.jpg" alt="Volontari a Nova's Legacy" style={{ objectPosition: 'center 40%' }} />
+        <img src={cmsImages.volunteer_hero || '/img/vol-volontari-1.jpg'} alt="Volontari a Nova's Legacy" style={{ objectPosition: 'center 40%' }} />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">{t('volunteer.hero_label')}</span>

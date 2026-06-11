@@ -1,12 +1,14 @@
 import { useTranslation } from 'react-i18next'
+import { useCMSImages } from '../CMSContext'
 
 function Conservation({ goTo }) {
   const { t } = useTranslation()
+  const cmsImages = useCMSImages()
 
   return (
     <>
       <div className="page-hero-img">
-        <img src="/img/due-ghepardi.png" alt="Conservazione" />
+        <img src={cmsImages.conservation_hero || '/img/due-ghepardi.png'} alt="Conservazione" />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">{t('conservation.hero_label')}</span>

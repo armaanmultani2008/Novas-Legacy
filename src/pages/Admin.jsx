@@ -298,7 +298,7 @@ function ImageUpload({ value, onChange, label = 'Foto' }) {
         <div className="img-up-row">
           {!isBase64
             ? <input value={value} onChange={e => onChange(e.target.value)} placeholder="https://... oppure carica dal dispositivo sotto" />
-            : <input value="" readOnly placeholder="[foto caricata dal dispositivo]" style={{ color: '#888' }} onClick={() => onChange('')} title="Clicca per rimuovere e inserire un URL" />
+            : <input value="" readOnly placeholder="[foto caricata dal dispositivo]" style={{ color: '#51ef0d' }} onClick={() => onChange('')} title="Clicca per rimuovere e inserire un URL" />
           }
           <label className="btn-upload" title="Carica dal dispositivo">
             + Carica
@@ -754,141 +754,213 @@ function AnimalForm({ animal, onSave, onClose, saving }) {
 
 // ── Contenuti tab — editor testi di tutto il sito ────────────────────────────
 
-const CONTENT_SECTIONS = [
-  { key: 'home',         label: 'Homepage' },
-  { key: 'footer',       label: 'Footer' },
-  { key: 'nova_story',   label: "Storia di Nova" },
-  { key: 'kim_story',    label: "Storia di Kim" },
-  { key: 'conservation', label: 'Conservazione' },
-  { key: 'horses',       label: 'Cavalli' },
-  { key: 'volunteer',    label: 'Volontariato' },
-  { key: 'internship',   label: 'Internship' },
-  { key: 'visit',        label: 'Soggiorno' },
-  { key: 'cheetah_run',  label: 'Cheetah Run' },
-  { key: 'cheetah',      label: 'Progetto Ghepardi' },
-  { key: 'blog',         label: 'Blog (testi pagina)' },
-  { key: 'adopt',        label: 'Adozione (testi)' },
-  { key: 'merch',        label: 'Shop (testi)' },
-  { key: 'donate',       label: 'Donazioni' },
-  { key: 'faq',          label: 'FAQ (testi pagina)' },
-  { key: 'nav',          label: 'Navigazione' },
+const CURATED = [
+  { key: 'home', label: 'Homepage', imageKey: 'home_hero', fields: [
+    { k: 'hero_title',    l: 'Titolo principale' },
+    { k: 'hero_sub',      l: 'Sottotitolo hero' },
+    { k: 'work_title',    l: '"I tre pilastri" — titolo' },
+    { k: 'work_desc',     l: '"I tre pilastri" — testo' },
+    { k: 'pillar1_title', l: 'Pilastro 1 — titolo' },
+    { k: 'pillar1_desc',  l: 'Pilastro 1 — testo' },
+    { k: 'pillar2_title', l: 'Pilastro 2 — titolo' },
+    { k: 'pillar2_desc',  l: 'Pilastro 2 — testo' },
+    { k: 'pillar3_title', l: 'Pilastro 3 — titolo' },
+    { k: 'pillar3_desc',  l: 'Pilastro 3 — testo' },
+    { k: 'cta_title',     l: 'CTA — titolo' },
+    { k: 'cta_desc',      l: 'CTA — testo' },
+    { k: 'contact_desc',  l: 'Contatti — testo intro' },
+  ]},
+  { key: 'nova_story', label: "Storia di Nova", imageKey: 'nova_story_hero', fields: [
+    { k: 'hero_label',    l: 'Label piccolo (sopra il titolo)' },
+    { k: 'hero_title',    l: 'Titolo hero' },
+    { k: 'hero_sub',      l: 'Sottotitolo hero' },
+    { k: 'origins_title', l: 'Origini — titolo sezione' },
+    { k: 'origins_p1',    l: 'Origini — paragrafo 1' },
+    { k: 'origins_p2',    l: 'Origini — paragrafo 2' },
+    { k: 'highlight',     l: 'Citazione in evidenza' },
+    { k: 'legacy_title',  l: "Legacy — titolo sezione" },
+    { k: 'legacy_p1',     l: 'Legacy — paragrafo 1' },
+    { k: 'legacy_p2',     l: 'Legacy — paragrafo 2' },
+  ]},
+  { key: 'kim_story', label: "Storia di Kim", imageKey: 'kim_story_hero', fields: [
+    { k: 'hero_label',    l: 'Label piccolo' },
+    { k: 'hero_title',    l: 'Titolo' },
+    { k: 'hero_sub',      l: 'Sottotitolo' },
+    { k: 'p1',            l: 'Testo principale' },
+    { k: 'quote1',        l: 'Citazione 1' },
+    { k: 'quote2',        l: 'Citazione 2' },
+    { k: 'quote3',        l: 'Citazione 3' },
+  ]},
+  { key: 'conservation', label: 'Conservazione', imageKey: 'conservation_hero', fields: [
+    { k: 'hero_label',    l: 'Label piccolo' },
+    { k: 'hero_title',    l: 'Titolo' },
+    { k: 'hero_sub',      l: 'Sottotitolo' },
+    { k: 'mission_p',     l: 'Missione — testo' },
+    { k: 'highlight',     l: 'Citazione in evidenza' },
+    { k: 'edu_title',     l: 'Educazione — titolo' },
+    { k: 'edu_p1',        l: 'Educazione — testo 1' },
+    { k: 'edu_p2',        l: 'Educazione — testo 2' },
+    { k: 'science_title', l: 'Ricerca scientifica — titolo' },
+    { k: 'science_p',     l: 'Ricerca scientifica — testo' },
+  ]},
+  { key: 'volunteer', label: 'Volontariato', imageKey: 'volunteer_hero', fields: [
+    { k: 'hero_label',    l: 'Label piccolo' },
+    { k: 'hero_title',    l: 'Titolo' },
+    { k: 'hero_sub',      l: 'Sottotitolo' },
+    { k: 'what_p1',       l: 'Cosa significa — testo 1' },
+    { k: 'what_p2',       l: 'Cosa significa — testo 2' },
+    { k: 'highlight',     l: 'Evidenziato' },
+    { k: 'apply_title',   l: 'Come candidarsi — titolo' },
+    { k: 'apply_text',    l: 'Come candidarsi — testo' },
+  ]},
+  { key: 'visit', label: 'Soggiorno', imageKey: 'visit_hero', fields: [
+    { k: 'hero_label',    l: 'Label piccolo' },
+    { k: 'hero_title',    l: 'Titolo' },
+    { k: 'hero_sub',      l: 'Sottotitolo' },
+    { k: 'chalets_title', l: 'Chalet — titolo' },
+    { k: 'chalets_p',     l: 'Chalet — testo' },
+    { k: 'highlight',     l: 'Evidenziato (periodo consigliato ecc.)' },
+    { k: 'how_p1',        l: 'Come arrivare — testo 1' },
+    { k: 'how_p2',        l: 'Come arrivare — testo 2' },
+  ]},
+  { key: 'horses', label: 'Cavalli', imageKey: 'horses_hero', fields: [
+    { k: 'hero_label',    l: 'Label piccolo' },
+    { k: 'hero_title',    l: 'Titolo' },
+    { k: 'hero_sub',      l: 'Sottotitolo' },
+    { k: 'who_p1',        l: 'I nostri cavalli — testo 1' },
+    { k: 'who_p2',        l: 'I nostri cavalli — testo 2' },
+    { k: 'highlight',     l: 'Evidenziato' },
+    { k: 'vol_p1',        l: 'Cosa fanno i volontari — testo 1' },
+  ]},
+  { key: 'cheetah_run', label: 'Cheetah Run', imageKey: 'cheetah_run_hero', fields: [
+    { k: 'hero_label',       l: 'Label piccolo' },
+    { k: 'hero_title',       l: 'Titolo' },
+    { k: 'hero_sub',         l: 'Sottotitolo' },
+    { k: 'p1',               l: 'Testo principale' },
+    { k: 'highlight',        l: 'Evidenziato' },
+    { k: 'how_p1',           l: 'Come funziona — testo 1' },
+    { k: 'how_p2',           l: 'Come funziona — testo 2' },
+    { k: 'booking_highlight', l: 'Testo prenotazione' },
+  ]},
+  { key: 'donate', label: 'Donazioni', imageKey: null, fields: [
+    { k: 'hero_label',    l: 'Label piccolo' },
+    { k: 'hero_title',    l: 'Titolo' },
+    { k: 'hero_sub',      l: 'Sottotitolo' },
+    { k: 'section_title', l: 'Sezione — titolo' },
+  ]},
+  { key: 'footer', label: 'Footer', imageKey: null, fields: [
+    { k: 'brand_desc', l: 'Descrizione brand' },
+    { k: 'copyright',  l: 'Copyright' },
+    { k: 'reg',        l: 'Info legali (numero registro)' },
+  ]},
 ]
 
-function FieldEditor({ fieldKey, value, onChange }) {
-  const label = fieldKey.replace(/_/g, ' ')
-
-  if (typeof value === 'string') {
-    const long = value.length > 120
-    return (
-      <div className="adm-field">
-        <label>{label}</label>
-        {long
-          ? <textarea rows={Math.min(Math.ceil(value.length / 80) + 1, 8)} value={value} onChange={e => onChange(e.target.value)} />
-          : <input value={value} onChange={e => onChange(e.target.value)} />
-        }
-      </div>
-    )
-  }
-  if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'string') {
-    return (
-      <div className="adm-field">
-        <label>{label}</label>
-        <textarea rows={Math.min(value.length + 1, 8)} value={value.join('\n')}
-          onChange={e => onChange(e.target.value === '' ? [] : e.target.value.split('\n'))} />
-        <div className="adm-field-hint">Una voce per riga</div>
-      </div>
-    )
-  }
-  return null
+function TextField({ label, value, onChange }) {
+  const long = typeof value === 'string' && value.length > 100
+  return (
+    <div className="adm-field">
+      <label>{label}</label>
+      {long
+        ? <textarea rows={Math.min(Math.ceil(value.length / 80) + 1, 7)} value={value} onChange={e => onChange(e.target.value)} />
+        : <input value={value || ''} onChange={e => onChange(e.target.value)} />
+      }
+    </div>
+  )
 }
 
 function ContenutiTab({ token }) {
-  const [content, setContent]   = useState(null)
-  const [section, setSection]   = useState('home')
-  const [saving,  setSaving]    = useState(false)
-  const [msg,     setMsg]       = useState(null)
+  const [content, setContent] = useState(null)
+  const [secIdx,  setSecIdx]  = useState(0)
+  const [saving,  setSaving]  = useState(false)
+  const [msg,     setMsg]     = useState(null)
 
   useEffect(() => {
-    loadContent().then(d => {
-      if (d) {
-        setContent(d)
-      } else {
-        // Usa le traduzioni integrate (en.json già caricato da i18n)
-        const builtin = i18n.getDataByLanguage('en')?.translation || {}
-        setContent(builtin)
-      }
-    })
+    const apply = d => {
+      if (!d || !Object.keys(d).length) return false
+      setContent(d); return true
+    }
+    const cached = (() => { try { return JSON.parse(localStorage.getItem('nl_content')) } catch { return null } })()
+    if (cached) apply(cached)
+    loadContent().then(d => { if (d) { apply(d); localStorage.setItem('nl_content', JSON.stringify(d)) } })
   }, [])
 
-  const updateField = (secKey, fieldKey, value) =>
-    setContent(prev => ({ ...prev, [secKey]: { ...prev[secKey], [fieldKey]: value } }))
+  const sec = CURATED[secIdx]
+
+  const updateField = (fieldKey, value) =>
+    setContent(prev => ({ ...prev, [sec.key]: { ...(prev?.[sec.key] || {}), [fieldKey]: value } }))
+
+  const updateImage = (imgKey, value) =>
+    setContent(prev => ({ ...prev, _images: { ...(prev?._images || {}), [imgKey]: value } }))
 
   const save = async () => {
     setSaving(true); setMsg(null)
-    const { ok } = await saveContent(content, token)
+    const payload = content || {}
+    const { ok } = await saveContent(payload, token)
     if (ok) {
-      i18n.addResourceBundle('en', 'translation', content, true, true)
+      i18n.addResourceBundle('en', 'translation', payload, true, true)
+      localStorage.setItem('nl_content', JSON.stringify(payload))
       setMsg('ok')
     } else {
-      setMsg('err')
+      localStorage.setItem('nl_content', JSON.stringify(payload))
+      i18n.addResourceBundle('en', 'translation', payload, true, true)
+      setMsg('local')
     }
     setSaving(false)
   }
 
-  const secData = content?.[section] || {}
-  const editableFields = Object.entries(secData).filter(([, v]) => {
-    if (typeof v === 'string') return true
-    if (Array.isArray(v) && v.length > 0 && typeof v[0] === 'string') return true
-    return false
-  })
+  const secData = content?.[sec.key] || {}
+  const images  = content?._images  || {}
 
   return (
-    <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
-      {/* Sidebar sezioni */}
-      <div style={{ width: 170, flexShrink: 0, position: 'sticky', top: 72 }}>
-        <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', color: '#AAA', textTransform: 'uppercase', marginBottom: '0.6rem' }}>
-          Sezione
-        </div>
-        {CONTENT_SECTIONS.map(s => (
-          <button key={s.key} onClick={() => { setSection(s.key); setMsg(null) }}
+    <div>
+      {msg === 'ok'    && <div className="adm-ok">Salvato sul server. Il sito si aggiorna automaticamente.</div>}
+      {msg === 'local' && <div className="adm-offline">Salvato localmente. Visibile subito su questo browser. Fai il deploy per renderlo permanente.</div>}
+
+      {/* Tabs pagine */}
+      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+        {CURATED.map((s, i) => (
+          <button key={s.key} onClick={() => { setSecIdx(i); setMsg(null) }}
             style={{
-              display: 'block', width: '100%', textAlign: 'left',
-              background: section === s.key ? '#111' : 'transparent',
-              color: section === s.key ? '#fff' : '#555',
-              border: 'none', borderRadius: 4,
-              padding: '0.42rem 0.7rem', fontSize: '0.8rem', fontWeight: section === s.key ? 700 : 400,
-              cursor: 'pointer', marginBottom: 2, transition: 'all 0.15s',
+              background: secIdx === i ? '#111' : '#fff',
+              color: secIdx === i ? '#fff' : '#555',
+              border: `1px solid ${secIdx === i ? '#111' : '#D0C9BE'}`,
+              borderRadius: 4, padding: '0.35rem 0.75rem',
+              fontSize: '0.75rem', fontWeight: secIdx === i ? 700 : 400,
+              cursor: 'pointer', transition: 'all 0.15s',
             }}>
             {s.label}
           </button>
         ))}
       </div>
 
-      {/* Campi */}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        {msg === 'ok'  && <div className="adm-ok">Salvato. Il sito aggiorna automaticamente i testi.</div>}
-        {msg === 'err' && <div className="adm-err">Errore di rete. Riprova.</div>}
+      {!content && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento...</p>}
 
-        <div className="adm-section-head">
-          <h2>{CONTENT_SECTIONS.find(s => s.key === section)?.label || section}</h2>
-          <button className="btn-primary" onClick={save} disabled={saving || !content}>
-            {saving ? 'Salvataggio...' : 'Salva modifiche'}
-          </button>
+      {content && (
+        <div style={{ background: '#fff', border: '1px solid #E2D8CC', borderRadius: 6, padding: '1.3rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
+            <h2 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>{sec.label}</h2>
+            <button className="btn-primary" onClick={save} disabled={saving}>
+              {saving ? 'Salvataggio...' : 'Salva'}
+            </button>
+          </div>
+
+          {/* Immagine principale */}
+          {sec.imageKey && (
+            <div style={{ marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #EDE5D8' }}>
+              <ImageUpload
+                label="Immagine principale pagina"
+                value={images[sec.imageKey] || ''}
+                onChange={v => updateImage(sec.imageKey, v)}
+              />
+            </div>
+          )}
+
+          {/* Campi testo */}
+          {sec.fields.map(({ k, l }) => (
+            <TextField key={k} label={l} value={secData[k] || ''} onChange={v => updateField(k, v)} />
+          ))}
         </div>
-
-        {!content && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento...</p>}
-
-        {content && editableFields.length === 0 && (
-          <p style={{ color: '#AAA', fontSize: '0.85rem' }}>
-            Questa sezione contiene solo strutture complesse (oggetti annidati) non modificabili direttamente. Usa le schede Blog, Shop e Animali per gestire quei contenuti.
-          </p>
-        )}
-
-        {content && editableFields.map(([k, v]) => (
-          <FieldEditor key={k} fieldKey={k} value={v}
-            onChange={val => updateField(section, k, val)} />
-        ))}
-      </div>
+      )}
     </div>
   )
 }

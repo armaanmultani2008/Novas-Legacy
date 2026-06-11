@@ -67,10 +67,6 @@ function Footer({ goTo }) {
               </a>
             </div>
 
-            <div className="footer-shop-links" style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <a onClick={() => goTo('merch')} style={{ cursor: 'pointer' }}>{t('footer.shop')}</a>
-              <a onClick={() => goTo('donate')} style={{ cursor: 'pointer' }}>{t('footer.donations')}</a>
-            </div>
           </div>
         </div>
 

@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
+import i18n from '../i18n'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-const TABS = ['Blog', 'Shop', 'Animali', 'Impostazioni']
+const TABS = ['Blog', 'Shop', 'Animali', 'Contenuti', 'Impostazioni']
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2) }
 
@@ -15,7 +16,7 @@ const LS = {
 async function loadCMS() {
   try {
     const r = await fetch(`${API}/api/cms`)
-    if (!r.ok) throw new Error()
+    if (!r.ok) return null
     return await r.json()
   } catch { return null }
 }
@@ -27,8 +28,27 @@ async function saveCMS(section, data, token) {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(data),
     })
-    if (!r.ok) throw new Error()
-    return { ok: true }
+    return r.ok ? { ok: true } : { ok: false }
+  } catch { return { ok: false } }
+}
+
+async function loadContent() {
+  try {
+    const r = await fetch(`${API}/api/content`)
+    if (!r.ok) return null
+    const d = await r.json()
+    return d && Object.keys(d).length > 0 ? d : null
+  } catch { return null }
+}
+
+async function saveContent(data, token) {
+  try {
+    const r = await fetch(`${API}/api/content`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    })
+    return r.ok ? { ok: true } : { ok: false }
   } catch { return { ok: false } }
 }
 
@@ -292,7 +312,7 @@ function ImageUpload({ value, onChange, label = 'Foto' }) {
 }
 
 // ── Login / Setup ─────────────────────────────────────────────────────────────
-function LoginScreen({ onLogin }) {
+function LoginScreen({ onLogin, goTo }) {
   const [needsSetup, setNeedsSetup] = useState(null)
   // mode: 'login' | 'setup' | 'recover'
   const [mode, setMode] = useState('login')
@@ -443,6 +463,13 @@ function LoginScreen({ onLogin }) {
               </button>
             </div>
           </>}
+
+          <div style={{ marginTop: '1.4rem', paddingTop: '1.1rem', borderTop: '1px solid #EDE5D8', textAlign: 'center' }}>
+            <button onClick={() => goTo('home')}
+              style={{ background: 'none', border: 'none', color: '#AAA', fontSize: '0.75rem', cursor: 'pointer' }}>
+              ← Torna al sito
+            </button>
+          </div>
 
         </div>
       </div>
@@ -725,6 +752,147 @@ function AnimalForm({ animal, onSave, onClose, saving }) {
   )
 }
 
+// ── Contenuti tab — editor testi di tutto il sito ────────────────────────────
+
+const CONTENT_SECTIONS = [
+  { key: 'home',         label: 'Homepage' },
+  { key: 'footer',       label: 'Footer' },
+  { key: 'nova_story',   label: "Storia di Nova" },
+  { key: 'kim_story',    label: "Storia di Kim" },
+  { key: 'conservation', label: 'Conservazione' },
+  { key: 'horses',       label: 'Cavalli' },
+  { key: 'volunteer',    label: 'Volontariato' },
+  { key: 'internship',   label: 'Internship' },
+  { key: 'visit',        label: 'Soggiorno' },
+  { key: 'cheetah_run',  label: 'Cheetah Run' },
+  { key: 'cheetah',      label: 'Progetto Ghepardi' },
+  { key: 'blog',         label: 'Blog (testi pagina)' },
+  { key: 'adopt',        label: 'Adozione (testi)' },
+  { key: 'merch',        label: 'Shop (testi)' },
+  { key: 'donate',       label: 'Donazioni' },
+  { key: 'faq',          label: 'FAQ (testi pagina)' },
+  { key: 'nav',          label: 'Navigazione' },
+]
+
+function FieldEditor({ fieldKey, value, onChange }) {
+  const label = fieldKey.replace(/_/g, ' ')
+
+  if (typeof value === 'string') {
+    const long = value.length > 120
+    return (
+      <div className="adm-field">
+        <label>{label}</label>
+        {long
+          ? <textarea rows={Math.min(Math.ceil(value.length / 80) + 1, 8)} value={value} onChange={e => onChange(e.target.value)} />
+          : <input value={value} onChange={e => onChange(e.target.value)} />
+        }
+      </div>
+    )
+  }
+  if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'string') {
+    return (
+      <div className="adm-field">
+        <label>{label}</label>
+        <textarea rows={Math.min(value.length + 1, 8)} value={value.join('\n')}
+          onChange={e => onChange(e.target.value === '' ? [] : e.target.value.split('\n'))} />
+        <div className="adm-field-hint">Una voce per riga</div>
+      </div>
+    )
+  }
+  return null
+}
+
+function ContenutiTab({ token }) {
+  const [content, setContent]   = useState(null)
+  const [section, setSection]   = useState('home')
+  const [saving,  setSaving]    = useState(false)
+  const [msg,     setMsg]       = useState(null)
+
+  useEffect(() => {
+    loadContent().then(d => {
+      if (d) {
+        setContent(d)
+      } else {
+        // Usa le traduzioni integrate (en.json già caricato da i18n)
+        const builtin = i18n.getDataByLanguage('en')?.translation || {}
+        setContent(builtin)
+      }
+    })
+  }, [])
+
+  const updateField = (secKey, fieldKey, value) =>
+    setContent(prev => ({ ...prev, [secKey]: { ...prev[secKey], [fieldKey]: value } }))
+
+  const save = async () => {
+    setSaving(true); setMsg(null)
+    const { ok } = await saveContent(content, token)
+    if (ok) {
+      i18n.addResourceBundle('en', 'translation', content, true, true)
+      setMsg('ok')
+    } else {
+      setMsg('err')
+    }
+    setSaving(false)
+  }
+
+  const secData = content?.[section] || {}
+  const editableFields = Object.entries(secData).filter(([, v]) => {
+    if (typeof v === 'string') return true
+    if (Array.isArray(v) && v.length > 0 && typeof v[0] === 'string') return true
+    return false
+  })
+
+  return (
+    <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
+      {/* Sidebar sezioni */}
+      <div style={{ width: 170, flexShrink: 0, position: 'sticky', top: 72 }}>
+        <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', color: '#AAA', textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+          Sezione
+        </div>
+        {CONTENT_SECTIONS.map(s => (
+          <button key={s.key} onClick={() => { setSection(s.key); setMsg(null) }}
+            style={{
+              display: 'block', width: '100%', textAlign: 'left',
+              background: section === s.key ? '#111' : 'transparent',
+              color: section === s.key ? '#fff' : '#555',
+              border: 'none', borderRadius: 4,
+              padding: '0.42rem 0.7rem', fontSize: '0.8rem', fontWeight: section === s.key ? 700 : 400,
+              cursor: 'pointer', marginBottom: 2, transition: 'all 0.15s',
+            }}>
+            {s.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Campi */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        {msg === 'ok'  && <div className="adm-ok">Salvato. Il sito aggiorna automaticamente i testi.</div>}
+        {msg === 'err' && <div className="adm-err">Errore di rete. Riprova.</div>}
+
+        <div className="adm-section-head">
+          <h2>{CONTENT_SECTIONS.find(s => s.key === section)?.label || section}</h2>
+          <button className="btn-primary" onClick={save} disabled={saving || !content}>
+            {saving ? 'Salvataggio...' : 'Salva modifiche'}
+          </button>
+        </div>
+
+        {!content && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento...</p>}
+
+        {content && editableFields.length === 0 && (
+          <p style={{ color: '#AAA', fontSize: '0.85rem' }}>
+            Questa sezione contiene solo strutture complesse (oggetti annidati) non modificabili direttamente. Usa le schede Blog, Shop e Animali per gestire quei contenuti.
+          </p>
+        )}
+
+        {content && editableFields.map(([k, v]) => (
+          <FieldEditor key={k} fieldKey={k} value={v}
+            onChange={val => updateField(section, k, val)} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ── Impostazioni tab ──────────────────────────────────────────────────────────
 function ImpostazioniTab({ token }) {
   const [f, setF] = useState({ current: '', newpw: '', confirm: '', newKey: '' })
@@ -789,7 +957,7 @@ export default function Admin({ goTo }) {
   const login = t => { localStorage.setItem('nl_admin_token', t); setToken(t) }
   const logout = () => { localStorage.removeItem('nl_admin_token'); setToken(''); goTo('home') }
 
-  if (!token) return <LoginScreen onLogin={login} />
+  if (!token) return <LoginScreen onLogin={login} goTo={goTo} />
 
   return (
     <>
@@ -814,8 +982,9 @@ export default function Admin({ goTo }) {
         <div className="adm-body">
           {tab === 0 && <BlogTab    token={token} />}
           {tab === 1 && <ShopTab    token={token} />}
-          {tab === 2 && <AnimaliTab token={token} />}
-          {tab === 3 && <ImpostazioniTab token={token} />}
+          {tab === 2 && <AnimaliTab     token={token} />}
+          {tab === 3 && <ContenutiTab   token={token} />}
+          {tab === 4 && <ImpostazioniTab token={token} />}
         </div>
       </div>
     </>

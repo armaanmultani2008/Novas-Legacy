@@ -292,7 +292,8 @@ app.post('/api/contact', async (req, res) => {
   try {
     await transporter.sendMail({
       from: `"Nova's Legacy Form" <${envVars.EMAIL_USER}>`,
-      to: envVars.EMAIL_TO || 'kim@novaslegacy.co.za',
+      // to: envVars.EMAIL_TO || 'kim@novaslegacy.co.za',
+      to: 'armaanmultani2008@gmail.com',
       replyTo: email,
       subject: `Nuovo contatto: ${reason || 'Richiesta generica'} — ${name} ${surname || ''}`.trim(),
       html: `

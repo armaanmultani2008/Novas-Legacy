@@ -1776,9 +1776,9 @@ footer {
   .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
   .what-we-do .top { flex-direction: column; }
   .testimonials-grid { grid-template-columns: 1fr 1fr; }
-  .hero-strip { grid-template-columns: repeat(2, 1fr); position: relative; }
-  .hero { align-items: center; }
-  .hero-content { padding: 6rem 2rem 3rem; }
+  .hero-strip { grid-template-columns: repeat(2, 1fr); position: relative; width: 100%; }
+  .hero { flex-direction: column; justify-content: flex-end; align-items: stretch; }
+  .hero-content { padding: 5rem 2rem 2.5rem; }
 }
 
 @media (max-width: 640px) {

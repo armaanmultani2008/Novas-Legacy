@@ -171,141 +171,93 @@ function Home({ goTo }) {
       </div>
 
       {/* ── WHAT WE DO ── */}
-      <section className="what-we-do" style={{ width: '100%', maxWidth: '100%', padding: '5rem 0 0 0' }}>
-
-        {/* Intestazione allineata con font serif originale ripristinato tramite classe .h2 */}
-        <div className="what-we-do-content" style={{
-          maxWidth: '1200px',
-          margin: '0 auto 3.5rem auto',
-          padding: '0 2rem'
-        }}>
+      <section style={{ padding: '5rem 2rem' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <span className="label rv">{t('home.work_label')}</span>
           <h2 className="h2 rv rv-d1" style={{ fontSize: '2.6rem', lineHeight: '1.2', margin: '0 0 1.2rem 0' }}>
             {t('home.work_title').split(' ').slice(0, -3).join(' ')} <em>{t('home.work_title').split(' ').slice(-3).join(' ')}</em>
           </h2>
-          <p className="rv rv-d2" style={{ color: '#555', maxWidth: '850px', lineHeight: '1.65', margin: 0 }}>
+          <p className="rv rv-d2" style={{ color: '#555', maxWidth: '850px', lineHeight: '1.65', margin: '0 0 3.5rem 0' }}>
             {t('home.work_desc')}
           </p>
-        </div>
 
-        {/* Griglia dei pilastri estesa a tutta larghezza (Full-Width) senza spaziature vuote */}
-        <div className="pillars" style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: 0,
-          width: '100%',
-          margin: 0,
-          padding: 0
-        }}>
-          {/* PILASTRO 1 */}
-          <div className="pillar rv" style={{
-            position: 'relative',
-            flex: '1 1 400px',
-            height: '500px',
-            overflow: 'hidden'
-          }}>
-            <img src={IMG.pillar1} alt="Breeding" style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center 15%',
-              display: 'block'
-            }}/>
-            <div className="pillar-overlay" style={{
-              position: 'absolute',
-              bottom: 0, left: 0, right: 0,
-              background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 70%, transparent 100%)',
-              padding: '3rem 2rem 2.5rem 2rem',
-              color: '#fff'
-            }}>
-              <div className="pillar-num" style={{ opacity: 0.5, fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.5rem' }}>01</div>
-              <h3 style={{ fontSize: '1.6rem', margin: '0 0 0.6rem 0', fontFamily: 'var(--serif)' }}>{t('home.pillar1_title')}</h3>
-              <p style={{ fontSize: '0.9rem', opacity: 0.85, margin: '0 0 1.2rem 0', lineHeight: '1.5' }}>{t('home.pillar1_desc')}</p>
-              <span className="pillar-link" style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }} onClick={() => goTo('conservation')}>{t('common.learn_more')}</span>
-            </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }} className="pillars-grid">
+            {[
+              { img: IMG.pillar1, pos: 'center 15%', num: '01', title: t('home.pillar1_title'), desc: t('home.pillar1_desc'), page: 'conservation', rv: 'rv' },
+              { img: IMG.pillar2, pos: 'center 30%', num: '02', title: t('home.pillar2_title'), desc: t('home.pillar2_desc'), page: 'volunteer',    rv: 'rv rv-d1' },
+              { img: IMG.pillar3, pos: 'center 50%', num: '03', title: t('home.pillar3_title'), desc: t('home.pillar3_desc'), page: 'horses',        rv: 'rv rv-d2' },
+            ].map(({ img, pos, num, title, desc, page, rv }) => (
+              <div key={num} className={`program-card ${rv}`}>
+                <div className="program-img" style={{ height: '280px' }}>
+                  <img src={img} alt={title} style={{ objectPosition: pos }} />
+                </div>
+                <div className="program-body" style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.4rem' }}>{num}</div>
+                  <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.4rem', marginBottom: '0.6rem', color: 'var(--dark)', lineHeight: '1.3' }}>{title}</h3>
+                  <p style={{ fontSize: '0.84rem', color: '#777', lineHeight: '1.65', marginBottom: '1.4rem', flexGrow: 1 }}>{desc}</p>
+                  <span className="program-link" style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--dark)' }} onClick={() => goTo(page)}>{t('common.learn_more_arrow')}</span>
+                </div>
+              </div>
+            ))}
           </div>
-
-          {/* PILASTRO 2 */}
-          <div className="pillar rv rv-d1" style={{
-            position: 'relative',
-            flex: '1 1 400px',
-            height: '500px',
-            overflow: 'hidden'
-          }}>
-            <img src={IMG.pillar2} alt="Education" style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center 30%',
-              display: 'block'
-            }}/>
-            <div className="pillar-overlay" style={{
-              position: 'absolute',
-              bottom: 0, left: 0, right: 0,
-              background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 70%, transparent 100%)',
-              padding: '3rem 2rem 2.5rem 2rem',
-              color: '#fff'
-            }}>
-              <div className="pillar-num">02</div>
-              <h3 style={{ fontSize: '1.6rem', margin: '0 0 0.6rem 0', fontFamily: 'var(--serif)' }}>{t('home.pillar2_title')}</h3>
-              <p style={{ fontSize: '0.9rem', opacity: 0.85, margin: '0 0 1.2rem 0', lineHeight: '1.5' }}>{t('home.pillar2_desc')}</p>
-              <span className="pillar-link" style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }} onClick={() => goTo('volunteer')}>{t('common.learn_more')}</span>
-            </div>
-          </div>
-
-          {/* PILASTRO 3 */}
-          <div className="pillar rv rv-d2" style={{
-            position: 'relative',
-            flex: '1 1 400px',
-            height: '500px',
-            overflow: 'hidden'
-          }}>
-            <img src={IMG.pillar3} alt="Rehabilitation" style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center 50%',
-              display: 'block'
-            }}/>
-            <div className="pillar-overlay" style={{
-              position: 'absolute',
-              bottom: 0, left: 0, right: 0,
-              background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 70%, transparent 100%)',
-              padding: '3rem 2rem 2.5rem 2rem',
-              color: '#fff'
-            }}>
-              <div className="pillar-num">03</div>
-              <h3 style={{ fontSize: '1.6rem', margin: '0 0 0.6rem 0', fontFamily: 'var(--serif)' }}>{t('home.pillar3_title')}</h3>
-              <p style={{ fontSize: '0.9rem', opacity: 0.85, margin: '0 0 1.2rem 0', lineHeight: '1.5' }}>{t('home.pillar3_desc')}</p>
-              <span className="pillar-link" style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }} onClick={() => goTo('horses')}>{t('common.learn_more')}</span>
-            </div>
-          </div>
+          <style>{`
+            @media (max-width: 900px) { .pillars-grid { grid-template-columns: 1fr !important; } }
+            @media (max-width: 600px) { .pillars-grid { grid-template-columns: 1fr !important; } }
+          `}</style>
         </div>
       </section>
 
       {/* ── CHEETAH RUN ── */}
-      <section className="cheetah-run">
-        <div className="cheetah-run-img">
-          <img src={IMG.cheetahRun} alt="Cheetah Run" />
-        </div>
-        <div className="cheetah-run-content">
-          <span className="label label-light rv">{t('home.run_label')}</span>
-          <h2 className="rv rv-d1">
-            {(() => {
-              const title = t('home.run_title')
-              const idx = title.indexOf('Cheetah Run')
-              return <>{title.slice(0, idx)}<em>Cheetah Run</em>{title.slice(idx + 11)}</>
-            })()}
-          </h2>
-          <p className="rv rv-d2">{t('home.run_desc')}</p>
-          <div className="speed-badge rv rv-d3">
-            <span className="num">112</span>
-            <span className="txt">km/h<br />{t('home.run_speed_label')}</span>
+      <section style={{ padding: '3.5rem 2rem', background: 'var(--sand-pale)' }}>
+        <div className="cr-wrap">
+          {/* Immagine staccata su sfondo sabbia */}
+          <div style={{ padding: '2.5rem', display: 'flex', alignItems: 'center', background: 'var(--sand-pale)' }}>
+            <div style={{ borderRadius: '4px', overflow: 'hidden', width: '100%', boxShadow: '0 16px 48px rgba(0,0,0,0.22)' }}>
+              <img
+                src={IMG.cheetahRun}
+                alt="Cheetah Run"
+                style={{ width: '100%', height: '360px', objectFit: 'cover', display: 'block', transition: 'transform 0.6s cubic-bezier(0.22,1,0.36,1)' }}
+                onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.04)'}
+                onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+              />
+            </div>
           </div>
-          <button className="btn btn-gold rv rv-d4" onClick={() => goTo('cheetah-run')}>
-            {t('home.run_btn')}
-          </button>
+          {/* Testo: sfondo scuro solo sul pannello destro */}
+          <div className="cheetah-run-content" style={{ padding: '4rem 3.5rem' }}>
+            <span className="label label-light rv">{t('home.run_label')}</span>
+            <h2 className="rv rv-d1">
+              {(() => {
+                const title = t('home.run_title')
+                const idx = title.indexOf('Cheetah Run')
+                return <>{title.slice(0, idx)}<em>Cheetah Run</em>{title.slice(idx + 11)}</>
+              })()}
+            </h2>
+            <p className="rv rv-d2">{t('home.run_desc')}</p>
+            <div className="speed-badge rv rv-d3">
+              <span className="num">112</span>
+              <span className="txt">km/h<br />{t('home.run_speed_label')}</span>
+            </div>
+            <button className="btn btn-gold rv rv-d4" onClick={() => goTo('cheetah-run')}>
+              {t('home.run_btn')}
+            </button>
+          </div>
         </div>
+        <style>{`
+          .cr-wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 70px rgba(0,0,0,0.10);
+          }
+          @media (max-width: 900px) {
+            .cr-wrap { grid-template-columns: 1fr; }
+            .cr-wrap > div:first-child { padding: 2rem; }
+            .cr-wrap > div:first-child img { height: 260px !important; }
+          }
+        `}</style>
       </section>
 
       {/* ── PROGRAMS GRID ── */}

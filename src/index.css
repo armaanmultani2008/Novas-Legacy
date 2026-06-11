@@ -303,8 +303,10 @@ nav.solid {
 .hero-content {
   position: relative;
   z-index: 2;
-  padding: 0 3rem 6rem;
+  padding: 0 3rem 9rem;
   max-width: 900px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .hero-eyebrow {
@@ -534,10 +536,11 @@ nav.solid {
 
 .cheetah-run-content {
   background: var(--dark);
-  padding: 6rem 4rem;
+  padding: 4rem 3.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 0;
 }
 
 .cheetah-run-content .label { color: rgba(245,184,48,0.7); }
@@ -1052,11 +1055,22 @@ nav.solid {
   background: var(--white);
 }
 
+.contact-section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
 .contact-grid {
   margin-top: 3.5rem;
   display: grid;
   grid-template-columns: 1fr 1.2fr;
-  gap: 5rem;
+  gap: 4rem;
+  min-width: 0;
+}
+
+.contact-info,
+.contact-form {
+  min-width: 0;
 }
 
 .contact-info p {
@@ -1080,7 +1094,7 @@ nav.solid {
 .contact-value a { color: var(--dark); transition: color 0.2s; }
 .contact-value a:hover { color: var(--gold); }
 
-.contact-socials { display: flex; gap: 1rem; margin-top: 2rem; }
+.contact-socials { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
 
 .social-link {
   display: inline-flex;
@@ -1104,6 +1118,9 @@ nav.solid {
 .contact-form input,
 .contact-form textarea,
 .contact-form select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   background: var(--off-white);
   border: 1px solid #DDD;
   padding: 0.9rem 1.1rem;
@@ -1765,6 +1782,13 @@ footer {
 /* ======================================================
    RESPONSIVE
    ====================================================== */
+@media (max-width: 1200px) {
+  /* Hero: column layout whenever hamburger is visible */
+  .hero { flex-direction: column; justify-content: flex-end; align-items: stretch; min-height: 900px; }
+  .hero-strip { position: relative; width: 100%; }
+  .hero-content { padding: 5rem 3rem 2.5rem; }
+}
+
 @media (max-width: 1100px) {
   .pillars { grid-template-columns: 1fr; }
   .pillar { height: 280px; }
@@ -1785,11 +1809,11 @@ footer {
   .volunteer-section { grid-template-columns: 1fr; }
   .volunteer-img-col { min-height: 320px; }
   .vol-content { padding: 4rem 2.5rem; }
-  .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .contact-section { padding: 5rem 2rem; }
   .what-we-do .top { flex-direction: column; }
   .testimonials-grid { grid-template-columns: 1fr 1fr; }
-  .hero-strip { grid-template-columns: repeat(2, 1fr); position: relative; width: 100%; }
-  .hero { flex-direction: column; justify-content: flex-end; align-items: stretch; }
+  .hero-strip { grid-template-columns: repeat(2, 1fr); }
   .hero-content { padding: 5rem 2rem 2.5rem; }
 }
 

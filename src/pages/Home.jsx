@@ -86,7 +86,11 @@ function Home({ goTo }) {
   useScrollRevealLocal()
   const { t } = useTranslation()
   const cmsImages = useCMSImages()
-  const IMG = { ...DEFAULTS, ...(cmsImages.home_hero ? { hero: cmsImages.home_hero } : {}) }
+  const IMG = {
+    ...DEFAULTS,
+    ...(cmsImages.home_hero ? { hero: cmsImages.home_hero } : {}),
+    ...(cmsImages.home_cta  ? { bigCta: cmsImages.home_cta } : {}),
+  }
 
   const animalRoles = t('home.animal_roles',   { returnObjects: true })
   const progTags    = t('home.prog_tags',       { returnObjects: true })

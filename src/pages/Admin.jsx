@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import i18n from '../i18n'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-const TABS = ['Blog', 'Shop', 'Animali', 'Contenuti', 'Impostazioni']
+const TABS = ['Blog', 'Shop', 'Animals', 'Content', 'Settings']
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2) }
 
@@ -292,7 +292,7 @@ function Dots() {
 }
 
 // ── Image upload component ────────────────────────────────────────────────────
-function ImageUpload({ value, onChange, label = 'Foto' }) {
+function ImageUpload({ value, onChange, label = 'Photo' }) {
   const inputRef = useRef()
   const isBase64 = value?.startsWith('data:')
 
@@ -306,23 +306,20 @@ function ImageUpload({ value, onChange, label = 'Foto' }) {
 
   return (
     <div className="adm-field">
-      <label>{label}</label>
+      {label && <label>{label}</label>}
       <div className="img-up-wrap">
-        {value
-          ? <img src={value} className="img-up-preview" alt="" />
-          : <div className="img-up-placeholder">Nessuna foto</div>
-        }
+        {value && !isBase64 && <img src={value} className="img-up-preview" alt="" />}
         <div className="img-up-row">
           {!isBase64
-            ? <input value={value} onChange={e => onChange(e.target.value)} placeholder="https://... oppure carica dal dispositivo sotto" />
-            : <input value="" readOnly placeholder="[foto caricata dal dispositivo]" style={{ color: '#51ef0d' }} onClick={() => onChange('')} title="Clicca per rimuovere e inserire un URL" />
+            ? <input value={value || ''} onChange={e => onChange(e.target.value)} placeholder="https://... or upload from device →" />
+            : <input value="" readOnly placeholder="[uploaded from device — click to remove]" style={{ color: '#888', fontStyle: 'italic' }} onClick={() => onChange('')} title="Click to remove and use a URL instead" />
           }
-          <label className="btn-upload" title="Carica dal dispositivo">
-            + Carica
+          <label className="btn-upload" title="Upload from device">
+            + Upload
             <input ref={inputRef} type="file" accept="image/*" onChange={pick} style={{ display: 'none' }} />
           </label>
         </div>
-        {isBase64 && <div className="img-up-name">Foto caricata — clicca il campo testo per rimuoverla e usare un URL</div>}
+        {isBase64 && <div className="img-up-name">Photo uploaded — click the text field to remove it and use a URL</div>}
       </div>
     </div>
   )
@@ -395,7 +392,7 @@ function LoginScreen({ onLogin, goTo }) {
       <Styles />
       <div className="adm-login"><div className="adm-login-box">
         <div className="adm-login-logo">Nova&apos;s <em>Legacy</em></div>
-        <p style={{ color: '#999', fontSize: '0.85rem' }}>Connessione<Dots /></p>
+        <p style={{ color: '#999', fontSize: '0.85rem' }}>Connecting<Dots /></p>
       </div></div>
     </>
   )
@@ -409,30 +406,30 @@ function LoginScreen({ onLogin, goTo }) {
 
           {/* ── SETUP ── */}
           {mode === 'setup' && <>
-            <h2>Prima configurazione</h2>
-            <p className="adm-login-sub">Scegli password e parola chiave di recupero.</p>
+            <h2>Initial Setup</h2>
+            <p className="adm-login-sub">Choose a password and a recovery keyword.</p>
             {err && <div className="adm-err">{err}</div>}
             <form onSubmit={doSetup}>
               <div className="adm-field">
-                <label>Password (min. 8 caratteri)</label>
+                <label>Password (min. 8 characters)</label>
                 <input type="password" value={f.pw} onChange={set('pw')} placeholder="••••••••" required minLength={8} autoFocus />
               </div>
               <div className="adm-field">
-                <label>Parola chiave di recupero</label>
+                <label>Recovery keyword</label>
                 <input type="text" value={f.recoveryKey} onChange={set('recoveryKey')}
-                  placeholder="es. novachieetah" required minLength={3} autoComplete="off" />
-                <div className="adm-field-hint">Usata per reimpostare la password se dimenticata. Tienila al sicuro.</div>
+                  placeholder="e.g. novalegacy" required minLength={3} autoComplete="off" />
+                <div className="adm-field-hint">Used to reset your password if forgotten. Keep it safe.</div>
               </div>
               <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.3rem' }} disabled={loading}>
-                {loading ? <Dots /> : 'Imposta e accedi'}
+                {loading ? <Dots /> : 'Set & Sign In'}
               </button>
             </form>
           </>}
 
           {/* ── LOGIN ── */}
           {mode === 'login' && <>
-            <h2>Accesso admin</h2>
-            <p className="adm-login-sub">Solo per uso interno.</p>
+            <h2>Admin Sign In</h2>
+            <p className="adm-login-sub">Internal use only.</p>
             {err && <div className="adm-err">{err}</div>}
             <form onSubmit={doLogin}>
               <div className="adm-field">
@@ -440,43 +437,43 @@ function LoginScreen({ onLogin, goTo }) {
                 <input type="password" value={f.pw} onChange={set('pw')} placeholder="••••••••" required autoFocus />
               </div>
               <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.3rem' }} disabled={loading}>
-                {loading ? <Dots /> : 'Accedi'}
+                {loading ? <Dots /> : 'Sign In'}
               </button>
             </form>
             <div style={{ marginTop: '1rem', textAlign: 'center' }}>
               <button onClick={() => { setMode('recover'); setErr(null) }}
                 style={{ background: 'none', border: 'none', color: '#999', fontSize: '0.75rem', cursor: 'pointer', textDecoration: 'underline' }}>
-                Password dimenticata?
+                Forgot password?
               </button>
             </div>
           </>}
 
-          {/* ── RECUPERO ── */}
+          {/* ── RECOVER ── */}
           {mode === 'recover' && <>
-            <h2>Recupero password</h2>
-            <p className="adm-login-sub">Inserisci la parola chiave segreta per impostare una nuova password.</p>
+            <h2>Password Recovery</h2>
+            <p className="adm-login-sub">Enter your recovery keyword to set a new password.</p>
             {err && <div className="adm-err">{err}</div>}
             <form onSubmit={doRecover}>
               <div className="adm-field">
-                <label>Parola chiave di recupero</label>
-                <input type="text" value={f.recoveryKey} onChange={set('recoveryKey')} placeholder="parola chiave" required autoComplete="off" autoFocus />
+                <label>Recovery keyword</label>
+                <input type="text" value={f.recoveryKey} onChange={set('recoveryKey')} placeholder="recovery keyword" required autoComplete="off" autoFocus />
               </div>
               <div className="adm-field">
-                <label>Nuova password (min. 8 caratteri)</label>
+                <label>New password (min. 8 characters)</label>
                 <input type="password" value={f.newpw} onChange={set('newpw')} placeholder="••••••••" required minLength={8} />
               </div>
               <div className="adm-field">
-                <label>Conferma nuova password</label>
+                <label>Confirm new password</label>
                 <input type="password" value={f.newpwConfirm} onChange={set('newpwConfirm')} placeholder="••••••••" required />
               </div>
               <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.3rem' }} disabled={loading}>
-                {loading ? <Dots /> : 'Reimposta password'}
+                {loading ? <Dots /> : 'Reset password'}
               </button>
             </form>
             <div style={{ marginTop: '1rem', textAlign: 'center' }}>
               <button onClick={() => { setMode('login'); setErr(null) }}
                 style={{ background: 'none', border: 'none', color: '#999', fontSize: '0.75rem', cursor: 'pointer', textDecoration: 'underline' }}>
-                Torna al login
+                Back to sign in
               </button>
             </div>
           </>}
@@ -484,7 +481,7 @@ function LoginScreen({ onLogin, goTo }) {
           <div style={{ marginTop: '1.4rem', paddingTop: '1.1rem', borderTop: '1px solid #EDE5D8', textAlign: 'center' }}>
             <button onClick={() => goTo('home')}
               style={{ background: 'none', border: 'none', color: '#AAA', fontSize: '0.75rem', cursor: 'pointer' }}>
-              ← Torna al sito
+              ← Back to site
             </button>
           </div>
 
@@ -506,7 +503,7 @@ function Modal({ title, onClose, onSave, saving, children }) {
         <div className="adm-modal-body">
           {children}
           <div className="adm-modal-foot">
-            <button className="btn-cancel" onClick={onClose}>Annulla</button>
+            <button className="btn-cancel" onClick={onClose}>Cancel</button>
             <button className="btn-primary" onClick={onSave} disabled={saving}>
               {saving ? <><Dots /> Salvo</> : 'Salva'}
             </button>
@@ -546,7 +543,7 @@ function BlogTab({ token }) {
   const { items: posts, saving, msg, persist } = useCMS('blog', token)
   const [editing, setEditing] = useState(null)
 
-  const del = id => { if (!confirm('Eliminare questo articolo?')) return; persist(posts.filter(p => p.id !== id)) }
+  const del = id => { if (!confirm('Delete this post?')) return; persist(posts.filter(p => p.id !== id)) }
   const upsert = post => {
     const list = posts.find(p => p.id === post.id)
       ? posts.map(p => p.id === post.id ? post : p)
@@ -556,14 +553,14 @@ function BlogTab({ token }) {
 
   return (
     <div>
-      {msg === 'local' && <div className="adm-offline">Salvato localmente. Fai il deploy del backend per rendere le modifiche visibili a tutti.</div>}
-      {msg === 'ok'    && <div className="adm-ok">Salvato sul server.</div>}
+      {msg === 'local' && <div className="adm-offline">Saved locally. Deploy the backend to make changes visible to everyone.</div>}
+      {msg === 'ok'    && <div className="adm-ok">Saved to server.</div>}
       <div className="adm-section-head">
-        <h2>Articoli Blog {posts && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({posts.length})</span>}</h2>
-        <button className="btn-add" onClick={() => setEditing({})}>+ Nuovo articolo</button>
+        <h2>Blog Posts {posts && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({posts.length})</span>}</h2>
+        <button className="btn-add" onClick={() => setEditing({})}>+ New Post</button>
       </div>
-      {posts === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento<Dots /></p>}
-      {posts?.length === 0 && <p className="adm-empty">Nessun articolo. Aggiungine uno.</p>}
+      {posts === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Loading<Dots /></p>}
+      {posts?.length === 0 && <p className="adm-empty">No posts yet. Add one.</p>}
       <div className="adm-list">
         {posts?.map(p => (
           <div key={p.id} className="adm-item">
@@ -574,8 +571,8 @@ function BlogTab({ token }) {
               <div className="adm-item-meta">{p.excerpt?.slice(0, 80)}{p.excerpt?.length > 80 ? '...' : ''}</div>
             </div>
             <div className="adm-item-btns">
-              <button className="btn-sm" onClick={() => setEditing(p)}>Modifica</button>
-              <button className="btn-sm btn-del" onClick={() => del(p.id)}>Elimina</button>
+              <button className="btn-sm" onClick={() => setEditing(p)}>Edit</button>
+              <button className="btn-sm btn-del" onClick={() => del(p.id)}>Delete</button>
             </div>
           </div>
         ))}
@@ -593,22 +590,22 @@ function BlogForm({ post, onSave, onClose, saving }) {
   })
   const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
   const save = () => {
-    if (!f.title.trim()) return alert('Inserisci il titolo.')
+    if (!f.title.trim()) return alert('Please enter a title.')
     onSave({ ...f, body: f.body.split('\n\n').map(s => s.trim()).filter(Boolean) })
   }
   return (
-    <Modal title={f.id ? 'Modifica articolo' : 'Nuovo articolo'} onClose={onClose} onSave={save} saving={saving}>
+    <Modal title={f.id ? 'Edit post' : 'New post'} onClose={onClose} onSave={save} saving={saving}>
       <div className="adm-grid2">
-        <div className="adm-field"><label>Titolo *</label><input value={f.title} onChange={set('title')} /></div>
-        <div className="adm-field"><label>Tag (es. Conservation)</label><input value={f.tag} onChange={set('tag')} /></div>
-        <div className="adm-field"><label>Data (es. June 11, 2026)</label><input value={f.date} onChange={set('date')} /></div>
+        <div className="adm-field"><label>Title *</label><input value={f.title} onChange={set('title')} /></div>
+        <div className="adm-field"><label>Tag (e.g. Conservation)</label><input value={f.tag} onChange={set('tag')} /></div>
+        <div className="adm-field"><label>Date (e.g. June 11, 2026)</label><input value={f.date} onChange={set('date')} /></div>
       </div>
-      <div className="adm-field"><label>Estratto breve</label><textarea rows={2} value={f.excerpt} onChange={set('excerpt')} /></div>
-      <ImageUpload label="Foto copertina" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} />
+      <div className="adm-field"><label>Short excerpt</label><textarea rows={2} value={f.excerpt} onChange={set('excerpt')} /></div>
+      <ImageUpload label="Cover photo" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} />
       <div className="adm-field">
-        <label>Testo articolo</label>
+        <label>Article body</label>
         <textarea rows={9} value={f.body} onChange={set('body')} />
-        <div className="adm-field-hint">Separa i paragrafi con una riga vuota.</div>
+        <div className="adm-field-hint">Separate paragraphs with a blank line.</div>
       </div>
     </Modal>
   )
@@ -619,7 +616,7 @@ function ShopTab({ token }) {
   const { items: products, saving, msg, persist } = useCMS('products', token)
   const [editing, setEditing] = useState(null)
 
-  const del = id => { if (!confirm('Eliminare questo prodotto?')) return; persist(products.filter(p => p.id !== id)) }
+  const del = id => { if (!confirm('Delete this product?')) return; persist(products.filter(p => p.id !== id)) }
   const upsert = prod => {
     const list = products.find(p => p.id === prod.id)
       ? products.map(p => p.id === prod.id ? prod : p)
@@ -629,14 +626,14 @@ function ShopTab({ token }) {
 
   return (
     <div>
-      {msg === 'local' && <div className="adm-offline">Salvato localmente. Fai il deploy del backend per rendere le modifiche visibili a tutti.</div>}
-      {msg === 'ok'    && <div className="adm-ok">Salvato sul server.</div>}
+      {msg === 'local' && <div className="adm-offline">Saved locally. Deploy the backend to make changes visible to everyone.</div>}
+      {msg === 'ok'    && <div className="adm-ok">Saved to server.</div>}
       <div className="adm-section-head">
-        <h2>Prodotti Shop {products && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({products.length})</span>}</h2>
-        <button className="btn-add" onClick={() => setEditing({})}>+ Nuovo prodotto</button>
+        <h2>Shop Products {products && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({products.length})</span>}</h2>
+        <button className="btn-add" onClick={() => setEditing({})}>+ New Product</button>
       </div>
-      {products === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento<Dots /></p>}
-      {products?.length === 0 && <p className="adm-empty">Nessun prodotto.</p>}
+      {products === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Loading<Dots /></p>}
+      {products?.length === 0 && <p className="adm-empty">No products yet.</p>}
       <div className="adm-list">
         {products?.map(p => (
           <div key={p.id} className="adm-item">
@@ -649,8 +646,8 @@ function ShopTab({ token }) {
               </div>
             </div>
             <div className="adm-item-btns">
-              <button className="btn-sm" onClick={() => setEditing(p)}>Modifica</button>
-              <button className="btn-sm btn-del" onClick={() => del(p.id)}>Elimina</button>
+              <button className="btn-sm" onClick={() => setEditing(p)}>Edit</button>
+              <button className="btn-sm btn-del" onClick={() => del(p.id)}>Delete</button>
             </div>
           </div>
         ))}
@@ -669,31 +666,31 @@ function ShopForm({ prod, onSave, onClose, saving }) {
   })
   const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
   const save = () => {
-    if (!f.name.trim()) return alert('Inserisci il nome del prodotto.')
-    if (!f.price) return alert('Inserisci il prezzo.')
+    if (!f.name.trim()) return alert('Please enter a product name.')
+    if (!f.price) return alert('Please enter a price.')
     onSave({
       ...f, price: parseFloat(f.price) || 0, priceZar: parseFloat(f.priceZar) || 0,
       sizes: f.sizes ? f.sizes.split(',').map(s => s.trim()).filter(Boolean) : [],
     })
   }
   return (
-    <Modal title={f.id ? 'Modifica prodotto' : 'Nuovo prodotto'} onClose={onClose} onSave={save} saving={saving}>
-      <div className="adm-field"><label>Nome prodotto *</label><input value={f.name} onChange={set('name')} /></div>
+    <Modal title={f.id ? 'Edit product' : 'New product'} onClose={onClose} onSave={save} saving={saving}>
+      <div className="adm-field"><label>Product name *</label><input value={f.name} onChange={set('name')} /></div>
       <div className="adm-grid2">
         <div className="adm-field">
-          <label>Prezzo Euro (€) *</label>
+          <label>Price Euro (€) *</label>
           <input type="number" min="0" step="0.01" value={f.price} onChange={set('price')} placeholder="22" />
         </div>
         <div className="adm-field">
-          <label>Prezzo Rand (R)</label>
+          <label>Price Rand (R)</label>
           <input type="number" min="0" step="1" value={f.priceZar} onChange={set('priceZar')} placeholder="350" />
         </div>
       </div>
       <div className="adm-field">
-        <label>Taglie (separate da virgola — lascia vuoto se non applicabile)</label>
+        <label>Sizes (comma-separated — leave empty if n/a)</label>
         <input value={f.sizes} onChange={set('sizes')} placeholder="XS, S, M, L, XL" />
       </div>
-      <ImageUpload label="Foto prodotto" value={f.photo} onChange={v => setF(p => ({ ...p, photo: v }))} />
+      <ImageUpload label="Product photo" value={f.photo} onChange={v => setF(p => ({ ...p, photo: v }))} />
     </Modal>
   )
 }
@@ -703,7 +700,7 @@ function AnimaliTab({ token }) {
   const { items: animals, saving, msg, persist } = useCMS('animals', token)
   const [editing, setEditing] = useState(null)
 
-  const del = id => { if (!confirm('Eliminare questo animale?')) return; persist(animals.filter(a => a.id !== id)) }
+  const del = id => { if (!confirm('Delete this animal?')) return; persist(animals.filter(a => a.id !== id)) }
   const upsert = animal => {
     const list = animals.find(a => a.id === animal.id)
       ? animals.map(a => a.id === animal.id ? animal : a)
@@ -713,14 +710,14 @@ function AnimaliTab({ token }) {
 
   return (
     <div>
-      {msg === 'local' && <div className="adm-offline">Salvato localmente. Fai il deploy del backend per rendere le modifiche visibili a tutti.</div>}
-      {msg === 'ok'    && <div className="adm-ok">Salvato sul server.</div>}
+      {msg === 'local' && <div className="adm-offline">Saved locally. Deploy the backend to make changes visible to everyone.</div>}
+      {msg === 'ok'    && <div className="adm-ok">Saved to server.</div>}
       <div className="adm-section-head">
-        <h2>Animali Adozione {animals && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({animals.length})</span>}</h2>
-        <button className="btn-add" onClick={() => setEditing({})}>+ Nuovo animale</button>
+        <h2>Adoption Animals {animals && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({animals.length})</span>}</h2>
+        <button className="btn-add" onClick={() => setEditing({})}>+ New Animal</button>
       </div>
-      {animals === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento<Dots /></p>}
-      {animals?.length === 0 && <p className="adm-empty">Nessun animale.</p>}
+      {animals === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Loading<Dots /></p>}
+      {animals?.length === 0 && <p className="adm-empty">No animals yet.</p>}
       <div className="adm-list">
         {animals?.map(a => (
           <div key={a.id} className="adm-item">
@@ -728,7 +725,7 @@ function AnimaliTab({ token }) {
             <div className="adm-item-info">
               <div className="adm-item-label">{a.species}</div>
               <div className="adm-item-name">{a.name}</div>
-              <div className="adm-item-meta">€{a.price}/mese</div>
+              <div className="adm-item-meta">€{a.price}/month</div>
             </div>
             <div className="adm-item-btns">
               <button className="btn-sm" onClick={() => setEditing(a)}>Modifica</button>
@@ -750,126 +747,186 @@ function AnimalForm({ animal, onSave, onClose, saving }) {
   })
   const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
   const save = () => {
-    if (!f.name.trim()) return alert('Inserisci il nome.')
-    if (!f.price) return alert('Inserisci la quota mensile.')
+    if (!f.name.trim()) return alert('Please enter a name.')
+    if (!f.price) return alert('Please enter the monthly fee.')
     onSave({ ...f, price: parseFloat(f.price) || 0 })
   }
   return (
-    <Modal title={f.id ? 'Modifica animale' : 'Nuovo animale'} onClose={onClose} onSave={save} saving={saving}>
+    <Modal title={f.id ? 'Edit animal' : 'New animal'} onClose={onClose} onSave={save} saving={saving}>
       <div className="adm-grid2">
-        <div className="adm-field"><label>Nome *</label><input value={f.name} onChange={set('name')} /></div>
-        <div className="adm-field"><label>Specie</label><input value={f.species} onChange={set('species')} placeholder="Cheetah" /></div>
+        <div className="adm-field"><label>Name *</label><input value={f.name} onChange={set('name')} /></div>
+        <div className="adm-field"><label>Species</label><input value={f.species} onChange={set('species')} placeholder="Cheetah" /></div>
         <div className="adm-field">
-          <label>Quota mensile (€) *</label>
+          <label>Monthly fee (€) *</label>
           <input type="number" min="1" step="1" value={f.price} onChange={set('price')} placeholder="15" />
         </div>
       </div>
-      <ImageUpload label="Foto animale" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} />
+      <ImageUpload label="Animal photo" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} />
     </Modal>
   )
 }
 
-// ── Contenuti tab — editor testi di tutto il sito ────────────────────────────
+// ── Content tab — site-wide text & image editor ────────────────────────────
 
 const CURATED = [
-  { key: 'home', label: 'Homepage', imageKey: 'home_hero', fields: [
-    { k: 'hero_title',    l: 'Titolo principale' },
-    { k: 'hero_sub',      l: 'Sottotitolo hero' },
-    { k: 'work_title',    l: '"I tre pilastri" — titolo' },
-    { k: 'work_desc',     l: '"I tre pilastri" — testo' },
-    { k: 'pillar1_title', l: 'Pilastro 1 — titolo' },
-    { k: 'pillar1_desc',  l: 'Pilastro 1 — testo' },
-    { k: 'pillar2_title', l: 'Pilastro 2 — titolo' },
-    { k: 'pillar2_desc',  l: 'Pilastro 2 — testo' },
-    { k: 'pillar3_title', l: 'Pilastro 3 — titolo' },
-    { k: 'pillar3_desc',  l: 'Pilastro 3 — testo' },
-    { k: 'cta_title',     l: 'CTA — titolo' },
-    { k: 'cta_desc',      l: 'CTA — testo' },
-    { k: 'contact_desc',  l: 'Contatti — testo intro' },
-  ]},
-  { key: 'nova_story', label: "Storia di Nova", imageKey: 'nova_story_hero', fields: [
-    { k: 'hero_label',    l: 'Label piccolo (sopra il titolo)' },
-    { k: 'hero_title',    l: 'Titolo hero' },
-    { k: 'hero_sub',      l: 'Sottotitolo hero' },
-    { k: 'origins_title', l: 'Origini — titolo sezione' },
-    { k: 'origins_p1',    l: 'Origini — paragrafo 1' },
-    { k: 'origins_p2',    l: 'Origini — paragrafo 2' },
-    { k: 'highlight',     l: 'Citazione in evidenza' },
-    { k: 'legacy_title',  l: "Legacy — titolo sezione" },
-    { k: 'legacy_p1',     l: 'Legacy — paragrafo 1' },
-    { k: 'legacy_p2',     l: 'Legacy — paragrafo 2' },
-  ]},
-  { key: 'kim_story', label: "Storia di Kim", imageKey: 'kim_story_hero', fields: [
-    { k: 'hero_label',    l: 'Label piccolo' },
-    { k: 'hero_title',    l: 'Titolo' },
-    { k: 'hero_sub',      l: 'Sottotitolo' },
-    { k: 'p1',            l: 'Testo principale' },
-    { k: 'quote1',        l: 'Citazione 1' },
-    { k: 'quote2',        l: 'Citazione 2' },
-    { k: 'quote3',        l: 'Citazione 3' },
-  ]},
-  { key: 'conservation', label: 'Conservazione', imageKey: 'conservation_hero', fields: [
-    { k: 'hero_label',    l: 'Label piccolo' },
-    { k: 'hero_title',    l: 'Titolo' },
-    { k: 'hero_sub',      l: 'Sottotitolo' },
-    { k: 'mission_p',     l: 'Missione — testo' },
-    { k: 'highlight',     l: 'Citazione in evidenza' },
-    { k: 'edu_title',     l: 'Educazione — titolo' },
-    { k: 'edu_p1',        l: 'Educazione — testo 1' },
-    { k: 'edu_p2',        l: 'Educazione — testo 2' },
-    { k: 'science_title', l: 'Ricerca scientifica — titolo' },
-    { k: 'science_p',     l: 'Ricerca scientifica — testo' },
-  ]},
-  { key: 'volunteer', label: 'Volontariato', imageKey: 'volunteer_hero', fields: [
-    { k: 'hero_label',    l: 'Label piccolo' },
-    { k: 'hero_title',    l: 'Titolo' },
-    { k: 'hero_sub',      l: 'Sottotitolo' },
-    { k: 'what_p1',       l: 'Cosa significa — testo 1' },
-    { k: 'what_p2',       l: 'Cosa significa — testo 2' },
-    { k: 'highlight',     l: 'Evidenziato' },
-    { k: 'apply_title',   l: 'Come candidarsi — titolo' },
-    { k: 'apply_text',    l: 'Come candidarsi — testo' },
-  ]},
-  { key: 'visit', label: 'Soggiorno', imageKey: 'visit_hero', fields: [
-    { k: 'hero_label',    l: 'Label piccolo' },
-    { k: 'hero_title',    l: 'Titolo' },
-    { k: 'hero_sub',      l: 'Sottotitolo' },
-    { k: 'chalets_title', l: 'Chalet — titolo' },
-    { k: 'chalets_p',     l: 'Chalet — testo' },
-    { k: 'highlight',     l: 'Evidenziato (periodo consigliato ecc.)' },
-    { k: 'how_p1',        l: 'Come arrivare — testo 1' },
-    { k: 'how_p2',        l: 'Come arrivare — testo 2' },
-  ]},
-  { key: 'horses', label: 'Cavalli', imageKey: 'horses_hero', fields: [
-    { k: 'hero_label',    l: 'Label piccolo' },
-    { k: 'hero_title',    l: 'Titolo' },
-    { k: 'hero_sub',      l: 'Sottotitolo' },
-    { k: 'who_p1',        l: 'I nostri cavalli — testo 1' },
-    { k: 'who_p2',        l: 'I nostri cavalli — testo 2' },
-    { k: 'highlight',     l: 'Evidenziato' },
-    { k: 'vol_p1',        l: 'Cosa fanno i volontari — testo 1' },
-  ]},
-  { key: 'cheetah_run', label: 'Cheetah Run', imageKey: 'cheetah_run_hero', fields: [
-    { k: 'hero_label',       l: 'Label piccolo' },
-    { k: 'hero_title',       l: 'Titolo' },
-    { k: 'hero_sub',         l: 'Sottotitolo' },
-    { k: 'p1',               l: 'Testo principale' },
-    { k: 'highlight',        l: 'Evidenziato' },
-    { k: 'how_p1',           l: 'Come funziona — testo 1' },
-    { k: 'how_p2',           l: 'Come funziona — testo 2' },
-    { k: 'booking_highlight', l: 'Testo prenotazione' },
-  ]},
-  { key: 'donate', label: 'Donazioni', imageKey: null, fields: [
-    { k: 'hero_label',    l: 'Label piccolo' },
-    { k: 'hero_title',    l: 'Titolo' },
-    { k: 'hero_sub',      l: 'Sottotitolo' },
-    { k: 'section_title', l: 'Sezione — titolo' },
-  ]},
-  { key: 'footer', label: 'Footer', imageKey: null, fields: [
-    { k: 'brand_desc', l: 'Descrizione brand' },
-    { k: 'copyright',  l: 'Copyright' },
-    { k: 'reg',        l: 'Info legali (numero registro)' },
-  ]},
+  { key: 'home', label: 'Homepage',
+    images: [
+      { k: 'home_hero', l: 'Hero banner (main)',       def: '/img/ghepardo-erba.png' },
+      { k: 'home_cta',  l: 'Bottom CTA background',   def: '/img/ghepardo-corsa.png' },
+    ],
+    fields: [
+      { k: 'hero_title',    l: 'Hero — main title' },
+      { k: 'hero_sub',      l: 'Hero — subtitle' },
+      { k: 'work_title',    l: 'Three pillars — title' },
+      { k: 'work_desc',     l: 'Three pillars — text' },
+      { k: 'pillar1_title', l: 'Pillar 1 — title' },
+      { k: 'pillar1_desc',  l: 'Pillar 1 — text' },
+      { k: 'pillar2_title', l: 'Pillar 2 — title' },
+      { k: 'pillar2_desc',  l: 'Pillar 2 — text' },
+      { k: 'pillar3_title', l: 'Pillar 3 — title' },
+      { k: 'pillar3_desc',  l: 'Pillar 3 — text' },
+      { k: 'cta_title',     l: 'CTA — title' },
+      { k: 'cta_desc',      l: 'CTA — text' },
+      { k: 'contact_desc',  l: 'Contact section — intro text' },
+    ]},
+  { key: 'nova_story', label: "Nova's Story",
+    images: [
+      { k: 'nova_story_hero', l: 'Hero image', def: '/img/nova-madre-cucciolo.png' },
+    ],
+    fields: [
+      { k: 'hero_label',    l: 'Small label (above title)' },
+      { k: 'hero_title',    l: 'Hero title' },
+      { k: 'hero_sub',      l: 'Hero subtitle' },
+      { k: 'origins_title', l: 'Origins — section title' },
+      { k: 'origins_p1',    l: 'Origins — paragraph 1' },
+      { k: 'origins_p2',    l: 'Origins — paragraph 2' },
+      { k: 'highlight',     l: 'Highlighted quote' },
+      { k: 'legacy_title',  l: "Legacy — section title" },
+      { k: 'legacy_p1',     l: 'Legacy — paragraph 1' },
+      { k: 'legacy_p2',     l: 'Legacy — paragraph 2' },
+    ]},
+  { key: 'kim_story', label: "Kim's Story",
+    images: [
+      { k: 'kim_story_hero', l: 'Hero image', def: '/img/kim-savana.svg' },
+    ],
+    fields: [
+      { k: 'hero_label',    l: 'Small label' },
+      { k: 'hero_title',    l: 'Title' },
+      { k: 'hero_sub',      l: 'Subtitle' },
+      { k: 'p1',            l: 'Main text' },
+      { k: 'quote1',        l: 'Quote 1' },
+      { k: 'quote2',        l: 'Quote 2' },
+      { k: 'quote3',        l: 'Quote 3' },
+    ]},
+  { key: 'conservation', label: 'Conservation',
+    images: [
+      { k: 'conservation_hero', l: 'Hero image', def: '/img/due-ghepardi.png' },
+    ],
+    fields: [
+      { k: 'hero_label',    l: 'Small label' },
+      { k: 'hero_title',    l: 'Title' },
+      { k: 'hero_sub',      l: 'Subtitle' },
+      { k: 'mission_p',     l: 'Mission — text' },
+      { k: 'highlight',     l: 'Highlighted quote' },
+      { k: 'edu_title',     l: 'Education — title' },
+      { k: 'edu_p1',        l: 'Education — paragraph 1' },
+      { k: 'edu_p2',        l: 'Education — paragraph 2' },
+      { k: 'science_title', l: 'Scientific research — title' },
+      { k: 'science_p',     l: 'Scientific research — text' },
+    ]},
+  { key: 'volunteer', label: 'Volunteering',
+    images: [
+      { k: 'volunteer_hero', l: 'Hero image', def: '/img/vol-volontari-1.jpg' },
+    ],
+    fields: [
+      { k: 'hero_label',    l: 'Small label' },
+      { k: 'hero_title',    l: 'Title' },
+      { k: 'hero_sub',      l: 'Subtitle' },
+      { k: 'what_p1',       l: 'What it means — paragraph 1' },
+      { k: 'what_p2',       l: 'What it means — paragraph 2' },
+      { k: 'highlight',     l: 'Highlighted box' },
+      { k: 'apply_title',   l: 'How to apply — title' },
+      { k: 'apply_text',    l: 'How to apply — text' },
+    ]},
+  { key: 'visit', label: 'Stay & Visits',
+    images: [
+      { k: 'visit_hero', l: 'Hero image', def: '/img/chalet-esterno.png' },
+    ],
+    fields: [
+      { k: 'hero_label',    l: 'Small label' },
+      { k: 'hero_title',    l: 'Title' },
+      { k: 'hero_sub',      l: 'Subtitle' },
+      { k: 'chalets_title', l: 'Chalets — title' },
+      { k: 'chalets_p',     l: 'Chalets — text' },
+      { k: 'highlight',     l: 'Highlighted box (best season etc.)' },
+      { k: 'how_p1',        l: 'How to get there — paragraph 1' },
+      { k: 'how_p2',        l: 'How to get there — paragraph 2' },
+    ]},
+  { key: 'horses', label: 'Horse Project',
+    images: [
+      { k: 'horses_hero', l: 'Hero image', def: '/img/cavallo-puledro.png' },
+    ],
+    fields: [
+      { k: 'hero_label',    l: 'Small label' },
+      { k: 'hero_title',    l: 'Title' },
+      { k: 'hero_sub',      l: 'Subtitle' },
+      { k: 'who_p1',        l: 'Our horses — paragraph 1' },
+      { k: 'who_p2',        l: 'Our horses — paragraph 2' },
+      { k: 'highlight',     l: 'Highlighted box' },
+      { k: 'vol_p1',        l: 'What volunteers do — paragraph 1' },
+    ]},
+  { key: 'cheetah_run', label: 'Cheetah Run',
+    images: [
+      { k: 'cheetah_run_hero', l: 'Hero / slideshow first image', def: '/img/ghepardo-corsa.png' },
+    ],
+    fields: [
+      { k: 'hero_label',        l: 'Small label' },
+      { k: 'hero_title',        l: 'Title' },
+      { k: 'hero_sub',          l: 'Subtitle' },
+      { k: 'p1',                l: 'Main text' },
+      { k: 'highlight',         l: 'Highlighted box' },
+      { k: 'how_p1',            l: 'How it works — paragraph 1' },
+      { k: 'how_p2',            l: 'How it works — paragraph 2' },
+      { k: 'booking_highlight', l: 'Booking info text' },
+    ]},
+  { key: 'donate', label: 'Donations',
+    images: [],
+    fields: [
+      { k: 'hero_label',    l: 'Small label' },
+      { k: 'hero_title',    l: 'Title' },
+      { k: 'hero_sub',      l: 'Subtitle' },
+      { k: 'section_title', l: 'Section title' },
+    ]},
+  { key: 'footer', label: 'Footer',
+    images: [],
+    fields: [
+      { k: 'brand_desc', l: 'Brand description' },
+      { k: 'copyright',  l: 'Copyright line' },
+      { k: 'reg',        l: 'Legal info (reg. number)' },
+    ]},
+  { key: 'nav', label: 'Navigation',
+    images: [],
+    fields: [
+      { k: 'home',           l: 'Home' },
+      { k: 'about_us',       l: 'About Us (menu label)' },
+      { k: 'nova_story',     l: '  ↳ Nova\'s Story' },
+      { k: 'kim_story',      l: '  ↳ Kim\'s Story' },
+      { k: 'our_mission',    l: 'Our Mission (menu label)' },
+      { k: 'cheetah_project', l: '  ↳ Cheetah Project' },
+      { k: 'horses',         l: '  ↳ Horse Project' },
+      { k: 'get_involved',   l: 'Get Involved (menu label)' },
+      { k: 'volunteer',      l: '  ↳ Volunteering' },
+      { k: 'internship',     l: '  ↳ Internship' },
+      { k: 'stay',           l: '  ↳ Stay' },
+      { k: 'cheetah_run',    l: '  ↳ Cheetah Run' },
+      { k: 'blog',           l: 'Blog' },
+      { k: 'shop',           l: 'Shop' },
+      { k: 'support_us',     l: 'Support Us (menu label)' },
+      { k: 'donations',      l: '  ↳ Donations' },
+      { k: 'wishlist',       l: '  ↳ Wishlist' },
+      { k: 'adopt_animal',   l: '  ↳ Adopt an Animal' },
+      { k: 'become_volunteer', l: 'CTA button (top right)' },
+    ]},
 ]
 
 function TextField({ label, value, onChange }) {
@@ -885,7 +942,7 @@ function TextField({ label, value, onChange }) {
   )
 }
 
-function ContenutiTab({ token }) {
+function ContentTab({ token }) {
   const [content, setContent] = useState(null)
   const [secIdx,  setSecIdx]  = useState(0)
   const [saving,  setSaving]  = useState(false)
@@ -894,13 +951,11 @@ function ContenutiTab({ token }) {
   useEffect(() => {
     const cached = (() => { try { return JSON.parse(localStorage.getItem('nl_content')) } catch { return null } })()
     if (cached && Object.keys(cached).length) setContent(cached)
-
     loadContent().then(d => {
       if (d && Object.keys(d).length) {
         setContent(d)
         localStorage.setItem('nl_content', JSON.stringify(d))
       } else if (!cached) {
-        // Backend non raggiungibile e nessuna cache → usa i18n integrato
         const builtin = i18n.getDataByLanguage('en')?.translation || {}
         setContent(Object.keys(builtin).length ? builtin : {})
       }
@@ -932,14 +987,14 @@ function ContenutiTab({ token }) {
   }
 
   const secData = content?.[sec.key] || {}
-  const images  = content?._images  || {}
+  const cmsImgs = content?._images  || {}
 
   return (
     <div>
-      {msg === 'ok'    && <div className="adm-ok">Salvato sul server. Il sito si aggiorna automaticamente.</div>}
-      {msg === 'local' && <div className="adm-offline">Salvato localmente. Visibile subito su questo browser. Fai il deploy per renderlo permanente.</div>}
+      {msg === 'ok'    && <div className="adm-ok">Saved to server. The site will update automatically.</div>}
+      {msg === 'local' && <div className="adm-offline">Saved locally. Visible immediately in this browser. Deploy the backend to make it permanent for everyone.</div>}
 
-      {/* Tabs pagine */}
+      {/* Page tabs */}
       <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
         {CURATED.map((s, i) => (
           <button key={s.key} onClick={() => { setSecIdx(i); setMsg(null) }}
@@ -956,40 +1011,73 @@ function ContenutiTab({ token }) {
         ))}
       </div>
 
-      {content === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento<Dots /></p>}
+      {content === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Loading<Dots /></p>}
 
       {content !== null && (
         <div style={{ background: '#fff', border: '1px solid #E2D8CC', borderRadius: 6, padding: '1.3rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.4rem' }}>
             <h2 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>{sec.label}</h2>
             <button className="btn-primary" onClick={save} disabled={saving}>
-              {saving ? <><Dots /> Salvo</> : 'Salva'}
+              {saving ? <><Dots /> Saving</> : 'Save changes'}
             </button>
           </div>
 
-          {/* Immagine principale */}
-          {sec.imageKey && (
-            <div style={{ marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #EDE5D8' }}>
-              <ImageUpload
-                label="Immagine principale pagina"
-                value={images[sec.imageKey] || ''}
-                onChange={v => updateImage(sec.imageKey, v)}
-              />
+          {/* Images grid */}
+          {sec.images.length > 0 && (
+            <div style={{ marginBottom: '1.4rem', paddingBottom: '1.4rem', borderBottom: '1px solid #EDE5D8' }}>
+              <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#AAA', marginBottom: '0.8rem' }}>
+                Images
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+                {sec.images.map(({ k, l, def }) => {
+                  const current = cmsImgs[k] || def
+                  return (
+                    <div key={k} style={{ background: '#F8F5F0', border: '1px solid #EDE5D8', borderRadius: 5, overflow: 'hidden' }}>
+                      <div style={{ position: 'relative', height: 120 }}>
+                        <img src={current} alt={l}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                        {cmsImgs[k] && (
+                          <button onClick={() => updateImage(k, '')}
+                            title="Remove custom image (restore default)"
+                            style={{
+                              position: 'absolute', top: 6, right: 6,
+                              background: 'rgba(0,0,0,0.55)', border: 'none',
+                              color: '#fff', borderRadius: '50%', width: 22, height: 22,
+                              fontSize: '0.75rem', cursor: 'pointer', lineHeight: 1,
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            }}>×</button>
+                        )}
+                      </div>
+                      <div style={{ padding: '0.6rem 0.7rem' }}>
+                        <div style={{ fontSize: '0.7rem', fontWeight: 600, color: '#555', marginBottom: '0.45rem' }}>{l}</div>
+                        <ImageUpload label="" value={cmsImgs[k] || ''} onChange={v => updateImage(k, v)} />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           )}
 
-          {/* Campi testo */}
-          {sec.fields.map(({ k, l }) => (
-            <TextField key={k} label={l} value={secData[k] || ''} onChange={v => updateField(k, v)} />
-          ))}
+          {/* Text fields */}
+          {sec.fields.length > 0 && (
+            <>
+              <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#AAA', marginBottom: '0.8rem' }}>
+                Text
+              </div>
+              {sec.fields.map(({ k, l }) => (
+                <TextField key={k} label={l} value={secData[k] || ''} onChange={v => updateField(k, v)} />
+              ))}
+            </>
+          )}
         </div>
       )}
     </div>
   )
 }
 
-// ── Impostazioni tab ──────────────────────────────────────────────────────────
-function ImpostazioniTab({ token }) {
+// ── Settings tab ──────────────────────────────────────────────────────────────
+function SettingsTab({ token }) {
   const [f, setF] = useState({ current: '', newpw: '', confirm: '', newKey: '' })
   const [msg, setMsg] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -997,8 +1085,8 @@ function ImpostazioniTab({ token }) {
 
   const change = async e => {
     e.preventDefault(); setMsg(null)
-    if (f.newpw !== f.confirm) return setMsg({ err: 'Le password non coincidono.' })
-    if (f.newpw.length < 8) return setMsg({ err: 'Almeno 8 caratteri per la password.' })
+    if (f.newpw !== f.confirm) return setMsg({ err: 'Passwords do not match.' })
+    if (f.newpw.length < 8) return setMsg({ err: 'Password must be at least 8 characters.' })
     setLoading(true)
     try {
       const body = { current: f.current, newPassword: f.newpw }
@@ -1010,34 +1098,34 @@ function ImpostazioniTab({ token }) {
       })
       const d = await r.json()
       if (d.ok) {
-        const note = f.newKey.trim().length >= 3 ? ' e parola chiave aggiornate.' : ' aggiornata.'
-        setMsg({ ok: 'Password' + note + ' Le modifiche sono permanenti.' })
+        const note = f.newKey.trim().length >= 3 ? ' and recovery keyword updated.' : ' updated.'
+        setMsg({ ok: 'Password' + note + ' Changes are permanent.' })
         setF({ current: '', newpw: '', confirm: '', newKey: '' })
-      } else setMsg({ err: d.error || 'Errore.' })
-    } catch { setMsg({ err: 'Server non raggiungibile.' }) }
+      } else setMsg({ err: d.error || 'Error.' })
+    } catch { setMsg({ err: 'Server unreachable.' }) }
     setLoading(false)
   }
 
   return (
     <div className="adm-settings">
-      <div className="adm-section-head" style={{ marginBottom: '1.3rem' }}><h2>Impostazioni</h2></div>
-      <h3>Cambia password</h3>
+      <div className="adm-section-head" style={{ marginBottom: '1.3rem' }}><h2>Settings</h2></div>
+      <h3>Change password</h3>
       {msg?.ok  && <div className="adm-ok">{msg.ok}</div>}
       {msg?.err && <div className="adm-err">{msg.err}</div>}
       <form onSubmit={change}>
-        <div className="adm-field"><label>Password attuale</label>
+        <div className="adm-field"><label>Current password</label>
           <input type="password" value={f.current} onChange={set('current')} required placeholder="••••••••" /></div>
-        <div className="adm-field"><label>Nuova password (min. 8 caratteri)</label>
+        <div className="adm-field"><label>New password (min. 8 characters)</label>
           <input type="password" value={f.newpw} onChange={set('newpw')} required minLength={8} placeholder="••••••••" /></div>
-        <div className="adm-field"><label>Conferma nuova password</label>
+        <div className="adm-field"><label>Confirm new password</label>
           <input type="password" value={f.confirm} onChange={set('confirm')} required placeholder="••••••••" /></div>
         <div className="adm-field">
-          <label>Nuova parola chiave di recupero (opzionale)</label>
-          <input type="text" value={f.newKey} onChange={set('newKey')} placeholder="lascia vuoto per non cambiarla" autoComplete="off" />
-          <div className="adm-field-hint">Usata per recuperare l&apos;accesso se dimentichi la password.</div>
+          <label>New recovery keyword (optional)</label>
+          <input type="text" value={f.newKey} onChange={set('newKey')} placeholder="leave empty to keep current" autoComplete="off" />
+          <div className="adm-field-hint">Used to recover access if you forget your password.</div>
         </div>
         <button type="submit" className="btn-primary" disabled={loading}>
-          {loading ? <Dots /> : 'Salva modifiche'}
+          {loading ? <Dots /> : 'Save changes'}
         </button>
       </form>
     </div>
@@ -1062,8 +1150,8 @@ export default function Admin({ goTo }) {
           <div className="adm-bar-top">
             <div className="adm-logo">Nova&apos;s <em>Legacy</em></div>
             <div className="adm-bar-acts">
-              <button className="adm-btn-site" onClick={() => goTo('home')}>← Sito</button>
-              <button className="adm-btn-exit" onClick={logout}>Esci</button>
+              <button className="adm-btn-site" onClick={() => goTo('home')}>← Site</button>
+              <button className="adm-btn-exit" onClick={logout}>Sign out</button>
             </div>
           </div>
           <div className="adm-tabs">
@@ -1075,11 +1163,11 @@ export default function Admin({ goTo }) {
           </div>
         </div>
         <div className="adm-body">
-          {tab === 0 && <BlogTab    token={token} />}
-          {tab === 1 && <ShopTab    token={token} />}
-          {tab === 2 && <AnimaliTab     token={token} />}
-          {tab === 3 && <ContenutiTab   token={token} />}
-          {tab === 4 && <ImpostazioniTab token={token} />}
+          {tab === 0 && <BlogTab     token={token} />}
+          {tab === 1 && <ShopTab     token={token} />}
+          {tab === 2 && <AnimaliTab  token={token} />}
+          {tab === 3 && <ContentTab  token={token} />}
+          {tab === 4 && <SettingsTab token={token} />}
         </div>
       </div>
     </>

@@ -12,7 +12,8 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const CMS_FILE = path.join(__dirname, 'cms.json');
+const CMS_FILE      = path.join(__dirname, 'cms.json');
+const SETTINGS_FILE = path.join(__dirname, 'settings.json');
 
 const CMS_DEFAULTS = { blog: [], products: [], animals: [] };
 
@@ -22,6 +23,13 @@ function readCMS() {
 }
 function writeCMS(data) {
   fs.writeFileSync(CMS_FILE, JSON.stringify(data, null, 2), 'utf-8');
+}
+function readSettings() {
+  try { return JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf-8')); }
+  catch { return {}; }
+}
+function writeSettings(data) {
+  fs.writeFileSync(SETTINGS_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
 
 dotenv.config();
@@ -83,7 +91,10 @@ async function notifyKim(toName, toEmail, animalName, monthlyEur) {
 app.use(cors());
 app.use(express.json());
 
-let adminPassword = envVars.ADMIN_PASSWORD || "";
+// Password e parola chiave: da settings.json oppure env var
+const _savedSettings = readSettings();
+let adminPassword = _savedSettings.adminPassword || envVars.ADMIN_PASSWORD || "";
+let adminRecoveryKey = _savedSettings.recoveryKey || "";
 
 app.get('/', (req, res) => {
     res.json({ message: "Il backend di Nova's Legacy è online e funzionante!" });
@@ -100,13 +111,19 @@ app.get('/api/paypal-config', (req, res) => {
 });
 
 app.post('/api/admin/setup', (req, res) => {
-    const { password } = req.body;
+    const { password, recoveryKey } = req.body;
     if (!password || password.length < 8) {
         return res.status(400).json({ ok: false, error: "La password deve contenere almeno 8 caratteri." });
     }
+    if (!recoveryKey || recoveryKey.trim().length < 3) {
+        return res.status(400).json({ ok: false, error: "Inserisci una parola chiave di recupero (min. 3 caratteri)." });
+    }
     adminPassword = password;
+    adminRecoveryKey = recoveryKey.trim();
+    writeSettings({ ...readSettings(), adminPassword: password, recoveryKey: adminRecoveryKey });
     res.json({ ok: true });
 });
+
 
 app.post('/api/admin/login', (req, res) => {
     const { password } = req.body;
@@ -121,6 +138,24 @@ app.post('/api/admin/login', (req, res) => {
     }
 
     return res.status(401).json({ error: 'Password errata' });
+});
+
+// Recupero password tramite parola chiave
+app.post('/api/admin/recover', (req, res) => {
+    const { recoveryKey, newPassword } = req.body;
+    if (!adminRecoveryKey) {
+        return res.status(400).json({ error: "Nessuna parola chiave impostata. Contatta l'amministratore." });
+    }
+    if (recoveryKey?.trim() !== adminRecoveryKey) {
+        return res.status(401).json({ error: 'Parola chiave errata.' });
+    }
+    if (!newPassword || newPassword.length < 8) {
+        return res.status(400).json({ error: 'La nuova password deve avere almeno 8 caratteri.' });
+    }
+    adminPassword = newPassword;
+    writeSettings({ ...readSettings(), adminPassword: newPassword });
+    const token = jwt.sign({ role: 'admin' }, envVars.JWT_SECRET || 'secret_provvisorio', { expiresIn: '1h' });
+    res.json({ ok: true, token });
 });
 
 app.put('/api/admin/paypal-config', (req, res) => {
@@ -292,6 +327,21 @@ function requireAdmin(req, res, next) {
     res.status(401).json({ error: 'Token non valido' });
   }
 }
+
+// ── Admin: cambio password ────────────────────────────────────────────────────
+app.post('/api/admin/change-password', requireAdmin, (req, res) => {
+  const { current, newPassword, newRecoveryKey } = req.body;
+  if (current !== adminPassword) return res.status(401).json({ error: 'Password attuale errata.' });
+  if (!newPassword || newPassword.length < 8) return res.status(400).json({ error: 'Almeno 8 caratteri.' });
+  adminPassword = newPassword;
+  const updates = { adminPassword: newPassword };
+  if (newRecoveryKey?.trim().length >= 3) {
+    adminRecoveryKey = newRecoveryKey.trim();
+    updates.recoveryKey = adminRecoveryKey;
+  }
+  writeSettings({ ...readSettings(), ...updates });
+  res.json({ ok: true });
+});
 
 // ── CMS: lettura pubblica ─────────────────────────────────────────────────────
 app.get('/api/cms', (_req, res) => {

@@ -4,9 +4,10 @@ import Lightbox from '../components/Lightbox'
 import { useCMSImages } from '../CMSContext'
 
 const DEFAULTS = {
-  hero:        '/img/ghepardo-erba.png',
+  heroDesktop: '/img/ghepardo-erba.png',
+  heroMobile:  '/img/heroMobile.png',
   pillar1:     '/img/madre-cucciolo.png',
-  pillar2:     '/img/volontari-gruppo.png',
+  pillar2:     '/img/community.png',
   pillar3:     '/img/ghepardo-visita-vet.png',
   cheetahRun:  '/img/ghepardo-corsa-recinzione.png',
   progRun:     '/img/ghepardo-corsa-2.png',
@@ -38,8 +39,8 @@ const PROG_IMGS  = [DEFAULTS.progRun, DEFAULTS.progVol, DEFAULTS.progChalet, DEF
 function useScrollRevealLocal() {
   useEffect(() => {
     const obs = new IntersectionObserver(
-      (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible') }),
-      { threshold: 0.1, rootMargin: '0px 0px -30px 0px' }
+        (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible') }),
+        { threshold: 0.1, rootMargin: '0px 0px -30px 0px' }
     )
     const sel = '.reveal,.rv,.rv-left,.rv-right,.rv-scale,.rv-up'
     document.querySelectorAll(sel).forEach(el => obs.observe(el))
@@ -75,10 +76,10 @@ function StatItem({ num, suffix, label }) {
   }, [])
 
   return (
-    <div className="hero-strip-item" ref={ref}>
-      <div className="strip-num">{active ? count.toLocaleString('it-IT') : 0}{suffix}</div>
-      <div className="strip-label">{label}</div>
-    </div>
+      <div className="hero-strip-item" ref={ref}>
+        <div className="strip-num">{active ? count.toLocaleString('it-IT') : 0}{suffix}</div>
+        <div className="strip-label">{label}</div>
+      </div>
   )
 }
 
@@ -88,7 +89,7 @@ function Home({ goTo }) {
   const cmsImages = useCMSImages()
   const IMG = {
     ...DEFAULTS,
-    ...(cmsImages.home_hero ? { hero: cmsImages.home_hero } : {}),
+    ...(cmsImages.home_hero ? { heroDesktop: cmsImages.home_hero } : {}),
     ...(cmsImages.home_cta  ? { bigCta: cmsImages.home_cta } : {}),
   }
 
@@ -100,11 +101,10 @@ function Home({ goTo }) {
   const heroTitleWords = t('home.hero_title').split(' ')
   const cta2parts = t('home.cta_title').split('. ')
 
-  // Hero parallax
   const heroImgRef = useRef(null)
   useEffect(() => {
     const onScroll = () => {
-      if (!heroImgRef.current) return
+      if (!heroImgRef.current || window.innerWidth <= 768) return
       const y = window.scrollY * 0.35
       heroImgRef.current.style.transform = `translateY(${y}px) scale(1.02)`
     }
@@ -135,112 +135,121 @@ function Home({ goTo }) {
   }
 
   return (
-    <>
-      {/* ── HERO ── */}
-      <section className="hero">
-        <img ref={heroImgRef} className="hero-img" src={IMG.hero} alt="Nova — la gheparda fondatrice" />
-        <div className="hero-overlay" />
+      <>
+        {/* ── HERO ── */}
+        <section className="hero">
+          <picture className="hero-img-picture" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}>
+            <source media="(max-width: 768px)" srcSet={IMG.heroMobile} />
+            <img
+                ref={heroImgRef}
+                className="hero-img"
+                src={IMG.heroDesktop}
+                alt="Nova — la gheparda fondatrice"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', display: 'block' }}
+            />
+          </picture>
+          <div className="hero-overlay" />
 
-        <div className="hero-content">
-          <div className="hero-eyebrow">{t('home.hero_eyebrow')}</div>
-          <h1>
-            {heroTitleWords.slice(0, -1).join(' ')}<br />
-            <em>{heroTitleWords.slice(-1)}</em>
-          </h1>
-          <p className="hero-sub">{t('home.hero_sub')}</p>
-          <div className="hero-buttons">
-            <button className="btn btn-gold" onClick={() => goTo('volunteer')}>
-              {t('home.btn_volunteer')}
-            </button>
-            <button className="btn btn-outline" onClick={() => goTo('nova-story')}>
-              {t('home.btn_discover')}
-            </button>
+          <div className="hero-content">
+            <div className="hero-eyebrow">{t('home.hero_eyebrow')}</div>
+            <h1>
+              {heroTitleWords.slice(0, -1).join(' ')}<br />
+              <em>{heroTitleWords.slice(-1)}</em>
+            </h1>
+            <p className="hero-sub">{t('home.hero_sub')}</p>
+            <div className="hero-buttons">
+              <button className="btn btn-gold" onClick={() => goTo('volunteer')}>
+                {t('home.btn_volunteer')}
+              </button>
+              <button className="btn btn-outline" onClick={() => goTo('nova-story')}>
+                {t('home.btn_discover')}
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div className="hero-strip">
-          <StatItem num={7000} suffix="+"   label={t('home.stat_cheetahs')} />
-          <StatItem num={865}  suffix=" ha" label={t('home.stat_reserve')} />
-          <StatItem num={50}   suffix="+"   label={t('home.stat_animals')} />
-          <StatItem num={200}  suffix="+"   label={t('home.stat_volunteers')} />
-        </div>
-      </section>
+          <div className="hero-strip">
+            <StatItem num={7000} suffix="+"   label={t('home.stat_cheetahs')} />
+            <StatItem num={865}  suffix=" ha" label={t('home.stat_reserve')} />
+            <StatItem num={50}   suffix="+"   label={t('home.stat_animals')} />
+            <StatItem num={200}  suffix="+"   label={t('home.stat_volunteers')} />
+          </div>
+        </section>
 
-      {/* ── ALERT BAR ── */}
-      <div className="alert-bar">
-        <span className="alert-tag">{t('home.alert_tag')}</span>
-        <p>
-          {t('home.alert_body_1')}<strong>{t('home.alert_body_strong1')}</strong>{t('home.alert_body_2')}<strong>{t('home.alert_body_strong2')}</strong>{t('home.alert_body_3')}
-        </p>
-        <button className="btn btn-outline btn-sm" onClick={() => goTo('conservation')}>
-          {t('home.alert_btn')}
-        </button>
-      </div>
-
-      {/* ── WHAT WE DO ── */}
-      <section style={{ padding: '5rem 2rem' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <span className="label rv">{t('home.work_label')}</span>
-          <h2 className="h2 rv rv-d1" style={{ fontSize: '2.6rem', lineHeight: '1.2', margin: '0 0 1.2rem 0' }}>
-            {t('home.work_title').split(' ').slice(0, -3).join(' ')} <em>{t('home.work_title').split(' ').slice(-3).join(' ')}</em>
-          </h2>
-          <p className="rv rv-d2" style={{ color: '#555', maxWidth: '850px', lineHeight: '1.65', margin: '0 0 3.5rem 0' }}>
-            {t('home.work_desc')}
+        {/* ── ALERT BAR ── */}
+        <div className="alert-bar">
+          <span className="alert-tag">{t('home.alert_tag')}</span>
+          <p>
+            {t('home.alert_body_1')}<strong>{t('home.alert_body_strong1')}</strong>{t('home.alert_body_2')}<strong>{t('home.alert_body_strong2')}</strong>{t('home.alert_body_3')}
           </p>
+          <button className="btn btn-outline btn-sm" onClick={() => goTo('conservation')}>
+            {t('home.alert_btn')}
+          </button>
+        </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }} className="pillars-grid">
-            {[
-              { img: IMG.pillar1, pos: 'center 15%', num: '01', title: t('home.pillar1_title'), desc: t('home.pillar1_desc'), page: 'conservation', rv: 'rv' },
-              { img: IMG.pillar2, pos: 'center 30%', num: '02', title: t('home.pillar2_title'), desc: t('home.pillar2_desc'), page: 'volunteer',    rv: 'rv rv-d1' },
-              { img: IMG.pillar3, pos: 'center 50%', num: '03', title: t('home.pillar3_title'), desc: t('home.pillar3_desc'), page: 'horses',        rv: 'rv rv-d2' },
-            ].map(({ img, pos, num, title, desc, page, rv }) => (
-              <div key={num} className={`program-card ${rv}`}>
-                <div className="program-img" style={{ height: '280px' }}>
-                  <img src={img} alt={title} style={{ objectPosition: pos }} />
-                </div>
-                <div className="program-body" style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                  <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.4rem' }}>{num}</div>
-                  <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.4rem', marginBottom: '0.6rem', color: 'var(--dark)', lineHeight: '1.3' }}>{title}</h3>
-                  <p style={{ fontSize: '0.84rem', color: '#777', lineHeight: '1.65', marginBottom: '1.4rem', flexGrow: 1 }}>{desc}</p>
-                  <span className="program-link" style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--dark)' }} onClick={() => goTo(page)}>{t('common.learn_more_arrow')}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-          <style>{`
+        {/* ── WHAT WE DO ── */}
+        <section style={{ padding: '5rem 2rem' }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <span className="label rv">{t('home.work_label')}</span>
+            <h2 className="h2 rv rv-d1" style={{ fontSize: '2.6rem', lineHeight: '1.2', margin: '0 0 1.2rem 0' }}>
+              {t('home.work_title').split(' ').slice(0, -3).join(' ')} <em>{t('home.work_title').split(' ').slice(-3).join(' ')}</em>
+            </h2>
+            <p className="rv rv-d2" style={{ color: '#555', maxWidth: '850px', lineHeight: '1.65', margin: '0 0 3.5rem 0' }}>
+              {t('home.work_desc')}
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }} className="pillars-grid">
+              {[
+                { img: IMG.pillar1, pos: 'center 15%', num: '01', title: t('home.pillar1_title'), desc: t('home.pillar1_desc'), page: 'conservation', rv: 'rv' },
+                { img: IMG.pillar2, pos: 'center 30%', num: '02', title: t('home.pillar2_title'), desc: t('home.pillar2_desc'), page: 'volunteer',    rv: 'rv rv-d1' },
+                { img: IMG.pillar3, pos: 'center 50%', num: '03', title: t('home.pillar3_title'), desc: t('home.pillar3_desc'), page: 'horses',        rv: 'rv rv-d2' },
+              ].map(({ img, pos, num, title, desc, page, rv }) => (
+                  <div key={num} className={`program-card ${rv}`}>
+                    <div className="program-img" style={{ height: '280px' }}>
+                      <img src={img} alt={title} style={{ objectPosition: pos }} />
+                    </div>
+                    <div className="program-body" style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                      <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.4rem' }}>{num}</div>
+                      <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.4rem', marginBottom: '0.6rem', color: 'var(--dark)', lineHeight: '1.3' }}>{title}</h3>
+                      <p style={{ fontSize: '0.84rem', color: '#777', lineHeight: '1.65', marginBottom: '1.4rem', flexGrow: 1 }}>{desc}</p>
+                      <span className="program-link" style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--dark)' }} onClick={() => goTo(page)}>{t('common.learn_more_arrow')}</span>
+                    </div>
+                  </div>
+              ))}
+            </div>
+            <style>{`
             @media (max-width: 900px) { .pillars-grid { grid-template-columns: 1fr !important; } }
             @media (max-width: 600px) { .pillars-grid { grid-template-columns: 1fr !important; } }
           `}</style>
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* ── CHEETAH RUN ── */}
-      <section style={{ padding: '5rem 2rem', background: 'var(--sand-pale)' }}>
-        <div className="cr-cinema">
-          <img src={IMG.cheetahRun} alt="Cheetah Run" className="cr-cinema-img" />
-          <div className="cr-cinema-overlay">
-            <div className="cr-cinema-left">
-              <span className="label label-light rv">{t('home.run_label')}</span>
-              <h2 className="cr-cinema-h2 rv rv-d1">
-                {(() => {
-                  const title = t('home.run_title')
-                  const idx = title.indexOf('Cheetah Run')
-                  return <>{title.slice(0, idx)}<em>Cheetah Run</em>{title.slice(idx + 11)}</>
-                })()}
-              </h2>
-              <p className="cr-cinema-p rv rv-d2">{t('home.run_desc')}</p>
-              <button className="btn btn-gold rv rv-d3" onClick={() => goTo('cheetah-run')}>
-                {t('home.run_btn')}
-              </button>
-            </div>
-            <div className="cr-cinema-right">
-              <span className="cr-big-num">112</span>
-              <span className="cr-big-unit">km/h</span>
-              <span className="cr-big-label">{t('home.run_speed_label')}</span>
+        {/* ── CHEETAH RUN ── */}
+        <section style={{ padding: '5rem 2rem', background: 'var(--sand-pale)' }}>
+          <div className="cr-cinema">
+            <img src={IMG.cheetahRun} alt="Cheetah Run" className="cr-cinema-img" />
+            <div className="cr-cinema-overlay">
+              <div className="cr-cinema-left">
+                <span className="label label-light rv">{t('home.run_label')}</span>
+                <h2 className="cr-cinema-h2 rv rv-d1">
+                  {(() => {
+                    const title = t('home.run_title')
+                    const idx = title.indexOf('Cheetah Run')
+                    return <>{title.slice(0, idx)}<em>Cheetah Run</em>{title.slice(idx + 11)}</>
+                  })()}
+                </h2>
+                <p className="cr-cinema-p rv rv-d2">{t('home.run_desc')}</p>
+                <button className="btn btn-gold rv rv-d3" onClick={() => goTo('cheetah-run')}>
+                  {t('home.run_btn')}
+                </button>
+              </div>
+              <div className="cr-cinema-right">
+                <span className="cr-big-num">112</span>
+                <span className="cr-big-unit">km/h</span>
+                <span className="cr-big-label">{t('home.run_speed_label')}</span>
+              </div>
             </div>
           </div>
-        </div>
-        <style>{`
+          <style>{`
           .cr-cinema {
             max-width: 1200px;
             margin: 0 auto;
@@ -355,108 +364,104 @@ function Home({ goTo }) {
             .cr-cinema-overlay { padding: 1.5rem; }
           }
         `}</style>
-      </section>
+        </section>
 
-      {/* ── PROGRAMS GRID ── */}
-      <section className="programs" id="programs" style={{ padding: '4rem 2rem', maxWidth: '1200px', margin: '0 auto' }}>
-        <span className="label rv">{t('home.programs_label')}</span>
-        <h2 className="h2 rv rv-d1" style={{ margin: '0 0 2.5rem 0' }}>
-          {t('home.programs_title').split(' ').slice(0, -3).join(' ')} <em>{t('home.programs_title').split(' ').slice(-3).join(' ')}</em>
-        </h2>
+        {/* ── PROGRAMS GRID ── */}
+        <section className="programs" id="programs" style={{ padding: '4rem 2rem', maxWidth: '1200px', margin: '0 auto' }}>
+          <span className="label rv">{t('home.programs_label')}</span>
+          <h2 className="h2 rv rv-d1" style={{ margin: '0 0 2.5rem 0' }}>
+            {t('home.programs_title').split(' ').slice(0, -3).join(' ')} <em>{t('home.programs_title').split(' ').slice(-3).join(' ')}</em>
+          </h2>
 
-        {/* Griglia ottimizzata: 3 colonne fisse su desktop, evita buchi e spazi vuoti asimmetrici */}
-        <div className="programs-grid" style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(var(--grid-cols, 3), 1fr)', /* Configurazione dinamica gestita via CSS o fallback */
-          gap: '1.5rem',
-          width: '100%'
-        }}>
-          {PROG_PAGES.map((page, i) => (
-              <div
-                  key={page}
-                  className={`program-card rv rv-d${Math.min(i + 1, 5)}`}
-                  onClick={() => goTo(page)}
-                  style={{
-                    background: 'var(--off-white)',
-                    border: '1px solid #EDE5D8',
-                    overflow: 'hidden',
-                    transition: 'all 0.3s',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: '100%' /* Forza tutte le schede ad avere la stessa identica altezza */
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.transform = 'translateY(-5px)';
-                    e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.07)';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.transform = 'none';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-              >
-                {/* Contenitore immagine proporzionato con fuoco alto (280px) */}
-                <div className="program-img" style={{ height: '280px', overflow: 'hidden', position: 'relative', width: '100%' }}>
-                  <img
-                      src={PROG_IMGS[i]}
-                      alt={progTitles[i]}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        objectPosition: 'center 20%'
-                      }}
-                  />
-                </div>
-
-                {/* Corpo del testo spazioso con flex-grow per spingere i link tutti alla stessa altezza */}
-                <div className="program-body" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                  <div className="program-tag" style={{
-                    fontSize: '0.68rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.15em',
-                    textTransform: 'uppercase',
-                    color: 'var(--gold)',
-                    marginBottom: '0.3rem'
-                  }}>
-                    {progTags[i]}
+          <div className="programs-grid" style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(var(--grid-cols, 3), 1fr)',
+            gap: '1.5rem',
+            width: '100%'
+          }}>
+            {PROG_PAGES.map((page, i) => (
+                <div
+                    key={page}
+                    className={`program-card rv rv-d${Math.min(i + 1, 5)}`}
+                    onClick={() => goTo(page)}
+                    style={{
+                      background: 'var(--off-white)',
+                      border: '1px solid #EDE5D8',
+                      overflow: 'hidden',
+                      transition: 'all 0.3s',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      height: '100%'
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.transform = 'translateY(-5px)';
+                      e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.07)';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.transform = 'none';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                >
+                  <div className="program-img" style={{ height: '280px', overflow: 'hidden', position: 'relative', width: '100%' }}>
+                    <img
+                        src={PROG_IMGS[i]}
+                        alt={progTitles[i]}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          objectPosition: 'center 20%'
+                        }}
+                    />
                   </div>
-                  <h3 style={{
-                    fontFamily: 'var(--serif)',
-                    fontSize: '1.4rem',
-                    marginBottom: '0.5rem',
-                    color: 'var(--dark)',
-                    lineHeight: '1.3'
-                  }}>
-                    {progTitles[i]}
-                  </h3>
-                  <p style={{
-                    fontSize: '0.84rem',
-                    color: '#777',
-                    lineHeight: '1.65',
-                    fontWeight: 300,
-                    marginBottom: '1.4rem',
-                    flexGrow: 1 /* Satura lo spazio vuoto se il testo è più corto di un altro blocco */
-                  }}>
-                    {progDescs[i]}
-                  </p>
-                  <span className="program-link" style={{
-                    fontWeight: 600,
-                    fontSize: '0.85rem',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    color: 'var(--dark)',
-                    marginTop: 'auto' /* Allinea il link perfettamente sul fondo di ogni card */
-                  }}>
+
+                  <div className="program-body" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                    <div className="program-tag" style={{
+                      fontSize: '0.68rem',
+                      fontWeight: 700,
+                      letterSpacing: '0.15em',
+                      textTransform: 'uppercase',
+                      color: 'var(--gold)',
+                      marginBottom: '0.3rem'
+                    }}>
+                      {progTags[i]}
+                    </div>
+                    <h3 style={{
+                      fontFamily: 'var(--serif)',
+                      fontSize: '1.4rem',
+                      marginBottom: '0.5rem',
+                      color: 'var(--dark)',
+                      lineHeight: '1.3'
+                    }}>
+                      {progTitles[i]}
+                    </h3>
+                    <p style={{
+                      fontSize: '0.84rem',
+                      color: '#777',
+                      lineHeight: '1.65',
+                      fontWeight: 300,
+                      marginBottom: '1.4rem',
+                      flexGrow: 1
+                    }}>
+                      {progDescs[i]}
+                    </p>
+                    <span className="program-link" style={{
+                      fontWeight: 600,
+                      fontSize: '0.85rem',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      color: 'var(--dark)',
+                      marginTop: 'auto'
+                    }}>
                   {t('common.learn_more_arrow')}
                 </span>
+                  </div>
                 </div>
-              </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* Piccolo blocco di stile inline per garantire il responsive perfetto senza toccare file CSS esterni */}
-        <style>{`
+          <style>{`
           .programs-grid {
             grid-template-columns: repeat(3, 1fr) !important;
           }
@@ -467,191 +472,191 @@ function Home({ goTo }) {
             .programs-grid { grid-template-columns: repeat(1, 1fr) !important; }
           }
         `}</style>
-      </section>
+        </section>
 
-      {/* ── ANIMALS MARQUEE ── */}
-      <section className="animals-section" id="animals">
-        <div className="animals-header">
-          <span className="label rv">{t('home.animals_label')}</span>
-          <h2 className="h2 rv rv-d1">
-            {t('home.animals_title').split(' ').slice(0, -2).join(' ')} <em>{t('home.animals_title').split(' ').slice(-2).join(' ')}</em>
-          </h2>
-        </div>
+        {/* ── ANIMALS MARQUEE ── */}
+        <section className="animals-section" id="animals">
+          <div className="animals-header">
+            <span className="label rv">{t('home.animals_label')}</span>
+            <h2 className="h2 rv rv-d1">
+              {t('home.animals_title').split(' ').slice(0, -2).join(' ')} <em>{t('home.animals_title').split(' ').slice(-2).join(' ')}</em>
+            </h2>
+          </div>
 
-        <div style={{ overflow: 'hidden' }}>
-          <div className="marquee-track">
-            {[...Array(2)].flatMap((_, rep) =>
-              ANIMALS_NAMES.map((name, i) => (
-                <div key={`${rep}-${name}`} className="animal-card" onClick={() => setLbIdx(i)} style={{ cursor: 'pointer' }}>
-                  <div className="animal-photo">
-                    <img src={ANIMALS_SRCS[i]} alt={name} />
+          <div style={{ overflow: 'hidden' }}>
+            <div className="marquee-track">
+              {[...Array(2)].flatMap((_, rep) =>
+                  ANIMALS_NAMES.map((name, i) => (
+                      <div key={`${rep}-${name}`} className="animal-card" onClick={() => setLbIdx(i)} style={{ cursor: 'pointer' }}>
+                        <div className="animal-photo">
+                          <img src={ANIMALS_SRCS[i]} alt={name} />
+                        </div>
+                        <div className="animal-info">
+                          <h4>{name}</h4>
+                          <span>{animalRoles[i]}</span>
+                        </div>
+                      </div>
+                  ))
+              )}
+            </div>
+          </div>
+        </section>
+
+        {lbIdx !== null && (
+            <Lightbox srcs={ANIMALS_SRCS} captions={ANIMALS_NAMES} idx={lbIdx} setIdx={setLbIdx} />
+        )}
+
+        {/* ── BIG CTA ── */}
+        <section className="big-cta">
+          <img src={IMG.bigCta} alt="Cheetah" />
+          <div className="big-cta-content">
+            <span className="label label-light rv">{t('home.cta_label')}</span>
+            <h2 className="rv rv-d1">
+              {cta2parts[0]}.<br /><em>{cta2parts[1]}</em>
+            </h2>
+            <p className="rv rv-d2">{t('home.cta_desc')}</p>
+            <div className="rv rv-d3" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button className="btn btn-gold" onClick={() => goTo('adopt')}>{t('home.cta_btn1')}</button>
+              <button className="btn btn-outline" onClick={() => goTo('volunteer')}>{t('home.cta_btn2')}</button>
+            </div>
+          </div>
+        </section>
+
+        {/* ── CONTACT ── */}
+        <section className="contact-section" id="contact">
+          <div className="contact-section-inner">
+            <span className="label rv">{t('home.contact_label')}</span>
+            <h2 className="h2 rv rv-d1">
+              {t('home.contact_title').split(' ').slice(0, -3).join(' ')} <em>{t('home.contact_title').split(' ').slice(-3).join(' ')}</em>
+            </h2>
+
+            <div className="contact-grid">
+              <div className="contact-info rv-left">
+                <p>{t('home.contact_desc')}</p>
+
+                <div className="contact-item">
+                  <span className="contact-icon">@</span>
+                  <div>
+                    <div className="contact-label">{t('home.contact_email_label')}</div>
+                    <div className="contact-value">
+                      <a href="mailto:kim@novaslegacy.co.za">kim@novaslegacy.co.za</a>
+                    </div>
                   </div>
-                  <div className="animal-info">
-                    <h4>{name}</h4>
-                    <span>{animalRoles[i]}</span>
+                </div>
+
+                <div className="contact-item">
+                  <span className="contact-icon">+</span>
+                  <div>
+                    <div className="contact-label">{t('home.contact_phone_label')}</div>
+                    <div className="contact-value">
+                      <a href="tel:+27823520940">+27 82 352 0940</a>
+                    </div>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
-        </div>
-      </section>
 
-      {lbIdx !== null && (
-        <Lightbox srcs={ANIMALS_SRCS} captions={ANIMALS_NAMES} idx={lbIdx} setIdx={setLbIdx} />
-      )}
+                <div className="contact-item">
+                  <span className="contact-icon">◆</span>
+                  <div>
+                    <div className="contact-label">{t('home.contact_address_label')}</div>
+                    <div className="contact-value">
+                      431 Diepdrift, Bela-Bela, 0480<br />Limpopo, South Africa
+                    </div>
+                  </div>
+                </div>
 
-      {/* ── BIG CTA ── */}
-      <section className="big-cta">
-        <img src={IMG.bigCta} alt="Cheetah" />
-        <div className="big-cta-content">
-          <span className="label label-light rv">{t('home.cta_label')}</span>
-          <h2 className="rv rv-d1">
-            {cta2parts[0]}.<br /><em>{cta2parts[1]}</em>
-          </h2>
-          <p className="rv rv-d2">{t('home.cta_desc')}</p>
-          <div className="rv rv-d3" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button className="btn btn-gold" onClick={() => goTo('adopt')}>{t('home.cta_btn1')}</button>
-            <button className="btn btn-outline" onClick={() => goTo('volunteer')}>{t('home.cta_btn2')}</button>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CONTACT ── */}
-      <section className="contact-section" id="contact">
-        <div className="contact-section-inner">
-        <span className="label rv">{t('home.contact_label')}</span>
-        <h2 className="h2 rv rv-d1">
-          {t('home.contact_title').split(' ').slice(0, -3).join(' ')} <em>{t('home.contact_title').split(' ').slice(-3).join(' ')}</em>
-        </h2>
-
-        <div className="contact-grid">
-          <div className="contact-info rv-left">
-            <p>{t('home.contact_desc')}</p>
-
-            <div className="contact-item">
-              <span className="contact-icon">@</span>
-              <div>
-                <div className="contact-label">{t('home.contact_email_label')}</div>
-                <div className="contact-value">
-                  <a href="mailto:kim@novaslegacy.co.za">kim@novaslegacy.co.za</a>
+                <div className="contact-socials">
+                  <a className="social-link" href="https://facebook.com/Feracare" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg> Facebook</a>
+                  <a className="social-link" href="https://instagram.com/novaslegacycheetahproject" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  </svg> Instagram</a>
+                  <a className="social-link" href="https://www.tiktok.com/@novaslegacycheetahs" target="_blank" rel="noreferrer">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.77a4.83 4.83 0 01-1.01-.08z"/>
+                    </svg>Tik Tok</a>
                 </div>
               </div>
-            </div>
 
-            <div className="contact-item">
-              <span className="contact-icon">+</span>
-              <div>
-                <div className="contact-label">{t('home.contact_phone_label')}</div>
-                <div className="contact-value">
-                  <a href="tel:+27823520940">+27 82 352 0940</a>
+              <form
+                  className="contact-form rv-right"
+                  onSubmit={handleContactSubmit}
+              >
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+                  <input
+                      placeholder={t('home.form_name')} required
+                      value={contactForm.name}
+                      onChange={e => setContactForm(f => ({ ...f, name: e.target.value }))}
+                  />
+                  <input
+                      placeholder={t('home.form_surname')}
+                      value={contactForm.surname}
+                      onChange={e => setContactForm(f => ({ ...f, surname: e.target.value }))}
+                  />
                 </div>
-              </div>
+                <input
+                    type="email" placeholder={t('home.form_email')} required
+                    value={contactForm.email}
+                    onChange={e => setContactForm(f => ({ ...f, email: e.target.value }))}
+                />
+                <input
+                    type="tel" placeholder={t('home.form_phone')}
+                    value={contactForm.phone}
+                    onChange={e => setContactForm(f => ({ ...f, phone: e.target.value }))}
+                />
+                <select
+                    value={contactForm.reason}
+                    onChange={e => setContactForm(f => ({ ...f, reason: e.target.value }))}
+                >
+                  <option value="" disabled>{t('home.form_reason')}</option>
+                  <option value={t('home.form_reason_vol')}>{t('home.form_reason_vol')}</option>
+                  <option value={t('home.form_reason_int')}>{t('home.form_reason_int')}</option>
+                  <option value={t('home.form_reason_stay')}>{t('home.form_reason_stay')}</option>
+                  <option value={t('home.form_reason_run')}>{t('home.form_reason_run')}</option>
+                  <option value={t('home.form_reason_adopt')}>{t('home.form_reason_adopt')}</option>
+                  <option value={t('home.form_reason_donate')}>{t('home.form_reason_donate')}</option>
+                  <option value={t('home.form_reason_other')}>{t('home.form_reason_other')}</option>
+                </select>
+                <textarea
+                    placeholder={t('home.form_message')} rows={5}
+                    value={contactForm.message}
+                    onChange={e => setContactForm(f => ({ ...f, message: e.target.value }))}
+                />
+                {contactStatus === 'ok' && (
+                    <p style={{ color: '#3a7d44', fontFamily: 'Outfit,sans-serif', margin: '0 0 0.5rem' }}>
+                      {t('home.form_success')}
+                    </p>
+                )}
+                {contactStatus === 'error' && (
+                    <p style={{ color: '#c0392b', fontFamily: 'Outfit,sans-serif', margin: '0 0 0.5rem' }}>
+                      {t('home.form_error')}
+                    </p>
+                )}
+                <button
+                    type="submit"
+                    className="btn btn-dark"
+                    disabled={contactStatus === 'sending'}
+                >
+                  {contactStatus === 'sending' ? '...' : t('common.send_message')}
+                </button>
+              </form>
             </div>
 
-            <div className="contact-item">
-              <span className="contact-icon">◆</span>
-              <div>
-                <div className="contact-label">{t('home.contact_address_label')}</div>
-                <div className="contact-value">
-                  431 Diepdrift, Bela-Bela, 0480<br />Limpopo, South Africa
-                </div>
-              </div>
-            </div>
-
-            <div className="contact-socials">
-              <a className="social-link" href="https://facebook.com/Feracare" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg> Facebook</a>
-              <a className="social-link" href="https://instagram.com/novaslegacycheetahproject" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-              </svg> Instagram</a>
-              <a className="social-link" href="https://www.tiktok.com/@novaslegacycheetahs" target="_blank" rel="noreferrer">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-                  <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.77a4.83 4.83 0 01-1.01-.08z"/>
-                </svg>Tik Tok</a>
-            </div>
-          </div>
-
-          <form
-            className="contact-form rv-right"
-            onSubmit={handleContactSubmit}
-          >
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
-              <input
-                placeholder={t('home.form_name')} required
-                value={contactForm.name}
-                onChange={e => setContactForm(f => ({ ...f, name: e.target.value }))}
+            <div className="rv" style={{ marginTop: '3rem' }}>
+              <iframe
+                  src="https://maps.google.com/maps?q=-24.845059,28.240967&z=14&output=embed"
+                  width="100%"
+                  height="360"
+                  style={{ border: 0, display: 'block' }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Nova's Legacy — Bela-Bela, South Africa"
               />
-              <input
-                placeholder={t('home.form_surname')}
-                value={contactForm.surname}
-                onChange={e => setContactForm(f => ({ ...f, surname: e.target.value }))}
-              />
             </div>
-            <input
-              type="email" placeholder={t('home.form_email')} required
-              value={contactForm.email}
-              onChange={e => setContactForm(f => ({ ...f, email: e.target.value }))}
-            />
-            <input
-              type="tel" placeholder={t('home.form_phone')}
-              value={contactForm.phone}
-              onChange={e => setContactForm(f => ({ ...f, phone: e.target.value }))}
-            />
-            <select
-              value={contactForm.reason}
-              onChange={e => setContactForm(f => ({ ...f, reason: e.target.value }))}
-            >
-              <option value="" disabled>{t('home.form_reason')}</option>
-              <option value={t('home.form_reason_vol')}>{t('home.form_reason_vol')}</option>
-              <option value={t('home.form_reason_int')}>{t('home.form_reason_int')}</option>
-              <option value={t('home.form_reason_stay')}>{t('home.form_reason_stay')}</option>
-              <option value={t('home.form_reason_run')}>{t('home.form_reason_run')}</option>
-              <option value={t('home.form_reason_adopt')}>{t('home.form_reason_adopt')}</option>
-              <option value={t('home.form_reason_donate')}>{t('home.form_reason_donate')}</option>
-              <option value={t('home.form_reason_other')}>{t('home.form_reason_other')}</option>
-            </select>
-            <textarea
-              placeholder={t('home.form_message')} rows={5}
-              value={contactForm.message}
-              onChange={e => setContactForm(f => ({ ...f, message: e.target.value }))}
-            />
-            {contactStatus === 'ok' && (
-              <p style={{ color: '#3a7d44', fontFamily: 'Outfit,sans-serif', margin: '0 0 0.5rem' }}>
-                {t('home.form_success')}
-              </p>
-            )}
-            {contactStatus === 'error' && (
-              <p style={{ color: '#c0392b', fontFamily: 'Outfit,sans-serif', margin: '0 0 0.5rem' }}>
-                {t('home.form_error')}
-              </p>
-            )}
-            <button
-              type="submit"
-              className="btn btn-dark"
-              disabled={contactStatus === 'sending'}
-            >
-              {contactStatus === 'sending' ? '...' : t('common.send_message')}
-            </button>
-          </form>
-        </div>
-
-        <div className="rv" style={{ marginTop: '3rem' }}>
-          <iframe
-            src="https://maps.google.com/maps?q=-24.845059,28.240967&z=14&output=embed"
-            width="100%"
-            height="360"
-            style={{ border: 0, display: 'block' }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title="Nova's Legacy — Bela-Bela, South Africa"
-          />
-        </div>
-        </div>
-      </section>
-    </>
+          </div>
+        </section>
+      </>
   )
 }
 

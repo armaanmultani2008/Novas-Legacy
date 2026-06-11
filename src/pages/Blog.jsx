@@ -58,7 +58,7 @@ function Blog({ goTo }) {
                 onMouseLeave={e => e.currentTarget.style.transform = 'none'}
                 onClick={() => goTo('blog-post', null, i)}
               >
-                <div style={{ height: '200px', overflow: 'hidden' }}>
+                <div style={{ height: '250px', overflow: 'hidden' }}>
                   <img src={p.img || FALLBACK_IMGS[i] || FALLBACK_IMGS[0]} alt={p.title}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>

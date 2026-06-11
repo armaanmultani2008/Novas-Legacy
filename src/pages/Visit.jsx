@@ -20,6 +20,12 @@ function Visit({ goTo }) {
         <div className="container">
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
+          <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <button onClick={() => goTo('home', 'contact')} className="btn btn-dark">
+              {t('visit.btn_book')}
+            </button>
+          </div>
+
           <h2>{t('visit.chalets_title').split(', ')[0]}, <em>{t('visit.chalets_title').split(', ')[1]}</em></h2>
           <p>{t('visit.chalets_p')}</p>
 
@@ -79,9 +85,6 @@ function Visit({ goTo }) {
           <p>{t('visit.add_run_p')}</p>
 
           <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <a href="mailto:kim@novaslegacy.co.za" className="btn btn-dark">
-              {t('visit.btn_book')}
-            </a>
             <button className="btn btn-outline-dark" onClick={() => goTo('cheetah-run')}>
               {t('visit.btn2')}
             </button>

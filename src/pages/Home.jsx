@@ -209,108 +209,143 @@ function Home({ goTo }) {
 
       {/* ── CHEETAH RUN ── */}
       <section style={{ padding: '5rem 2rem', background: 'var(--sand-pale)' }}>
-        <div className="cr-wrap">
-
-          {/* Image — same width as text, with speed badge overlay */}
-          <div className="cr-img-col">
-            <img
-              src={IMG.cheetahRun}
-              alt="Cheetah Run"
-              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.06)'}
-              onMouseLeave={e => e.currentTarget.style.transform = 'none'}
-            />
-            <div className="cr-badge">
-              <span className="cr-badge-num">112</span>
-              <div className="cr-badge-text">
-                <span className="cr-badge-unit">km/h</span>
-                <span className="cr-badge-label">{t('home.run_speed_label')}</span>
-              </div>
+        <div className="cr-cinema">
+          <img src={IMG.cheetahRun} alt="Cheetah Run" className="cr-cinema-img" />
+          <div className="cr-cinema-overlay">
+            <div className="cr-cinema-left">
+              <span className="label label-light rv">{t('home.run_label')}</span>
+              <h2 className="cr-cinema-h2 rv rv-d1">
+                {(() => {
+                  const title = t('home.run_title')
+                  const idx = title.indexOf('Cheetah Run')
+                  return <>{title.slice(0, idx)}<em>Cheetah Run</em>{title.slice(idx + 11)}</>
+                })()}
+              </h2>
+              <p className="cr-cinema-p rv rv-d2">{t('home.run_desc')}</p>
+              <button className="btn btn-gold rv rv-d3" onClick={() => goTo('cheetah-run')}>
+                {t('home.run_btn')}
+              </button>
+            </div>
+            <div className="cr-cinema-right">
+              <span className="cr-big-num">112</span>
+              <span className="cr-big-unit">km/h</span>
+              <span className="cr-big-label">{t('home.run_speed_label')}</span>
             </div>
           </div>
-
-          {/* Text panel */}
-          <div className="cheetah-run-content">
-            <span className="label label-light rv">{t('home.run_label')}</span>
-            <h2 className="rv rv-d1">
-              {(() => {
-                const title = t('home.run_title')
-                const idx = title.indexOf('Cheetah Run')
-                return <>{title.slice(0, idx)}<em>Cheetah Run</em>{title.slice(idx + 11)}</>
-              })()}
-            </h2>
-            <p className="rv rv-d2">{t('home.run_desc')}</p>
-            <button className="btn btn-gold rv rv-d3" onClick={() => goTo('cheetah-run')}>
-              {t('home.run_btn')}
-            </button>
-          </div>
-
         </div>
         <style>{`
-          .cr-wrap {
+          .cr-cinema {
             max-width: 1200px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 32px 100px rgba(0,0,0,0.22);
-            min-height: 560px;
-          }
-          .cr-img-col {
             position: relative;
+            border-radius: 18px;
             overflow: hidden;
+            min-height: 560px;
+            box-shadow: 0 40px 120px rgba(0,0,0,0.28);
           }
-          .cr-img-col img {
-            position: absolute;
-            inset: 0;
+          .cr-cinema-img {
             width: 100%;
             height: 100%;
+            min-height: 560px;
             object-fit: cover;
+            object-position: center 25%;
             display: block;
-            transition: transform 0.8s cubic-bezier(0.22,1,0.36,1);
+            transition: transform 1s cubic-bezier(0.22,1,0.36,1);
           }
-          .cr-badge {
+          .cr-cinema:hover .cr-cinema-img {
+            transform: scale(1.04);
+          }
+          .cr-cinema-overlay {
             position: absolute;
-            bottom: 2rem;
-            left: 2rem;
-            background: rgba(0,0,0,0.58);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(245,184,48,0.35);
-            border-radius: 10px;
-            padding: 1rem 1.5rem;
+            inset: 0;
+            background: linear-gradient(
+              to top,
+              rgba(0,0,0,0.94) 0%,
+              rgba(0,0,0,0.55) 42%,
+              rgba(0,0,0,0.06) 100%
+            );
             display: flex;
-            align-items: center;
-            gap: 1rem;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 3rem 3.5rem;
+            gap: 3rem;
           }
-          .cr-badge-num {
+          .cr-cinema-left {
+            max-width: 540px;
+          }
+          .cr-cinema-h2 {
             font-family: var(--serif);
-            font-size: 3.4rem;
+            font-size: clamp(1.9rem, 3.4vw, 3rem);
+            color: var(--white);
+            line-height: 1.12;
+            margin: 0.5rem 0 1rem;
+          }
+          .cr-cinema-h2 em {
+            font-style: italic;
+            font-weight: 400;
+            color: var(--gold-light);
+          }
+          .cr-cinema-p {
+            font-size: 0.94rem;
+            color: rgba(255,255,255,0.68);
+            line-height: 1.8;
+            font-weight: 300;
+            margin-bottom: 2rem;
+          }
+          .cr-cinema-right {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: flex-end;
+            padding-bottom: 0.25rem;
+          }
+          .cr-big-num {
+            font-family: var(--serif);
+            font-size: clamp(5rem, 8vw, 8.5rem);
             font-weight: 700;
             color: var(--gold-light);
             line-height: 1;
           }
-          .cr-badge-unit {
-            display: block;
-            font-size: 0.88rem;
+          .cr-big-unit {
+            font-size: 1.5rem;
             font-weight: 700;
-            color: rgba(255,255,255,0.92);
-            letter-spacing: 0.06em;
-          }
-          .cr-badge-label {
-            display: block;
-            font-size: 0.65rem;
-            color: rgba(255,255,255,0.45);
-            letter-spacing: 0.12em;
+            color: rgba(255,255,255,0.85);
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-            margin-top: 0.2rem;
-            max-width: 120px;
           }
-          @media (max-width: 900px) {
-            .cr-wrap { grid-template-columns: 1fr; min-height: auto; }
-            .cr-img-col { height: 340px; }
-            .cr-badge { bottom: 1rem; left: 1rem; padding: 0.75rem 1.1rem; }
-            .cr-badge-num { font-size: 2.6rem; }
+          .cr-big-label {
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.38);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            max-width: 130px;
+            text-align: right;
+            margin-top: 0.4rem;
+            line-height: 1.5;
+          }
+          @media (max-width: 768px) {
+            .cr-cinema { min-height: 500px; }
+            .cr-cinema-img { min-height: 500px; }
+            .cr-cinema-overlay {
+              flex-direction: column-reverse;
+              align-items: flex-start;
+              padding: 2rem;
+              gap: 1rem;
+            }
+            .cr-cinema-right {
+              flex-direction: row;
+              align-items: flex-end;
+              gap: 0.75rem;
+            }
+            .cr-big-num { font-size: 3.5rem; }
+            .cr-big-unit { font-size: 1.1rem; }
+            .cr-big-label { max-width: 100px; text-align: left; }
+          }
+          @media (max-width: 480px) {
+            .cr-cinema { min-height: 420px; border-radius: 12px; }
+            .cr-cinema-img { min-height: 420px; }
+            .cr-cinema-overlay { padding: 1.5rem; }
           }
         `}</style>
       </section>

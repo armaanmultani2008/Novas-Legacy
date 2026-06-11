@@ -466,7 +466,7 @@ function Navbar({ goTo }) {
         .ovmenu__socials a:hover { color: rgba(255,255,255,0.65); }
 
         /* ── RESPONSIVE ── */
-        @media (max-width: 1200px) {
+        @media (max-width: 1050px) {
           .nn__links, .nn__actions { display: none; }
           .hamburger { display: flex; }
         }

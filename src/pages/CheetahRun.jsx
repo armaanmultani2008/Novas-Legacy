@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useCMSImages } from '../CMSContext'
 
-const SLIDE_IMGS = [
+const DEFAULT_SLIDES = [
   '/img/ghepardo-corsa.png',
   '/img/ghepardo-corsa-2.png',
   '/img/ghepardo-corsa-3.png',
@@ -19,12 +20,16 @@ const STATS = [
 function CheetahRun({ goTo }) {
   const [slide, setSlide] = useState(0)
   const { t } = useTranslation()
+  const cmsImages = useCMSImages()
   const statLabels = t('cheetah_run.stat_labels', { returnObjects: true })
+  const SLIDE_IMGS = cmsImages.cheetah_run_hero
+    ? [cmsImages.cheetah_run_hero, ...DEFAULT_SLIDES]
+    : DEFAULT_SLIDES
 
   useEffect(() => {
     const timer = setInterval(() => setSlide(s => (s + 1) % SLIDE_IMGS.length), 3000)
     return () => clearInterval(timer)
-  }, [])
+  }, [SLIDE_IMGS.length])
 
   return (
     <>

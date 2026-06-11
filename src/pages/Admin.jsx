@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
+import i18n from '../i18n'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-const TABS = ['Blog', 'Shop', 'Animali', 'Impostazioni']
+const TABS = ['Blog', 'Shop', 'Animali', 'Contenuti', 'Impostazioni']
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2) }
 
@@ -15,7 +16,7 @@ const LS = {
 async function loadCMS() {
   try {
     const r = await fetch(`${API}/api/cms`)
-    if (!r.ok) throw new Error()
+    if (!r.ok) return null
     return await r.json()
   } catch { return null }
 }
@@ -27,8 +28,27 @@ async function saveCMS(section, data, token) {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(data),
     })
-    if (!r.ok) throw new Error()
-    return { ok: true }
+    return r.ok ? { ok: true } : { ok: false }
+  } catch { return { ok: false } }
+}
+
+async function loadContent() {
+  try {
+    const r = await fetch(`${API}/api/content`)
+    if (!r.ok) return null
+    const d = await r.json()
+    return d && Object.keys(d).length > 0 ? d : null
+  } catch { return null }
+}
+
+async function saveContent(data, token) {
+  try {
+    const r = await fetch(`${API}/api/content`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    })
+    return r.ok ? { ok: true } : { ok: false }
   } catch { return { ok: false } }
 }
 
@@ -236,6 +256,19 @@ const S = `
   .adm-login-box h2 { font-size: 1rem; margin: 0 0 0.25rem; }
   .adm-login-sub { font-size: 0.77rem; color: #999; margin-bottom: 1.3rem; }
 
+  /* animated dots */
+  @keyframes dot-up {
+    0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
+    30%            { opacity: 1;    transform: translateY(-4px); }
+  }
+  .dots span {
+    display: inline-block;
+    animation: dot-up 1.1s infinite;
+    font-size: 1.1em; line-height: 1;
+  }
+  .dots span:nth-child(2) { animation-delay: 0.18s; }
+  .dots span:nth-child(3) { animation-delay: 0.36s; }
+
   /* mobile */
   @media (max-width: 540px) {
     .adm-bar-top { padding: 0 1rem; gap: 0.5rem; }
@@ -253,6 +286,10 @@ const S = `
 `
 
 function Styles() { return <style>{S}</style> }
+
+function Dots() {
+  return <span className="dots"><span>.</span><span>.</span><span>.</span></span>
+}
 
 // ── Image upload component ────────────────────────────────────────────────────
 function ImageUpload({ value, onChange, label = 'Foto' }) {
@@ -278,7 +315,7 @@ function ImageUpload({ value, onChange, label = 'Foto' }) {
         <div className="img-up-row">
           {!isBase64
             ? <input value={value} onChange={e => onChange(e.target.value)} placeholder="https://... oppure carica dal dispositivo sotto" />
-            : <input value="" readOnly placeholder="[foto caricata dal dispositivo]" style={{ color: '#888' }} onClick={() => onChange('')} title="Clicca per rimuovere e inserire un URL" />
+            : <input value="" readOnly placeholder="[foto caricata dal dispositivo]" style={{ color: '#51ef0d' }} onClick={() => onChange('')} title="Clicca per rimuovere e inserire un URL" />
           }
           <label className="btn-upload" title="Carica dal dispositivo">
             + Carica
@@ -292,7 +329,7 @@ function ImageUpload({ value, onChange, label = 'Foto' }) {
 }
 
 // ── Login / Setup ─────────────────────────────────────────────────────────────
-function LoginScreen({ onLogin }) {
+function LoginScreen({ onLogin, goTo }) {
   const [needsSetup, setNeedsSetup] = useState(null)
   // mode: 'login' | 'setup' | 'recover'
   const [mode, setMode] = useState('login')
@@ -358,7 +395,7 @@ function LoginScreen({ onLogin }) {
       <Styles />
       <div className="adm-login"><div className="adm-login-box">
         <div className="adm-login-logo">Nova&apos;s <em>Legacy</em></div>
-        <p style={{ color: '#999', fontSize: '0.85rem' }}>Connessione...</p>
+        <p style={{ color: '#999', fontSize: '0.85rem' }}>Connessione<Dots /></p>
       </div></div>
     </>
   )
@@ -387,7 +424,7 @@ function LoginScreen({ onLogin }) {
                 <div className="adm-field-hint">Usata per reimpostare la password se dimenticata. Tienila al sicuro.</div>
               </div>
               <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.3rem' }} disabled={loading}>
-                {loading ? '...' : 'Imposta e accedi'}
+                {loading ? <Dots /> : 'Imposta e accedi'}
               </button>
             </form>
           </>}
@@ -403,7 +440,7 @@ function LoginScreen({ onLogin }) {
                 <input type="password" value={f.pw} onChange={set('pw')} placeholder="••••••••" required autoFocus />
               </div>
               <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.3rem' }} disabled={loading}>
-                {loading ? '...' : 'Accedi'}
+                {loading ? <Dots /> : 'Accedi'}
               </button>
             </form>
             <div style={{ marginTop: '1rem', textAlign: 'center' }}>
@@ -433,7 +470,7 @@ function LoginScreen({ onLogin }) {
                 <input type="password" value={f.newpwConfirm} onChange={set('newpwConfirm')} placeholder="••••••••" required />
               </div>
               <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.3rem' }} disabled={loading}>
-                {loading ? '...' : 'Reimposta password'}
+                {loading ? <Dots /> : 'Reimposta password'}
               </button>
             </form>
             <div style={{ marginTop: '1rem', textAlign: 'center' }}>
@@ -443,6 +480,13 @@ function LoginScreen({ onLogin }) {
               </button>
             </div>
           </>}
+
+          <div style={{ marginTop: '1.4rem', paddingTop: '1.1rem', borderTop: '1px solid #EDE5D8', textAlign: 'center' }}>
+            <button onClick={() => goTo('home')}
+              style={{ background: 'none', border: 'none', color: '#AAA', fontSize: '0.75rem', cursor: 'pointer' }}>
+              ← Torna al sito
+            </button>
+          </div>
 
         </div>
       </div>
@@ -464,7 +508,7 @@ function Modal({ title, onClose, onSave, saving, children }) {
           <div className="adm-modal-foot">
             <button className="btn-cancel" onClick={onClose}>Annulla</button>
             <button className="btn-primary" onClick={onSave} disabled={saving}>
-              {saving ? 'Salvataggio...' : 'Salva'}
+              {saving ? <><Dots /> Salvo</> : 'Salva'}
             </button>
           </div>
         </div>
@@ -518,7 +562,7 @@ function BlogTab({ token }) {
         <h2>Articoli Blog {posts && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({posts.length})</span>}</h2>
         <button className="btn-add" onClick={() => setEditing({})}>+ Nuovo articolo</button>
       </div>
-      {posts === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento...</p>}
+      {posts === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento<Dots /></p>}
       {posts?.length === 0 && <p className="adm-empty">Nessun articolo. Aggiungine uno.</p>}
       <div className="adm-list">
         {posts?.map(p => (
@@ -591,7 +635,7 @@ function ShopTab({ token }) {
         <h2>Prodotti Shop {products && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({products.length})</span>}</h2>
         <button className="btn-add" onClick={() => setEditing({})}>+ Nuovo prodotto</button>
       </div>
-      {products === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento...</p>}
+      {products === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento<Dots /></p>}
       {products?.length === 0 && <p className="adm-empty">Nessun prodotto.</p>}
       <div className="adm-list">
         {products?.map(p => (
@@ -675,7 +719,7 @@ function AnimaliTab({ token }) {
         <h2>Animali Adozione {animals && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({animals.length})</span>}</h2>
         <button className="btn-add" onClick={() => setEditing({})}>+ Nuovo animale</button>
       </div>
-      {animals === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento...</p>}
+      {animals === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento<Dots /></p>}
       {animals?.length === 0 && <p className="adm-empty">Nessun animale.</p>}
       <div className="adm-list">
         {animals?.map(a => (
@@ -722,6 +766,225 @@ function AnimalForm({ animal, onSave, onClose, saving }) {
       </div>
       <ImageUpload label="Foto animale" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} />
     </Modal>
+  )
+}
+
+// ── Contenuti tab — editor testi di tutto il sito ────────────────────────────
+
+const CURATED = [
+  { key: 'home', label: 'Homepage', imageKey: 'home_hero', fields: [
+    { k: 'hero_title',    l: 'Titolo principale' },
+    { k: 'hero_sub',      l: 'Sottotitolo hero' },
+    { k: 'work_title',    l: '"I tre pilastri" — titolo' },
+    { k: 'work_desc',     l: '"I tre pilastri" — testo' },
+    { k: 'pillar1_title', l: 'Pilastro 1 — titolo' },
+    { k: 'pillar1_desc',  l: 'Pilastro 1 — testo' },
+    { k: 'pillar2_title', l: 'Pilastro 2 — titolo' },
+    { k: 'pillar2_desc',  l: 'Pilastro 2 — testo' },
+    { k: 'pillar3_title', l: 'Pilastro 3 — titolo' },
+    { k: 'pillar3_desc',  l: 'Pilastro 3 — testo' },
+    { k: 'cta_title',     l: 'CTA — titolo' },
+    { k: 'cta_desc',      l: 'CTA — testo' },
+    { k: 'contact_desc',  l: 'Contatti — testo intro' },
+  ]},
+  { key: 'nova_story', label: "Storia di Nova", imageKey: 'nova_story_hero', fields: [
+    { k: 'hero_label',    l: 'Label piccolo (sopra il titolo)' },
+    { k: 'hero_title',    l: 'Titolo hero' },
+    { k: 'hero_sub',      l: 'Sottotitolo hero' },
+    { k: 'origins_title', l: 'Origini — titolo sezione' },
+    { k: 'origins_p1',    l: 'Origini — paragrafo 1' },
+    { k: 'origins_p2',    l: 'Origini — paragrafo 2' },
+    { k: 'highlight',     l: 'Citazione in evidenza' },
+    { k: 'legacy_title',  l: "Legacy — titolo sezione" },
+    { k: 'legacy_p1',     l: 'Legacy — paragrafo 1' },
+    { k: 'legacy_p2',     l: 'Legacy — paragrafo 2' },
+  ]},
+  { key: 'kim_story', label: "Storia di Kim", imageKey: 'kim_story_hero', fields: [
+    { k: 'hero_label',    l: 'Label piccolo' },
+    { k: 'hero_title',    l: 'Titolo' },
+    { k: 'hero_sub',      l: 'Sottotitolo' },
+    { k: 'p1',            l: 'Testo principale' },
+    { k: 'quote1',        l: 'Citazione 1' },
+    { k: 'quote2',        l: 'Citazione 2' },
+    { k: 'quote3',        l: 'Citazione 3' },
+  ]},
+  { key: 'conservation', label: 'Conservazione', imageKey: 'conservation_hero', fields: [
+    { k: 'hero_label',    l: 'Label piccolo' },
+    { k: 'hero_title',    l: 'Titolo' },
+    { k: 'hero_sub',      l: 'Sottotitolo' },
+    { k: 'mission_p',     l: 'Missione — testo' },
+    { k: 'highlight',     l: 'Citazione in evidenza' },
+    { k: 'edu_title',     l: 'Educazione — titolo' },
+    { k: 'edu_p1',        l: 'Educazione — testo 1' },
+    { k: 'edu_p2',        l: 'Educazione — testo 2' },
+    { k: 'science_title', l: 'Ricerca scientifica — titolo' },
+    { k: 'science_p',     l: 'Ricerca scientifica — testo' },
+  ]},
+  { key: 'volunteer', label: 'Volontariato', imageKey: 'volunteer_hero', fields: [
+    { k: 'hero_label',    l: 'Label piccolo' },
+    { k: 'hero_title',    l: 'Titolo' },
+    { k: 'hero_sub',      l: 'Sottotitolo' },
+    { k: 'what_p1',       l: 'Cosa significa — testo 1' },
+    { k: 'what_p2',       l: 'Cosa significa — testo 2' },
+    { k: 'highlight',     l: 'Evidenziato' },
+    { k: 'apply_title',   l: 'Come candidarsi — titolo' },
+    { k: 'apply_text',    l: 'Come candidarsi — testo' },
+  ]},
+  { key: 'visit', label: 'Soggiorno', imageKey: 'visit_hero', fields: [
+    { k: 'hero_label',    l: 'Label piccolo' },
+    { k: 'hero_title',    l: 'Titolo' },
+    { k: 'hero_sub',      l: 'Sottotitolo' },
+    { k: 'chalets_title', l: 'Chalet — titolo' },
+    { k: 'chalets_p',     l: 'Chalet — testo' },
+    { k: 'highlight',     l: 'Evidenziato (periodo consigliato ecc.)' },
+    { k: 'how_p1',        l: 'Come arrivare — testo 1' },
+    { k: 'how_p2',        l: 'Come arrivare — testo 2' },
+  ]},
+  { key: 'horses', label: 'Cavalli', imageKey: 'horses_hero', fields: [
+    { k: 'hero_label',    l: 'Label piccolo' },
+    { k: 'hero_title',    l: 'Titolo' },
+    { k: 'hero_sub',      l: 'Sottotitolo' },
+    { k: 'who_p1',        l: 'I nostri cavalli — testo 1' },
+    { k: 'who_p2',        l: 'I nostri cavalli — testo 2' },
+    { k: 'highlight',     l: 'Evidenziato' },
+    { k: 'vol_p1',        l: 'Cosa fanno i volontari — testo 1' },
+  ]},
+  { key: 'cheetah_run', label: 'Cheetah Run', imageKey: 'cheetah_run_hero', fields: [
+    { k: 'hero_label',       l: 'Label piccolo' },
+    { k: 'hero_title',       l: 'Titolo' },
+    { k: 'hero_sub',         l: 'Sottotitolo' },
+    { k: 'p1',               l: 'Testo principale' },
+    { k: 'highlight',        l: 'Evidenziato' },
+    { k: 'how_p1',           l: 'Come funziona — testo 1' },
+    { k: 'how_p2',           l: 'Come funziona — testo 2' },
+    { k: 'booking_highlight', l: 'Testo prenotazione' },
+  ]},
+  { key: 'donate', label: 'Donazioni', imageKey: null, fields: [
+    { k: 'hero_label',    l: 'Label piccolo' },
+    { k: 'hero_title',    l: 'Titolo' },
+    { k: 'hero_sub',      l: 'Sottotitolo' },
+    { k: 'section_title', l: 'Sezione — titolo' },
+  ]},
+  { key: 'footer', label: 'Footer', imageKey: null, fields: [
+    { k: 'brand_desc', l: 'Descrizione brand' },
+    { k: 'copyright',  l: 'Copyright' },
+    { k: 'reg',        l: 'Info legali (numero registro)' },
+  ]},
+]
+
+function TextField({ label, value, onChange }) {
+  const long = typeof value === 'string' && value.length > 100
+  return (
+    <div className="adm-field">
+      <label>{label}</label>
+      {long
+        ? <textarea rows={Math.min(Math.ceil(value.length / 80) + 1, 7)} value={value} onChange={e => onChange(e.target.value)} />
+        : <input value={value || ''} onChange={e => onChange(e.target.value)} />
+      }
+    </div>
+  )
+}
+
+function ContenutiTab({ token }) {
+  const [content, setContent] = useState(null)
+  const [secIdx,  setSecIdx]  = useState(0)
+  const [saving,  setSaving]  = useState(false)
+  const [msg,     setMsg]     = useState(null)
+
+  useEffect(() => {
+    const cached = (() => { try { return JSON.parse(localStorage.getItem('nl_content')) } catch { return null } })()
+    if (cached && Object.keys(cached).length) setContent(cached)
+
+    loadContent().then(d => {
+      if (d && Object.keys(d).length) {
+        setContent(d)
+        localStorage.setItem('nl_content', JSON.stringify(d))
+      } else if (!cached) {
+        // Backend non raggiungibile e nessuna cache → usa i18n integrato
+        const builtin = i18n.getDataByLanguage('en')?.translation || {}
+        setContent(Object.keys(builtin).length ? builtin : {})
+      }
+    })
+  }, [])
+
+  const sec = CURATED[secIdx]
+
+  const updateField = (fieldKey, value) =>
+    setContent(prev => ({ ...prev, [sec.key]: { ...(prev?.[sec.key] || {}), [fieldKey]: value } }))
+
+  const updateImage = (imgKey, value) =>
+    setContent(prev => ({ ...prev, _images: { ...(prev?._images || {}), [imgKey]: value } }))
+
+  const save = async () => {
+    setSaving(true); setMsg(null)
+    const payload = content || {}
+    const { ok } = await saveContent(payload, token)
+    if (ok) {
+      i18n.addResourceBundle('en', 'translation', payload, true, true)
+      localStorage.setItem('nl_content', JSON.stringify(payload))
+      setMsg('ok')
+    } else {
+      localStorage.setItem('nl_content', JSON.stringify(payload))
+      i18n.addResourceBundle('en', 'translation', payload, true, true)
+      setMsg('local')
+    }
+    setSaving(false)
+  }
+
+  const secData = content?.[sec.key] || {}
+  const images  = content?._images  || {}
+
+  return (
+    <div>
+      {msg === 'ok'    && <div className="adm-ok">Salvato sul server. Il sito si aggiorna automaticamente.</div>}
+      {msg === 'local' && <div className="adm-offline">Salvato localmente. Visibile subito su questo browser. Fai il deploy per renderlo permanente.</div>}
+
+      {/* Tabs pagine */}
+      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+        {CURATED.map((s, i) => (
+          <button key={s.key} onClick={() => { setSecIdx(i); setMsg(null) }}
+            style={{
+              background: secIdx === i ? '#111' : '#fff',
+              color: secIdx === i ? '#fff' : '#555',
+              border: `1px solid ${secIdx === i ? '#111' : '#D0C9BE'}`,
+              borderRadius: 4, padding: '0.35rem 0.75rem',
+              fontSize: '0.75rem', fontWeight: secIdx === i ? 700 : 400,
+              cursor: 'pointer', transition: 'all 0.15s',
+            }}>
+            {s.label}
+          </button>
+        ))}
+      </div>
+
+      {content === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento<Dots /></p>}
+
+      {content !== null && (
+        <div style={{ background: '#fff', border: '1px solid #E2D8CC', borderRadius: 6, padding: '1.3rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
+            <h2 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>{sec.label}</h2>
+            <button className="btn-primary" onClick={save} disabled={saving}>
+              {saving ? <><Dots /> Salvo</> : 'Salva'}
+            </button>
+          </div>
+
+          {/* Immagine principale */}
+          {sec.imageKey && (
+            <div style={{ marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #EDE5D8' }}>
+              <ImageUpload
+                label="Immagine principale pagina"
+                value={images[sec.imageKey] || ''}
+                onChange={v => updateImage(sec.imageKey, v)}
+              />
+            </div>
+          )}
+
+          {/* Campi testo */}
+          {sec.fields.map(({ k, l }) => (
+            <TextField key={k} label={l} value={secData[k] || ''} onChange={v => updateField(k, v)} />
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -774,7 +1037,7 @@ function ImpostazioniTab({ token }) {
           <div className="adm-field-hint">Usata per recuperare l&apos;accesso se dimentichi la password.</div>
         </div>
         <button type="submit" className="btn-primary" disabled={loading}>
-          {loading ? '...' : 'Salva modifiche'}
+          {loading ? <Dots /> : 'Salva modifiche'}
         </button>
       </form>
     </div>
@@ -789,7 +1052,7 @@ export default function Admin({ goTo }) {
   const login = t => { localStorage.setItem('nl_admin_token', t); setToken(t) }
   const logout = () => { localStorage.removeItem('nl_admin_token'); setToken(''); goTo('home') }
 
-  if (!token) return <LoginScreen onLogin={login} />
+  if (!token) return <LoginScreen onLogin={login} goTo={goTo} />
 
   return (
     <>
@@ -814,8 +1077,9 @@ export default function Admin({ goTo }) {
         <div className="adm-body">
           {tab === 0 && <BlogTab    token={token} />}
           {tab === 1 && <ShopTab    token={token} />}
-          {tab === 2 && <AnimaliTab token={token} />}
-          {tab === 3 && <ImpostazioniTab token={token} />}
+          {tab === 2 && <AnimaliTab     token={token} />}
+          {tab === 3 && <ContenutiTab   token={token} />}
+          {tab === 4 && <ImpostazioniTab token={token} />}
         </div>
       </div>
     </>

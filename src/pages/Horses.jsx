@@ -1,12 +1,14 @@
 import { useTranslation } from 'react-i18next'
+import { useCMSImages } from '../CMSContext'
 
 function Horses({ goTo }) {
   const { t } = useTranslation()
+  const cmsImages = useCMSImages()
 
   return (
     <>
       <div className="page-hero-img">
-        <img src="/img/cavallo-puledro.png" alt="Progetto Cavalli" />
+        <img src={cmsImages.horses_hero || '/img/cavallo-puledro.png'} alt="Progetto Cavalli" />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">{t('horses.hero_label')}</span>

@@ -14,6 +14,7 @@ import path from 'path';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CMS_FILE      = path.join(__dirname, 'cms.json');
 const SETTINGS_FILE = path.join(__dirname, 'settings.json');
+const CONTENT_FILE  = path.join(__dirname, 'content.json');
 
 const CMS_DEFAULTS = { blog: [], products: [], animals: [] };
 
@@ -30,6 +31,13 @@ function readSettings() {
 }
 function writeSettings(data) {
   fs.writeFileSync(SETTINGS_FILE, JSON.stringify(data, null, 2), 'utf-8');
+}
+function readContent() {
+  try { return JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf-8')); }
+  catch { return null; }
+}
+function writeContent(data) {
+  fs.writeFileSync(CONTENT_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
 
 dotenv.config();
@@ -341,6 +349,15 @@ app.post('/api/admin/change-password', requireAdmin, (req, res) => {
     updates.recoveryKey = adminRecoveryKey;
   }
   writeSettings({ ...readSettings(), ...updates });
+  res.json({ ok: true });
+});
+
+// ── Contenuto sito (testi) ────────────────────────────────────────────────────
+app.get('/api/content', (_req, res) => {
+  res.json(readContent() || {});
+});
+app.put('/api/content', requireAdmin, (req, res) => {
+  writeContent(req.body);
   res.json({ ok: true });
 });
 

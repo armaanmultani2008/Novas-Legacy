@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Lightbox from '../components/Lightbox'
+import { useCMSImages } from '../CMSContext'
 
 const PHOTOS = [
   { src: '/img/nova-primo-piano.png' },
@@ -12,6 +13,7 @@ const PHOTO_SRCS = PHOTOS.map(p => p.src)
 
 function NovaStory({ goTo }) {
   const { t } = useTranslation()
+  const cmsImages = useCMSImages()
   const photoCaps = t('nova_story.photo_caps', { returnObjects: true })
   const [lbIdx, setLbIdx] = useState(null)
 

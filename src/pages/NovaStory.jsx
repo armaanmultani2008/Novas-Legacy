@@ -5,8 +5,8 @@ import { useCMSImages } from '../CMSContext'
 
 const PHOTOS = [
   { src: '/img/nova-primo-piano.png' },
+  { src: '/img/cub.png' },
   { src: '/img/nova-madre-cucciolo.png' },
-  { src: '/img/ghepardo-erba.png' },
   { src: '/img/due-ghepardi.png' },
 ]
 const PHOTO_SRCS = PHOTOS.map(p => p.src)
@@ -21,9 +21,9 @@ function NovaStory({ goTo }) {
     <>
       <div className="page-hero-img">
         <img
-          src={cmsImages.nova_story_hero || '/img/nova-madre-cucciolo.png'}
+          src="/img/ghepardo-erba.png"
           alt="Nova — la gheparda fondatrice"
-          style={{ objectPosition: 'center 40%' }}
+          style={{ objectPosition: 'center 20%' }}
         />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
@@ -54,7 +54,7 @@ function NovaStory({ goTo }) {
             {PHOTOS.map((p, i) => (
               <div
                 key={i}
-                style={{ height: '260px', overflow: 'hidden', position: 'relative', cursor: 'pointer' }}
+                style={{ height: '320px', overflow: 'hidden', position: 'relative', cursor: 'pointer' }}
                 onClick={() => setLbIdx(i)}
               >
                 <img

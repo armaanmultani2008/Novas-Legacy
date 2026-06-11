@@ -5,7 +5,7 @@ import { useCMSImages } from '../CMSContext'
 
 const DEFAULTS = {
   hero:        '/img/ghepardo-erba.png',
-  pillar1:     '/img/nova-madre-cucciolo.png',
+  pillar1:     '/img/madre-cucciolo.png',
   pillar2:     '/img/volontari-gruppo.png',
   pillar3:     '/img/ghepardo-visita-vet.png',
   cheetahRun:  '/img/ghepardo-corsa-recinzione.png',
@@ -14,7 +14,7 @@ const DEFAULTS = {
   progChalet:  '/img/chalet-esterno.png',
   progInt:     '/img/volontari-gruppo.png',
   progAdopt:   '/img/ghepardo-cucciolo.png',
-  progBreed:   '/img/nova-madre-cucciolo.png',
+  progBreed:   '/img/cucciolata.png',
   bigCta:      '/img/ghepardo-corsa.png',
 }
 

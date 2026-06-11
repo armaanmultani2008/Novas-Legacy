@@ -1,14 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
-const ANIMALS = [
-  { name: 'Storm',    species: 'Golden Tabby Tiger', price: 15, img: '/img/adopt-storm.png' },
-  { name: 'Guinness', species: 'King Cheetah',       price: 20, img: '/img/adopt-guinness.png' },
-  { name: 'Lyvia',    species: 'Cheetah',            price: 15, img: '/img/adopt-lyvia.png' },
-  { name: 'Oakley',   species: 'Cheetah',            price: 15, img: '/img/adopt-oakley.png' },
-  { name: 'Jagger',   species: 'Cheetah',            price: 12, img: '/img/adopt-jagger.png' },
+const FALLBACK_ANIMALS = [
+  { id: '1', name: 'Storm',    species: 'Golden Tabby Tiger', price: 15, img: '/img/adopt-storm.png' },
+  { id: '2', name: 'Guinness', species: 'King Cheetah',       price: 20, img: '/img/adopt-guinness.png' },
+  { id: '3', name: 'Lyvia',    species: 'Cheetah',            price: 15, img: '/img/adopt-lyvia.png' },
+  { id: '4', name: 'Oakley',   species: 'Cheetah',            price: 15, img: '/img/adopt-oakley.png' },
+  { id: '5', name: 'Jagger',   species: 'Cheetah',            price: 12, img: '/img/adopt-jagger.png' },
 ]
 
 function Adopt({ goTo }) {
@@ -17,8 +17,16 @@ function Adopt({ goTo }) {
   const [portalEmail, setPortalEmail] = useState('')
   const [portalLoading, setPortalLoading] = useState(false)
   const [portalError, setPortalError] = useState(null)
+  const [cmsAnimals, setCmsAnimals] = useState(null)
 
-  const animals = t('adopt.animals', { returnObjects: true })
+  useEffect(() => {
+    fetch(`${API}/api/cms`)
+      .then(r => r.json())
+      .then(d => { if (d.animals?.length) setCmsAnimals(d.animals) })
+      .catch(() => {})
+  }, [])
+
+  const animals = cmsAnimals || FALLBACK_ANIMALS
 
   const handleAdopt = async (animal) => {
     setLoading(animal.name)
@@ -81,11 +89,9 @@ function Adopt({ goTo }) {
             </p>
 
             <div className="page-grid-3" style={{ gap: '1.5rem' }}>
-              {ANIMALS.map((a, idx) => {
-                const info = animals[idx] || {}
-                return (
+              {animals.map(a => (
                     <div
-                        key={a.name}
+                        key={a.id || a.name}
                         style={{
                           background: 'var(--off-white)',
                           border: '1px solid #EDE5D8',
@@ -103,7 +109,7 @@ function Adopt({ goTo }) {
                               width: '100%',
                               height: '100%',
                               objectFit: 'cover',
-                              objectPosition: 'center 20%' /* Aiuta a non tagliare le teste in alto */
+                              objectPosition: 'center 20%',
                             }}
                         />
                         <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', background: 'var(--gold)', color: '#fff', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.1em', padding: '0.25rem 0.65rem', textTransform: 'uppercase' }}>
@@ -111,9 +117,8 @@ function Adopt({ goTo }) {
                         </div>
                       </div>
                       <div style={{ padding: '1.5rem' }}>
-                        <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.3rem' }}>{info.species || a.species}</div>
+                        <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.3rem' }}>{a.species}</div>
                         <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--dark)' }}>{a.name}</h3>
-                        <p style={{ fontSize: '0.84rem', color: '#777', lineHeight: '1.65', fontWeight: 300, marginBottom: '1.4rem' }}>{info.desc || ''}</p>
                         <button
                             className="btn btn-dark btn-sm"
                             style={{ width: '100%', opacity: loading === a.name ? 0.6 : 1 }}
@@ -124,8 +129,7 @@ function Adopt({ goTo }) {
                         </button>
                       </div>
                     </div>
-                )
-              })}
+              ))}
             </div>
 
             <div className="highlight" style={{ marginTop: '3rem' }}>

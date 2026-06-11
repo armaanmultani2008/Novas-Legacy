@@ -422,6 +422,7 @@ function Home({ goTo }) {
 
       {/* ── CONTACT ── */}
       <section className="contact-section" id="contact">
+        <div className="contact-section-inner">
         <span className="label rv">{t('home.contact_label')}</span>
         <h2 className="h2 rv rv-d1">
           {t('home.contact_title').split(' ').slice(0, -3).join(' ')} <em>{t('home.contact_title').split(' ').slice(-3).join(' ')}</em>
@@ -479,7 +480,7 @@ function Home({ goTo }) {
             className="contact-form rv-right"
             onSubmit={handleContactSubmit}
           >
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
               <input
                 placeholder={t('home.form_name')} required
                 value={contactForm.name}
@@ -550,6 +551,7 @@ function Home({ goTo }) {
             referrerPolicy="no-referrer-when-downgrade"
             title="Nova's Legacy — Bela-Bela, South Africa"
           />
+        </div>
         </div>
       </section>
     </>

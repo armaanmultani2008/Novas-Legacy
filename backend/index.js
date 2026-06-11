@@ -83,7 +83,7 @@ async function notifyKim(toName, toEmail, animalName, monthlyEur) {
 app.use(cors());
 app.use(express.json());
 
-let adminPassword = "";
+let adminPassword = envVars.ADMIN_PASSWORD || "";
 
 app.get('/', (req, res) => {
     res.json({ message: "Il backend di Nova's Legacy è online e funzionante!" });

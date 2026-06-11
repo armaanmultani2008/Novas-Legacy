@@ -85,11 +85,36 @@ function AdminStyles() {
 }
 
 function LoginScreen({ onLogin }) {
+  const [needsSetup, setNeedsSetup] = useState(false)
   const [pw, setPw] = useState('')
   const [err, setErr] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  const submit = async e => {
+  useEffect(() => {
+    fetch(`${API}/api/paypal-config`)
+      .then(r => r.json())
+      .then(d => setNeedsSetup(Boolean(d.needsSetup)))
+      .catch(() => {})
+  }, [])
+
+  const doSetup = async e => {
+    e.preventDefault()
+    setErr(null)
+    setLoading(true)
+    try {
+      const r = await fetch(`${API}/api/admin/setup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw }),
+      })
+      const d = await r.json()
+      if (d.ok) setNeedsSetup(false)
+      else setErr(d.error || 'Errore')
+    } catch { setErr('Impossibile raggiungere il server') }
+    setLoading(false)
+  }
+
+  const doLogin = async e => {
     e.preventDefault()
     setErr(null)
     setLoading(true)
@@ -113,16 +138,34 @@ function LoginScreen({ onLogin }) {
         <div className="adm-login-card">
           <div className="adm-brand">Nova&apos;s <em>Legacy</em></div>
           <h2>Pannello Gestione</h2>
-          <p className="adm-hint">Solo per uso interno — Kim&apos;s CMS</p>
-          {err && <div className="adm-alert adm-alert--err">{err}</div>}
-          <form onSubmit={submit} className="adm-form">
-            <label>Password admin</label>
-            <input type="password" value={pw} onChange={e => setPw(e.target.value)}
-              placeholder="••••••••" required />
-            <button className="adm-btn adm-btn--primary" disabled={loading}>
-              {loading ? 'Accesso…' : 'Accedi'}
-            </button>
-          </form>
+
+          {needsSetup ? (
+            <>
+              <p className="adm-hint">Prima configurazione — scegli la password admin.</p>
+              {err && <div className="adm-alert adm-alert--err">{err}</div>}
+              <form onSubmit={doSetup} className="adm-form">
+                <label>Nuova password (minimo 8 caratteri)</label>
+                <input type="password" value={pw} onChange={e => setPw(e.target.value)}
+                  placeholder="••••••••" required minLength={8} />
+                <button className="adm-btn adm-btn--primary" disabled={loading}>
+                  {loading ? 'Salvataggio…' : 'Imposta password'}
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <p className="adm-hint">Solo per uso interno — Kim&apos;s CMS</p>
+              {err && <div className="adm-alert adm-alert--err">{err}</div>}
+              <form onSubmit={doLogin} className="adm-form">
+                <label>Password admin</label>
+                <input type="password" value={pw} onChange={e => setPw(e.target.value)}
+                  placeholder="••••••••" required />
+                <button className="adm-btn adm-btn--primary" disabled={loading}>
+                  {loading ? 'Accesso…' : 'Accedi'}
+                </button>
+              </form>
+            </>
+          )}
         </div>
       </div>
     </>

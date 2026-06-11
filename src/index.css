@@ -1773,7 +1773,7 @@ footer {
    ====================================================== */
 @media (max-width: 1200px) {
   /* Hero: column layout whenever hamburger is visible */
-  .hero { flex-direction: column; justify-content: flex-end; align-items: stretch; }
+  .hero { flex-direction: column; justify-content: flex-end; align-items: stretch; min-height: 900px; }
   .hero-strip { position: relative; width: 100%; }
   .hero-content { padding: 5rem 3rem 2.5rem; }
 }

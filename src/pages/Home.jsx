@@ -210,14 +210,25 @@ function Home({ goTo }) {
       {/* ── CHEETAH RUN ── */}
       <section style={{ padding: '5rem 2rem', background: 'var(--sand-pale)' }}>
         <div className="cr-wrap">
+
+          {/* Image — same width as text, with speed badge overlay */}
           <div className="cr-img-col">
             <img
               src={IMG.cheetahRun}
               alt="Cheetah Run"
-              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.06)'}
               onMouseLeave={e => e.currentTarget.style.transform = 'none'}
             />
+            <div className="cr-badge">
+              <span className="cr-badge-num">112</span>
+              <div className="cr-badge-text">
+                <span className="cr-badge-unit">km/h</span>
+                <span className="cr-badge-label">{t('home.run_speed_label')}</span>
+              </div>
+            </div>
           </div>
+
+          {/* Text panel */}
           <div className="cheetah-run-content">
             <span className="label label-light rv">{t('home.run_label')}</span>
             <h2 className="rv rv-d1">
@@ -228,25 +239,22 @@ function Home({ goTo }) {
               })()}
             </h2>
             <p className="rv rv-d2">{t('home.run_desc')}</p>
-            <div className="speed-badge rv rv-d3">
-              <span className="num">112</span>
-              <span className="txt">km/h<br />{t('home.run_speed_label')}</span>
-            </div>
-            <button className="btn btn-gold rv rv-d4" onClick={() => goTo('cheetah-run')}>
+            <button className="btn btn-gold rv rv-d3" onClick={() => goTo('cheetah-run')}>
               {t('home.run_btn')}
             </button>
           </div>
+
         </div>
         <style>{`
           .cr-wrap {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 1.15fr 1fr;
-            border-radius: 12px;
+            grid-template-columns: 1fr 1fr;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 28px 90px rgba(0,0,0,0.18);
-            min-height: 480px;
+            box-shadow: 0 32px 100px rgba(0,0,0,0.22);
+            min-height: 560px;
           }
           .cr-img-col {
             position: relative;
@@ -259,11 +267,50 @@ function Home({ goTo }) {
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: transform 0.7s cubic-bezier(0.22,1,0.36,1);
+            transition: transform 0.8s cubic-bezier(0.22,1,0.36,1);
+          }
+          .cr-badge {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            background: rgba(0,0,0,0.58);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(245,184,48,0.35);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+          }
+          .cr-badge-num {
+            font-family: var(--serif);
+            font-size: 3.4rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            line-height: 1;
+          }
+          .cr-badge-unit {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.92);
+            letter-spacing: 0.06em;
+          }
+          .cr-badge-label {
+            display: block;
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.45);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-top: 0.2rem;
+            max-width: 120px;
           }
           @media (max-width: 900px) {
             .cr-wrap { grid-template-columns: 1fr; min-height: auto; }
-            .cr-img-col { height: 300px; position: relative; }
+            .cr-img-col { height: 340px; }
+            .cr-badge { bottom: 1rem; left: 1rem; padding: 0.75rem 1.1rem; }
+            .cr-badge-num { font-size: 2.6rem; }
           }
         `}</style>
       </section>

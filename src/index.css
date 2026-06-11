@@ -536,10 +536,11 @@ nav.solid {
 
 .cheetah-run-content {
   background: var(--dark);
-  padding: 4.5rem 3.5rem;
+  padding: 4rem 3.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 0;
 }
 
 .cheetah-run-content .label { color: rgba(245,184,48,0.7); }

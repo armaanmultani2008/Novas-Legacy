@@ -34,6 +34,15 @@ function Volunteer({ goTo }) {
         <div className="container">
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
+          <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <button onClick={() => goTo('home', 'contact')} className="btn btn-dark">
+              {t('volunteer.btn_write')}
+            </button>
+            <button className="btn btn-outline-dark" onClick={() => goTo('internship')}>
+              {t('volunteer.btn2')}
+            </button>
+          </div>
+
           <h2>{t('volunteer.what_title')}</h2>
           <p>{t('volunteer.what_p1')}</p>
           <p>{t('volunteer.what_p2')}</p>
@@ -118,15 +127,6 @@ function Volunteer({ goTo }) {
             <a href="tel:+27823520940" style={{ color: 'var(--gold)' }}>+27 82 352 0940</a>
             {t('volunteer.apply_text').split('+27 82 352 0940')[1]}
           </p>
-
-          <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <a href="mailto:kim@novaslegacy.co.za" className="btn btn-dark">
-              {t('volunteer.btn_write')}
-            </a>
-            <button className="btn btn-outline-dark" onClick={() => goTo('internship')}>
-              {t('volunteer.btn2')}
-            </button>
-          </div>
         </div>
       </div>
     </>

@@ -43,6 +43,15 @@ function Internship({ goTo }) {
         <div className="container">
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
+          <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <button onClick={() => goTo('home', 'contact')} className="btn btn-dark">
+              {t('internship.btn1')}
+            </button>
+            <button className="btn btn-outline-dark" onClick={() => goTo('volunteer')}>
+              {t('internship.btn2')}
+            </button>
+          </div>
+
           <h2>{t('internship.learn_title')}</h2>
           <p>{t('internship.learn_p1')}</p>
           <p>{t('internship.learn_p2')}</p>
@@ -140,14 +149,6 @@ function Internship({ goTo }) {
           <h2>{t('internship.duration_title')}</h2>
           <p>{t('internship.duration_p')}</p>
 
-          <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <a href="mailto:kim@novaslegacy.co.za" className="btn btn-dark">
-              {t('internship.btn1')}
-            </a>
-            <button className="btn btn-outline-dark" onClick={() => goTo('volunteer')}>
-              {t('internship.btn2')}
-            </button>
-          </div>
         </div>
       </div>
     </>

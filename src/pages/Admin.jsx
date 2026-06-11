@@ -1,627 +1,823 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+const TABS = ['Blog', 'Shop', 'Animali', 'Impostazioni']
 
-const TABS = ['Blog', 'Shop', 'Animali']
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2) }
 
-// ── helpers ──────────────────────────────────────────────────────────────────
-function uid() { return Math.random().toString(36).slice(2) }
+// ── localStorage cache ────────────────────────────────────────────────────────
+const LS = {
+  get: key => { try { return JSON.parse(localStorage.getItem('nl_cms_' + key)) } catch { return null } },
+  set: (key, val) => localStorage.setItem('nl_cms_' + key, JSON.stringify(val)),
+}
 
-// ── Login screen ─────────────────────────────────────────────────────────────
-function AdminStyles() {
+// ── API helpers ───────────────────────────────────────────────────────────────
+async function loadCMS() {
+  try {
+    const r = await fetch(`${API}/api/cms`)
+    if (!r.ok) throw new Error()
+    return await r.json()
+  } catch { return null }
+}
+
+async function saveCMS(section, data, token) {
+  try {
+    const r = await fetch(`${API}/api/cms/${section}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    })
+    if (!r.ok) throw new Error()
+    return { ok: true }
+  } catch { return { ok: false } }
+}
+
+// ── Image compress (client-side, no backend needed) ───────────────────────────
+function compressImage(file, maxPx = 1000, quality = 0.82) {
+  return new Promise(resolve => {
+    const img = new Image()
+    const url = URL.createObjectURL(file)
+    img.onload = () => {
+      let w = img.width, h = img.height
+      if (w > maxPx) { h = Math.round(h * maxPx / w); w = maxPx }
+      if (h > maxPx) { w = Math.round(w * maxPx / h); h = maxPx }
+      const c = document.createElement('canvas')
+      c.width = w; c.height = h
+      c.getContext('2d').drawImage(img, 0, 0, w, h)
+      resolve(c.toDataURL('image/jpeg', quality))
+      URL.revokeObjectURL(url)
+    }
+    img.onerror = () => resolve(null)
+    img.src = url
+  })
+}
+
+// ── Styles ────────────────────────────────────────────────────────────────────
+const S = `
+  *, *::before, *::after { box-sizing: border-box; }
+  .adm { min-height: 100vh; background: #F6F3EE; font-family: var(--sans, system-ui, sans-serif); color: #111; }
+
+  /* ── TOP BAR ── */
+  .adm-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: #111;
+    display: flex; flex-direction: column;
+  }
+  .adm-bar-top {
+    height: 52px; display: flex; align-items: center;
+    padding: 0 1.25rem; gap: 0.75rem;
+  }
+  .adm-logo {
+    font-family: var(--serif, Georgia, serif); font-size: 1.05rem; font-weight: 700;
+    color: #fff; white-space: nowrap; cursor: pointer; flex-shrink: 0;
+  }
+  .adm-logo em { font-style: italic; font-weight: 400; color: var(--gold-light, #E8B84B); margin-left: 3px; }
+  .adm-bar-acts { display: flex; gap: 0.4rem; margin-left: auto; flex-shrink: 0; }
+  .adm-btn-site {
+    background: none; border: 1px solid rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.7); font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 0.3rem 0.75rem; cursor: pointer; border-radius: 3px;
+    transition: all 0.18s; white-space: nowrap;
+  }
+  .adm-btn-site:hover { border-color: rgba(255,255,255,0.6); color: #fff; }
+  .adm-btn-exit {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.45); font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 0.3rem 0.75rem; cursor: pointer; border-radius: 3px;
+    transition: all 0.18s; white-space: nowrap;
+  }
+  .adm-btn-exit:hover { color: #ff9999; border-color: rgba(255,100,100,0.4); }
+
+  /* Tab row */
+  .adm-tabs {
+    display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; border-top: 1px solid rgba(255,255,255,0.07);
+    padding: 0 1.25rem;
+  }
+  .adm-tabs::-webkit-scrollbar { display: none; }
+  .adm-tab {
+    background: none; border: none; border-bottom: 2px solid transparent;
+    color: rgba(255,255,255,0.38); font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 0 1rem; height: 38px; white-space: nowrap;
+    cursor: pointer; transition: color 0.18s, border-color 0.18s; flex-shrink: 0;
+  }
+  .adm-tab:hover { color: rgba(255,255,255,0.75); }
+  .adm-tab--on { color: var(--gold-light, #E8B84B); border-bottom-color: var(--gold-light, #E8B84B); }
+
+  /* ── BODY ── */
+  .adm-body { max-width: 860px; margin: 0 auto; padding: 1.75rem 1.25rem 3rem; }
+
+  /* banners */
+  .adm-offline { background: #FFF8E7; border: 1px solid #F0D080; color: #7A5C00; padding: 0.55rem 0.9rem; font-size: 0.77rem; border-radius: 4px; margin-bottom: 0.9rem; }
+  .adm-ok  { background: #EBF5EC; border: 1px solid #B8DFB8; color: #1E6B2E; padding: 0.55rem 0.9rem; font-size: 0.8rem; border-radius: 4px; margin-bottom: 0.8rem; }
+  .adm-err { background: #FDF0EE; border: 1px solid #F0C0BA; color: #B03020; padding: 0.55rem 0.9rem; font-size: 0.8rem; border-radius: 4px; margin-bottom: 0.8rem; }
+
+  /* section header */
+  .adm-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; flex-wrap: wrap; gap: 0.5rem; }
+  .adm-section-head h2 { font-size: 1rem; font-weight: 700; margin: 0; }
+
+  /* list */
+  .adm-list { display: flex; flex-direction: column; gap: 0.45rem; }
+  .adm-item {
+    display: flex; align-items: center; gap: 0.8rem;
+    background: #fff; border: 1px solid #E2D8CC;
+    padding: 0.7rem 0.9rem; border-radius: 5px;
+    transition: box-shadow 0.15s;
+  }
+  .adm-item:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+  .adm-item-thumb {
+    width: 56px; height: 44px; flex-shrink: 0;
+    background: #EDE5D8; border-radius: 3px; overflow: hidden;
+  }
+  .adm-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .adm-item-info { flex: 1; min-width: 0; }
+  .adm-item-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold, #C8880A); margin-bottom: 0.1rem; }
+  .adm-item-name  { font-weight: 600; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .adm-item-meta  { font-size: 0.73rem; color: #888; margin-top: 0.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .adm-item-btns  { display: flex; gap: 0.3rem; flex-shrink: 0; }
+  .adm-empty { text-align: center; color: #AAA; font-size: 0.84rem; padding: 2.5rem 0; }
+
+  /* buttons */
+  .btn-add {
+    background: #111; color: #fff; border: none;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em;
+    padding: 0.5rem 1rem; cursor: pointer; border-radius: 4px;
+    transition: background 0.18s; white-space: nowrap;
+  }
+  .btn-add:hover { background: var(--gold, #C8880A); }
+  .btn-sm {
+    background: #fff; border: 1px solid #D0C9BE; color: #333;
+    font-size: 0.7rem; font-weight: 600;
+    padding: 0.28rem 0.65rem; cursor: pointer; border-radius: 3px;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .btn-sm:hover { border-color: #888; color: #111; }
+  .btn-del { color: #B03020; border-color: #EAC0BA; }
+  .btn-del:hover { background: #FDF0EE; }
+  .btn-primary {
+    background: #111; color: #fff; border: 1px solid #111;
+    font-size: 0.8rem; font-weight: 700;
+    padding: 0.6rem 1.4rem; cursor: pointer; border-radius: 4px;
+    transition: background 0.18s;
+  }
+  .btn-primary:hover { background: var(--gold, #C8880A); border-color: var(--gold, #C8880A); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-cancel {
+    background: #fff; color: #555; border: 1px solid #D0C9BE;
+    font-size: 0.8rem; font-weight: 600;
+    padding: 0.6rem 1.2rem; cursor: pointer; border-radius: 4px;
+    transition: all 0.15s;
+  }
+  .btn-cancel:hover { border-color: #999; color: #111; }
+
+  /* modal overlay */
+  .adm-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.52); z-index: 200;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 2rem 0.75rem 2rem; overflow-y: auto;
+  }
+  .adm-modal {
+    background: #fff; width: 100%; max-width: 640px;
+    border-radius: 6px; box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+    margin: auto;
+  }
+  .adm-modal-top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 1.3rem; border-bottom: 1px solid #EDE5D8;
+  }
+  .adm-modal-top h3 { font-size: 0.92rem; font-weight: 700; margin: 0; }
+  .adm-modal-x { background: none; border: none; font-size: 1.15rem; line-height: 1; cursor: pointer; color: #999; padding: 0; }
+  .adm-modal-x:hover { color: #333; }
+  .adm-modal-body { padding: 1.3rem; }
+  .adm-modal-foot { display: flex; justify-content: flex-end; gap: 0.55rem; padding-top: 1.1rem; border-top: 1px solid #EDE5D8; margin-top: 0.5rem; }
+
+  /* forms */
+  .adm-field { margin-bottom: 0.85rem; }
+  .adm-field label { display: block; font-size: 0.73rem; font-weight: 700; color: #555; letter-spacing: 0.04em; margin-bottom: 0.28rem; }
+  .adm-field input, .adm-field textarea, .adm-field select {
+    width: 100%; border: 1px solid #D0C8BC;
+    padding: 0.52rem 0.75rem; font-size: 0.86rem;
+    font-family: inherit; border-radius: 4px;
+    background: #FDFBF8; color: #111; outline: none;
+    transition: border-color 0.18s;
+  }
+  .adm-field input:focus, .adm-field textarea:focus { border-color: var(--gold, #C8880A); }
+  .adm-field textarea { resize: vertical; }
+  .adm-field-hint { font-size: 0.7rem; color: #999; margin-top: 0.22rem; }
+  .adm-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+  /* image upload */
+  .img-up-wrap { display: flex; flex-direction: column; gap: 0.5rem; }
+  .img-up-preview { width: 100%; height: 140px; object-fit: cover; border-radius: 4px; border: 1px solid #EDE5D8; display: block; }
+  .img-up-placeholder { width: 100%; height: 90px; background: #F0EBE2; border: 1px dashed #C8B898; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #BBB; font-size: 0.78rem; }
+  .img-up-row { display: flex; gap: 0.5rem; align-items: stretch; }
+  .img-up-row input { flex: 1; min-width: 0; }
+  .btn-upload {
+    flex-shrink: 0; background: #fff; border: 1px solid #D0C9BE; color: #333;
+    font-size: 0.72rem; font-weight: 700; padding: 0 0.9rem;
+    cursor: pointer; border-radius: 4px; transition: all 0.15s;
+    display: flex; align-items: center; gap: 0.3rem; white-space: nowrap;
+  }
+  .btn-upload:hover { border-color: #888; background: #F5F0E8; }
+  .img-up-name { font-size: 0.7rem; color: #888; margin-top: 0.15rem; }
+
+  /* settings */
+  .adm-settings { max-width: 400px; }
+  .adm-settings h3 { font-size: 0.88rem; font-weight: 700; margin: 0 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #EDE5D8; }
+
+  /* login */
+  .adm-login { min-height: 100vh; background: #F6F3EE; display: flex; align-items: center; justify-content: center; font-family: var(--sans, system-ui, sans-serif); padding: 2rem 1rem; }
+  .adm-login-box { background: #fff; border: 1px solid #E2D8CC; padding: 2.2rem 2rem; width: 100%; max-width: 360px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
+  .adm-login-logo { font-family: var(--serif, Georgia, serif); font-size: 1.25rem; font-weight: 700; color: #111; margin-bottom: 1.3rem; }
+  .adm-login-logo em { font-style: italic; font-weight: 400; color: var(--gold, #C8880A); }
+  .adm-login-box h2 { font-size: 1rem; margin: 0 0 0.25rem; }
+  .adm-login-sub { font-size: 0.77rem; color: #999; margin-bottom: 1.3rem; }
+
+  /* mobile */
+  @media (max-width: 540px) {
+    .adm-bar-top { padding: 0 1rem; gap: 0.5rem; }
+    .adm-logo { font-size: 0.9rem; }
+    .adm-btn-site, .adm-btn-exit { font-size: 0.65rem; padding: 0.28rem 0.6rem; }
+    .adm-tabs { padding: 0 0.75rem; }
+    .adm-tab { font-size: 0.68rem; padding: 0 0.75rem; }
+    .adm-body { padding: 1.2rem 0.9rem 3rem; }
+    .adm-grid2 { grid-template-columns: 1fr; }
+    .adm-item-btns { flex-direction: column; }
+    .adm-overlay { padding: 0; align-items: flex-end; }
+    .adm-modal { border-radius: 12px 12px 0 0; max-height: 92vh; overflow-y: auto; }
+    .adm-login-box { padding: 1.8rem 1.4rem; }
+  }
+`
+
+function Styles() { return <style>{S}</style> }
+
+// ── Image upload component ────────────────────────────────────────────────────
+function ImageUpload({ value, onChange, label = 'Foto' }) {
+  const inputRef = useRef()
+  const isBase64 = value?.startsWith('data:')
+
+  const pick = async e => {
+    const file = e.target.files[0]
+    if (!file) return
+    const b64 = await compressImage(file)
+    if (b64) onChange(b64)
+    e.target.value = ''
+  }
+
   return (
-    <style>{`
-      .adm-wrap { min-height: 100vh; background: #F4F1EC; font-family: var(--sans); }
-      .adm-login-card { max-width: 400px; margin: 10vh auto 0; background: #fff; border: 1px solid #E8E0D4; padding: 2.5rem; box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
-      .adm-brand { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--dark); margin-bottom: 1.2rem; }
-      .adm-brand em { font-style: italic; font-weight: 400; color: var(--gold); margin-left: 4px; }
-      .adm-login-card h2 { font-size: 1.3rem; margin-bottom: 0.3rem; }
-      .adm-hint { font-size: 0.8rem; color: #999; margin-bottom: 1.5rem; }
-      .adm-shell { display: flex; min-height: 100vh; }
-      .adm-sidebar { width: 220px; flex-shrink: 0; background: #111; display: flex; flex-direction: column; padding: 1.8rem 1.2rem; position: sticky; top: 0; height: 100vh; }
-      .adm-sidebar .adm-brand { color: #fff; margin-bottom: 2.5rem; }
-      .adm-sidebar .adm-brand em { color: var(--gold-light); }
-      .adm-nav { flex: 1; display: flex; flex-direction: column; gap: 0.3rem; }
-      .adm-nav-item { display: flex; align-items: center; gap: 0.75rem; background: none; border: none; color: rgba(255,255,255,0.5); font-size: 0.85rem; font-weight: 500; padding: 0.7rem 0.9rem; cursor: pointer; text-align: left; border-radius: 6px; transition: background 0.2s, color 0.2s; }
-      .adm-nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
-      .adm-nav-item--active { background: rgba(200,136,10,0.18); color: var(--gold-light); }
-      .adm-nav-icon { font-size: 1rem; }
-      .adm-logout { background: none; border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.4); font-size: 0.78rem; padding: 0.55rem 1rem; cursor: pointer; border-radius: 4px; transition: all 0.2s; }
-      .adm-logout:hover { border-color: rgba(255,255,255,0.4); color: rgba(255,255,255,0.7); }
-      .adm-main { flex: 1; padding: 2rem 2.5rem; overflow-y: auto; max-width: 900px; }
-      .adm-main-header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #E8E0D4; }
-      .adm-main-header h2 { font-size: 1.5rem; font-weight: 700; }
-      .adm-main-sub { font-size: 0.82rem; color: #999; }
-      .adm-tab-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-      .adm-tab-header h3 { font-size: 1rem; font-weight: 600; }
-      .adm-count { background: var(--gold-pale); color: var(--gold); font-size: 0.72rem; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-left: 0.4rem; }
-      .adm-list { display: flex; flex-direction: column; gap: 0.6rem; }
-      .adm-row { display: flex; align-items: center; gap: 1rem; background: #fff; border: 1px solid #EDE5D8; padding: 0.9rem 1rem; border-radius: 6px; transition: box-shadow 0.2s; }
-      .adm-row:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-      .adm-row-img { width: 64px; height: 52px; flex-shrink: 0; background: #F0EBE3; border-radius: 4px; overflow: hidden; }
-      .adm-row-img img { width: 100%; height: 100%; object-fit: cover; }
-      .adm-row-body { flex: 1; min-width: 0; }
-      .adm-row-tag { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.2rem; }
-      .adm-row-title { font-weight: 600; font-size: 0.9rem; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .adm-row-sub { font-size: 0.78rem; color: #888; margin-top: 0.15rem; }
-      .adm-row-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
-      .adm-empty { color: #aaa; font-size: 0.85rem; padding: 1.5rem 0; text-align: center; }
-      .adm-btn { background: #fff; border: 1px solid #D0C9BE; color: #333; font-size: 0.78rem; font-weight: 600; padding: 0.5rem 1rem; cursor: pointer; border-radius: 4px; transition: all 0.2s; }
-      .adm-btn:hover { border-color: #888; color: #111; }
-      .adm-btn--primary { background: #111; border-color: #111; color: #fff; }
-      .adm-btn--primary:hover { background: var(--gold); border-color: var(--gold); }
-      .adm-btn--sm { font-size: 0.72rem; padding: 0.35rem 0.75rem; }
-      .adm-btn--danger { color: #C0392B; border-color: #f0c0ba; }
-      .adm-btn--danger:hover { background: #fdf0ee; }
-      .adm-btn:disabled { opacity: 0.55; cursor: not-allowed; }
-      .adm-alert { padding: 0.65rem 1rem; border-radius: 4px; font-size: 0.82rem; margin-bottom: 0.8rem; }
-      .adm-alert--ok { background: #EAF5EC; color: #276a2f; border: 1px solid #b8e4bc; }
-      .adm-alert--err { background: #fdf0ee; color: #C0392B; border: 1px solid #f5c0ba; }
-      .adm-form { display: flex; flex-direction: column; gap: 0.9rem; }
-      .adm-form label { font-size: 0.78rem; font-weight: 600; color: #555; display: block; margin-bottom: 0.25rem; }
-      .adm-form input, .adm-form textarea { width: 100%; border: 1px solid #D5CBBD; padding: 0.6rem 0.85rem; font-size: 0.88rem; font-family: var(--sans); border-radius: 4px; background: #FDFBF8; color: #111; transition: border-color 0.2s; box-sizing: border-box; }
-      .adm-form input:focus, .adm-form textarea:focus { outline: none; border-color: var(--gold); }
-      .adm-form textarea { resize: vertical; }
-      .adm-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 2000; display: flex; align-items: flex-start; justify-content: center; padding: 3rem 1rem; overflow-y: auto; }
-      .adm-modal { background: #fff; width: 100%; max-width: 680px; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); overflow: hidden; }
-      .adm-modal-head { display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 1.5rem; border-bottom: 1px solid #EDE5D8; }
-      .adm-modal-head h3 { font-size: 1rem; font-weight: 700; }
-      .adm-modal-close { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: #888; line-height: 1; }
-      .adm-form--modal { padding: 1.5rem; }
-      .adm-modal-foot { display: flex; justify-content: flex-end; gap: 0.6rem; padding-top: 1rem; border-top: 1px solid #EDE5D8; margin-top: 0.5rem; }
-      .adm-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-      .adm-preview-img { height: 120px; object-fit: cover; border-radius: 4px; border: 1px solid #EDE5D8; }
-      @media (max-width: 768px) {
-        .adm-shell { flex-direction: column; }
-        .adm-sidebar { width: 100%; height: auto; position: relative; flex-direction: row; flex-wrap: wrap; padding: 1rem; gap: 0.5rem; }
-        .adm-sidebar .adm-brand { width: 100%; margin-bottom: 0.5rem; }
-        .adm-nav { flex-direction: row; flex: unset; }
-        .adm-logout { margin-left: auto; }
-        .adm-main { padding: 1.2rem; }
-        .adm-grid-2 { grid-template-columns: 1fr; }
-      }
-    `}</style>
+    <div className="adm-field">
+      <label>{label}</label>
+      <div className="img-up-wrap">
+        {value
+          ? <img src={value} className="img-up-preview" alt="" />
+          : <div className="img-up-placeholder">Nessuna foto</div>
+        }
+        <div className="img-up-row">
+          {!isBase64
+            ? <input value={value} onChange={e => onChange(e.target.value)} placeholder="https://... oppure carica dal dispositivo sotto" />
+            : <input value="" readOnly placeholder="[foto caricata dal dispositivo]" style={{ color: '#888' }} onClick={() => onChange('')} title="Clicca per rimuovere e inserire un URL" />
+          }
+          <label className="btn-upload" title="Carica dal dispositivo">
+            + Carica
+            <input ref={inputRef} type="file" accept="image/*" onChange={pick} style={{ display: 'none' }} />
+          </label>
+        </div>
+        {isBase64 && <div className="img-up-name">Foto caricata — clicca il campo testo per rimuoverla e usare un URL</div>}
+      </div>
+    </div>
   )
 }
 
+// ── Login / Setup ─────────────────────────────────────────────────────────────
 function LoginScreen({ onLogin }) {
-  const [needsSetup, setNeedsSetup] = useState(false)
-  const [pw, setPw] = useState('')
+  const [needsSetup, setNeedsSetup] = useState(null)
+  // mode: 'login' | 'setup' | 'recover'
+  const [mode, setMode] = useState('login')
+  const [f, setF] = useState({ pw: '', recoveryKey: '', newpw: '', newpwConfirm: '' })
   const [err, setErr] = useState(null)
   const [loading, setLoading] = useState(false)
+  const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
 
   useEffect(() => {
     fetch(`${API}/api/paypal-config`)
       .then(r => r.json())
-      .then(d => setNeedsSetup(Boolean(d.needsSetup)))
-      .catch(() => {})
+      .then(d => { if (d.needsSetup) setMode('setup'); setNeedsSetup(Boolean(d.needsSetup)) })
+      .catch(() => setNeedsSetup(false))
   }, [])
 
   const doSetup = async e => {
-    e.preventDefault()
-    setErr(null)
-    setLoading(true)
+    e.preventDefault(); setErr(null); setLoading(true)
     try {
       const r = await fetch(`${API}/api/admin/setup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pw }),
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: f.pw, recoveryKey: f.recoveryKey }),
       })
       const d = await r.json()
-      if (d.ok) setNeedsSetup(false)
+      if (d.ok) { setNeedsSetup(false); setMode('login'); setF(p => ({ ...p, pw: '', recoveryKey: '' })) }
       else setErr(d.error || 'Errore')
-    } catch { setErr('Impossibile raggiungere il server') }
+    } catch { setErr('Server non raggiungibile') }
     setLoading(false)
   }
 
   const doLogin = async e => {
-    e.preventDefault()
-    setErr(null)
-    setLoading(true)
+    e.preventDefault(); setErr(null); setLoading(true)
     try {
       const r = await fetch(`${API}/api/admin/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pw }),
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: f.pw }),
       })
       const d = await r.json()
-      if (d.token) { onLogin(d.token) }
+      if (d.token) onLogin(d.token)
       else setErr(d.error || 'Password errata')
-    } catch { setErr('Impossibile raggiungere il server') }
+    } catch { setErr('Server non raggiungibile') }
     setLoading(false)
   }
 
+  const doRecover = async e => {
+    e.preventDefault(); setErr(null)
+    if (f.newpw !== f.newpwConfirm) return setErr('Le password non coincidono.')
+    if (f.newpw.length < 8) return setErr('Almeno 8 caratteri.')
+    setLoading(true)
+    try {
+      const r = await fetch(`${API}/api/admin/recover`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recoveryKey: f.recoveryKey, newPassword: f.newpw }),
+      })
+      const d = await r.json()
+      if (d.token) onLogin(d.token)
+      else setErr(d.error || 'Errore')
+    } catch { setErr('Server non raggiungibile') }
+    setLoading(false)
+  }
+
+  if (needsSetup === null) return (
+    <>
+      <Styles />
+      <div className="adm-login"><div className="adm-login-box">
+        <div className="adm-login-logo">Nova&apos;s <em>Legacy</em></div>
+        <p style={{ color: '#999', fontSize: '0.85rem' }}>Connessione...</p>
+      </div></div>
+    </>
+  )
+
   return (
     <>
-      <AdminStyles />
-      <div className="adm-wrap">
-        <div className="adm-login-card">
-          <div className="adm-brand">Nova&apos;s <em>Legacy</em></div>
-          <h2>Pannello Gestione</h2>
+      <Styles />
+      <div className="adm-login">
+        <div className="adm-login-box">
+          <div className="adm-login-logo">Nova&apos;s <em>Legacy</em></div>
 
-          {needsSetup ? (
-            <>
-              <p className="adm-hint">Prima configurazione — scegli la password admin.</p>
-              {err && <div className="adm-alert adm-alert--err">{err}</div>}
-              <form onSubmit={doSetup} className="adm-form">
-                <label>Nuova password (minimo 8 caratteri)</label>
-                <input type="password" value={pw} onChange={e => setPw(e.target.value)}
-                  placeholder="••••••••" required minLength={8} />
-                <button className="adm-btn adm-btn--primary" disabled={loading}>
-                  {loading ? 'Salvataggio…' : 'Imposta password'}
-                </button>
-              </form>
-            </>
-          ) : (
-            <>
-              <p className="adm-hint">Solo per uso interno — Kim&apos;s CMS</p>
-              {err && <div className="adm-alert adm-alert--err">{err}</div>}
-              <form onSubmit={doLogin} className="adm-form">
-                <label>Password admin</label>
-                <input type="password" value={pw} onChange={e => setPw(e.target.value)}
-                  placeholder="••••••••" required />
-                <button className="adm-btn adm-btn--primary" disabled={loading}>
-                  {loading ? 'Accesso…' : 'Accedi'}
-                </button>
-              </form>
-            </>
-          )}
+          {/* ── SETUP ── */}
+          {mode === 'setup' && <>
+            <h2>Prima configurazione</h2>
+            <p className="adm-login-sub">Scegli password e parola chiave di recupero.</p>
+            {err && <div className="adm-err">{err}</div>}
+            <form onSubmit={doSetup}>
+              <div className="adm-field">
+                <label>Password (min. 8 caratteri)</label>
+                <input type="password" value={f.pw} onChange={set('pw')} placeholder="••••••••" required minLength={8} autoFocus />
+              </div>
+              <div className="adm-field">
+                <label>Parola chiave di recupero</label>
+                <input type="text" value={f.recoveryKey} onChange={set('recoveryKey')}
+                  placeholder="es. novachieetah" required minLength={3} autoComplete="off" />
+                <div className="adm-field-hint">Usata per reimpostare la password se dimenticata. Tienila al sicuro.</div>
+              </div>
+              <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.3rem' }} disabled={loading}>
+                {loading ? '...' : 'Imposta e accedi'}
+              </button>
+            </form>
+          </>}
+
+          {/* ── LOGIN ── */}
+          {mode === 'login' && <>
+            <h2>Accesso admin</h2>
+            <p className="adm-login-sub">Solo per uso interno.</p>
+            {err && <div className="adm-err">{err}</div>}
+            <form onSubmit={doLogin}>
+              <div className="adm-field">
+                <label>Password</label>
+                <input type="password" value={f.pw} onChange={set('pw')} placeholder="••••••••" required autoFocus />
+              </div>
+              <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.3rem' }} disabled={loading}>
+                {loading ? '...' : 'Accedi'}
+              </button>
+            </form>
+            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+              <button onClick={() => { setMode('recover'); setErr(null) }}
+                style={{ background: 'none', border: 'none', color: '#999', fontSize: '0.75rem', cursor: 'pointer', textDecoration: 'underline' }}>
+                Password dimenticata?
+              </button>
+            </div>
+          </>}
+
+          {/* ── RECUPERO ── */}
+          {mode === 'recover' && <>
+            <h2>Recupero password</h2>
+            <p className="adm-login-sub">Inserisci la parola chiave segreta per impostare una nuova password.</p>
+            {err && <div className="adm-err">{err}</div>}
+            <form onSubmit={doRecover}>
+              <div className="adm-field">
+                <label>Parola chiave di recupero</label>
+                <input type="text" value={f.recoveryKey} onChange={set('recoveryKey')} placeholder="parola chiave" required autoComplete="off" autoFocus />
+              </div>
+              <div className="adm-field">
+                <label>Nuova password (min. 8 caratteri)</label>
+                <input type="password" value={f.newpw} onChange={set('newpw')} placeholder="••••••••" required minLength={8} />
+              </div>
+              <div className="adm-field">
+                <label>Conferma nuova password</label>
+                <input type="password" value={f.newpwConfirm} onChange={set('newpwConfirm')} placeholder="••••••••" required />
+              </div>
+              <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.3rem' }} disabled={loading}>
+                {loading ? '...' : 'Reimposta password'}
+              </button>
+            </form>
+            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+              <button onClick={() => { setMode('login'); setErr(null) }}
+                style={{ background: 'none', border: 'none', color: '#999', fontSize: '0.75rem', cursor: 'pointer', textDecoration: 'underline' }}>
+                Torna al login
+              </button>
+            </div>
+          </>}
+
         </div>
       </div>
     </>
   )
 }
 
-// ── Blog tab ─────────────────────────────────────────────────────────────────
-function BlogTab({ token }) {
-  const [posts, setPosts] = useState([])
-  const [editing, setEditing] = useState(null)
-  const [saving, setSaving] = useState(false)
-  const [msg, setMsg] = useState(null)
-
-  useEffect(() => {
-    fetch(`${API}/api/cms`).then(r => r.json()).then(d => setPosts(d.blog || []))
-  }, [])
-
-  const save = async list => {
-    setSaving(true)
-    setMsg(null)
-    try {
-      const r = await fetch(`${API}/api/cms/blog`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(list),
-      })
-      const d = await r.json()
-      if (d.ok) { setPosts(list); setMsg({ ok: true, text: 'Salvato!' }) }
-      else setMsg({ ok: false, text: d.error || 'Errore' })
-    } catch { setMsg({ ok: false, text: 'Errore di rete' }) }
-    setSaving(false)
-  }
-
-  const del = id => {
-    if (!confirm('Eliminare questo articolo?')) return
-    save(posts.filter(p => p.id !== id))
-  }
-
-  const upsert = post => {
-    const list = post.id && posts.find(p => p.id === post.id)
-      ? posts.map(p => p.id === post.id ? post : p)
-      : [...posts, { ...post, id: uid() }]
-    save(list)
-    setEditing(null)
-  }
-
+// ── Modal base ────────────────────────────────────────────────────────────────
+function Modal({ title, onClose, onSave, saving, children }) {
   return (
-    <div className="adm-tab">
-      <div className="adm-tab-header">
-        <h3>Articoli Blog <span className="adm-count">{posts.length}</span></h3>
-        <button className="adm-btn adm-btn--primary" onClick={() => setEditing({})}>+ Nuovo articolo</button>
-      </div>
-      {msg && <div className={`adm-alert ${msg.ok ? 'adm-alert--ok' : 'adm-alert--err'}`}>{msg.text}</div>}
-
-      <div className="adm-list">
-        {posts.map(p => (
-          <div key={p.id} className="adm-row">
-            <div className="adm-row-img">
-              {p.img && <img src={p.img} alt="" />}
-            </div>
-            <div className="adm-row-body">
-              <div className="adm-row-tag">{p.tag} · {p.date}</div>
-              <div className="adm-row-title">{p.title}</div>
-              <div className="adm-row-sub">{p.excerpt?.slice(0, 80)}…</div>
-            </div>
-            <div className="adm-row-actions">
-              <button className="adm-btn adm-btn--sm" onClick={() => setEditing(p)}>Modifica</button>
-              <button className="adm-btn adm-btn--sm adm-btn--danger" onClick={() => del(p.id)}>Elimina</button>
-            </div>
+    <div className="adm-overlay" onClick={onClose}>
+      <div className="adm-modal" onClick={e => e.stopPropagation()}>
+        <div className="adm-modal-top">
+          <h3>{title}</h3>
+          <button className="adm-modal-x" onClick={onClose}>x</button>
+        </div>
+        <div className="adm-modal-body">
+          {children}
+          <div className="adm-modal-foot">
+            <button className="btn-cancel" onClick={onClose}>Annulla</button>
+            <button className="btn-primary" onClick={onSave} disabled={saving}>
+              {saving ? 'Salvataggio...' : 'Salva'}
+            </button>
           </div>
-        ))}
-        {posts.length === 0 && <p className="adm-empty">Nessun articolo. Aggiungine uno!</p>}
+        </div>
       </div>
-
-      {editing && (
-        <BlogModal post={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} />
-      )}
     </div>
   )
 }
 
-function BlogModal({ post, onSave, onClose, saving }) {
-  const [form, setForm] = useState({
-    id: post.id || '',
-    title: post.title || '',
-    tag: post.tag || '',
-    date: post.date || '',
-    excerpt: post.excerpt || '',
-    img: post.img || '',
-    body: Array.isArray(post.body) ? post.body.join('\n\n') : (post.body || ''),
-  })
+// ── Shared hook per caricare e salvare una sezione CMS ────────────────────────
+function useCMS(section, token) {
+  const [items, setItems] = useState(null)
+  const [saving, setSaving] = useState(false)
+  const [msg, setMsg] = useState(null)
 
-  const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }))
-
-  const submit = e => {
-    e.preventDefault()
-    onSave({
-      ...form,
-      body: form.body.split('\n\n').map(s => s.trim()).filter(Boolean),
+  useEffect(() => {
+    loadCMS().then(d => {
+      if (d?.[section]?.length) { setItems(d[section]); LS.set(section, d[section]) }
+      else { const cached = LS.get(section); if (cached) setItems(cached); else setItems([]) }
     })
+  }, [section])
+
+  const persist = async list => {
+    setSaving(true); setMsg(null)
+    const { ok } = await saveCMS(section, list, token)
+    if (ok) { setItems(list); LS.set(section, list); setMsg('ok') }
+    else    { LS.set(section, list); setItems(list); setMsg('local') }
+    setSaving(false)
+  }
+
+  return { items, saving, msg, persist }
+}
+
+// ── Blog tab ──────────────────────────────────────────────────────────────────
+function BlogTab({ token }) {
+  const { items: posts, saving, msg, persist } = useCMS('blog', token)
+  const [editing, setEditing] = useState(null)
+
+  const del = id => { if (!confirm('Eliminare questo articolo?')) return; persist(posts.filter(p => p.id !== id)) }
+  const upsert = post => {
+    const list = posts.find(p => p.id === post.id)
+      ? posts.map(p => p.id === post.id ? post : p)
+      : [...posts, { ...post, id: uid() }]
+    persist(list); setEditing(null)
   }
 
   return (
-    <div className="adm-modal-overlay" onClick={onClose}>
-      <div className="adm-modal" onClick={e => e.stopPropagation()}>
-        <div className="adm-modal-head">
-          <h3>{form.id ? 'Modifica articolo' : 'Nuovo articolo'}</h3>
-          <button className="adm-modal-close" onClick={onClose}>✕</button>
-        </div>
-        <form onSubmit={submit} className="adm-form adm-form--modal">
-          <div className="adm-grid-2">
-            <div>
-              <label>Titolo *</label>
-              <input value={form.title} onChange={set('title')} required />
-            </div>
-            <div>
-              <label>Tag (es. Conservation)</label>
-              <input value={form.tag} onChange={set('tag')} placeholder="Conservation" />
-            </div>
-            <div>
-              <label>Data</label>
-              <input value={form.date} onChange={set('date')} placeholder="June 11, 2026" />
-            </div>
-            <div>
-              <label>URL Immagine di copertina</label>
-              <input value={form.img} onChange={set('img')} placeholder="https://… oppure /img/foto.jpg" />
-            </div>
-          </div>
-          {form.img && <img src={form.img} className="adm-preview-img" alt="preview" />}
-          <label>Estratto (breve descrizione)</label>
-          <textarea rows={2} value={form.excerpt} onChange={set('excerpt')} />
-          <label>Testo articolo (separa i paragrafi con una riga vuota)</label>
-          <textarea rows={10} value={form.body} onChange={set('body')} />
-          <div className="adm-modal-foot">
-            <button type="button" className="adm-btn" onClick={onClose}>Annulla</button>
-            <button type="submit" className="adm-btn adm-btn--primary" disabled={saving}>
-              {saving ? 'Salvataggio…' : 'Salva'}
-            </button>
-          </div>
-        </form>
+    <div>
+      {msg === 'local' && <div className="adm-offline">Salvato localmente. Fai il deploy del backend per rendere le modifiche visibili a tutti.</div>}
+      {msg === 'ok'    && <div className="adm-ok">Salvato sul server.</div>}
+      <div className="adm-section-head">
+        <h2>Articoli Blog {posts && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({posts.length})</span>}</h2>
+        <button className="btn-add" onClick={() => setEditing({})}>+ Nuovo articolo</button>
       </div>
+      {posts === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento...</p>}
+      {posts?.length === 0 && <p className="adm-empty">Nessun articolo. Aggiungine uno.</p>}
+      <div className="adm-list">
+        {posts?.map(p => (
+          <div key={p.id} className="adm-item">
+            <div className="adm-item-thumb">{p.img && <img src={p.img} alt="" />}</div>
+            <div className="adm-item-info">
+              <div className="adm-item-label">{p.tag || 'Blog'}{p.date ? ' · ' + p.date : ''}</div>
+              <div className="adm-item-name">{p.title}</div>
+              <div className="adm-item-meta">{p.excerpt?.slice(0, 80)}{p.excerpt?.length > 80 ? '...' : ''}</div>
+            </div>
+            <div className="adm-item-btns">
+              <button className="btn-sm" onClick={() => setEditing(p)}>Modifica</button>
+              <button className="btn-sm btn-del" onClick={() => del(p.id)}>Elimina</button>
+            </div>
+          </div>
+        ))}
+      </div>
+      {editing && <BlogForm post={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} />}
     </div>
+  )
+}
+
+function BlogForm({ post, onSave, onClose, saving }) {
+  const [f, setF] = useState({
+    id: post.id || '', title: post.title || '', tag: post.tag || '',
+    date: post.date || '', excerpt: post.excerpt || '', img: post.img || '',
+    body: Array.isArray(post.body) ? post.body.join('\n\n') : (post.body || ''),
+  })
+  const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
+  const save = () => {
+    if (!f.title.trim()) return alert('Inserisci il titolo.')
+    onSave({ ...f, body: f.body.split('\n\n').map(s => s.trim()).filter(Boolean) })
+  }
+  return (
+    <Modal title={f.id ? 'Modifica articolo' : 'Nuovo articolo'} onClose={onClose} onSave={save} saving={saving}>
+      <div className="adm-grid2">
+        <div className="adm-field"><label>Titolo *</label><input value={f.title} onChange={set('title')} /></div>
+        <div className="adm-field"><label>Tag (es. Conservation)</label><input value={f.tag} onChange={set('tag')} /></div>
+        <div className="adm-field"><label>Data (es. June 11, 2026)</label><input value={f.date} onChange={set('date')} /></div>
+      </div>
+      <div className="adm-field"><label>Estratto breve</label><textarea rows={2} value={f.excerpt} onChange={set('excerpt')} /></div>
+      <ImageUpload label="Foto copertina" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} />
+      <div className="adm-field">
+        <label>Testo articolo</label>
+        <textarea rows={9} value={f.body} onChange={set('body')} />
+        <div className="adm-field-hint">Separa i paragrafi con una riga vuota.</div>
+      </div>
+    </Modal>
   )
 }
 
 // ── Shop tab ──────────────────────────────────────────────────────────────────
 function ShopTab({ token }) {
-  const [products, setProducts] = useState([])
+  const { items: products, saving, msg, persist } = useCMS('products', token)
   const [editing, setEditing] = useState(null)
-  const [saving, setSaving] = useState(false)
-  const [msg, setMsg] = useState(null)
 
-  useEffect(() => {
-    fetch(`${API}/api/cms`).then(r => r.json()).then(d => setProducts(d.products || []))
-  }, [])
-
-  const save = async list => {
-    setSaving(true)
-    setMsg(null)
-    try {
-      const r = await fetch(`${API}/api/cms/products`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(list),
-      })
-      const d = await r.json()
-      if (d.ok) { setProducts(list); setMsg({ ok: true, text: 'Salvato!' }) }
-      else setMsg({ ok: false, text: d.error || 'Errore' })
-    } catch { setMsg({ ok: false, text: 'Errore di rete' }) }
-    setSaving(false)
-  }
-
-  const del = id => {
-    if (!confirm('Eliminare questo prodotto?')) return
-    save(products.filter(p => p.id !== id))
-  }
-
+  const del = id => { if (!confirm('Eliminare questo prodotto?')) return; persist(products.filter(p => p.id !== id)) }
   const upsert = prod => {
-    const list = prod.id && products.find(p => p.id === prod.id)
+    const list = products.find(p => p.id === prod.id)
       ? products.map(p => p.id === prod.id ? prod : p)
       : [...products, { ...prod, id: uid() }]
-    save(list)
-    setEditing(null)
+    persist(list); setEditing(null)
   }
 
   return (
-    <div className="adm-tab">
-      <div className="adm-tab-header">
-        <h3>Prodotti Shop <span className="adm-count">{products.length}</span></h3>
-        <button className="adm-btn adm-btn--primary" onClick={() => setEditing({})}>+ Nuovo prodotto</button>
+    <div>
+      {msg === 'local' && <div className="adm-offline">Salvato localmente. Fai il deploy del backend per rendere le modifiche visibili a tutti.</div>}
+      {msg === 'ok'    && <div className="adm-ok">Salvato sul server.</div>}
+      <div className="adm-section-head">
+        <h2>Prodotti Shop {products && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({products.length})</span>}</h2>
+        <button className="btn-add" onClick={() => setEditing({})}>+ Nuovo prodotto</button>
       </div>
-      {msg && <div className={`adm-alert ${msg.ok ? 'adm-alert--ok' : 'adm-alert--err'}`}>{msg.text}</div>}
-
+      {products === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento...</p>}
+      {products?.length === 0 && <p className="adm-empty">Nessun prodotto.</p>}
       <div className="adm-list">
-        {products.map(p => (
-          <div key={p.id} className="adm-row">
-            <div className="adm-row-img">
-              {p.photo && <img src={p.photo} alt="" />}
-            </div>
-            <div className="adm-row-body">
-              <div className="adm-row-title">{p.name}</div>
-              <div className="adm-row-sub">
-                €{p.price} · R {p.priceZar}
-                {p.sizes?.length > 0 && ` · Taglie: ${p.sizes.join(', ')}`}
+        {products?.map(p => (
+          <div key={p.id} className="adm-item">
+            <div className="adm-item-thumb">{p.photo && <img src={p.photo} alt="" />}</div>
+            <div className="adm-item-info">
+              <div className="adm-item-name">{p.name}</div>
+              <div className="adm-item-meta">
+                €{p.price}{p.priceZar ? ` · R ${p.priceZar}` : ''}
+                {p.sizes?.length > 0 ? ` · ${p.sizes.join(', ')}` : ''}
               </div>
             </div>
-            <div className="adm-row-actions">
-              <button className="adm-btn adm-btn--sm" onClick={() => setEditing(p)}>Modifica</button>
-              <button className="adm-btn adm-btn--sm adm-btn--danger" onClick={() => del(p.id)}>Elimina</button>
+            <div className="adm-item-btns">
+              <button className="btn-sm" onClick={() => setEditing(p)}>Modifica</button>
+              <button className="btn-sm btn-del" onClick={() => del(p.id)}>Elimina</button>
             </div>
           </div>
         ))}
-        {products.length === 0 && <p className="adm-empty">Nessun prodotto.</p>}
       </div>
-
-      {editing && (
-        <ShopModal prod={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} />
-      )}
+      {editing && <ShopForm prod={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} />}
     </div>
   )
 }
 
-function ShopModal({ prod, onSave, onClose, saving }) {
-  const [form, setForm] = useState({
-    id: prod.id || '',
-    name: prod.name || '',
-    price: prod.price ?? '',
-    priceZar: prod.priceZar ?? '',
-    sizes: Array.isArray(prod.sizes) ? prod.sizes.join(', ') : (prod.sizes || ''),
+function ShopForm({ prod, onSave, onClose, saving }) {
+  const [f, setF] = useState({
+    id: prod.id || '', name: prod.name || '',
+    price: prod.price ?? '', priceZar: prod.priceZar ?? '',
+    sizes: Array.isArray(prod.sizes) ? prod.sizes.join(', ') : '',
     photo: prod.photo || '',
   })
-
-  const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }))
-
-  const submit = e => {
-    e.preventDefault()
+  const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
+  const save = () => {
+    if (!f.name.trim()) return alert('Inserisci il nome del prodotto.')
+    if (!f.price) return alert('Inserisci il prezzo.')
     onSave({
-      ...form,
-      price: parseFloat(form.price) || 0,
-      priceZar: parseFloat(form.priceZar) || 0,
-      sizes: form.sizes ? form.sizes.split(',').map(s => s.trim()).filter(Boolean) : [],
+      ...f, price: parseFloat(f.price) || 0, priceZar: parseFloat(f.priceZar) || 0,
+      sizes: f.sizes ? f.sizes.split(',').map(s => s.trim()).filter(Boolean) : [],
     })
   }
-
   return (
-    <div className="adm-modal-overlay" onClick={onClose}>
-      <div className="adm-modal" onClick={e => e.stopPropagation()}>
-        <div className="adm-modal-head">
-          <h3>{form.id ? 'Modifica prodotto' : 'Nuovo prodotto'}</h3>
-          <button className="adm-modal-close" onClick={onClose}>✕</button>
+    <Modal title={f.id ? 'Modifica prodotto' : 'Nuovo prodotto'} onClose={onClose} onSave={save} saving={saving}>
+      <div className="adm-field"><label>Nome prodotto *</label><input value={f.name} onChange={set('name')} /></div>
+      <div className="adm-grid2">
+        <div className="adm-field">
+          <label>Prezzo Euro (€) *</label>
+          <input type="number" min="0" step="0.01" value={f.price} onChange={set('price')} placeholder="22" />
         </div>
-        <form onSubmit={submit} className="adm-form adm-form--modal">
-          <div className="adm-grid-2">
-            <div>
-              <label>Nome prodotto *</label>
-              <input value={form.name} onChange={set('name')} required />
-            </div>
-            <div>
-              <label>Prezzo in € *</label>
-              <input type="number" min="0" step="0.01" value={form.price} onChange={set('price')} required />
-            </div>
-            <div>
-              <label>Prezzo in Rand (ZAR)</label>
-              <input type="number" min="0" step="1" value={form.priceZar} onChange={set('priceZar')} />
-            </div>
-            <div>
-              <label>Taglie (separate da virgola)</label>
-              <input value={form.sizes} onChange={set('sizes')} placeholder="XS, S, M, L, XL — lascia vuoto se non applicabile" />
-            </div>
-          </div>
-          <label>URL Foto prodotto</label>
-          <input value={form.photo} onChange={set('photo')} placeholder="https://… oppure /img/foto.jpg" />
-          {form.photo && <img src={form.photo} className="adm-preview-img" alt="preview" />}
-          <div className="adm-modal-foot">
-            <button type="button" className="adm-btn" onClick={onClose}>Annulla</button>
-            <button type="submit" className="adm-btn adm-btn--primary" disabled={saving}>
-              {saving ? 'Salvataggio…' : 'Salva'}
-            </button>
-          </div>
-        </form>
+        <div className="adm-field">
+          <label>Prezzo Rand (R)</label>
+          <input type="number" min="0" step="1" value={f.priceZar} onChange={set('priceZar')} placeholder="350" />
+        </div>
       </div>
-    </div>
+      <div className="adm-field">
+        <label>Taglie (separate da virgola — lascia vuoto se non applicabile)</label>
+        <input value={f.sizes} onChange={set('sizes')} placeholder="XS, S, M, L, XL" />
+      </div>
+      <ImageUpload label="Foto prodotto" value={f.photo} onChange={v => setF(p => ({ ...p, photo: v }))} />
+    </Modal>
   )
 }
 
 // ── Animali tab ───────────────────────────────────────────────────────────────
 function AnimaliTab({ token }) {
-  const [animals, setAnimals] = useState([])
+  const { items: animals, saving, msg, persist } = useCMS('animals', token)
   const [editing, setEditing] = useState(null)
-  const [saving, setSaving] = useState(false)
-  const [msg, setMsg] = useState(null)
 
-  useEffect(() => {
-    fetch(`${API}/api/cms`).then(r => r.json()).then(d => setAnimals(d.animals || []))
-  }, [])
-
-  const save = async list => {
-    setSaving(true)
-    setMsg(null)
-    try {
-      const r = await fetch(`${API}/api/cms/animals`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(list),
-      })
-      const d = await r.json()
-      if (d.ok) { setAnimals(list); setMsg({ ok: true, text: 'Salvato!' }) }
-      else setMsg({ ok: false, text: d.error || 'Errore' })
-    } catch { setMsg({ ok: false, text: 'Errore di rete' }) }
-    setSaving(false)
-  }
-
-  const del = id => {
-    if (!confirm('Eliminare questo animale?')) return
-    save(animals.filter(a => a.id !== id))
-  }
-
+  const del = id => { if (!confirm('Eliminare questo animale?')) return; persist(animals.filter(a => a.id !== id)) }
   const upsert = animal => {
-    const list = animal.id && animals.find(a => a.id === animal.id)
+    const list = animals.find(a => a.id === animal.id)
       ? animals.map(a => a.id === animal.id ? animal : a)
       : [...animals, { ...animal, id: uid() }]
-    save(list)
-    setEditing(null)
+    persist(list); setEditing(null)
   }
 
   return (
-    <div className="adm-tab">
-      <div className="adm-tab-header">
-        <h3>Animali Adozione <span className="adm-count">{animals.length}</span></h3>
-        <button className="adm-btn adm-btn--primary" onClick={() => setEditing({})}>+ Nuovo animale</button>
+    <div>
+      {msg === 'local' && <div className="adm-offline">Salvato localmente. Fai il deploy del backend per rendere le modifiche visibili a tutti.</div>}
+      {msg === 'ok'    && <div className="adm-ok">Salvato sul server.</div>}
+      <div className="adm-section-head">
+        <h2>Animali Adozione {animals && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({animals.length})</span>}</h2>
+        <button className="btn-add" onClick={() => setEditing({})}>+ Nuovo animale</button>
       </div>
-      {msg && <div className={`adm-alert ${msg.ok ? 'adm-alert--ok' : 'adm-alert--err'}`}>{msg.text}</div>}
-
+      {animals === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento...</p>}
+      {animals?.length === 0 && <p className="adm-empty">Nessun animale.</p>}
       <div className="adm-list">
-        {animals.map(a => (
-          <div key={a.id} className="adm-row">
-            <div className="adm-row-img">
-              {a.img && <img src={a.img} alt="" />}
+        {animals?.map(a => (
+          <div key={a.id} className="adm-item">
+            <div className="adm-item-thumb">{a.img && <img src={a.img} alt="" />}</div>
+            <div className="adm-item-info">
+              <div className="adm-item-label">{a.species}</div>
+              <div className="adm-item-name">{a.name}</div>
+              <div className="adm-item-meta">€{a.price}/mese</div>
             </div>
-            <div className="adm-row-body">
-              <div className="adm-row-title">{a.name}</div>
-              <div className="adm-row-sub">{a.species} · €{a.price}/mese</div>
-            </div>
-            <div className="adm-row-actions">
-              <button className="adm-btn adm-btn--sm" onClick={() => setEditing(a)}>Modifica</button>
-              <button className="adm-btn adm-btn--sm adm-btn--danger" onClick={() => del(a.id)}>Elimina</button>
+            <div className="adm-item-btns">
+              <button className="btn-sm" onClick={() => setEditing(a)}>Modifica</button>
+              <button className="btn-sm btn-del" onClick={() => del(a.id)}>Elimina</button>
             </div>
           </div>
         ))}
-        {animals.length === 0 && <p className="adm-empty">Nessun animale.</p>}
       </div>
-
-      {editing && (
-        <AnimalModal animal={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} />
-      )}
+      {editing && <AnimalForm animal={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} />}
     </div>
   )
 }
 
-function AnimalModal({ animal, onSave, onClose, saving }) {
-  const [form, setForm] = useState({
-    id: animal.id || '',
-    name: animal.name || '',
-    species: animal.species || '',
-    price: animal.price ?? '',
+function AnimalForm({ animal, onSave, onClose, saving }) {
+  const [f, setF] = useState({
+    id: animal.id || '', name: animal.name || '',
+    species: animal.species || '', price: animal.price ?? '',
     img: animal.img || '',
   })
+  const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
+  const save = () => {
+    if (!f.name.trim()) return alert('Inserisci il nome.')
+    if (!f.price) return alert('Inserisci la quota mensile.')
+    onSave({ ...f, price: parseFloat(f.price) || 0 })
+  }
+  return (
+    <Modal title={f.id ? 'Modifica animale' : 'Nuovo animale'} onClose={onClose} onSave={save} saving={saving}>
+      <div className="adm-grid2">
+        <div className="adm-field"><label>Nome *</label><input value={f.name} onChange={set('name')} /></div>
+        <div className="adm-field"><label>Specie</label><input value={f.species} onChange={set('species')} placeholder="Cheetah" /></div>
+        <div className="adm-field">
+          <label>Quota mensile (€) *</label>
+          <input type="number" min="1" step="1" value={f.price} onChange={set('price')} placeholder="15" />
+        </div>
+      </div>
+      <ImageUpload label="Foto animale" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} />
+    </Modal>
+  )
+}
 
-  const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }))
+// ── Impostazioni tab ──────────────────────────────────────────────────────────
+function ImpostazioniTab({ token }) {
+  const [f, setF] = useState({ current: '', newpw: '', confirm: '', newKey: '' })
+  const [msg, setMsg] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
 
-  const submit = e => {
-    e.preventDefault()
-    onSave({ ...form, price: parseFloat(form.price) || 0 })
+  const change = async e => {
+    e.preventDefault(); setMsg(null)
+    if (f.newpw !== f.confirm) return setMsg({ err: 'Le password non coincidono.' })
+    if (f.newpw.length < 8) return setMsg({ err: 'Almeno 8 caratteri per la password.' })
+    setLoading(true)
+    try {
+      const body = { current: f.current, newPassword: f.newpw }
+      if (f.newKey.trim().length >= 3) body.newRecoveryKey = f.newKey.trim()
+      const r = await fetch(`${API}/api/admin/change-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(body),
+      })
+      const d = await r.json()
+      if (d.ok) {
+        const note = f.newKey.trim().length >= 3 ? ' e parola chiave aggiornate.' : ' aggiornata.'
+        setMsg({ ok: 'Password' + note + ' Le modifiche sono permanenti.' })
+        setF({ current: '', newpw: '', confirm: '', newKey: '' })
+      } else setMsg({ err: d.error || 'Errore.' })
+    } catch { setMsg({ err: 'Server non raggiungibile.' }) }
+    setLoading(false)
   }
 
   return (
-    <div className="adm-modal-overlay" onClick={onClose}>
-      <div className="adm-modal" onClick={e => e.stopPropagation()}>
-        <div className="adm-modal-head">
-          <h3>{form.id ? 'Modifica animale' : 'Nuovo animale'}</h3>
-          <button className="adm-modal-close" onClick={onClose}>✕</button>
+    <div className="adm-settings">
+      <div className="adm-section-head" style={{ marginBottom: '1.3rem' }}><h2>Impostazioni</h2></div>
+      <h3>Cambia password</h3>
+      {msg?.ok  && <div className="adm-ok">{msg.ok}</div>}
+      {msg?.err && <div className="adm-err">{msg.err}</div>}
+      <form onSubmit={change}>
+        <div className="adm-field"><label>Password attuale</label>
+          <input type="password" value={f.current} onChange={set('current')} required placeholder="••••••••" /></div>
+        <div className="adm-field"><label>Nuova password (min. 8 caratteri)</label>
+          <input type="password" value={f.newpw} onChange={set('newpw')} required minLength={8} placeholder="••••••••" /></div>
+        <div className="adm-field"><label>Conferma nuova password</label>
+          <input type="password" value={f.confirm} onChange={set('confirm')} required placeholder="••••••••" /></div>
+        <div className="adm-field">
+          <label>Nuova parola chiave di recupero (opzionale)</label>
+          <input type="text" value={f.newKey} onChange={set('newKey')} placeholder="lascia vuoto per non cambiarla" autoComplete="off" />
+          <div className="adm-field-hint">Usata per recuperare l&apos;accesso se dimentichi la password.</div>
         </div>
-        <form onSubmit={submit} className="adm-form adm-form--modal">
-          <div className="adm-grid-2">
-            <div>
-              <label>Nome *</label>
-              <input value={form.name} onChange={set('name')} required />
-            </div>
-            <div>
-              <label>Specie</label>
-              <input value={form.species} onChange={set('species')} placeholder="Cheetah" />
-            </div>
-            <div>
-              <label>Quota mensile in € *</label>
-              <input type="number" min="1" step="1" value={form.price} onChange={set('price')} required />
-            </div>
-          </div>
-          <label>URL Foto</label>
-          <input value={form.img} onChange={set('img')} placeholder="https://… oppure /img/foto.jpg" />
-          {form.img && <img src={form.img} className="adm-preview-img" alt="preview" />}
-          <div className="adm-modal-foot">
-            <button type="button" className="adm-btn" onClick={onClose}>Annulla</button>
-            <button type="submit" className="adm-btn adm-btn--primary" disabled={saving}>
-              {saving ? 'Salvataggio…' : 'Salva'}
-            </button>
-          </div>
-        </form>
-      </div>
+        <button type="submit" className="btn-primary" disabled={loading}>
+          {loading ? '...' : 'Salva modifiche'}
+        </button>
+      </form>
     </div>
   )
 }
 
-// ── Main Admin ────────────────────────────────────────────────────────────────
+// ── Main ──────────────────────────────────────────────────────────────────────
 export default function Admin({ goTo }) {
   const [token, setToken] = useState(() => localStorage.getItem('nl_admin_token') || '')
   const [tab, setTab] = useState(0)
 
-  const handleLogin = t => { localStorage.setItem('nl_admin_token', t); setToken(t) }
-  const logout = () => { localStorage.removeItem('nl_admin_token'); setToken('') }
+  const login = t => { localStorage.setItem('nl_admin_token', t); setToken(t) }
+  const logout = () => { localStorage.removeItem('nl_admin_token'); setToken(''); goTo('home') }
 
-  if (!token) return <LoginScreen onLogin={handleLogin} goTo={goTo} />
+  if (!token) return <LoginScreen onLogin={login} />
 
   return (
     <>
-    <AdminStyles />
-    <div className="adm-wrap">
-      <div className="adm-shell">
-        {/* Sidebar */}
-        <aside className="adm-sidebar">
-          <div className="adm-brand" onClick={() => goTo('home')} style={{ cursor: 'pointer' }}>
-            Nova&apos;s <em>Legacy</em>
+      <Styles />
+      <div className="adm">
+        <div className="adm-bar">
+          <div className="adm-bar-top">
+            <div className="adm-logo">Nova&apos;s <em>Legacy</em></div>
+            <div className="adm-bar-acts">
+              <button className="adm-btn-site" onClick={() => goTo('home')}>← Sito</button>
+              <button className="adm-btn-exit" onClick={logout}>Esci</button>
+            </div>
           </div>
-          <nav className="adm-nav">
+          <div className="adm-tabs">
             {TABS.map((t, i) => (
-              <button key={t} className={`adm-nav-item ${tab === i ? 'adm-nav-item--active' : ''}`}
-                onClick={() => setTab(i)}>
-                <span className="adm-nav-icon">{['📝', '🛍️', '🐆'][i]}</span>
+              <button key={t} className={`adm-tab${tab === i ? ' adm-tab--on' : ''}`} onClick={() => setTab(i)}>
                 {t}
               </button>
             ))}
-          </nav>
-          <button className="adm-logout" onClick={logout}>Esci</button>
-        </aside>
-
-        {/* Main */}
-        <main className="adm-main">
-          <div className="adm-main-header">
-            <h2>{TABS[tab]}</h2>
-            <span className="adm-main-sub">Gestisci i contenuti del sito</span>
           </div>
-          {tab === 0 && <BlogTab token={token} />}
-          {tab === 1 && <ShopTab token={token} />}
+        </div>
+        <div className="adm-body">
+          {tab === 0 && <BlogTab    token={token} />}
+          {tab === 1 && <ShopTab    token={token} />}
           {tab === 2 && <AnimaliTab token={token} />}
-        </main>
+          {tab === 3 && <ImpostazioniTab token={token} />}
+        </div>
       </div>
-    </div>
     </>
   )
 }

@@ -256,6 +256,19 @@ const S = `
   .adm-login-box h2 { font-size: 1rem; margin: 0 0 0.25rem; }
   .adm-login-sub { font-size: 0.77rem; color: #999; margin-bottom: 1.3rem; }
 
+  /* animated dots */
+  @keyframes dot-up {
+    0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
+    30%            { opacity: 1;    transform: translateY(-4px); }
+  }
+  .dots span {
+    display: inline-block;
+    animation: dot-up 1.1s infinite;
+    font-size: 1.1em; line-height: 1;
+  }
+  .dots span:nth-child(2) { animation-delay: 0.18s; }
+  .dots span:nth-child(3) { animation-delay: 0.36s; }
+
   /* mobile */
   @media (max-width: 540px) {
     .adm-bar-top { padding: 0 1rem; gap: 0.5rem; }
@@ -273,6 +286,10 @@ const S = `
 `
 
 function Styles() { return <style>{S}</style> }
+
+function Dots() {
+  return <span className="dots"><span>.</span><span>.</span><span>.</span></span>
+}
 
 // ── Image upload component ────────────────────────────────────────────────────
 function ImageUpload({ value, onChange, label = 'Foto' }) {
@@ -378,7 +395,7 @@ function LoginScreen({ onLogin, goTo }) {
       <Styles />
       <div className="adm-login"><div className="adm-login-box">
         <div className="adm-login-logo">Nova&apos;s <em>Legacy</em></div>
-        <p style={{ color: '#999', fontSize: '0.85rem' }}>Connessione...</p>
+        <p style={{ color: '#999', fontSize: '0.85rem' }}>Connessione<Dots /></p>
       </div></div>
     </>
   )
@@ -407,7 +424,7 @@ function LoginScreen({ onLogin, goTo }) {
                 <div className="adm-field-hint">Usata per reimpostare la password se dimenticata. Tienila al sicuro.</div>
               </div>
               <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.3rem' }} disabled={loading}>
-                {loading ? '...' : 'Imposta e accedi'}
+                {loading ? <Dots /> : 'Imposta e accedi'}
               </button>
             </form>
           </>}
@@ -423,7 +440,7 @@ function LoginScreen({ onLogin, goTo }) {
                 <input type="password" value={f.pw} onChange={set('pw')} placeholder="••••••••" required autoFocus />
               </div>
               <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.3rem' }} disabled={loading}>
-                {loading ? '...' : 'Accedi'}
+                {loading ? <Dots /> : 'Accedi'}
               </button>
             </form>
             <div style={{ marginTop: '1rem', textAlign: 'center' }}>
@@ -453,7 +470,7 @@ function LoginScreen({ onLogin, goTo }) {
                 <input type="password" value={f.newpwConfirm} onChange={set('newpwConfirm')} placeholder="••••••••" required />
               </div>
               <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0.3rem' }} disabled={loading}>
-                {loading ? '...' : 'Reimposta password'}
+                {loading ? <Dots /> : 'Reimposta password'}
               </button>
             </form>
             <div style={{ marginTop: '1rem', textAlign: 'center' }}>
@@ -491,7 +508,7 @@ function Modal({ title, onClose, onSave, saving, children }) {
           <div className="adm-modal-foot">
             <button className="btn-cancel" onClick={onClose}>Annulla</button>
             <button className="btn-primary" onClick={onSave} disabled={saving}>
-              {saving ? 'Salvataggio...' : 'Salva'}
+              {saving ? <><Dots /> Salvo</> : 'Salva'}
             </button>
           </div>
         </div>
@@ -545,7 +562,7 @@ function BlogTab({ token }) {
         <h2>Articoli Blog {posts && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({posts.length})</span>}</h2>
         <button className="btn-add" onClick={() => setEditing({})}>+ Nuovo articolo</button>
       </div>
-      {posts === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento...</p>}
+      {posts === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento<Dots /></p>}
       {posts?.length === 0 && <p className="adm-empty">Nessun articolo. Aggiungine uno.</p>}
       <div className="adm-list">
         {posts?.map(p => (
@@ -618,7 +635,7 @@ function ShopTab({ token }) {
         <h2>Prodotti Shop {products && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({products.length})</span>}</h2>
         <button className="btn-add" onClick={() => setEditing({})}>+ Nuovo prodotto</button>
       </div>
-      {products === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento...</p>}
+      {products === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento<Dots /></p>}
       {products?.length === 0 && <p className="adm-empty">Nessun prodotto.</p>}
       <div className="adm-list">
         {products?.map(p => (
@@ -702,7 +719,7 @@ function AnimaliTab({ token }) {
         <h2>Animali Adozione {animals && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({animals.length})</span>}</h2>
         <button className="btn-add" onClick={() => setEditing({})}>+ Nuovo animale</button>
       </div>
-      {animals === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento...</p>}
+      {animals === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento<Dots /></p>}
       {animals?.length === 0 && <p className="adm-empty">Nessun animale.</p>}
       <div className="adm-list">
         {animals?.map(a => (
@@ -875,13 +892,19 @@ function ContenutiTab({ token }) {
   const [msg,     setMsg]     = useState(null)
 
   useEffect(() => {
-    const apply = d => {
-      if (!d || !Object.keys(d).length) return false
-      setContent(d); return true
-    }
     const cached = (() => { try { return JSON.parse(localStorage.getItem('nl_content')) } catch { return null } })()
-    if (cached) apply(cached)
-    loadContent().then(d => { if (d) { apply(d); localStorage.setItem('nl_content', JSON.stringify(d)) } })
+    if (cached && Object.keys(cached).length) setContent(cached)
+
+    loadContent().then(d => {
+      if (d && Object.keys(d).length) {
+        setContent(d)
+        localStorage.setItem('nl_content', JSON.stringify(d))
+      } else if (!cached) {
+        // Backend non raggiungibile e nessuna cache → usa i18n integrato
+        const builtin = i18n.getDataByLanguage('en')?.translation || {}
+        setContent(Object.keys(builtin).length ? builtin : {})
+      }
+    })
   }, [])
 
   const sec = CURATED[secIdx]
@@ -933,14 +956,14 @@ function ContenutiTab({ token }) {
         ))}
       </div>
 
-      {!content && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento...</p>}
+      {content === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Caricamento<Dots /></p>}
 
-      {content && (
+      {content !== null && (
         <div style={{ background: '#fff', border: '1px solid #E2D8CC', borderRadius: 6, padding: '1.3rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
             <h2 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700 }}>{sec.label}</h2>
             <button className="btn-primary" onClick={save} disabled={saving}>
-              {saving ? 'Salvataggio...' : 'Salva'}
+              {saving ? <><Dots /> Salvo</> : 'Salva'}
             </button>
           </div>
 
@@ -1014,7 +1037,7 @@ function ImpostazioniTab({ token }) {
           <div className="adm-field-hint">Usata per recuperare l&apos;accesso se dimentichi la password.</div>
         </div>
         <button type="submit" className="btn-primary" disabled={loading}>
-          {loading ? '...' : 'Salva modifiche'}
+          {loading ? <Dots /> : 'Salva modifiche'}
         </button>
       </form>
     </div>

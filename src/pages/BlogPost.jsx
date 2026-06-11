@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
-const POST_IMGS = [
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+
+const FALLBACK_IMGS = [
   '/img/nova-madre-cucciolo.png',
   '/img/volontari-lavoro.png',
   '/img/due-ghepardi.png',
@@ -11,15 +14,28 @@ const POST_IMGS = [
 
 function BlogPost({ goTo, postId }) {
   const { t } = useTranslation()
-  const posts = t('blog.posts', { returnObjects: true })
-  const idx   = postId ?? 0
-  const post  = posts[idx] || posts[0]
-  const body  = Array.isArray(post.body) ? post.body : []
+  const fallback = t('blog.posts', { returnObjects: true })
+
+  const [posts, setPosts] = useState(null)
+
+  useEffect(() => {
+    fetch(`${API}/api/cms`)
+      .then(r => r.json())
+      .then(d => { if (d.blog?.length) setPosts(d.blog) })
+      .catch(() => {})
+  }, [])
+
+  const items = posts || fallback.map((p, i) => ({ ...p, id: String(i), img: FALLBACK_IMGS[i] }))
+  const idx  = postId ?? 0
+  const post = items[idx] || items[0]
+  if (!post) return null
+  const body = Array.isArray(post.body) ? post.body : []
+  const img  = post.img || FALLBACK_IMGS[idx] || FALLBACK_IMGS[0]
 
   return (
     <>
       <div className="page-hero-img" style={{ height: '50vh' }}>
-        <img src={POST_IMGS[idx] || POST_IMGS[0]} alt={post.title} style={{ objectPosition: 'center 40%' }} />
+        <img src={img} alt={post.title} style={{ objectPosition: 'center 40%' }} />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">{post.tag}</span>
@@ -50,7 +66,7 @@ function BlogPost({ goTo, postId }) {
                   ‹ {t('blog.prev_post')}
                 </button>
               )}
-              {idx < posts.length - 1 && (
+              {idx < items.length - 1 && (
                 <button className="btn btn-dark" onClick={() => goTo('blog-post', null, idx + 1)}>
                   {t('blog.next_post')} ›
                 </button>

@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
-const POST_IMGS = [
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+
+const FALLBACK_IMGS = [
   '/img/nova-madre-cucciolo.png',
   '/img/volontari-lavoro.png',
   '/img/due-ghepardi.png',
@@ -11,7 +14,18 @@ const POST_IMGS = [
 
 function Blog({ goTo }) {
   const { t } = useTranslation()
-  const posts = t('blog.posts', { returnObjects: true })
+  const fallback = t('blog.posts', { returnObjects: true })
+
+  const [posts, setPosts] = useState(null)
+
+  useEffect(() => {
+    fetch(`${API}/api/cms`)
+      .then(r => r.json())
+      .then(d => { if (d.blog?.length) setPosts(d.blog) })
+      .catch(() => {})
+  }, [])
+
+  const items = posts || fallback.map((p, i) => ({ ...p, id: String(i), img: FALLBACK_IMGS[i] }))
 
   return (
     <>
@@ -30,9 +44,9 @@ function Blog({ goTo }) {
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
           <div className="page-grid-3">
-            {posts.map((p, i) => (
+            {items.map((p, i) => (
               <div
-                key={p.title}
+                key={p.id || p.title}
                 style={{
                   background: 'var(--off-white)',
                   border: '1px solid #EDE5D8',
@@ -45,7 +59,8 @@ function Blog({ goTo }) {
                 onClick={() => goTo('blog-post', null, i)}
               >
                 <div style={{ height: '200px', overflow: 'hidden' }}>
-                  <img src={POST_IMGS[i]} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={p.img || FALLBACK_IMGS[i] || FALLBACK_IMGS[0]} alt={p.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
                 <div style={{ padding: '1.5rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.7rem' }}>

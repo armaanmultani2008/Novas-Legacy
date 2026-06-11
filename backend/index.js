@@ -7,6 +7,22 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import Stripe from 'stripe';
 import nodemailer from 'nodemailer';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const CMS_FILE = path.join(__dirname, 'cms.json');
+
+const CMS_DEFAULTS = { blog: [], products: [], animals: [] };
+
+function readCMS() {
+  try { return JSON.parse(fs.readFileSync(CMS_FILE, 'utf-8')); }
+  catch { return { ...CMS_DEFAULTS }; }
+}
+function writeCMS(data) {
+  fs.writeFileSync(CMS_FILE, JSON.stringify(data, null, 2), 'utf-8');
+}
 
 dotenv.config();
 
@@ -67,7 +83,7 @@ async function notifyKim(toName, toEmail, animalName, monthlyEur) {
 app.use(cors());
 app.use(express.json());
 
-let adminPassword = "";
+let adminPassword = envVars.ADMIN_PASSWORD || "";
 
 app.get('/', (req, res) => {
     res.json({ message: "Il backend di Nova's Legacy è online e funzionante!" });
@@ -263,6 +279,47 @@ app.post('/api/contact', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+// ── CMS: middleware auth ──────────────────────────────────────────────────────
+function requireAdmin(req, res, next) {
+  const auth = req.headers.authorization;
+  if (!auth?.startsWith('Bearer ')) return res.status(401).json({ error: 'Non autorizzato' });
+  try {
+    jwt.verify(auth.slice(7), envVars.JWT_SECRET || 'dev_secret');
+    next();
+  } catch {
+    res.status(401).json({ error: 'Token non valido' });
+  }
+}
+
+// ── CMS: lettura pubblica ─────────────────────────────────────────────────────
+app.get('/api/cms', (_req, res) => {
+  res.json(readCMS());
+});
+
+// ── CMS: salvataggio blog ─────────────────────────────────────────────────────
+app.put('/api/cms/blog', requireAdmin, (req, res) => {
+  const cms = readCMS();
+  cms.blog = req.body;
+  writeCMS(cms);
+  res.json({ ok: true });
+});
+
+// ── CMS: salvataggio prodotti ─────────────────────────────────────────────────
+app.put('/api/cms/products', requireAdmin, (req, res) => {
+  const cms = readCMS();
+  cms.products = req.body;
+  writeCMS(cms);
+  res.json({ ok: true });
+});
+
+// ── CMS: salvataggio animali ──────────────────────────────────────────────────
+app.put('/api/cms/animals', requireAdmin, (req, res) => {
+  const cms = readCMS();
+  cms.animals = req.body;
+  writeCMS(cms);
+  res.json({ ok: true });
 });
 
 app.listen(PORT, () => {

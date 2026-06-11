@@ -1,20 +1,19 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
-const ITEMS = [
-  { name: 'Classic Tee',      price: '€22', priceZar: 'R 350', sizes: ['XS','S','M','L','XL'],      photo: '/img/merch-tee.jpg' },
-  { name: 'Coalition Hoodie', price: '€40', priceZar: 'R 650', sizes: ['S','M','L','XL','XXL'],      photo: '/img/merch-hoodie.jpg' },
-  { name: 'Bush Cap',         price: '€16', priceZar: 'R 250', sizes: ['UNICA'],                     photo: '/img/merch-cap.jpg' },
-  { name: 'Field Tote Bag',   price: '€18', priceZar: 'R 280', sizes: null,                          photo: '/img/merch-tote.jpg' },
-  { name: 'Safari Mug',       price: '€12', priceZar: 'R 180', sizes: null,                          photo: '/img/merch-mug.jpg' },
-  { name: 'Sticker Pack',     price: '€5',  priceZar: 'R 80',  sizes: null,                          photo: '/img/merch-sticker.jpg' },
+const FALLBACK_ITEMS = [
+  { id: '1', name: 'Classic Tee',      price: 22, priceZar: 350, sizes: ['XS','S','M','L','XL'],    photo: '/img/merch-tee.jpg' },
+  { id: '2', name: 'Coalition Hoodie', price: 40, priceZar: 650, sizes: ['S','M','L','XL','XXL'],   photo: '/img/merch-hoodie.jpg' },
+  { id: '3', name: 'Bush Cap',         price: 16, priceZar: 250, sizes: ['UNICA'],                  photo: '/img/merch-cap.jpg' },
+  { id: '4', name: 'Field Tote Bag',   price: 18, priceZar: 280, sizes: [],                         photo: '/img/merch-tote.jpg' },
+  { id: '5', name: 'Safari Mug',       price: 12, priceZar: 180, sizes: [],                         photo: '/img/merch-mug.jpg' },
+  { id: '6', name: 'Sticker Pack',     price: 5,  priceZar: 80,  sizes: [],                         photo: '/img/merch-sticker.jpg' },
 ]
 
-async function startCheckout(name, priceStr, errCheckout, errBackend) {
-  const price = parseFloat(priceStr.replace('€', ''))
+async function startCheckout(name, price, errCheckout, errBackend) {
   try {
     const r = await fetch(`${API}/api/stripe/checkout`, {
       method: 'POST',
@@ -33,8 +32,16 @@ function Merch({ goTo }) {
   useScrollReveal()
   const { t } = useTranslation()
   const [loading, setLoading] = useState(null)
+  const [cmsItems, setCmsItems] = useState(null)
 
-  const items = t('merch.items', { returnObjects: true })
+  useEffect(() => {
+    fetch(`${API}/api/cms`)
+      .then(r => r.json())
+      .then(d => { if (d.products?.length) setCmsItems(d.products) })
+      .catch(() => {})
+  }, [])
+
+  const shopItems = cmsItems || FALLBACK_ITEMS
   const infoStrip = t('merch.info', { returnObjects: true })
 
   const handleBuy = async (item) => {
@@ -42,6 +49,9 @@ function Merch({ goTo }) {
     await startCheckout(item.name, item.price, t('common.error_checkout'), t('common.error_backend'))
     setLoading(null)
   }
+
+  const fmtPrice = p => `€${typeof p === 'number' ? p : p}`
+  const fmtZar   = p => `R ${typeof p === 'number' ? p : p}`
 
   return (
     <>
@@ -67,53 +77,43 @@ function Merch({ goTo }) {
           </div>
 
           <div className="shop-grid">
-            {ITEMS.map((item, i) => {
-              const info = items[i] || {}
-              return (
-                <article key={item.name} className={`shop-card rv rv-d${Math.min((i % 3) + 1, 3)}`}>
-                  <div className="s-photo">
-                    <img src={item.photo} alt={item.name} />
-                    <div className="s-photo-overlay" />
-                    <div className="s-emoji-wrap">
-                      <div className="s-emoji">◆</div>
+            {shopItems.map((item, i) => (
+              <article key={item.id || item.name} className={`shop-card rv rv-d${Math.min((i % 3) + 1, 3)}`}>
+                <div className="s-photo">
+                  <img src={item.photo} alt={item.name} />
+                  <div className="s-photo-overlay" />
+                  <div className="s-emoji-wrap"><div className="s-emoji">◆</div></div>
+                  <div className="s-brand">Nova&apos;s Legacy</div>
+                </div>
+
+                <div className="s-body">
+                  <h3 className="s-name">{item.name}</h3>
+
+                  {item.sizes?.length > 0 && (
+                    <div className="s-sizes">
+                      {item.sizes.map(sz => (
+                        <span key={sz} className="s-size">{sz}</span>
+                      ))}
                     </div>
-                    {info.badge && (
-                      <div className="s-badge">{info.badge}</div>
-                    )}
-                    <div className="s-brand">Nova&apos;s Legacy</div>
-                  </div>
+                  )}
 
-                  <div className="s-body">
-                    <div className="s-cat">{info.category || ''}</div>
-                    <h3 className="s-name">{item.name}</h3>
-                    <p className="s-desc">{info.desc || ''}</p>
-
-                    {item.sizes && (
-                      <div className="s-sizes">
-                        {item.sizes.map(sz => (
-                          <span key={sz} className="s-size">{sz}</span>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="s-footer">
-                      <div className="s-price">
-                        {item.price}
-                        <span>{item.priceZar} {t('merch.zar_label')}</span>
-                      </div>
-                      <button
-                        className="btn btn-dark btn-sm"
-                        onClick={() => handleBuy(item)}
-                        disabled={loading === item.name}
-                        style={{ opacity: loading === item.name ? 0.6 : 1 }}
-                      >
-                        {loading === item.name ? '...' : t('merch.order_btn')}
-                      </button>
+                  <div className="s-footer">
+                    <div className="s-price">
+                      {fmtPrice(item.price)}
+                      <span>{fmtZar(item.priceZar)} {t('merch.zar_label')}</span>
                     </div>
+                    <button
+                      className="btn btn-dark btn-sm"
+                      onClick={() => handleBuy(item)}
+                      disabled={loading === item.name}
+                      style={{ opacity: loading === item.name ? 0.6 : 1 }}
+                    >
+                      {loading === item.name ? '...' : t('merch.order_btn')}
+                    </button>
                   </div>
-                </article>
-              )
-            })}
+                </div>
+              </article>
+            ))}
           </div>
 
           <div className="s-info-strip rv">

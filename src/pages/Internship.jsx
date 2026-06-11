@@ -13,10 +13,8 @@ const FIELD_IMGS = [
 ]
 
 const PHOTOS = [
-  '/img/int-photo-1.jpg',
-  '/img/int-photo-2.jpg',
-  '/img/int-photo-3.jpg',
-  '/img/int-photo-4.jpg',
+  '/img/internship.png',
+  '/img/internship2.png',
 ]
 
 const ALL_IMGS = [...PHOTOS, ...FIELD_IMGS]
@@ -58,7 +56,7 @@ function Internship({ goTo }) {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
+            gridTemplateColumns: 'repeat(2, 1fr)',
             gap: '6px',
             margin: '2.5rem 0',
           }}>
@@ -67,7 +65,7 @@ function Internship({ goTo }) {
                 key={i}
                 className="rv"
                 style={{
-                  height: '180px',
+                  height: '280px',
                   overflow: 'hidden',
                   borderRadius: '4px',
                   transitionDelay: `${i * 0.08}s`,

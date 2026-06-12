@@ -14,36 +14,30 @@ import path from 'path';
 import { MongoClient } from 'mongodb';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const CMS_FILE      = path.join(__dirname, 'cms.json');
-const SETTINGS_FILE = path.join(__dirname, 'settings.json');
-const CONTENT_FILE  = path.join(__dirname, 'content.json');
+const CMS_FILE  = path.join(__dirname, 'cms.json');
 
 const CMS_DEFAULTS = { blog: [], products: [], animals: [] };
 
-// ── In-memory store (loaded from MongoDB or local files at startup) ───────────
+// ── In-memory store (caricato da MongoDB o dal file locale all'avvio) ───────────
 let _db       = null;
 let _cms      = { ...CMS_DEFAULTS };
-let _settings = {};
-let _content  = {};
 
-function _asyncSave(key, data) {
+function _asyncSave(data) {
     if (_db) {
         _db.collection('store')
-            .replaceOne({ _id: key }, { _id: key, ...data }, { upsert: true })
-            .catch(err => console.error(`[DB] write ${key} failed:`, err));
+            .replaceOne({ _id: 'cms' }, { _id: 'cms', ...data }, { upsert: true })
+            .catch(err => console.error(`[DB] Scrittura cms su Atlas fallita:`, err));
     } else {
-        const fileMap = { cms: CMS_FILE, settings: SETTINGS_FILE, content: CONTENT_FILE };
-        try { fs.writeFileSync(fileMap[key], JSON.stringify(data, null, 2), 'utf-8'); }
-        catch (e) { console.error(`[FS] write ${key} failed:`, e); }
+        try {
+            fs.writeFileSync(CMS_FILE, JSON.stringify(data, null, 2), 'utf-8');
+        } catch (e) {
+            console.error(`[FS] Scrittura cms.json locale fallita:`, e);
+        }
     }
 }
 
-function readCMS()           { return _cms; }
-function writeCMS(data)      { _cms = data;      _asyncSave('cms', data); }
-function readSettings()      { return _settings; }
-function writeSettings(data) { _settings = data; _asyncSave('settings', data); }
-function readContent()       { return _content;  }
-function writeContent(data)  { _content = data;  _asyncSave('content', data); }
+function readCMS()      { return _cms; }
+function writeCMS(data) { _cms = data; _asyncSave(data); }
 
 function loadLocalFallback() {
     try {
@@ -51,7 +45,9 @@ function loadLocalFallback() {
             _cms = JSON.parse(fs.readFileSync(CMS_FILE, 'utf-8'));
             console.log(`[FILE] Letto cms.json locale con successo. Prodotti: ${_cms.products?.length || 0}, Animali: ${_cms.animals?.length || 0}`);
         }
-    } catch (e) { console.error("[FILE] Errore lettura cms.json locale:", e); }
+    } catch (e) {
+        console.error("[FILE] Errore lettura cms.json locale:", e);
+    }
 }
 
 async function initDB() {
@@ -66,33 +62,17 @@ async function initDB() {
             await client.connect();
             _db = client.db('novas-legacy');
 
-            const docs = await _db.collection('store').find({ _id: { $in: ['cms', 'settings', 'content'] } }).toArray();
+            const doc = await _db.collection('store').findOne({ _id: 'cms' });
 
-            let foundInDb = { cms: false, settings: false, content: false };
-
-            for (const doc of docs) {
+            if (doc) {
                 const { _id, ...data } = doc;
-                if (_id === 'cms')      { _cms = data;      foundInDb.cms = true; }
-                if (_id === 'settings') { _settings = data; foundInDb.settings = true; }
-                if (_id === 'content')  { _content = data;  foundInDb.content = true; }
-            }
-
-            console.log('[DB] Connesso a MongoDB Atlas.');
-
-            // MIGRAZIONE FORZATA: Se il database cloud non ha la collezione 'cms', spingiamo i dati locali subito su Atlas
-            if (!foundInDb.cms) {
-                console.log('[DB] Atlas è vuoto. Avvio migrazione forzata del cms.json locale...');
+                _cms = data;
+                console.log('[DB] Connesso a MongoDB Atlas e dati sincronizzati.');
+            } else {
+                // MIGRAZIONE FORZATA: Se Atlas non ha il documento 'cms', carichiamo quello locale subito
+                console.log('[DB] Connesso ad Atlas. Documento cms non trovato. Avvio migrazione del cms.json locale...');
                 await _db.collection('store').replaceOne({ _id: 'cms' }, { _id: 'cms', ..._cms }, { upsert: true });
                 console.log('[DB] Migrazione completata: I dati locali ora sono al sicuro su Atlas.');
-            }
-
-            // Configurazione automatica delle credenziali dell'Admin direttamente su Atlas se mancanti
-            if (!foundInDb.settings) {
-                const defaultPlainPassword = envVars.ADMIN_PASSWORD || "novaslegacy1";
-                console.log('[DB] Generazione credenziali protette su Atlas...');
-                const hashed = await bcrypt.hash(defaultPlainPassword, 10);
-                _settings = { adminPasswordHash: hashed, recoveryKey: "nova_backup" };
-                await _db.collection('store').replaceOne({ _id: 'settings' }, { _id: 'settings', ..._settings }, { upsert: true });
             }
 
         } catch (err) {
@@ -160,8 +140,8 @@ async function notifyKim(toName, toEmail, animalName, monthlyEur) {
 app.use(cors());
 app.use(express.json());
 
-let adminPasswordHash = "";
-let adminRecoveryKey = "";
+const adminPasswordHash = envVars.ADMIN_PASSWORD_HASH || "";
+const adminRecoveryKey  = envVars.ADMIN_RECOVERY_KEY  || "nova_backup";
 
 app.get('/', (req, res) => {
     res.json({ message: "Il backend di Nova's Legacy è online e funzionante!" });
@@ -177,29 +157,11 @@ app.get('/api/paypal-config', (req, res) => {
     });
 });
 
-app.post('/api/admin/setup', async (req, res) => {
-    const { password, recoveryKey } = req.body;
-    if (adminPasswordHash) {
-        return res.status(400).json({ ok: false, error: "Setup già completato." });
-    }
-    if (!password || password.length < 8) {
-        return res.status(400).json({ ok: false, error: "La password deve contenere almeno 8 caratteri." });
-    }
-    if (!recoveryKey || recoveryKey.trim().length < 3) {
-        return res.status(400).json({ ok: false, error: "Inserisci una parola chiave di recupero (min. 3 caratteri)." });
-    }
-
-    adminPasswordHash = await bcrypt.hash(password, 10);
-    adminRecoveryKey = recoveryKey.trim();
-    writeSettings({ ...readSettings(), adminPasswordHash: adminPasswordHash, recoveryKey: adminRecoveryKey });
-    res.json({ ok: true });
-});
-
 app.post('/api/admin/login', async (req, res) => {
     const { password } = req.body;
 
     if (!adminPasswordHash) {
-        return res.status(400).json({ error: "Esegui prima la configurazione iniziale." });
+        return res.status(400).json({ error: "Configura l'ADMIN_PASSWORD_HASH nel file .env di Render." });
     }
 
     const valid = await bcrypt.compare(password || '', adminPasswordHash);
@@ -214,7 +176,7 @@ app.post('/api/admin/login', async (req, res) => {
 app.post('/api/admin/recover', async (req, res) => {
     const { recoveryKey, newPassword } = req.body;
     if (!adminRecoveryKey) {
-        return res.status(400).json({ error: "Nessuna parola chiave impostata. Contatta l'amministratore." });
+        return res.status(400).json({ error: "Nessuna parola chiave impostata nelle variabili d'ambiente." });
     }
     if (recoveryKey?.trim() !== adminRecoveryKey) {
         return res.status(401).json({ error: 'Parola chiave errata.' });
@@ -223,10 +185,9 @@ app.post('/api/admin/recover', async (req, res) => {
         return res.status(400).json({ error: 'La nuova password deve avere almeno 8 caratteri.' });
     }
 
-    adminPasswordHash = await bcrypt.hash(newPassword, 10);
-    writeSettings({ ...readSettings(), adminPasswordHash: adminPasswordHash });
+    const temporaryHash = await bcrypt.hash(newPassword, 10);
     const token = jwt.sign({ role: 'admin' }, envVars.JWT_SECRET || 'secret_provvisorio', { expiresIn: '1h' });
-    res.json({ ok: true, token });
+    res.json({ ok: true, token, note: "Ricordati di aggiornare ADMIN_PASSWORD_HASH su Render con questo nuovo hash se vuoi renderlo permanente." });
 });
 
 app.put('/api/admin/paypal-config', (req, res) => {
@@ -234,7 +195,6 @@ app.put('/api/admin/paypal-config', (req, res) => {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ error: 'Non autorizzato' });
     }
-
     res.json({ ok: true });
 });
 
@@ -325,9 +285,7 @@ app.post('/api/stripe/checkout', async (req, res) => {
     if (!name || !price) {
         return res.status(400).json({ error: 'Dati prodotto mancanti' });
     }
-
     const origin = req.headers.origin || 'http://localhost:5174';
-
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -393,27 +351,14 @@ function requireAdmin(req, res, next) {
     }
 }
 
-app.post('/api/admin/change-password', requireAdmin, async (req, res) => {
-    const { current, newPassword, newRecoveryKey } = req.body;
-    const isPasswordValid = await bcrypt.compare(current, adminPasswordHash);
-    if (!isPasswordValid) return res.status(401).json({ error: 'Password attuale errata.' });
-    if (!newPassword || newPassword.length < 8) return res.status(400).json({ error: 'Almeno 8 caratteri.' });
-
-    adminPasswordHash = await bcrypt.hash(newPassword, 10);
-    const updates = { adminPasswordHash: adminPasswordHash };
-    if (newRecoveryKey?.trim().length >= 3) {
-        adminRecoveryKey = newRecoveryKey.trim();
-        updates.recoveryKey = adminRecoveryKey;
-    }
-    writeSettings({ ...readSettings(), ...updates });
-    res.json({ ok: true });
-});
-
 app.get('/api/content', (_req, res) => {
-    res.json(readContent() || {});
+    res.json(readCMS());
 });
+
 app.put('/api/content', requireAdmin, (req, res) => {
-    writeContent(req.body);
+    const cms = readCMS();
+    const updatedCms = { ...cms, ...req.body };
+    writeCMS(updatedCms);
     res.json({ ok: true });
 });
 
@@ -443,8 +388,6 @@ app.put('/api/cms/animals', requireAdmin, (req, res) => {
 });
 
 initDB().then(() => {
-    adminPasswordHash = _settings.adminPasswordHash || "";
-    adminRecoveryKey  = _settings.recoveryKey   || "nova_backup";
     app.listen(PORT, () => console.log(`Server in esecuzione sulla porta ${PORT}`));
 }).catch(err => {
     console.error('[FATAL] Inizializzazione fallita:', err);

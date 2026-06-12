@@ -58,7 +58,6 @@ async function initDB() {
     const envVars = globalThis.process?.env || process.env;
     const uri = envVars.MONGODB_URI;
 
-    // Carica prima forzatamente il cms.json che vedi nella cartella
     loadLocalFallback();
 
     if (uri) {
@@ -239,7 +238,6 @@ app.put('/api/admin/paypal-config', (req, res) => {
     res.json({ ok: true });
 });
 
-// ── Stripe: abbonamento adozione ─────────────────────────────────────────────
 app.post('/api/stripe/subscribe', async (req, res) => {
     const { animalName, animalSpecies, price } = req.body;
     if (!animalName || !price) return res.status(400).json({ error: 'Dati mancanti' });
@@ -271,7 +269,6 @@ app.post('/api/stripe/subscribe', async (req, res) => {
     }
 });
 
-// ── Stripe: customer portal (gestione / disdetta) ────────────────────────────
 app.post('/api/stripe/portal', async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: 'Email richiesta' });
@@ -291,7 +288,6 @@ app.post('/api/stripe/portal', async (req, res) => {
     }
 });
 
-// ── Stripe: webhook (FIXED: Cambiato eventVars in envVars) ───────────────────
 app.post('/api/stripe/webhook',
     express.raw({ type: 'application/json' }),
     async (req, res) => {
@@ -324,7 +320,6 @@ app.post('/api/stripe/webhook',
     }
 );
 
-// ── Stripe: checkout shop ─────────────────────────────────────────────────────
 app.post('/api/stripe/checkout', async (req, res) => {
     const { name, price, quantity = 1 } = req.body;
     if (!name || !price) {
@@ -354,7 +349,6 @@ app.post('/api/stripe/checkout', async (req, res) => {
     }
 });
 
-// ── Contact form ─────────────────────────────────────────────────────────────
 app.post('/api/contact', async (req, res) => {
     const { name, surname, email, phone, reason, message } = req.body;
     if (!name || !email) return res.status(400).json({ error: 'Nome ed email richiesti' });
@@ -388,7 +382,6 @@ app.post('/api/contact', async (req, res) => {
     }
 });
 
-// ── CMS: middleware auth ──────────────────────────────────────────────────────
 function requireAdmin(req, res, next) {
     const auth = req.headers.authorization;
     if (!auth?.startsWith('Bearer ')) return res.status(401).json({ error: 'Non autorizzato' });
@@ -416,7 +409,6 @@ app.post('/api/admin/change-password', requireAdmin, async (req, res) => {
     res.json({ ok: true });
 });
 
-// ── Contenuto sito (testi) ────────────────────────────────────────────────────
 app.get('/api/content', (_req, res) => {
     res.json(readContent() || {});
 });
@@ -425,12 +417,10 @@ app.put('/api/content', requireAdmin, (req, res) => {
     res.json({ ok: true });
 });
 
-// ── CMS: lettura pubblica ─────────────────────────────────────────────────────
 app.get('/api/cms', (_req, res) => {
     res.json(readCMS());
 });
 
-// ── CMS: salvataggio blog ─────────────────────────────────────────────────────
 app.put('/api/cms/blog', requireAdmin, (req, res) => {
     const cms = readCMS();
     cms.blog = req.body;
@@ -438,7 +428,6 @@ app.put('/api/cms/blog', requireAdmin, (req, res) => {
     res.json({ ok: true });
 });
 
-// ── CMS: salvataggio prodotti ─────────────────────────────────────────────────
 app.put('/api/cms/products', requireAdmin, (req, res) => {
     const cms = readCMS();
     cms.products = req.body;
@@ -446,7 +435,6 @@ app.put('/api/cms/products', requireAdmin, (req, res) => {
     res.json({ ok: true });
 });
 
-// ── CMS: salvataggio animali ──────────────────────────────────────────────────
 app.put('/api/cms/animals', requireAdmin, (req, res) => {
     const cms = readCMS();
     cms.animals = req.body;
@@ -455,7 +443,6 @@ app.put('/api/cms/animals', requireAdmin, (req, res) => {
 });
 
 initDB().then(() => {
-    // Ora l'autenticazione accetta in modo nativo la password crittografata generata nel database Atlas
     adminPasswordHash = _settings.adminPasswordHash || "";
     adminRecoveryKey  = _settings.recoveryKey   || "nova_backup";
     app.listen(PORT, () => console.log(`Server in esecuzione sulla porta ${PORT}`));

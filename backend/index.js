@@ -4,7 +4,7 @@
 import express from 'express';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs'; // 1. Aggiunto bcryptjs per la sicurezza delle password
+import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import Stripe from 'stripe';
 import nodemailer from 'nodemailer';
@@ -24,7 +24,7 @@ const CMS_DEFAULTS = { blog: [], products: [], animals: [] };
 let _db       = null;
 let _cms      = { ...CMS_DEFAULTS };
 let _settings = {};
-let _content  = null;
+let _content  = {}; // Inizializzato come oggetto vuoto sicuro
 
 function _asyncSave(key, data) {
     if (_db) {
@@ -45,29 +45,69 @@ function writeSettings(data) { _settings = data; _asyncSave('settings', data); }
 function readContent()       { return _content;  }
 function writeContent(data)  { _content = data;  _asyncSave('content', data); }
 
+// Carica solo i file esistenti, altrimenti assegna i valori di default sicuri
+function loadLocalFallback() {
+    try {
+        if (fs.existsSync(CMS_FILE)) {
+            _cms = JSON.parse(fs.readFileSync(CMS_FILE, 'utf-8'));
+        } else {
+            _cms = { ...CMS_DEFAULTS };
+        }
+    } catch { _cms = { ...CMS_DEFAULTS }; }
+
+    try {
+        if (fs.existsSync(SETTINGS_FILE)) {
+            _settings = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf-8'));
+        } else {
+            _settings = {};
+        }
+    } catch { _settings = {}; }
+
+    try {
+        if (fs.existsSync(CONTENT_FILE)) {
+            _content = JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf-8'));
+        } else {
+            _content = {};
+        }
+    } catch { _content = {}; }
+}
+
 async function initDB() {
     const uri = (globalThis.process?.env || process.env).MONGODB_URI;
+
+    // Carica prima il cms.json locale esistente in memoria
+    loadLocalFallback();
+
     if (uri) {
         try {
             const client = new MongoClient(uri);
             await client.connect();
             _db = client.db('novas-legacy');
+
             const docs = await _db.collection('store').find({ _id: { $in: ['cms', 'settings', 'content'] } }).toArray();
+
+            const foundInDb = { cms: false, settings: false, content: false };
+
             for (const doc of docs) {
                 const { _id, ...data } = doc;
-                if (_id === 'cms')      _cms      = data;
-                if (_id === 'settings') _settings = data;
-                if (_id === 'content')  _content  = data;
+                if (_id === 'cms')      { _cms = data;      foundInDb.cms = true; }
+                if (_id === 'settings') { _settings = data; foundInDb.settings = true; }
+                if (_id === 'content')  { _content = data;  foundInDb.content = true; }
             }
+
             console.log('[DB] Connesso a MongoDB Atlas');
+
+            // Se Atlas è vuoto ma abbiamo letto il vecchio cms.json locale, caricalo subito su Atlas!
+            if (!foundInDb.cms && (_cms.blog?.length || _cms.products?.length || _cms.animals?.length)) {
+                console.log('[DB] Migrazione: Inviato cms.json su MongoDB Atlas.');
+                _asyncSave('cms', _cms);
+            }
+
         } catch (err) {
-            console.error('[DB] Connessione fallita, fallback su filesystem:', err.message);
+            console.error('[DB] Connessione fallita, utilizzo dati locali:', err.message);
         }
     } else {
         console.warn('[DB] MONGODB_URI non impostata — uso filesystem locale');
-        try { _cms      = JSON.parse(fs.readFileSync(CMS_FILE,      'utf-8')); } catch { /* usa default */ }
-        try { _settings = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf-8')); } catch { /* usa default */ }
-        try { _content  = JSON.parse(fs.readFileSync(CONTENT_FILE,  'utf-8')); } catch { /* usa default */ }
     }
 }
 
@@ -129,7 +169,6 @@ async function notifyKim(toName, toEmail, animalName, monthlyEur) {
 app.use(cors());
 app.use(express.json());
 
-// Diventano hash di sicurezza gestiti con bcrypt
 let adminPasswordHash = "";
 let adminRecoveryKey = "";
 
@@ -147,7 +186,6 @@ app.get('/api/paypal-config', (req, res) => {
     });
 });
 
-// 2. Modificato il setup per salvare la password in modo sicuro con l'hash
 app.post('/api/admin/setup', async (req, res) => {
     const { password, recoveryKey } = req.body;
     if (adminPasswordHash) {
@@ -166,7 +204,6 @@ app.post('/api/admin/setup', async (req, res) => {
     res.json({ ok: true });
 });
 
-// 3. Modificato il login per confrontare l'hash memorizzato tramite bcrypt.compare
 app.post('/api/admin/login', async (req, res) => {
     const { password } = req.body;
 
@@ -183,7 +220,6 @@ app.post('/api/admin/login', async (req, res) => {
     return res.status(401).json({ error: 'Password errata' });
 });
 
-// 4. Modificato il recupero password per aggiornare l'hash crittografato
 app.post('/api/admin/recover', async (req, res) => {
     const { recoveryKey, newPassword } = req.body;
     if (!adminRecoveryKey) {
@@ -268,7 +304,7 @@ app.post('/api/stripe/webhook',
     express.raw({ type: 'application/json' }),
     async (req, res) => {
         const sig = req.headers['stripe-signature'];
-        const secret = eventVars.STRIPE_WEBHOOK_SECRET;
+        const secret = envVars.STRIPE_WEBHOOK_SECRET;
         let event;
         try {
             event = secret
@@ -372,7 +408,6 @@ function requireAdmin(req, res, next) {
     }
 }
 
-// 5. Modificato il cambio password interno all'admin panel per supportare bcrypt.compare e bcrypt.hash
 app.post('/api/admin/change-password', requireAdmin, async (req, res) => {
     const { current, newPassword, newRecoveryKey } = req.body;
     const isPasswordValid = await bcrypt.compare(current, adminPasswordHash);
@@ -428,7 +463,7 @@ app.put('/api/cms/animals', requireAdmin, (req, res) => {
 });
 
 initDB().then(() => {
-    // Gestisce la retrocompatibilità (se prima avevi una password in chiaro, diventerà l'hash al prossimo cambio/salvataggio)
+    // Se non trova dati in chiaro o vecchi hash (perché settings.json non esiste), rimanda alla schermata di setup iniziale /api/admin/setup
     adminPasswordHash = _settings.adminPasswordHash || _settings.adminPassword || envVars.ADMIN_PASSWORD || "";
     adminRecoveryKey  = _settings.recoveryKey   || "";
     app.listen(PORT, () => console.log(`Server in esecuzione sulla porta ${PORT}`));

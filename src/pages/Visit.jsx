@@ -8,7 +8,7 @@ function Visit({ goTo }) {
 
   return (
     <>
-      <div className="page-hero-img">
+      <div className="page-hero-img" style={{height: '65vh'}}>
         <img src={cmsImages.visit_hero || '/img/chalet-esterno.png'} alt="Stay at Nova's Legacy" />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">

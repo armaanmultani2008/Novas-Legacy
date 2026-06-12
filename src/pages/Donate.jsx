@@ -77,8 +77,8 @@ function Donate({ goTo }) {
   return (
       <>
         {/* ── HERO ── */}
-        <div className="page-hero-img" style={{ height: '52vh' }}>
-          <img src="/img/ghepardo-albero.png" alt="Donazioni Nova's Legacy" style={{ objectPosition: 'center 30%' }} />
+        <div className="page-hero-img" style={{ height: '65vh' }}>
+          <img src="/img/support.png" alt="Donazioni Nova's Legacy" style={{ objectPosition: 'center 30%' }} />
           <div className="page-hero-img-overlay" />
           <div className="page-hero-text">
             <span className="label label-light">{t('donate.hero_label')}</span>

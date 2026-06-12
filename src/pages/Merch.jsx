@@ -36,9 +36,9 @@ function Merch({ goTo }) {
 
   useEffect(() => {
     fetch(`${API}/api/cms`)
-      .then(r => r.json())
-      .then(d => { if (d.products?.length) setCmsItems(d.products) })
-      .catch(() => {})
+        .then(r => r.json())
+        .then(d => { if (d.products?.length) setCmsItems(d.products) })
+        .catch(() => {})
   }, [])
 
   const shopItems = cmsItems || FALLBACK_ITEMS
@@ -54,87 +54,111 @@ function Merch({ goTo }) {
   const fmtZar   = p => `R ${typeof p === 'number' ? p : p}`
 
   return (
-    <>
-      <div className="page-hero-img" style={{ height: '52vh' }}>
-        <img src="/img/merch-hero.jpg" alt="Shop Nova's Legacy" style={{ objectPosition: 'center 40%' }} />
-        <div className="page-hero-img-overlay" />
-        <div className="page-hero-text">
-          <span className="label label-light">{t('merch.hero_label')}</span>
-          <h1>Shop <em>Nova&apos;s Legacy</em></h1>
-          <p>{t('merch.hero_sub')}</p>
-        </div>
-      </div>
+      <>
+        <style>{`
+        .shop-card .s-photo {
+          height: 280px; 
+        }
+        @media (min-width: 768px) {
+          .shop-card .s-photo {
+            height: 340px;
+          }
+        }
+      `}</style>
 
-      <div className="shop-page">
-        <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
-          <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
+        <div className="page-hero-img" style={{
+          height: '65vh',
+          minHeight: '450px',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <picture style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}>
+            <source media="(max-width: 768px)" srcSet="/img/merch-hero.jpg" />
 
-          <div className="rv" style={{ marginBottom: '2.5rem' }}>
-            <span className="label">{t('merch.section_label')}</span>
-            <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(1.8rem,3vw,2.4rem)', color: 'var(--dark)', lineHeight: 1.15 }}>
-              {t('merch.section_title').split(' ').slice(0,-1).join(' ')} <em style={{ fontStyle: 'italic', color: 'var(--gold)', fontWeight: 400 }}>{t('merch.section_title').split(' ').slice(-1)}</em>
-            </h2>
+            <img
+                src="/img/hero.png"
+                alt="Shop Nova's Legacy"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', display: 'block' }}
+            />
+          </picture>
+          <div className="page-hero-img-overlay" />
+          <div className="page-hero-text">
+            <span className="label label-light">{t('merch.hero_label')}</span>
+            <h1>Shop <em>Nova&apos;s Legacy</em></h1>
+            <p>{t('merch.hero_sub')}</p>
           </div>
+        </div>
 
-          <div className="shop-grid">
-            {shopItems.map((item, i) => (
-              <article key={item.id || item.name} className={`shop-card rv rv-d${Math.min((i % 3) + 1, 3)}`}>
-                <div className="s-photo">
-                  <img src={item.photo} alt={item.name} />
-                  <div className="s-photo-overlay" />
-                  <div className="s-emoji-wrap"><div className="s-emoji">◆</div></div>
-                  <div className="s-brand">Nova&apos;s Legacy</div>
-                </div>
+        <div className="shop-page">
+          <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
+            <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
-                <div className="s-body">
-                  <h3 className="s-name">{item.name}</h3>
+            <div className="rv" style={{ marginBottom: '2.5rem' }}>
+              <span className="label">{t('merch.section_label')}</span>
+              <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(1.8rem,3vw,2.4rem)', color: 'var(--dark)', lineHeight: 1.15 }}>
+                {t('merch.section_title').split(' ').slice(0,-1).join(' ')} <em style={{ fontStyle: 'italic', color: 'var(--gold)', fontWeight: 400 }}>{t('merch.section_title').split(' ').slice(-1)}</em>
+              </h2>
+            </div>
 
-                  {item.sizes?.length > 0 && (
-                    <div className="s-sizes">
-                      {item.sizes.map(sz => (
-                        <span key={sz} className="s-size">{sz}</span>
-                      ))}
+            <div className="shop-grid">
+              {shopItems.map((item, i) => (
+                  <article key={item.id || item.name} className={`shop-card rv rv-d${Math.min((i % 3) + 1, 3)}`}>
+                    <div className="s-photo">
+                      <img src={item.photo} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      <div className="s-photo-overlay" />
+                      <div className="s-emoji-wrap"><div className="s-emoji">◆</div></div>
+                      <div className="s-brand">Nova&apos;s Legacy</div>
                     </div>
-                  )}
 
-                  <div className="s-footer">
-                    <div className="s-price">
-                      {fmtPrice(item.price)}
-                      <span>{fmtZar(item.priceZar)} {t('merch.zar_label')}</span>
+                    <div className="s-body">
+                      <h3 className="s-name">{item.name}</h3>
+
+                      {item.sizes?.length > 0 && (
+                          <div className="s-sizes">
+                            {item.sizes.map(sz => (
+                                <span key={sz} className="s-size">{sz}</span>
+                            ))}
+                          </div>
+                      )}
+
+                      <div className="s-footer">
+                        <div className="s-price">
+                          {fmtPrice(item.price)}
+                          <span>{fmtZar(item.priceZar)} {t('merch.zar_label')}</span>
+                        </div>
+                        <button
+                            className="btn btn-dark btn-sm"
+                            onClick={() => handleBuy(item)}
+                            disabled={loading === item.name}
+                            style={{ opacity: loading === item.name ? 0.6 : 1 }}
+                        >
+                          {loading === item.name ? '...' : t('merch.order_btn')}
+                        </button>
+                      </div>
                     </div>
-                    <button
-                      className="btn btn-dark btn-sm"
-                      onClick={() => handleBuy(item)}
-                      disabled={loading === item.name}
-                      style={{ opacity: loading === item.name ? 0.6 : 1 }}
-                    >
-                      {loading === item.name ? '...' : t('merch.order_btn')}
-                    </button>
+                  </article>
+              ))}
+            </div>
+
+            <div className="s-info-strip rv">
+              {infoStrip.map(f => (
+                  <div key={f.title} className="s-info-item">
+                    <span className="s-info-icon">◆</span>
+                    <strong>{f.title}</strong>
+                    <span>{f.desc}</span>
                   </div>
-                </div>
-              </article>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          <div className="s-info-strip rv">
-            {infoStrip.map(f => (
-              <div key={f.title} className="s-info-item">
-                <span className="s-info-icon">◆</span>
-                <strong>{f.title}</strong>
-                <span>{f.desc}</span>
-              </div>
-            ))}
+            <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: 'var(--gray)', fontWeight: 300 }}>
+              {t('merch.custom_orders')}{' '}
+              <a href="mailto:kim@novaslegacy.co.za" style={{ color: 'var(--gold)', fontWeight: 600 }}>
+                kim@novaslegacy.co.za
+              </a>
+            </p>
           </div>
-
-          <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: 'var(--gray)', fontWeight: 300 }}>
-            {t('merch.custom_orders')}{' '}
-            <a href="mailto:kim@novaslegacy.co.za" style={{ color: 'var(--gold)', fontWeight: 600 }}>
-              kim@novaslegacy.co.za
-            </a>
-          </p>
         </div>
-      </div>
-    </>
+      </>
   )
 }
 

@@ -9,7 +9,7 @@ const DEFAULTS = {
   pillar1:     '/img/madre-cucciolo.png',
   pillar2:     '/img/community.png',
   pillar3:     '/img/ghepardo-visita-vet.png',
-  cheetahRun:  '/img/ghepardo-corsa-recinzione.png',
+  cheetahRun:  '/img/ghepardo-corsa2.png',
   progRun:     '/img/ghepardo-corsa-2.png',
   progVol:     '/img/volontari-lavoro.png',
   progChalet:  '/img/chalet-esterno.png',

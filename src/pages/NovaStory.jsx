@@ -34,14 +34,12 @@ function NovaStory({ goTo }) {
 
   return (
       <>
-        {/* ── HERO CON ALTEZZA AUMENTATA, FUNZIONANTE SU MOBILE E DESKTOP ── */}
         <div className="page-hero-img" style={{
           height: '75vh',
           minHeight: '450px',
           position: 'relative',
           overflow: 'hidden'
         }}>
-          {/* Tag style per gestire il riposizionamento dell'immagine su mobile */}
           <style>{`
             @media (max-width: 768px) {
               .hero-img-responsive {
@@ -51,17 +49,14 @@ function NovaStory({ goTo }) {
           `}</style>
 
           <picture style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}>
-            {/* MODALITÀ MOBILE (<= 768px) */}
             <source
                 media="(max-width: 768px)"
                 srcSet="/img/ghepardo-erba.png"
             />
-
-            {/* MODALITÀ DESKTOP (Default) */}
             <img
                 ref={heroImgRef}
                 className="hero-img-responsive"
-                src="/img/ghepardo-erba.png"
+                src="/img/nova-sdraiata.png"
                 alt="Nova — la gheparda fondatrice"
                 style={{
                   width: '100%',
@@ -84,6 +79,15 @@ function NovaStory({ goTo }) {
         <div className="page-content">
           <div className="container">
             <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
+
+            <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <button className="btn btn-dark" onClick={() => goTo('cheetah-run')}>
+                {t('nova_story.btn1')}
+              </button>
+              <button className="btn btn-outline-dark" onClick={() => goTo('adopt')}>
+                {t('nova_story.btn2')}
+              </button>
+            </div>
 
             <h2>{t('nova_story.origins_title')}</h2>
             <p>{t('nova_story.origins_p1')}</p>
@@ -148,15 +152,6 @@ function NovaStory({ goTo }) {
             <h2>{t('nova_story.legacy_title')}</h2>
             <p>{t('nova_story.legacy_p1')}</p>
             <p>{t('nova_story.legacy_p2')}</p>
-
-            <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-              <button className="btn btn-dark" onClick={() => goTo('cheetah-run')}>
-                {t('nova_story.btn1')}
-              </button>
-              <button className="btn btn-outline-dark" onClick={() => goTo('adopt')}>
-                {t('nova_story.btn2')}
-              </button>
-            </div>
           </div>
         </div>
       </>

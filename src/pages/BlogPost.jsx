@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next'
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 const FALLBACK_IMGS = [
-  '/img/nova-madre-cucciolo.png',
-  '/img/volontari-lavoro.png',
-  '/img/due-ghepardi.png',
+  '/img/cucciolata.png',
+  '/img/blog-post.png',
+  '/img/cheetah-blog.png',
   '/img/cavallo-puledro.png',
-  '/img/volontari-gruppo.png',
+  '/img/children-visit.png',
   '/img/ghepardo-corsa-recinzione.png',
 ]
 

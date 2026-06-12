@@ -5,7 +5,7 @@ import { useCMSImages } from '../CMSContext'
 
 const DEFAULTS = {
   heroDesktop: '/img/ghepardo-erba.png',
-  heroMobile:  '/img/heroMobile.png',
+  heroMobile:  '/img/mother-baby.png',
   pillar1:     '/img/madre-cucciolo.png',
   pillar2:     '/img/community.png',
   pillar3:     '/img/ghepardo-visita-vet.png',

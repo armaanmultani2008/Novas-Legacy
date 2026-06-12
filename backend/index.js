@@ -10,6 +10,7 @@ import nodemailer from 'nodemailer';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import { MongoClient } from 'mongodb';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CMS_FILE      = path.join(__dirname, 'cms.json');
@@ -18,30 +19,58 @@ const CONTENT_FILE  = path.join(__dirname, 'content.json');
 
 const CMS_DEFAULTS = { blog: [], products: [], animals: [] };
 
-function readCMS() {
-  try { return JSON.parse(fs.readFileSync(CMS_FILE, 'utf-8')); }
-  catch { return { ...CMS_DEFAULTS }; }
+// ── In-memory store (loaded from MongoDB or local files at startup) ───────────
+let _db       = null;
+let _cms      = { ...CMS_DEFAULTS };
+let _settings = {};
+let _content  = null;
+
+function _asyncSave(key, data) {
+  if (_db) {
+    _db.collection('store')
+      .replaceOne({ _id: key }, { _id: key, ...data }, { upsert: true })
+      .catch(err => console.error(`[DB] write ${key} failed:`, err));
+  } else {
+    const fileMap = { cms: CMS_FILE, settings: SETTINGS_FILE, content: CONTENT_FILE };
+    try { fs.writeFileSync(fileMap[key], JSON.stringify(data, null, 2), 'utf-8'); }
+    catch (e) { console.error(`[FS] write ${key} failed:`, e); }
+  }
 }
-function writeCMS(data) {
-  fs.writeFileSync(CMS_FILE, JSON.stringify(data, null, 2), 'utf-8');
-}
-function readSettings() {
-  try { return JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf-8')); }
-  catch { return {}; }
-}
-function writeSettings(data) {
-  fs.writeFileSync(SETTINGS_FILE, JSON.stringify(data, null, 2), 'utf-8');
-}
-function readContent() {
-  try { return JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf-8')); }
-  catch { return null; }
-}
-function writeContent(data) {
-  fs.writeFileSync(CONTENT_FILE, JSON.stringify(data, null, 2), 'utf-8');
+
+function readCMS()           { return _cms; }
+function writeCMS(data)      { _cms = data;      _asyncSave('cms', data); }
+function readSettings()      { return _settings; }
+function writeSettings(data) { _settings = data; _asyncSave('settings', data); }
+function readContent()       { return _content;  }
+function writeContent(data)  { _content = data;  _asyncSave('content', data); }
+
+async function initDB() {
+  const uri = (globalThis.process?.env || process.env).MONGODB_URI;
+  if (uri) {
+    try {
+      const client = new MongoClient(uri);
+      await client.connect();
+      _db = client.db('novas-legacy');
+      const docs = await _db.collection('store').find({ _id: { $in: ['cms', 'settings', 'content'] } }).toArray();
+      for (const doc of docs) {
+        const { _id, ...data } = doc;
+        if (_id === 'cms')      _cms      = data;
+        if (_id === 'settings') _settings = data;
+        if (_id === 'content')  _content  = data;
+      }
+      console.log('[DB] Connesso a MongoDB Atlas');
+    } catch (err) {
+      console.error('[DB] Connessione fallita, fallback su filesystem:', err.message);
+    }
+  } else {
+    console.warn('[DB] MONGODB_URI non impostata — uso filesystem locale');
+    try { _cms      = JSON.parse(fs.readFileSync(CMS_FILE,      'utf-8')); } catch { /* usa default */ }
+    try { _settings = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf-8')); } catch { /* usa default */ }
+    try { _content  = JSON.parse(fs.readFileSync(CONTENT_FILE,  'utf-8')); } catch { /* usa default */ }
+  }
 }
 
 dotenv.config();
-
 const app = express();
 const envVars = globalThis.process?.env || process.env;
 const PORT = envVars.PORT || 3001;
@@ -99,10 +128,9 @@ async function notifyKim(toName, toEmail, animalName, monthlyEur) {
 app.use(cors());
 app.use(express.json());
 
-// Password e parola chiave: da settings.json oppure env var
-const _savedSettings = readSettings();
-let adminPassword = _savedSettings.adminPassword || envVars.ADMIN_PASSWORD || "";
-let adminRecoveryKey = _savedSettings.recoveryKey || "";
+// Password e parola chiave: inizializzate in initDB() dopo il caricamento dal DB
+let adminPassword = "";
+let adminRecoveryKey = "";
 
 app.get('/', (req, res) => {
     res.json({ message: "Il backend di Nova's Legacy è online e funzionante!" });
@@ -390,6 +418,11 @@ app.put('/api/cms/animals', requireAdmin, (req, res) => {
   res.json({ ok: true });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server in esecuzione sulla porta ${PORT}`);
+initDB().then(() => {
+  adminPassword    = _settings.adminPassword || envVars.ADMIN_PASSWORD || "";
+  adminRecoveryKey = _settings.recoveryKey   || "";
+  app.listen(PORT, () => console.log(`Server in esecuzione sulla porta ${PORT}`));
+}).catch(err => {
+  console.error('[FATAL] Inizializzazione fallita:', err);
+  process.exit(1);
 });

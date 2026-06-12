@@ -19,6 +19,7 @@ import Donate from './pages/Donate'
 import Wishlist from './pages/Wishlist'
 import Admin from './pages/Admin'
 import FAQ from './pages/FAQ'
+import OtherAnimals from './pages/OtherAnimals'
 
 const pages = {
   home: Home,
@@ -37,7 +38,8 @@ const pages = {
   merch: Merch,
   donate: Donate,
   wishlist: Wishlist,
-  faq: FAQ
+  faq: FAQ,
+  'other-animals': OtherAnimals
 }
 
 function App() {

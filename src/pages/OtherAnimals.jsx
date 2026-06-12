@@ -2,23 +2,21 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Lightbox from '../components/Lightbox'
 
-// Array completo per il Lightbox (unificato per l'indice globale)
 const ALL_PHOTOS = [
-    '/img/lions.png',                 // 0
-    '/img/ghost-pack.png',            // 1
-    '/img/lince.png',                 // 2
-    '/img/fox.png',                   // 3
-    '/img/porcospino.png',            // 4
-    '/img/dumbo.png',                 // 5
-    '/img/antille.png',               // 6
-    '/img/horse-zebra.png'            // 7
+    '/img/lions.png',
+    '/img/ghost-pack.png',
+    '/img/lince.png',
+    '/img/fox.png',
+    '/img/porcospino.png',
+    '/img/dumbo.png',
+    '/img/antille.png',
+    '/img/horse-zebra.png'
 ]
 
 function OtherAnimals({ goTo }) {
     const { t } = useTranslation()
     const [lbIdx, setLbIdx] = useState(null)
 
-    // Didscascalie per il Lightbox coerenti con l'ordine di ALL_PHOTOS
     const photoCaps = [
         t('other_animals.cap_lions', 'Lions Sanctuary'),
         t('other_animals.cap_ghost', 'Ghost Pack Predators'),
@@ -30,66 +28,110 @@ function OtherAnimals({ goTo }) {
         t('other_animals.cap_zebra', 'Free-roaming Zebras')
     ]
 
-    // Funzione helper per generare i singoli box delle immagini in modo pulito
-    const renderImageBlock = (globalIdx) => (
-        <div
-            className="rv"
-            style={{
-                height: '260px',
-                overflow: 'hidden',
-                position: 'relative',
-                cursor: 'pointer',
-                borderRadius: '4px'
-            }}
-            onClick={() => setLbIdx(globalIdx)}
-        >
-            <img
-                src={ALL_PHOTOS[globalIdx]}
-                alt={photoCaps[globalIdx]}
-                style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    display: 'block',
-                    transition: 'transform 0.5s'
-                }}
-                onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
-                onMouseLeave={e => e.target.style.transform = 'none'}
-            />
-            <div style={{
-                position: 'absolute', bottom: 0, left: 0, right: 0,
-                background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)',
-                padding: '0.8rem',
-                color: 'rgba(255,255,255,0.8)',
-                fontSize: '0.68rem',
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                pointerEvents: 'none',
-            }}>{photoCaps[globalIdx]}</div>
-        </div>
-    )
-
     return (
         <>
             <style>{`
         .sub-animal-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 8px;
-          margin: 2rem 0;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1.5rem;
+          margin: 2.5rem 0 4rem 0;
+        }
+
+        .sub-animal-grid--duo {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .animal-card {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 4 / 3;
+          overflow: hidden;
+          cursor: pointer;
+          border-radius: 8px;
+          background: #111;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+          transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
+        }
+
+        .animal-card.rv {
+          opacity: 1 !important;
+          transform: none !important;
+          visibility: visible !important;
+        }
+
+        .animal-card img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .animal-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .animal-card:hover img {
+          transform: scale(1.05);
+        }
+
+        .animal-card-overlay {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: flex-end;
+          background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 60%, transparent 100%);
+          padding: 1.5rem 1.2rem;
+          pointer-events: none;
+          z-index: 2;
+        }
+
+        .animal-card-title {
+          color: #ffffff;
+          font-family: var(--sans, sans-serif);
+          font-size: 0.75rem;
+          font-weight: 600;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          margin: 0;
+          opacity: 0.9;
+          transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .animal-card:hover .animal-card-title {
+          opacity: 1;
+        }
+
+        /* ── RESPONSIVE DESIGN ── */
+        @media (max-width: 992px) {
+          .sub-animal-grid, .sub-animal-grid--duo {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .sub-animal-grid, .sub-animal-grid--duo {
+            grid-template-columns: 1fr; 
+            gap: 1rem;
+          }
+          .animal-card {
+            aspect-ratio: 16 / 10; 
+          }
         }
       `}</style>
-
             <div className="page-hero-img" style={{
-                height: '75vh',
+                height: '70vh',
                 minHeight: '450px',
                 position: 'relative',
                 overflow: 'hidden'
             }}>
                 <picture style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}>
-                    <source media="(max-width: 768px)" srcSet="/img/other-animals-hero-mobile.jpg" />
+                    <source media="(max-width: 768px)" srcSet="/img/leoni-cuccioli.png" />
                     <img
-                        src="/img/other-animals-hero.jpg"
+                        src="/img/adotta-wild-hearts.png"
                         alt="Other Animals Sanctuary"
                         style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', display: 'block' }}
                     />
@@ -131,26 +173,66 @@ function OtherAnimals({ goTo }) {
                     <p>{t('other_animals.cats_p1', 'From the majestic roars of our rescued lions to the elusive habits of wild cat species, our sanctuary ensures species-specific nourishment and enrichment programs. Many of our predators come from situations of neglect or human-wildlife conflict.')}</p>
 
                     <div className="sub-animal-grid">
-                        {renderImageBlock(0)} {/* lions.png */}
-                        {renderImageBlock(1)} {/* ghost-pack.png */}
-                        {renderImageBlock(2)} {/* lince.png */}
+                        <div className="animal-card rv" onClick={() => setLbIdx(0)}>
+                            <img src={ALL_PHOTOS[0]} alt={photoCaps[0]} />
+                            <div className="animal-card-overlay">
+                                <span className="animal-card-title">{photoCaps[0]}</span>
+                            </div>
+                        </div>
+                        <div className="animal-card rv" onClick={() => setLbIdx(1)}>
+                            <img src={ALL_PHOTOS[1]} alt={photoCaps[1]} />
+                            <div className="animal-card-overlay">
+                                <span className="animal-card-title">{photoCaps[1]}</span>
+                            </div>
+                        </div>
+                        <div className="animal-card rv" onClick={() => setLbIdx(2)}>
+                            <img src={ALL_PHOTOS[2]} alt={photoCaps[2]} />
+                            <div className="animal-card-overlay">
+                                <span className="animal-card-title">{photoCaps[2]}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <h2>{t('other_animals.small_title', 'Small Wildlife & Specialized Care')}</h2>
                     <p>{t('other_animals.small_p1', 'Smaller nocturnal predators and local mammals find a secure haven here. Every single habitat is custom-designed around the precise biological needs of its guests, ensuring safety, structural dignity, and specialized veterinary monitoring for those who cannot be reintegrated into the open wilderness.')}</p>
 
                     <div className="sub-animal-grid">
-                        {renderImageBlock(3)} {/* fox.png */}
-                        {renderImageBlock(4)} {/* porcospino.png */}
-                        {renderImageBlock(5)} {/* dumbo.png */}
+                        <div className="animal-card rv" onClick={() => setLbIdx(3)}>
+                            <img src={ALL_PHOTOS[3]} alt={photoCaps[3]} />
+                            <div className="animal-card-overlay">
+                                <span className="animal-card-title">{photoCaps[3]}</span>
+                            </div>
+                        </div>
+                        <div className="animal-card rv" onClick={() => setLbIdx(4)}>
+                            <img src={ALL_PHOTOS[4]} alt={photoCaps[4]} style={{}}/>
+                            <div className="animal-card-overlay">
+                                <span className="animal-card-title">{photoCaps[4]}</span>
+                            </div>
+                        </div>
+                        <div className="animal-card rv" onClick={() => setLbIdx(5)}>
+                            <img src={ALL_PHOTOS[5]} alt={photoCaps[5]} />
+                            <div className="animal-card-overlay">
+                                <span className="animal-card-title">{photoCaps[5]}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <h2>{t('other_animals.herbivores_title', 'Free-Roaming Herbivores')}</h2>
                     <p>{t('other_animals.herbivores_p1', 'The reserve hosts vast, protected open fields where zebras, antelopes, and other free-roaming herbivores live peacefully. They play a vital role in keeping our ecosystem balanced and maintaining the natural African bushveld terrain.')}</p>
 
-                    <div className="sub-animal-grid">
-                        {renderImageBlock(6)} {/* antille.png */}
-                        {renderImageBlock(7)} {/* horse-zebra.png */}
+                    <div className="sub-animal-grid sub-animal-grid--duo">
+                        <div className="animal-card rv" onClick={() => setLbIdx(6)}>
+                            <img src={ALL_PHOTOS[6]} alt={photoCaps[6]} />
+                            <div className="animal-card-overlay">
+                                <span className="animal-card-title">{photoCaps[6]}</span>
+                            </div>
+                        </div>
+                        <div className="animal-card rv" onClick={() => setLbIdx(7)}>
+                            <img src={ALL_PHOTOS[7]} alt={photoCaps[7]} />
+                            <div className="animal-card-overlay">
+                                <span className="animal-card-title">{photoCaps[7]}</span>
+                            </div>
+                        </div>
                     </div>
 
                     {lbIdx !== null && (

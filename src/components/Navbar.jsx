@@ -20,6 +20,8 @@ function Navbar({ goTo }) {
       children: [
         { label: t('nav.cheetah_project'), page: 'conservation', sym: '◆' },
         { label: t('nav.horses'),          page: 'horses',       sym: '◆' },
+        /* ── NUOVA PAGINA AGGIUNTA QUI ── */
+        { label: t('nav.other_animals', 'Other Animals'), page: 'other-animals', sym: '◆' },
       ],
     },
     {
@@ -55,7 +57,6 @@ function Navbar({ goTo }) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Lock body scroll when overlay is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
@@ -68,115 +69,110 @@ function Navbar({ goTo }) {
   }
 
   return (
-    <>
-      {/* ── TOP BAR ── */}
-      <nav className={`nn ${solid || menuOpen ? 'nn--solid' : ''}`}>
-        <div className="nn__wrap">
+      <>
+        {/* ── TOP BAR ── */}
+        <nav className={`nn ${solid || menuOpen ? 'nn--solid' : ''}`}>
+          <div className="nn__wrap">
 
-          {/* Logo */}
-          <div className="nn__logo" onClick={() => handleNav('home')}>
-            Nova&apos;s <em>Legacy</em>
-          </div>
+            {/* Logo */}
+            <div className="nn__logo" onClick={() => handleNav('home')}>
+              Nova&apos;s <em>Legacy</em>
+            </div>
 
-          {/* Desktop links — hidden on mobile */}
-          <ul className="nn__links">
-            {NAV.map(item => (
-              <li key={item.label} className={item.children ? 'nn__item nn__item--drop' : 'nn__item'}>
+            <ul className="nn__links">
+              {NAV.map(item => (
+                  <li key={item.label} className={item.children ? 'nn__item nn__item--drop' : 'nn__item'}>
                 <span
-                  className="nn__link"
-                  onClick={() => !item.children && handleNav(item.page)}
+                    className="nn__link"
+                    onClick={() => !item.children && handleNav(item.page)}
                 >
                   {item.label}
                   {item.children && <span className="nn__arr">▾</span>}
                   <span className="nn__underline" />
                 </span>
-                {item.children && (
-                  <div className="nn__drop">
-                    {item.children.map(c => (
-                      <div key={c.label} className="nn__drop-item" onClick={() => handleNav(c.page)}>
-                        <span className="nn__drop-sym">{c.sym}</span>
-                        {c.label}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
+                    {item.children && (
+                        <div className="nn__drop">
+                          {item.children.map(c => (
+                              <div key={c.label} className="nn__drop-item" onClick={() => handleNav(c.page)}>
+                                <span className="nn__drop-sym">{c.sym}</span>
+                                {c.label}
+                              </div>
+                          ))}
+                        </div>
+                    )}
+                  </li>
+              ))}
+            </ul>
 
-          {/* Desktop CTA — hidden on mobile */}
-          <div className="nn__actions">
-            <button className="nn__cta" onClick={() => handleNav('volunteer')}>
-              {t('nav.become_volunteer')}
+            <div className="nn__actions">
+              <button className="nn__cta" onClick={() => handleNav('volunteer')}>
+                {t('nav.become_volunteer')}
+              </button>
+            </div>
+
+            <button
+                className={`hamburger ${menuOpen ? 'hamburger--open' : ''}`}
+                onClick={() => setMenuOpen(v => !v)}
+                aria-label="Toggle menu"
+            >
+              <span className="hamburger__b" />
+              <span className="hamburger__b" />
+              <span className="hamburger__b hamburger__b--short" />
             </button>
+
           </div>
+        </nav>
 
-          {/* Hamburger — mobile only */}
-          <button
-            className={`hamburger ${menuOpen ? 'hamburger--open' : ''}`}
-            onClick={() => setMenuOpen(v => !v)}
-            aria-label="Toggle menu"
-          >
-            <span className="hamburger__b" />
-            <span className="hamburger__b" />
-            <span className="hamburger__b hamburger__b--short" />
-          </button>
+        <div className={`ovmenu ${menuOpen ? 'ovmenu--open' : ''}`} aria-hidden={!menuOpen}>
 
-        </div>
-      </nav>
-
-      {/* ── FULLSCREEN OVERLAY — mobile only ── */}
-      <div className={`ovmenu ${menuOpen ? 'ovmenu--open' : ''}`} aria-hidden={!menuOpen}>
-
-        <ul className="ovmenu__list">
-          {NAV.map((item, idx) => (
-            <li key={item.label} className="ovmenu__row" style={{ '--i': idx }}>
-              <div className="ovmenu__row-inner">
+          <ul className="ovmenu__list">
+            {NAV.map((item, idx) => (
+                <li key={item.label} className="ovmenu__row" style={{ '--i': idx }}>
+                  <div className="ovmenu__row-inner">
                 <span
-                  className="ovmenu__link"
-                  onClick={() => item.children
-                    ? setActiveDropdown(activeDropdown === item.label ? null : item.label)
-                    : handleNav(item.page)
-                  }
+                    className="ovmenu__link"
+                    onClick={() => item.children
+                        ? setActiveDropdown(activeDropdown === item.label ? null : item.label)
+                        : handleNav(item.page)
+                    }
                 >
                   <span className="ovmenu__n">{String(idx + 1).padStart(2, '0')}</span>
                   {item.label}
                   {item.children && (
-                    <span className="ovmenu__toggle">{activeDropdown === item.label ? '−' : '+'}</span>
+                      <span className="ovmenu__toggle">{activeDropdown === item.label ? '−' : '+'}</span>
                   )}
                 </span>
-              </div>
+                  </div>
 
-              {item.children && activeDropdown === item.label && (
-                <ul className="ovmenu__sub">
-                  {item.children.map(c => (
-                    <li key={c.label} className="ovmenu__sub-item" onClick={() => handleNav(c.page)}>
-                      <span className="ovmenu__sub-sym">{c.sym}</span>
-                      {c.label}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))}
-        </ul>
+                  {item.children && activeDropdown === item.label && (
+                      <ul className="ovmenu__sub">
+                        {item.children.map(c => (
+                            <li key={c.label} className="ovmenu__sub-item" onClick={() => handleNav(c.page)}>
+                              <span className="ovmenu__sub-sym">{c.sym}</span>
+                              {c.label}
+                            </li>
+                        ))}
+                      </ul>
+                  )}
+                </li>
+            ))}
+          </ul>
 
-        <div className="ovmenu__foot">
-          <div className="ovmenu__contacts">
-            <a href="mailto:kim@novaslegacy.co.za">kim@novaslegacy.co.za</a>
-            <a href="tel:+27823520940">+27 82 352 0940</a>
+          <div className="ovmenu__foot">
+            <div className="ovmenu__contacts">
+              <a href="mailto:kim@novaslegacy.co.za">kim@novaslegacy.co.za</a>
+              <a href="tel:+27823520940">+27 82 352 0940</a>
+            </div>
+            <div className="ovmenu__socials">
+              <a href="https://instagram.com/novaslegacycheetahproject" target="_blank" rel="noreferrer">Instagram</a>
+              <a href="https://facebook.com/Feracare" target="_blank" rel="noreferrer">Facebook</a>
+              <a href="https://www.tiktok.com/@novaslegacycheetahs" target="_blank" rel="noreferrer">TikTok</a>
+            </div>
           </div>
-          <div className="ovmenu__socials">
-            <a href="https://instagram.com/novaslegacycheetahproject" target="_blank" rel="noreferrer">Instagram</a>
-            <a href="https://facebook.com/Feracare" target="_blank" rel="noreferrer">Facebook</a>
-            <a href="https://www.tiktok.com/@novaslegacycheetahs" target="_blank" rel="noreferrer">TikTok</a>
-          </div>
+
         </div>
 
-      </div>
-
-      <style>{`
-        /* ── NAVBAR ── */
+        <style>{`
         .nn {
           position: fixed;
           top: 0; left: 0; right: 0;
@@ -215,7 +211,6 @@ function Navbar({ goTo }) {
           margin-left: 0.12rem;
         }
 
-        /* Desktop links */
         .nn__links {
           display: flex;
           list-style: none;
@@ -243,7 +238,6 @@ function Navbar({ goTo }) {
         }
         .nn__link:hover { color: #fff; }
 
-        /* Underline slide-in from left */
         .nn__underline {
           position: absolute;
           bottom: 2px; left: 0.9rem; right: 0.9rem;
@@ -262,7 +256,6 @@ function Navbar({ goTo }) {
         }
         .nn__item--drop:hover .nn__arr { transform: rotate(180deg); }
 
-        /* Dropdown */
         .nn__drop {
           position: absolute;
           top: calc(100% + 8px);
@@ -305,7 +298,6 @@ function Navbar({ goTo }) {
         }
         .nn__drop-sym { color: var(--gold-mid); font-size: 0.65rem; flex-shrink: 0; }
 
-        /* Desktop CTA */
         .nn__actions { display: flex; align-items: center; flex-shrink: 0; }
         .nn__cta {
           background: var(--gold-light);
@@ -327,7 +319,6 @@ function Navbar({ goTo }) {
           box-shadow: 0 8px 24px rgba(200,136,10,0.4);
         }
 
-        /* ── HAMBURGER — mobile only ── */
         .hamburger {
           display: none;
           flex-direction: column;
@@ -350,7 +341,6 @@ function Navbar({ goTo }) {
         .hamburger--open .hamburger__b:nth-child(2) { opacity: 0; transform: scaleX(0); }
         .hamburger--open .hamburger__b:nth-child(3) { transform: translateY(-8.25px) rotate(-45deg); width: 100%; }
 
-        /* ── FULLSCREEN OVERLAY ── */
         .ovmenu {
           position: fixed;
           inset: 0;
@@ -465,7 +455,6 @@ function Navbar({ goTo }) {
         }
         .ovmenu__socials a:hover { color: rgba(255,255,255,0.65); }
 
-        /* ── RESPONSIVE ── */
         @media (max-width: 1050px) {
           .nn__links, .nn__actions { display: none; }
           .hamburger { display: flex; }
@@ -480,7 +469,7 @@ function Navbar({ goTo }) {
           .ovmenu__socials { margin-left: 0; }
         }
       `}</style>
-    </>
+      </>
   )
 }
 

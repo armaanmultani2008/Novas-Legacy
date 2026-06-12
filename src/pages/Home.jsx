@@ -136,7 +136,6 @@ function Home({ goTo }) {
 
   return (
       <>
-        {/* ── HERO ── */}
         <section className="hero">
           <picture className="hero-img-picture" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}>
             <source media="(max-width: 768px)" srcSet={IMG.heroMobile} />
@@ -175,7 +174,6 @@ function Home({ goTo }) {
           </div>
         </section>
 
-        {/* ── ALERT BAR ── */}
         <div className="alert-bar">
           <span className="alert-tag">{t('home.alert_tag')}</span>
           <p>
@@ -186,7 +184,6 @@ function Home({ goTo }) {
           </button>
         </div>
 
-        {/* ── WHAT WE DO ── */}
         <section style={{ padding: '5rem 2rem' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <span className="label rv">{t('home.work_label')}</span>
@@ -223,10 +220,9 @@ function Home({ goTo }) {
           </div>
         </section>
 
-        {/* ── CHEETAH RUN ── */}
         <section style={{ padding: '5rem 2rem', background: 'var(--sand-pale)' }}>
           <div className="cr-cinema">
-            <img src={IMG.cheetahRun} alt="Cheetah Run" className="cr-cinema-img" />
+            <img src={IMG.cheetahRun} alt="Cheetah Run" className="cr-cinema-img"/>
             <div className="cr-cinema-overlay">
               <div className="cr-cinema-left">
                 <span className="label label-light rv">{t('home.run_label')}</span>
@@ -366,7 +362,6 @@ function Home({ goTo }) {
         `}</style>
         </section>
 
-        {/* ── PROGRAMS GRID ── */}
         <section className="programs" id="programs" style={{ padding: '4rem 2rem', maxWidth: '1200px', margin: '0 auto' }}>
           <span className="label rv">{t('home.programs_label')}</span>
           <h2 className="h2 rv rv-d1" style={{ margin: '0 0 2.5rem 0' }}>
@@ -474,7 +469,6 @@ function Home({ goTo }) {
         `}</style>
         </section>
 
-        {/* ── ANIMALS MARQUEE ── */}
         <section className="animals-section" id="animals">
           <div className="animals-header">
             <span className="label rv">{t('home.animals_label')}</span>
@@ -506,9 +500,8 @@ function Home({ goTo }) {
             <Lightbox srcs={ANIMALS_SRCS} captions={ANIMALS_NAMES} idx={lbIdx} setIdx={setLbIdx} />
         )}
 
-        {/* ── BIG CTA ── */}
         <section className="big-cta">
-          <img src={IMG.bigCta} alt="Cheetah" />
+          <img src={IMG.bigCta} alt="Cheetah"/>
           <div className="big-cta-content">
             <span className="label label-light rv">{t('home.cta_label')}</span>
             <h2 className="rv rv-d1">
@@ -522,7 +515,6 @@ function Home({ goTo }) {
           </div>
         </section>
 
-        {/* ── CONTACT ── */}
         <section className="contact-section" id="contact">
           <div className="contact-section-inner">
             <span className="label rv">{t('home.contact_label')}</span>

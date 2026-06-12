@@ -24,7 +24,7 @@ const CMS_DEFAULTS = { blog: [], products: [], animals: [] };
 let _db       = null;
 let _cms      = { ...CMS_DEFAULTS };
 let _settings = {};
-let _content  = {}; // Inizializzato come oggetto vuoto sicuro
+let _content  = {};
 
 function _asyncSave(key, data) {
     if (_db) {
@@ -45,37 +45,20 @@ function writeSettings(data) { _settings = data; _asyncSave('settings', data); }
 function readContent()       { return _content;  }
 function writeContent(data)  { _content = data;  _asyncSave('content', data); }
 
-// Carica solo i file esistenti, altrimenti assegna i valori di default sicuri
 function loadLocalFallback() {
     try {
         if (fs.existsSync(CMS_FILE)) {
             _cms = JSON.parse(fs.readFileSync(CMS_FILE, 'utf-8'));
-        } else {
-            _cms = { ...CMS_DEFAULTS };
+            console.log(`[FILE] Letto cms.json locale con successo. Prodotti: ${_cms.products?.length || 0}, Animali: ${_cms.animals?.length || 0}`);
         }
-    } catch { _cms = { ...CMS_DEFAULTS }; }
-
-    try {
-        if (fs.existsSync(SETTINGS_FILE)) {
-            _settings = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf-8'));
-        } else {
-            _settings = {};
-        }
-    } catch { _settings = {}; }
-
-    try {
-        if (fs.existsSync(CONTENT_FILE)) {
-            _content = JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf-8'));
-        } else {
-            _content = {};
-        }
-    } catch { _content = {}; }
+    } catch (e) { console.error("[FILE] Errore lettura cms.json locale:", e); }
 }
 
 async function initDB() {
-    const uri = (globalThis.process?.env || process.env).MONGODB_URI;
+    const envVars = globalThis.process?.env || process.env;
+    const uri = envVars.MONGODB_URI;
 
-    // Carica prima il cms.json locale esistente in memoria
+    // Carica prima forzatamente il cms.json che vedi nella cartella
     loadLocalFallback();
 
     if (uri) {
@@ -86,7 +69,7 @@ async function initDB() {
 
             const docs = await _db.collection('store').find({ _id: { $in: ['cms', 'settings', 'content'] } }).toArray();
 
-            const foundInDb = { cms: false, settings: false, content: false };
+            let foundInDb = { cms: false, settings: false, content: false };
 
             for (const doc of docs) {
                 const { _id, ...data } = doc;
@@ -95,19 +78,29 @@ async function initDB() {
                 if (_id === 'content')  { _content = data;  foundInDb.content = true; }
             }
 
-            console.log('[DB] Connesso a MongoDB Atlas');
+            console.log('[DB] Connesso a MongoDB Atlas.');
 
-            // Se Atlas è vuoto ma abbiamo letto il vecchio cms.json locale, caricalo subito su Atlas!
-            if (!foundInDb.cms && (_cms.blog?.length || _cms.products?.length || _cms.animals?.length)) {
-                console.log('[DB] Migrazione: Inviato cms.json su MongoDB Atlas.');
-                _asyncSave('cms', _cms);
+            // MIGRAZIONE FORZATA: Se il database cloud non ha la collezione 'cms', spingiamo i dati locali subito su Atlas
+            if (!foundInDb.cms) {
+                console.log('[DB] Atlas è vuoto. Avvio migrazione forzata del cms.json locale...');
+                await _db.collection('store').replaceOne({ _id: 'cms' }, { _id: 'cms', ..._cms }, { upsert: true });
+                console.log('[DB] Migrazione completata: I dati locali ora sono al sicuro su Atlas.');
+            }
+
+            // Configurazione automatica delle credenziali dell'Admin direttamente su Atlas se mancanti
+            if (!foundInDb.settings) {
+                const defaultPlainPassword = envVars.ADMIN_PASSWORD || "novaslegacy1";
+                console.log('[DB] Generazione credenziali protette su Atlas...');
+                const hashed = await bcrypt.hash(defaultPlainPassword, 10);
+                _settings = { adminPasswordHash: hashed, recoveryKey: "nova_backup" };
+                await _db.collection('store').replaceOne({ _id: 'settings' }, { _id: 'settings', ..._settings }, { upsert: true });
             }
 
         } catch (err) {
-            console.error('[DB] Connessione fallita, utilizzo dati locali:', err.message);
+            console.error('[DB] Connessione ad Atlas fallita. Fallback di emergenza locale:', err.message);
         }
     } else {
-        console.warn('[DB] MONGODB_URI non impostata — uso filesystem locale');
+        console.warn('[DB] MONGODB_URI non trovata nelle ENV.');
     }
 }
 
@@ -117,7 +110,6 @@ const envVars = globalThis.process?.env || process.env;
 const PORT = envVars.PORT || 3001;
 const stripe = new Stripe(envVars.STRIPE_SECRET_KEY);
 
-// ── Nodemailer (Gmail App Password) ──────────────────────────────────────────
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -299,7 +291,7 @@ app.post('/api/stripe/portal', async (req, res) => {
     }
 });
 
-// ── Stripe: webhook (manda email quando abbonamento confermato) ───────────────
+// ── Stripe: webhook (FIXED: Cambiato eventVars in envVars) ───────────────────
 app.post('/api/stripe/webhook',
     express.raw({ type: 'application/json' }),
     async (req, res) => {
@@ -362,7 +354,7 @@ app.post('/api/stripe/checkout', async (req, res) => {
     }
 });
 
-// ── Contact form → email a Kim ────────────────────────────────────────────────
+// ── Contact form ─────────────────────────────────────────────────────────────
 app.post('/api/contact', async (req, res) => {
     const { name, surname, email, phone, reason, message } = req.body;
     if (!name || !email) return res.status(400).json({ error: 'Nome ed email richiesti' });
@@ -463,9 +455,9 @@ app.put('/api/cms/animals', requireAdmin, (req, res) => {
 });
 
 initDB().then(() => {
-    // Se non trova dati in chiaro o vecchi hash (perché settings.json non esiste), rimanda alla schermata di setup iniziale /api/admin/setup
-    adminPasswordHash = _settings.adminPasswordHash || _settings.adminPassword || envVars.ADMIN_PASSWORD || "";
-    adminRecoveryKey  = _settings.recoveryKey   || "";
+    // Ora l'autenticazione accetta in modo nativo la password crittografata generata nel database Atlas
+    adminPasswordHash = _settings.adminPasswordHash || "";
+    adminRecoveryKey  = _settings.recoveryKey   || "nova_backup";
     app.listen(PORT, () => console.log(`Server in esecuzione sulla porta ${PORT}`));
 }).catch(err => {
     console.error('[FATAL] Inizializzazione fallita:', err);

@@ -1057,6 +1057,7 @@ nav.solid {
 .contact-section {
   padding: 6rem 3rem;
   background: var(--white);
+  overflow-x: hidden;
 }
 
 .contact-section-inner {
@@ -1728,13 +1729,13 @@ footer {
 /* Large starting offsets = maximum visual impact */
 .rv       { transform: translateY(90px); }
 .rv-up    { transform: translateY(110px); }
-.rv-left  { transform: translateX(-60px); }
-.rv-right { transform: translateX(60px); }
+.rv-left  { transform: translateX(-40px); }
+.rv-right { transform: translateX(40px); }
 .rv-scale { transform: scale(0.84) translateY(40px); }
 
 @media (max-width: 768px) {
-  .rv-left  { transform: translateX(-30px); }
-  .rv-right { transform: translateX(30px); }
+  .rv-left  { transform: translateY(40px); }
+  .rv-right { transform: translateY(40px); }
   .rv       { transform: translateY(50px); }
   .rv-up    { transform: translateY(60px); }
 }

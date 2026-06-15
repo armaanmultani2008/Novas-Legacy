@@ -18,11 +18,11 @@ function Visit({ goTo }) {
         </div>
       </div>
 
-      <div className="page-content">
+      <div className="page-content" style={{ padding: '4rem 1.5rem'}}>
         <div className="container">
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
-          <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <div style={{display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <button onClick={() => goTo('home', 'contact')} className="btn btn-dark">
               {t('visit.btn_book')}
             </button>
@@ -33,8 +33,8 @@ function Visit({ goTo }) {
 
           <div className="chalets-grid">
             {chalets.map(c => (
-              <div key={c.name} style={{ border: '1px solid #EDE5D8', overflow: 'hidden', background: 'var(--off-white)' }}>
-                <div style={{ height: '200px', overflow: 'hidden' }}>
+              <div key={c.name} style={{ border: '1px solid #EDE5D8', overflow: 'hidden', background: 'var(--off-white)', borderRadius: '8px' }}>
+                <div style={{ height: '320px', overflow: 'hidden' }}>
                   {c.name === 'Chalet Nova' && <img src="/img/chalet-cucina.png" alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                   {c.name === 'Chalet Bush' && <img src="/img/chalet-esterno-2.png" alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                   {c.name === 'Chalet Waterberg' && <img src="/img/chalet-camera.png" alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
@@ -50,10 +50,10 @@ function Visit({ goTo }) {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', margin: '2.5rem 0' }}>
             {[
-              { src: '/img/chalet-esterno-2.png', cap: 'Spazio esterno privato' },
-              { src: '/img/chalet-camera.png',    cap: 'Camera nel bush' },
+              { src: '/img/chalet-esterno-2.png', cap: 'External space' },
+              { src: '/img/chalet-camera.png',    cap: 'Chalet room' },Room
             ].map((p, i) => (
-              <div key={i} style={{ height: '260px', overflow: 'hidden', position: 'relative' }}>
+              <div key={i} style={{ height: '300px', overflow: 'hidden', position: 'relative' }}>
                 <img src={p.src} alt={p.cap} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}
                   onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
                   onMouseLeave={e => e.target.style.transform = 'none'} />

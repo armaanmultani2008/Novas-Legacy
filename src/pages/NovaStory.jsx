@@ -32,7 +32,7 @@ function NovaStory({ goTo }) {
 
   return (
       <>
-        <div className="page-hero" style={{
+        <div className="page-hero-img" style={{
           height: '75vh',
           minHeight: '450px',
           position: 'relative',
@@ -106,7 +106,7 @@ function NovaStory({ goTo }) {
 
               @media (min-width: 768px) {
                 .responsive-grid {
-                  grid-template-columns: 1fr 1fr; /* 2 colonne su Desktop (da 768px in su) */
+                  grid-template-columns: 1fr 1fr; 
                 }
               }
             `}</style>

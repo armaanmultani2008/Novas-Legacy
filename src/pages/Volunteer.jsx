@@ -78,7 +78,7 @@ function Volunteer({ goTo }) {
                   <div
                       key={i}
                       style={{
-                        height: '250px',
+                        height: '320px',
                         overflow: 'hidden',
                         position: 'relative',
                         cursor: 'pointer',

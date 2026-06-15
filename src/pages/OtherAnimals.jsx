@@ -85,7 +85,7 @@ function OtherAnimals({ goTo }) {
                 }
             `}</style>
 
-            <div className="page-hero" style={{ height: '75vh', minHeight: '450px', position: 'relative', overflow: 'hidden' }}>
+            <div className="page-hero-img" style={{ height: '75vh', minHeight: '450px', position: 'relative', overflow: 'hidden' }}>
                 <picture style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}>
                     <source media="(max-width: 768px)" srcSet="/img/leoni-cuccioli.png" />
                     <img
@@ -120,7 +120,7 @@ function OtherAnimals({ goTo }) {
                     <p>{t('other_animals.sanctuary_p1', 'In addition to cheetahs, we provide a lifelong home to many other animal species. Lions, tigers, and small wild cats all find the care and protection they deserve here. Alongside them, we also care for numerous free-roaming herbivores, offering them a safe place to live out their lives.')}</p>
 
                     <div className="highlight">
-                        <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.2rem', color: 'var(--dark)', marginBottom: '0.5rem' }}>
+                        <h3 style={{ color: 'var(--dark)', marginBottom: '0.5rem'}}>
                             {t('other_animals.feracare_title', 'In Partnership with FeraCare Wildlife Centre')}
                         </h3>
                         <p style={{ fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>

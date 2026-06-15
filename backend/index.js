@@ -140,8 +140,15 @@ async function notifyKim(toName, toEmail, animalName, monthlyEur) {
 app.use(cors());
 app.use(express.json());
 
-const adminPasswordHash = envVars.ADMIN_PASSWORD_HASH || "";
-const adminRecoveryKey  = envVars.ADMIN_RECOVERY_KEY  || "nova_backup";
+let adminPasswordHash = envVars.ADMIN_PASSWORD_HASH || "";
+let adminRecoveryKey  = envVars.ADMIN_RECOVERY_KEY  || "nova_backup";
+
+async function initAuth() {
+    if (!adminPasswordHash && envVars.ADMIN_PASSWORD) {
+        adminPasswordHash = await bcrypt.hash(envVars.ADMIN_PASSWORD, 10);
+        console.log('[AUTH] Hash generato da ADMIN_PASSWORD. Imposta ADMIN_PASSWORD_HASH su Render per renderlo permanente.');
+    }
+}
 
 app.get('/', (req, res) => {
     res.json({ message: "Il backend di Nova's Legacy è online e funzionante!" });
@@ -173,6 +180,20 @@ app.post('/api/admin/login', async (req, res) => {
     return res.status(401).json({ error: 'Password errata' });
 });
 
+app.post('/api/admin/setup', async (req, res) => {
+    if (adminPasswordHash) {
+        return res.status(400).json({ error: 'Setup già completato.' });
+    }
+    const { password, recoveryKey } = req.body;
+    if (!password || password.length < 8) {
+        return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+    }
+    adminPasswordHash = await bcrypt.hash(password, 10);
+    if (recoveryKey?.trim()) adminRecoveryKey = recoveryKey.trim();
+    const token = jwt.sign({ role: 'admin' }, envVars.JWT_SECRET || 'secret_provvisorio', { expiresIn: '1h' });
+    res.json({ ok: true, token });
+});
+
 app.post('/api/admin/recover', async (req, res) => {
     const { recoveryKey, newPassword } = req.body;
     if (!adminRecoveryKey) {
@@ -185,9 +206,24 @@ app.post('/api/admin/recover', async (req, res) => {
         return res.status(400).json({ error: 'La nuova password deve avere almeno 8 caratteri.' });
     }
 
-    const temporaryHash = await bcrypt.hash(newPassword, 10);
+    adminPasswordHash = await bcrypt.hash(newPassword, 10);
     const token = jwt.sign({ role: 'admin' }, envVars.JWT_SECRET || 'secret_provvisorio', { expiresIn: '1h' });
-    res.json({ ok: true, token, note: "Ricordati di aggiornare ADMIN_PASSWORD_HASH su Render con questo nuovo hash se vuoi renderlo permanente." });
+    res.json({ ok: true, token });
+});
+
+app.post('/api/admin/change-password', requireAdmin, async (req, res) => {
+    const { current, newPassword, newRecoveryKey } = req.body;
+    if (!adminPasswordHash) {
+        return res.status(400).json({ error: 'Nessuna password impostata.' });
+    }
+    const valid = await bcrypt.compare(current || '', adminPasswordHash);
+    if (!valid) return res.status(401).json({ error: 'Current password is incorrect.' });
+    if (!newPassword || newPassword.length < 8) {
+        return res.status(400).json({ error: 'New password must be at least 8 characters.' });
+    }
+    adminPasswordHash = await bcrypt.hash(newPassword, 10);
+    if (newRecoveryKey?.trim().length >= 3) adminRecoveryKey = newRecoveryKey.trim();
+    res.json({ ok: true });
 });
 
 app.put('/api/admin/paypal-config', (req, res) => {
@@ -387,7 +423,7 @@ app.put('/api/cms/animals', requireAdmin, (req, res) => {
     res.json({ ok: true });
 });
 
-initDB().then(() => {
+Promise.all([initDB(), initAuth()]).then(() => {
     app.listen(PORT, () => console.log(`Server in esecuzione sulla porta ${PORT}`));
 }).catch(err => {
     console.error('[FATAL] Inizializzazione fallita:', err);

@@ -19,6 +19,7 @@ function Conservation({ goTo }) {
             <img
                 src={cmsImages.conservation_hero || '/img/hero-cheetah-project.png'}
                 alt="Conservazione"
+                className="page-hero-img-photo"
                 style={{
                   width: '100%',
                   height: '100%',
@@ -36,11 +37,15 @@ function Conservation({ goTo }) {
           </div>
         </div>
 
-        <div className="page-content">
+        <style>{`
+          @media (max-width: 768px) { .page-hero-img-photo { object-position: 40% center !important} }
+        `}</style>
+
+        <div className="page-content" style={{ padding: '4rem 1.5rem' }}>
           <div className="container">
             <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
-            <div style={{ marginTop: '3rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <button className="btn btn-dark" onClick={() => goTo('volunteer')}>{t('conservation.btn1')}</button>
               <button className="btn btn-outline-dark" onClick={() => goTo('internship')}>{t('conservation.btn2')}</button>
             </div>
@@ -62,7 +67,7 @@ function Conservation({ goTo }) {
                 { src: '/img/cubs.png',    cap: 'Cubs' },
                 { src: '/img/veterinary.jpg', cap: 'Veterinary monitoring' },
               ].map((p, i) => (
-                  <div key={i} style={{ height: '420px', overflow: 'hidden', position: 'relative' }}>
+                  <div key={i} style={{ height: '320px', overflow: 'hidden', position: 'relative', borderRadius: '6px' }}>
                     <img src={p.src} alt={p.cap} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}
                          onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
                          onMouseLeave={e => e.target.style.transform = 'none'} />
@@ -88,7 +93,7 @@ function Conservation({ goTo }) {
                 { src: '/img/volontari-gruppo.png',   cap: t('conservation.edu_title') },
                 { src: '/img/man-cheetah.png', cap: 'Cheetah' },
               ].map((p, i) => (
-                  <div key={i} style={{ height: '350px', overflow: 'hidden', position: 'relative' }}>
+                  <div key={i} style={{ height: '320px', overflow: 'hidden', position: 'relative', borderRadius: '6px' }}>
                     <img src={p.src} alt={p.cap} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}
                          onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
                          onMouseLeave={e => e.target.style.transform = 'none'} />

@@ -30,16 +30,14 @@ function Internship({ goTo }) {
           margin: 2.5rem 0;
           grid-template-columns: 1fr; /* 1 colonna di base su Mobile */
         }
-        
         @media (min-width: 768px) {
           .grid-2-col {
-            grid-template-columns: repeat(2, 1fr); /* 2 colonne su Desktop */
+            grid-template-columns: repeat(2, 1fr); 
           }
           .grid-3-col {
-            grid-template-columns: repeat(3, 1fr); /* 3 colonne su Desktop */
+            grid-template-columns: repeat(3, 1fr); 
           }
         }
-        
         .new-images-container {
           display: grid;
           gap: 12px;
@@ -67,7 +65,7 @@ function Internship({ goTo }) {
           <div className="container">
             <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
-            <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <button onClick={() => goTo('home', 'contact')} className="btn btn-dark">
                 {t('internship.btn1')}
               </button>
@@ -80,14 +78,13 @@ function Internship({ goTo }) {
             <p>{t('internship.learn_p1')}</p>
             <p>{t('internship.learn_p2')}</p>
 
-            {/* Griglia iniziale resa responsive */}
             <div className="grid-2-col">
               {PHOTOS.map((src, i) => (
                   <div
                       key={i}
                       className="rv"
                       style={{
-                        height: '280px',
+                        height: '320px',
                         overflow: 'hidden',
                         borderRadius: '4px',
                         transitionDelay: `${i * 0.08}s`,
@@ -138,7 +135,7 @@ function Internship({ goTo }) {
 
             <div className="new-images-container">
               <div
-                  style={{ height: '300px', overflow: 'hidden', borderRadius: '4px', cursor: 'pointer' }}
+                  style={{ height: '320px', overflow: 'hidden', borderRadius: '4px', cursor: 'pointer' }}
                   onClick={() => setLbIdx(PHOTOS.length + 0)}
               >
                 <img
@@ -150,7 +147,7 @@ function Internship({ goTo }) {
                 />
               </div>
               <div
-                  style={{ height: '300px', overflow: 'hidden', borderRadius: '4px', cursor: 'pointer' }}
+                  style={{ height: '320px', overflow: 'hidden', borderRadius: '4px', cursor: 'pointer' }}
                   onClick={() => setLbIdx(PHOTOS.length + 1)}
               >
                 <img

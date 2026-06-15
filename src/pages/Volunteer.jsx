@@ -22,21 +22,21 @@ function Volunteer({ goTo }) {
 
   return (
       <>
-        {/* ── HERO CON ALTEZZA AUMENTATA ED ESPANSA ── */}
         <div className="page-hero-img" style={{
-          height: '75vh',       /* Aumenta l'altezza sfruttando il 75% della viewport */
-          minHeight: '450px',   /* Misura minima di sicurezza per schermi bassi */
+          height: '75vh',
+          minHeight: '450px',
           position: 'relative',
           overflow: 'hidden'
         }}>
           <img
               src={cmsImages.volunteer_hero || '/img/vol-volontari-1.jpg'}
               alt="Volontari a Nova's Legacy"
+              className={'page-hero-img-photo'}
               style={{
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
-                objectPosition: 'center 25%' /* Mantiene lo sguardo e il soggetto centrati nel nuovo spazio */
+                objectPosition: 'center 25%'
               }}
           />
           <div className="page-hero-img-overlay" />
@@ -47,11 +47,15 @@ function Volunteer({ goTo }) {
           </div>
         </div>
 
-        <div className="page-content">
+        <style>{`
+          @media (max-width: 1080px) { .page-hero-img-photo { object-position: 65% center !important; }}
+        `}</style>
+
+        <div className="page-content" style={{ padding: '4rem 1.5rem'}}>
           <div className="container">
             <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
-            <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <button onClick={() => goTo('home', 'contact')} className="btn btn-dark">
                 {t('volunteer.btn_write')}
               </button>
@@ -78,6 +82,7 @@ function Volunteer({ goTo }) {
                         overflow: 'hidden',
                         position: 'relative',
                         cursor: 'pointer',
+                        borderRadius: '6px'
                       }}
                       onClick={() => setLbIdx(i)}
                   >

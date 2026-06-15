@@ -17,10 +17,8 @@ function NovaStory({ goTo }) {
   const photoCaps = t('nova_story.photo_caps', { returnObjects: true })
   const [lbIdx, setLbIdx] = useState(null)
 
-  // 2. Spostato useRef dentro il componente
   const heroImgRef = useRef(null)
 
-  // 3. Spostato useEffect dentro il componente
   useEffect(() => {
     const onScroll = () => {
       if (!heroImgRef.current || window.innerWidth <= 768) return
@@ -34,7 +32,7 @@ function NovaStory({ goTo }) {
 
   return (
       <>
-        <div className="page-hero-img" style={{
+        <div className="page-hero" style={{
           height: '75vh',
           minHeight: '450px',
           position: 'relative',
@@ -43,9 +41,10 @@ function NovaStory({ goTo }) {
           <style>{`
             @media (max-width: 768px) {
               .hero-img-responsive {
-                object-position: 65% 25% !important;
+                object-position: 75% center !important;
               }
             }
+            @media (max-width: 1080px) { .hero-img-responsive { object-position: 85% center !important; } }
           `}</style>
 
           <picture style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}>
@@ -76,11 +75,11 @@ function NovaStory({ goTo }) {
           </div>
         </div>
 
-        <div className="page-content">
+        <div className="page-content" style={{ padding: '4rem 1.5rem'}}>
           <div className="container">
             <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
-            <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <button className="btn btn-dark" onClick={() => goTo('cheetah-run')}>
                 {t('nova_story.btn1')}
               </button>
@@ -100,7 +99,7 @@ function NovaStory({ goTo }) {
             <style>{`
               .responsive-grid {
                 display: grid;
-                grid-template-columns: 1fr; /* 1 colonna di base (Mobile) */
+                grid-template-columns: 1fr; 
                 gap: 6px;
                 margin: 2.5rem 0;
               }
@@ -116,7 +115,7 @@ function NovaStory({ goTo }) {
               {PHOTOS.map((p, i) => (
                   <div
                       key={i}
-                      style={{ height: '320px', overflow: 'hidden', position: 'relative', cursor: 'pointer' }}
+                      style={{ height: '320px', overflow: 'hidden', position: 'relative', cursor: 'pointer', borderRadius: '6px' }}
                       onClick={() => setLbIdx(i)}
                   >
                     <img

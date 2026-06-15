@@ -22,9 +22,18 @@ function KimStory({ goTo }) {
         </div>
       </div>
 
-      <div className="page-content">
+      <div className="page-content" style={{ padding: '4rem 1.5rem' }}>
         <div className="container">
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
+
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <button className="btn btn-dark" onClick={() => goTo('nova-story')}>
+              {t('kim_story.btn1')}
+            </button>
+            <button className="btn btn-outline-dark" onClick={() => goTo('adopt')}>
+              {t('kim_story.btn2')}
+            </button>
+          </div>
 
           <div className="kim-split rv">
             <div className="kim-photo-wrap">
@@ -32,7 +41,7 @@ function KimStory({ goTo }) {
             </div>
             <div className="kim-text">
               <span className="label">{t('kim_story.section_label')}</span>
-              <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(1.8rem,3vw,2.8rem)', margin: '0.5rem 0 1.5rem', lineHeight: 1.15 }}>
+              <h2 style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(1.8rem,3vw,2.8rem)', margin: '0.5rem 0 0.5rem', lineHeight: 1.15 }}>
                 {t('kim_story.section_title')} <em style={{ color: 'var(--gold)', fontWeight: 400 }}>{t('kim_story.section_title_em')}</em>
               </h2>
               <p className="body-lg">{t('kim_story.p1')}</p>
@@ -49,15 +58,6 @@ function KimStory({ goTo }) {
             <blockquote className="kim-quote">
               <p>{t('kim_story.quote3')}</p>
             </blockquote>
-          </div>
-
-          <div style={{ marginTop: '3rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <button className="btn btn-dark" onClick={() => goTo('nova-story')}>
-              {t('kim_story.btn1')}
-            </button>
-            <button className="btn btn-outline-dark" onClick={() => goTo('adopt')}>
-              {t('kim_story.btn2')}
-            </button>
           </div>
         </div>
       </div>

@@ -96,8 +96,12 @@ const printfulGet = (path) =>
   }).then(r => r.json());
 
 // ── Nodemailer (Gmail App Password) ──────────────────────────────────────────
+// force IPv4: Render free tier does not support outbound IPv6 (ENETUNREACH)
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    family: 4,
     auth: {
         user: envVars.EMAIL_USER,
         pass: envVars.EMAIL_PASS,
@@ -393,7 +397,10 @@ app.post('/api/stripe/webhook',
         console.log('[webhook] event received:', event.type);
 
         if (event.type === 'checkout.session.completed') {
-          const s = event.data.object;
+          // Retrieve full session so shipping_details is always populated
+          const s = await stripe.checkout.sessions.retrieve(event.data.object.id, {
+            expand: ['shipping_details', 'customer_details'],
+          });
           console.log('[webhook] session mode:', s.mode, '| variantId:', s.metadata?.variantId, '| email:', s.customer_details?.email);
 
           if (s.mode === 'subscription') {

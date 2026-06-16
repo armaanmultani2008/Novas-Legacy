@@ -89,6 +89,13 @@ const envVars = globalThis.process?.env || process.env;
 const PORT = envVars.PORT || 3001;
 const stripe = new Stripe(envVars.STRIPE_SECRET_KEY);
 
+const PRINTFUL_BASE = 'https://api.printful.com';
+const printfulGet = (path) =>
+  fetch(`${PRINTFUL_BASE}${path}`, {
+    headers: { 'Authorization': `Bearer ${envVars.PRINTFUL_API_KEY}` },
+  }).then(r => r.json());
+
+// ── Nodemailer (Gmail App Password) ──────────────────────────────────────────
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -234,6 +241,35 @@ app.put('/api/admin/paypal-config', (req, res) => {
     res.json({ ok: true });
 });
 
+// ── Printful: prodotti dello store ───────────────────────────────────────────
+app.get('/api/printful/products', async (_req, res) => {
+  try {
+    const { result: list } = await printfulGet('/store/products');
+    if (!list?.length) return res.json([]);
+
+    const products = await Promise.all(list.map(async (p) => {
+      const { result } = await printfulGet(`/store/products/${p.id}`);
+      const sp = result.sync_product;
+      return {
+        id: sp.id,
+        name: sp.name,
+        thumbnail: sp.thumbnail_url,
+        variants: result.sync_variants.map(v => ({
+          id: v.id,
+          name: v.name,
+          price: parseFloat(v.retail_price),
+          size: v.size || null,
+        })),
+      };
+    }));
+
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Stripe: abbonamento adozione ─────────────────────────────────────────────
 app.post('/api/stripe/subscribe', async (req, res) => {
     const { animalName, animalSpecies, price } = req.body;
     if (!animalName || !price) return res.status(400).json({ error: 'Dati mancanti' });
@@ -299,31 +335,65 @@ app.post('/api/stripe/webhook',
         }
 
         if (event.type === 'checkout.session.completed') {
-            const s = event.data.object;
-            if (s.mode === 'subscription') {
-                const animalName = s.metadata?.animalName || '—';
-                const animalSpecies = s.metadata?.animalSpecies || '—';
-                const monthlyEur = s.metadata?.monthlyEur || '—';
-                const adopterEmail = s.customer_details?.email || s.customer_email || '';
-                const adopterName = s.customer_details?.name || '';
-                await Promise.all([
-                    sendAdoptionWelcome(adopterEmail, adopterName, animalName, animalSpecies, monthlyEur),
-                    notifyKim(adopterName, adopterEmail, animalName, monthlyEur),
-                ]);
+          const s = event.data.object;
+
+          if (s.mode === 'subscription') {
+            const animalName = s.metadata?.animalName || '—';
+            const animalSpecies = s.metadata?.animalSpecies || '—';
+            const monthlyEur = s.metadata?.monthlyEur || '—';
+            const adopterEmail = s.customer_details?.email || s.customer_email || '';
+            const adopterName = s.customer_details?.name || '';
+            await Promise.all([
+              sendAdoptionWelcome(adopterEmail, adopterName, animalName, animalSpecies, monthlyEur),
+              notifyKim(adopterName, adopterEmail, animalName, monthlyEur),
+            ]);
+          }
+
+          if (s.mode === 'payment' && s.metadata?.variantId) {
+            const variantId = parseInt(s.metadata.variantId);
+            const qty = parseInt(s.metadata.quantity || '1');
+            const addr = s.shipping_details?.address;
+            const recipientName = s.shipping_details?.name || s.customer_details?.name || '';
+            if (addr && envVars.PRINTFUL_API_KEY) {
+              try {
+                await fetch(`${PRINTFUL_BASE}/orders`, {
+                  method: 'POST',
+                  headers: {
+                    'Authorization': `Bearer ${envVars.PRINTFUL_API_KEY}`,
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    recipient: {
+                      name: recipientName,
+                      address1: addr.line1,
+                      address2: addr.line2 || '',
+                      city: addr.city,
+                      state_code: addr.state || '',
+                      country_code: addr.country,
+                      zip: addr.postal_code,
+                      email: s.customer_details?.email || '',
+                    },
+                    items: [{ sync_variant_id: variantId, quantity: qty }],
+                  }),
+                });
+              } catch (err) {
+                console.error('Printful order error:', err.message);
+              }
             }
+          }
         }
         res.json({ received: true });
     }
 );
 
 app.post('/api/stripe/checkout', async (req, res) => {
-    const { name, price, quantity = 1 } = req.body;
+    const { name, price, quantity = 1, variantId } = req.body;
     if (!name || !price) {
         return res.status(400).json({ error: 'Dati prodotto mancanti' });
     }
     const origin = req.headers.origin || 'http://localhost:5174';
     try {
-        const session = await stripe.checkout.sessions.create({
+        const sessionData = {
             payment_method_types: ['card'],
             mode: 'payment',
             line_items: [{
@@ -336,7 +406,16 @@ app.post('/api/stripe/checkout', async (req, res) => {
             }],
             success_url: `${origin}/?payment=success`,
             cancel_url: `${origin}/?payment=cancel`,
-        });
+        };
+
+        if (variantId) {
+            sessionData.shipping_address_collection = {
+                allowed_countries: ['AT','AU','BE','CA','CH','CZ','DE','DK','ES','FI','FR','GB','GR','HU','IE','IT','JP','NL','NO','NZ','PL','PT','RO','SE','SG','SK','US','ZA'],
+            };
+            sessionData.metadata = { variantId: String(variantId), quantity: String(quantity) };
+        }
+
+        const session = await stripe.checkout.sessions.create(sessionData);
         res.json({ url: session.url });
     } catch (err) {
         res.status(500).json({ error: err.message });

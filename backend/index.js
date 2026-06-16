@@ -390,8 +390,11 @@ app.post('/api/stripe/webhook',
         // Respond immediately — Stripe requires <30s response
         res.json({ received: true });
 
+        console.log('[webhook] event received:', event.type);
+
         if (event.type === 'checkout.session.completed') {
           const s = event.data.object;
+          console.log('[webhook] session mode:', s.mode, '| variantId:', s.metadata?.variantId, '| email:', s.customer_details?.email);
 
           if (s.mode === 'subscription') {
             const animalName = s.metadata?.animalName || '—';
@@ -409,6 +412,7 @@ app.post('/api/stripe/webhook',
             const variantId = parseInt(s.metadata.variantId);
             const qty = parseInt(s.metadata.quantity || '1');
             const addr = s.shipping_details?.address;
+            console.log('[webhook] payment | variantId:', variantId, '| addr:', addr ? 'OK' : 'MISSING', '| PRINTFUL_API_KEY:', envVars.PRINTFUL_API_KEY ? 'set' : 'MISSING');
             const recipientName = s.shipping_details?.name || s.customer_details?.name || '';
             const customerEmail = s.customer_details?.email || '';
             const productName = s.metadata?.productName || 'Nova\'s Legacy product';
@@ -450,10 +454,16 @@ app.post('/api/stripe/webhook',
               }
             }
 
-            await Promise.all([
-              sendOrderConfirmation(customerEmail, recipientName, productName, amount),
-              notifyKimOrder(recipientName, customerEmail, productName, amount, addrString),
-            ]);
+            console.log('[webhook] sending emails to:', customerEmail, '| printfulOk:', printfulOk);
+            try {
+              await Promise.all([
+                sendOrderConfirmation(customerEmail, recipientName, productName, amount),
+                notifyKimOrder(recipientName, customerEmail, productName, amount, addrString),
+              ]);
+              console.log('[webhook] emails sent OK');
+            } catch (emailErr) {
+              console.error('[webhook] email error:', emailErr.message);
+            }
 
             if (!printfulOk) {
               console.error(`ALERT: Printful order FAILED for Stripe session ${s.id} — manual action required`);

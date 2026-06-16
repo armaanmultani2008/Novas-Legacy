@@ -28,6 +28,21 @@ async function startCheckout(name, price, variantId, quantity, errCheckout, errB
   }
 }
 
+const CATEGORY_RULES = [
+  { key: 'tshirts',     label: 'T-Shirts',    match: /t-?shirt|tee/i },
+  { key: 'hoodies',     label: 'Hoodies',     match: /hoodie|sweatshirt|crewneck/i },
+  { key: 'headwear',    label: 'Headwear',    match: /cap|hat|beanie|bucket/i },
+  { key: 'mugs',        label: 'Mugs',        match: /mug|cup/i },
+  { key: 'accessories', label: 'Accessories', match: /bottle|bag|tote|sticker|poster|phone/i },
+]
+
+function getCategory(name) {
+  for (const rule of CATEGORY_RULES) {
+    if (rule.match.test(name)) return rule.key
+  }
+  return 'other'
+}
+
 function Merch({ goTo }) {
   useScrollReveal()
   const { t } = useTranslation()
@@ -36,6 +51,7 @@ function Merch({ goTo }) {
   const [printfulItems, setPrintfulItems] = useState(null)
   const [selectedVariants, setSelectedVariants] = useState({})
   const [selectedSizes, setSelectedSizes] = useState({})
+  const [activeFilter, setActiveFilter] = useState('all')
 
   useEffect(() => {
     fetch(`${API}/api/cms`)
@@ -74,7 +90,16 @@ function Merch({ goTo }) {
     }
   })
 
-  const shopItems = normalizedPrintful || cmsItems || FALLBACK_ITEMS
+  const allItems = normalizedPrintful || cmsItems || FALLBACK_ITEMS
+
+  const availableCategories = CATEGORY_RULES.filter(r =>
+    allItems.some(item => r.match.test(item.name))
+  )
+
+  const shopItems = activeFilter === 'all'
+    ? allItems
+    : allItems.filter(item => getCategory(item.name) === activeFilter)
+
   const infoStrip = t('merch.info', { returnObjects: true })
 
   const handleSizeSelect = (productId, size, isPrintful) => {
@@ -120,6 +145,43 @@ function Merch({ goTo }) {
           border-color: var(--dark);
         }
         .s-size { cursor: pointer; }
+        .shop-filter-bar {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-bottom: 2rem;
+          flex-wrap: wrap;
+        }
+        .shop-filter-label {
+          font-size: 0.8rem;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: var(--gray);
+        }
+        .shop-filter-select {
+          appearance: none;
+          -webkit-appearance: none;
+          background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23333' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 0.9rem center;
+          border: 1.5px solid #ddd;
+          border-radius: 6px;
+          padding: 0.5rem 2.4rem 0.5rem 0.9rem;
+          font-size: 0.88rem;
+          font-family: inherit;
+          color: var(--dark);
+          cursor: pointer;
+          transition: border-color 0.2s;
+          min-width: 160px;
+        }
+        .shop-filter-select:focus {
+          outline: none;
+          border-color: var(--gold);
+        }
+        .shop-count {
+          margin-left: auto;
+          font-size: 0.8rem;
+          color: var(--gray);
+        }
       `}</style>
 
       <div className="page-hero-img" style={{
@@ -154,6 +216,23 @@ function Merch({ goTo }) {
               {t('merch.section_title').split(' ').slice(0,-1).join(' ')} <em style={{ fontStyle: 'italic', color: 'var(--gold)', fontWeight: 400 }}>{t('merch.section_title').split(' ').slice(-1)}</em>
             </h2>
           </div>
+
+          {availableCategories.length > 0 && (
+            <div className="shop-filter-bar rv">
+              <span className="shop-filter-label">Filter</span>
+              <select
+                className="shop-filter-select"
+                value={activeFilter}
+                onChange={e => setActiveFilter(e.target.value)}
+              >
+                <option value="all">All products</option>
+                {availableCategories.map(c => (
+                  <option key={c.key} value={c.key}>{c.label}</option>
+                ))}
+              </select>
+              <span className="shop-count">{shopItems.length} product{shopItems.length !== 1 ? 's' : ''}</span>
+            </div>
+          )}
 
           <div className="shop-grid">
             {shopItems.map((item, i) => {

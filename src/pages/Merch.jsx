@@ -68,7 +68,7 @@ function Merch({ goTo }) {
       photo: p.thumbnail,
       price: activeVariant?.price ?? 0,
       priceZar: null,
-      sizes: p.variants?.map(v => v.size).filter(Boolean) ?? [],
+      sizes: [...new Set(p.variants?.map(v => v.size).filter(Boolean) ?? [])],
       variants: p.variants,
       isPrintful: true,
     }

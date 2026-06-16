@@ -660,7 +660,7 @@ function ShopTab() {
 
       <div className="adm-list">
         {products?.map(p => {
-          const sizes = p.variants?.map(v => v.size).filter(Boolean) ?? []
+          const sizes = [...new Set(p.variants?.map(v => v.size).filter(Boolean) ?? [])]
           const minPrice = p.variants?.length
             ? Math.min(...p.variants.map(v => v.price))
             : null

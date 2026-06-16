@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import ChatbaseBot from "./components/ChatbaseBot.jsx";
+import Lightbox from "./components/Lightbox.jsx";
 import Home from './pages/Home'
 import Cheetah from './pages/Cheetah'
 import CheetahRun from './pages/CheetahRun'
@@ -119,6 +121,7 @@ function App() {
         <PageComponent key={currentPage} goTo={goTo} postId={postId} />
       </div>
       <Footer goTo={goTo} />
+      <ChatbaseBot />
     </>
   )
 }

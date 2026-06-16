@@ -612,86 +612,83 @@ function BlogForm({ post, onSave, onClose, saving }) {
 }
 
 // ── Shop tab ──────────────────────────────────────────────────────────────────
-function ShopTab({ token }) {
-  const { items: products, saving, msg, persist } = useCMS('products', token)
-  const [editing, setEditing] = useState(null)
+function ShopTab() {
+  const [products, setProducts] = useState(null)
+  const [error, setError] = useState(null)
+  const [refreshKey, setRefreshKey] = useState(0)
 
-  const del = id => { if (!confirm('Delete this product?')) return; persist(products.filter(p => p.id !== id)) }
-  const upsert = prod => {
-    const list = products.find(p => p.id === prod.id)
-      ? products.map(p => p.id === prod.id ? prod : p)
-      : [...products, { ...prod, id: uid() }]
-    persist(list); setEditing(null)
-  }
+  useEffect(() => {
+    setProducts(null)
+    setError(null)
+    fetch(`${API}/api/printful/products`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.error) throw new Error(data.error)
+        setProducts(Array.isArray(data) ? data : [])
+      })
+      .catch(err => setError(err.message))
+  }, [refreshKey])
 
   return (
     <div>
-      {msg === 'local' && <div className="adm-offline">Saved locally. Deploy the backend to make changes visible to everyone.</div>}
-      {msg === 'ok'    && <div className="adm-ok">Saved to server.</div>}
       <div className="adm-section-head">
-        <h2>Shop Products {products && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({products.length})</span>}</h2>
-        <button className="btn-add" onClick={() => setEditing({})}>+ New Product</button>
+        <h2>
+          Shop Products
+          {products && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}> ({products.length})</span>}
+        </h2>
+        <div style={{ display: 'flex', gap: '0.6rem' }}>
+          <button className="btn-sm" onClick={() => setRefreshKey(k => k + 1)}>Refresh</button>
+          <a
+            href="https://www.printful.com/dashboard/products"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-add"
+            style={{ textDecoration: 'none' }}
+          >
+            Manage on Printful ↗
+          </a>
+        </div>
       </div>
-      {products === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Loading<Dots /></p>}
-      {products?.length === 0 && <p className="adm-empty">No products yet.</p>}
+
+      <p style={{ color: '#888', fontSize: '0.82rem', marginBottom: '1.2rem' }}>
+        Products are synced live from Printful. To add, remove or edit products go to Printful — changes appear on the site instantly.
+      </p>
+
+      {products === null && !error && <p style={{ color: '#999', fontSize: '0.85rem' }}>Loading<Dots /></p>}
+      {error && <p style={{ color: '#c0392b', fontSize: '0.85rem' }}>Error: {error}</p>}
+      {products?.length === 0 && <p className="adm-empty">No products found in Printful store.</p>}
+
       <div className="adm-list">
-        {products?.map(p => (
-          <div key={p.id} className="adm-item">
-            <div className="adm-item-thumb">{p.photo && <img src={p.photo} alt="" />}</div>
-            <div className="adm-item-info">
-              <div className="adm-item-name">{p.name}</div>
-              <div className="adm-item-meta">
-                €{p.price}{p.priceZar ? ` · R ${p.priceZar}` : ''}
-                {p.sizes?.length > 0 ? ` · ${p.sizes.join(', ')}` : ''}
+        {products?.map(p => {
+          const sizes = p.variants?.map(v => v.size).filter(Boolean) ?? []
+          const minPrice = p.variants?.length
+            ? Math.min(...p.variants.map(v => v.price))
+            : null
+          const maxPrice = p.variants?.length
+            ? Math.max(...p.variants.map(v => v.price))
+            : null
+          const priceLabel = minPrice === maxPrice
+            ? `€${minPrice?.toFixed(2)}`
+            : `€${minPrice?.toFixed(2)} – €${maxPrice?.toFixed(2)}`
+
+          return (
+            <div key={p.id} className="adm-item">
+              <div className="adm-item-thumb">
+                {p.thumbnail && <img src={p.thumbnail} alt={p.name} />}
+              </div>
+              <div className="adm-item-info">
+                <div className="adm-item-name">{p.name}</div>
+                <div className="adm-item-meta">
+                  {priceLabel}
+                  {sizes.length > 0 && ` · ${sizes.join(', ')}`}
+                  <span style={{ marginLeft: '0.5rem', color: '#27ae60', fontSize: '0.75rem' }}>● Live</span>
+                </div>
               </div>
             </div>
-            <div className="adm-item-btns">
-              <button className="btn-sm" onClick={() => setEditing(p)}>Edit</button>
-              <button className="btn-sm btn-del" onClick={() => del(p.id)}>Delete</button>
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
-      {editing && <ShopForm prod={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} />}
     </div>
-  )
-}
-
-function ShopForm({ prod, onSave, onClose, saving }) {
-  const [f, setF] = useState({
-    id: prod.id || '', name: prod.name || '',
-    price: prod.price ?? '', priceZar: prod.priceZar ?? '',
-    sizes: Array.isArray(prod.sizes) ? prod.sizes.join(', ') : '',
-    photo: prod.photo || '',
-  })
-  const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
-  const save = () => {
-    if (!f.name.trim()) return alert('Please enter a product name.')
-    if (!f.price) return alert('Please enter a price.')
-    onSave({
-      ...f, price: parseFloat(f.price) || 0, priceZar: parseFloat(f.priceZar) || 0,
-      sizes: f.sizes ? f.sizes.split(',').map(s => s.trim()).filter(Boolean) : [],
-    })
-  }
-  return (
-    <Modal title={f.id ? 'Edit product' : 'New product'} onClose={onClose} onSave={save} saving={saving}>
-      <div className="adm-field"><label>Product name *</label><input value={f.name} onChange={set('name')} /></div>
-      <div className="adm-grid2">
-        <div className="adm-field">
-          <label>Price Euro (€) *</label>
-          <input type="number" min="0" step="0.01" value={f.price} onChange={set('price')} placeholder="22" />
-        </div>
-        <div className="adm-field">
-          <label>Price Rand (R)</label>
-          <input type="number" min="0" step="1" value={f.priceZar} onChange={set('priceZar')} placeholder="350" />
-        </div>
-      </div>
-      <div className="adm-field">
-        <label>Sizes (comma-separated — leave empty if n/a)</label>
-        <input value={f.sizes} onChange={set('sizes')} placeholder="XS, S, M, L, XL" />
-      </div>
-      <ImageUpload label="Product photo" value={f.photo} onChange={v => setF(p => ({ ...p, photo: v }))} />
-    </Modal>
   )
 }
 
@@ -1164,7 +1161,7 @@ export default function Admin({ goTo }) {
         </div>
         <div className="adm-body">
           {tab === 0 && <BlogTab     token={token} />}
-          {tab === 1 && <ShopTab     token={token} />}
+          {tab === 1 && <ShopTab />}
           {tab === 2 && <AnimaliTab  token={token} />}
           {tab === 3 && <ContentTab  token={token} />}
           {tab === 4 && <SettingsTab token={token} />}

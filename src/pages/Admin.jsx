@@ -612,22 +612,70 @@ function BlogForm({ post, onSave, onClose, saving }) {
 }
 
 // ── Shop tab ──────────────────────────────────────────────────────────────────
-function ShopTab() {
+const SHOP_CATEGORIES = [
+  { key: 'tshirts',  label: 'T-Shirts' },
+  { key: 'hoodies',  label: 'Hoodies' },
+  { key: 'headwear', label: 'Headwear' },
+  { key: 'mugs',     label: 'Mugs' },
+  { key: 'bottles',  label: 'Bottles' },
+  { key: 'other',    label: 'Accessories' },
+]
+
+const CATEGORY_RULES_ADMIN = [
+  { key: 'tshirts',  match: /t-?shirt|\btee\b/i },
+  { key: 'hoodies',  match: /hoodie|sweatshirt|crewneck/i },
+  { key: 'headwear', match: /\bcap\b|hat|beanie|bucket|twill/i },
+  { key: 'mugs',     match: /\bmug\b|cup/i },
+  { key: 'bottles',  match: /bottle|flask/i },
+  { key: 'other',    match: /bag|tote|sticker|poster|phone|pillow|print/i },
+]
+
+function autoCat(name) {
+  for (const r of CATEGORY_RULES_ADMIN) if (r.match.test(name)) return r.key
+  return 'other'
+}
+
+function ShopTab({ token }) {
   const [products, setProducts] = useState(null)
+  const [overrides, setOverrides] = useState({})
+  const [localOv, setLocalOv] = useState({})
   const [error, setError] = useState(null)
+  const [saving, setSaving] = useState(false)
+  const [msg, setMsg] = useState(null)
   const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
-    setProducts(null)
-    setError(null)
-    fetch(`${API}/api/printful/products`)
-      .then(r => r.json())
-      .then(data => {
-        if (data.error) throw new Error(data.error)
-        setProducts(Array.isArray(data) ? data : [])
-      })
-      .catch(err => setError(err.message))
+    setProducts(null); setError(null)
+    Promise.all([
+      fetch(`${API}/api/printful/products`).then(r => r.json()),
+      fetch(`${API}/api/cms`).then(r => r.json()),
+    ]).then(([pf, cms]) => {
+      if (pf.error) throw new Error(pf.error)
+      setProducts(Array.isArray(pf) ? pf : [])
+      const ov = cms.productOverrides || {}
+      setOverrides(ov)
+      setLocalOv(ov)
+    }).catch(err => setError(err.message))
   }, [refreshKey])
+
+  const setOv = (id, field, value) =>
+    setLocalOv(prev => ({ ...prev, [id]: { ...prev[id], [field]: value } }))
+
+  const save = async () => {
+    setSaving(true); setMsg(null)
+    try {
+      const r = await fetch(`${API}/api/cms/productOverrides`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(localOv),
+      })
+      if (r.ok) { setOverrides(localOv); setMsg('ok') }
+      else setMsg('error')
+    } catch { setMsg('error') }
+    setSaving(false)
+  }
+
+  const isDirty = JSON.stringify(localOv) !== JSON.stringify(overrides)
 
   return (
     <div>
@@ -636,22 +684,18 @@ function ShopTab() {
           Shop Products
           {products && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}> ({products.length})</span>}
         </h2>
-        <div style={{ display: 'flex', gap: '0.6rem' }}>
+        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+          {msg === 'ok'    && <span style={{ color: '#27ae60', fontSize: '0.82rem' }}>Saved</span>}
+          {msg === 'error' && <span style={{ color: '#c0392b', fontSize: '0.82rem' }}>Error saving</span>}
           <button className="btn-sm" onClick={() => setRefreshKey(k => k + 1)}>Refresh</button>
-          <a
-            href="https://www.printful.com/dashboard/products"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-add"
-            style={{ textDecoration: 'none' }}
-          >
-            Manage on Printful ↗
-          </a>
+          {isDirty && <button className="btn-add" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save changes'}</button>}
+          <a href="https://www.printful.com/dashboard/products" target="_blank" rel="noopener noreferrer"
+            className="btn-sm" style={{ textDecoration: 'none' }}>Manage on Printful ↗</a>
         </div>
       </div>
 
       <p style={{ color: '#888', fontSize: '0.82rem', marginBottom: '1.2rem' }}>
-        Products are synced live from Printful. To add, remove or edit products go to Printful — changes appear on the site instantly.
+        Products sync live from Printful. Change category or hide products below — new products are auto-categorised by name.
       </p>
 
       {products === null && !error && <p style={{ color: '#999', fontSize: '0.85rem' }}>Loading<Dots /></p>}
@@ -660,29 +704,41 @@ function ShopTab() {
 
       <div className="adm-list">
         {products?.map(p => {
-          const sizes = [...new Set(p.variants?.map(v => v.size).filter(Boolean) ?? [])]
-          const minPrice = p.variants?.length
-            ? Math.min(...p.variants.map(v => v.price))
-            : null
-          const maxPrice = p.variants?.length
-            ? Math.max(...p.variants.map(v => v.price))
-            : null
-          const priceLabel = minPrice === maxPrice
-            ? `€${minPrice?.toFixed(2)}`
-            : `€${minPrice?.toFixed(2)} – €${maxPrice?.toFixed(2)}`
+          const ov = localOv[p.id] || {}
+          const available = ov.available !== false
+          const catAuto = autoCat(p.name)
+          const catLabel = SHOP_CATEGORIES.find(c => c.key === catAuto)?.label || 'Accessories'
+          const minPrice = p.variants?.length ? Math.min(...p.variants.map(v => v.price)) : null
+          const maxPrice = p.variants?.length ? Math.max(...p.variants.map(v => v.price)) : null
+          const priceLabel = minPrice === maxPrice ? `€${minPrice?.toFixed(2)}` : `€${minPrice?.toFixed(2)} – €${maxPrice?.toFixed(2)}`
 
           return (
-            <div key={p.id} className="adm-item">
+            <div key={p.id} className="adm-item" style={{ opacity: available ? 1 : 0.45, alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.6rem' }}>
               <div className="adm-item-thumb">
                 {p.thumbnail && <img src={p.thumbnail} alt={p.name} />}
               </div>
-              <div className="adm-item-info">
+              <div className="adm-item-info" style={{ flex: 1, minWidth: 0 }}>
                 <div className="adm-item-name">{p.name}</div>
-                <div className="adm-item-meta">
-                  {priceLabel}
-                  {sizes.length > 0 && ` · ${sizes.join(', ')}`}
-                  <span style={{ marginLeft: '0.5rem', color: '#27ae60', fontSize: '0.75rem' }}>● Live</span>
-                </div>
+                <div className="adm-item-meta">{priceLabel}</div>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0 }}>
+                <select
+                  value={ov.category || ''}
+                  onChange={e => setOv(p.id, 'category', e.target.value || undefined)}
+                  style={{ fontSize: '0.8rem', padding: '0.3rem 0.5rem', borderRadius: 5, border: '1.5px solid #ddd', fontFamily: 'inherit' }}
+                >
+                  <option value="">Auto: {catLabel}</option>
+                  {SHOP_CATEGORIES.map(c => (
+                    <option key={c.key} value={c.key}>{c.label}</option>
+                  ))}
+                </select>
+                <button
+                  className={`btn-sm${available ? '' : ' btn-del'}`}
+                  onClick={() => setOv(p.id, 'available', !available)}
+                  style={{ minWidth: 80 }}
+                >
+                  {available ? '● Visible' : '○ Hidden'}
+                </button>
               </div>
             </div>
           )
@@ -1161,7 +1217,7 @@ export default function Admin({ goTo }) {
         </div>
         <div className="adm-body">
           {tab === 0 && <BlogTab     token={token} />}
-          {tab === 1 && <ShopTab />}
+          {tab === 1 && <ShopTab token={token} />}
           {tab === 2 && <AnimaliTab  token={token} />}
           {tab === 3 && <ContentTab  token={token} />}
           {tab === 4 && <SettingsTab token={token} />}

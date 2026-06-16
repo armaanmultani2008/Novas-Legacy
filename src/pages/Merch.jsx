@@ -29,11 +29,11 @@ async function startCheckout(name, price, variantId, quantity, errCheckout, errB
 }
 
 const CATEGORY_RULES = [
-  { key: 'tshirts',  label: 'T-Shirts',  match: /t-?shirt|tee|unisex.*shirt/i },
-  { key: 'hoodies',  label: 'Hoodies',   match: /hoodie|sweatshirt|crewneck|blend hoodie/i },
-  { key: 'headwear', label: 'Headwear',  match: /cap|hat|beanie|bucket|twill/i },
-  { key: 'mugs',     label: 'Mugs',      match: /mug|cup/i },
-  { key: 'bottles',  label: 'Bottles',   match: /bottle|water bottle|flask/i },
+  { key: 'tshirts',  label: 'T-Shirts',    match: /t-?shirt|\btee\b/i },
+  { key: 'hoodies',  label: 'Hoodies',     match: /hoodie|sweatshirt|crewneck/i },
+  { key: 'headwear', label: 'Headwear',    match: /\bcap\b|hat|beanie|bucket|twill/i },
+  { key: 'mugs',     label: 'Mugs',        match: /\bmug\b|cup/i },
+  { key: 'bottles',  label: 'Bottles',     match: /bottle|flask/i },
   { key: 'other',    label: 'Accessories', match: /bag|tote|sticker|poster|phone|pillow|print/i },
 ]
 
@@ -44,11 +44,16 @@ function getCategory(name) {
   return 'other'
 }
 
+function getEffectiveCategory(item, overrides) {
+  return overrides[item.id]?.category || getCategory(item.name)
+}
+
 function Merch({ goTo }) {
   useScrollReveal()
   const { t } = useTranslation()
   const [loading, setLoading] = useState(null)
   const [cmsItems, setCmsItems] = useState(null)
+  const [overrides, setOverrides] = useState({})
   const [printfulItems, setPrintfulItems] = useState(null)
   const [selectedVariants, setSelectedVariants] = useState({})
   const [selectedSizes, setSelectedSizes] = useState({})
@@ -57,7 +62,10 @@ function Merch({ goTo }) {
   useEffect(() => {
     fetch(`${API}/api/cms`)
       .then(r => r.json())
-      .then(d => { if (d.products?.length) setCmsItems(d.products) })
+      .then(d => {
+        if (d.products?.length) setCmsItems(d.products)
+        if (d.productOverrides) setOverrides(d.productOverrides)
+      })
       .catch(() => {})
   }, [])
 
@@ -91,15 +99,16 @@ function Merch({ goTo }) {
     }
   })
 
-  const allItems = normalizedPrintful || cmsItems || FALLBACK_ITEMS
+  const allItems = (normalizedPrintful || cmsItems || FALLBACK_ITEMS)
+    .filter(item => overrides[item.id]?.available !== false)
 
   const availableCategories = CATEGORY_RULES.filter(r =>
-    allItems.some(item => getCategory(item.name) === r.key)
+    allItems.some(item => getEffectiveCategory(item, overrides) === r.key)
   )
 
   const shopItems = activeFilter === 'all'
     ? allItems
-    : allItems.filter(item => getCategory(item.name) === activeFilter)
+    : allItems.filter(item => getEffectiveCategory(item, overrides) === activeFilter)
 
   const infoStrip = t('merch.info', { returnObjects: true })
 

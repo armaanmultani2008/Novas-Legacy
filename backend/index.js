@@ -98,7 +98,8 @@ const printfulGet = (path) =>
 // ── Resend (HTTP API — works on Render, no SMTP blocking) ────────────────────
 const resend = new Resend(envVars.RESEND_API_KEY);
 
-const EMAIL_FROM = 'Nova\'s Legacy <noreply@novaslegacy.co.za>';
+// TODO: change to noreply@novaslegacy.co.za once DNS is verified on Resend
+const EMAIL_FROM = envVars.EMAIL_FROM || 'Nova\'s Legacy <onboarding@resend.dev>';
 
 async function sendAdoptionWelcome(toEmail, toName, animalName, animalSpecies, monthlyEur) {
     if (!envVars.RESEND_API_KEY) return;

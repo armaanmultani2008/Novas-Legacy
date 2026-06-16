@@ -29,11 +29,12 @@ async function startCheckout(name, price, variantId, quantity, errCheckout, errB
 }
 
 const CATEGORY_RULES = [
-  { key: 'tshirts',     label: 'T-Shirts',    match: /t-?shirt|tee/i },
-  { key: 'hoodies',     label: 'Hoodies',     match: /hoodie|sweatshirt|crewneck/i },
-  { key: 'headwear',    label: 'Headwear',    match: /cap|hat|beanie|bucket/i },
-  { key: 'mugs',        label: 'Mugs',        match: /mug|cup/i },
-  { key: 'accessories', label: 'Accessories', match: /bottle|bag|tote|sticker|poster|phone/i },
+  { key: 'tshirts',  label: 'T-Shirts',  match: /t-?shirt|tee|unisex.*shirt/i },
+  { key: 'hoodies',  label: 'Hoodies',   match: /hoodie|sweatshirt|crewneck|blend hoodie/i },
+  { key: 'headwear', label: 'Headwear',  match: /cap|hat|beanie|bucket|twill/i },
+  { key: 'mugs',     label: 'Mugs',      match: /mug|cup/i },
+  { key: 'bottles',  label: 'Bottles',   match: /bottle|water bottle|flask/i },
+  { key: 'other',    label: 'Accessories', match: /bag|tote|sticker|poster|phone|pillow|print/i },
 ]
 
 function getCategory(name) {
@@ -93,7 +94,7 @@ function Merch({ goTo }) {
   const allItems = normalizedPrintful || cmsItems || FALLBACK_ITEMS
 
   const availableCategories = CATEGORY_RULES.filter(r =>
-    allItems.some(item => r.match.test(item.name))
+    allItems.some(item => getCategory(item.name) === r.key)
   )
 
   const shopItems = activeFilter === 'all'

@@ -398,9 +398,7 @@ app.post('/api/stripe/webhook',
 
         if (event.type === 'checkout.session.completed') {
           // Retrieve full session so shipping_details is always populated
-          const s = await stripe.checkout.sessions.retrieve(event.data.object.id, {
-            expand: ['shipping_details', 'customer_details'],
-          });
+          const s = await stripe.checkout.sessions.retrieve(event.data.object.id);
           console.log('[webhook] session mode:', s.mode, '| variantId:', s.metadata?.variantId, '| email:', s.customer_details?.email);
 
           if (s.mode === 'subscription') {

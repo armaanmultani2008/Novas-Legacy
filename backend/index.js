@@ -387,6 +387,9 @@ app.post('/api/stripe/webhook',
             return res.status(400).json({ error: err.message });
         }
 
+        // Respond immediately — Stripe requires <30s response
+        res.json({ received: true });
+
         if (event.type === 'checkout.session.completed') {
           const s = event.data.object;
 
@@ -457,7 +460,6 @@ app.post('/api/stripe/webhook',
             }
           }
         }
-        res.json({ received: true });
     }
 );
 

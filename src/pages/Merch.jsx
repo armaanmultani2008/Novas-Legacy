@@ -145,7 +145,7 @@ function Merch({ goTo }) {
       </div>
 
       <div className="shop-page">
-        <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '1120px', margin: '0 auto', padding: '1rem 1.5rem' }}>
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
           <div className="rv" style={{ marginBottom: '2.5rem' }}>
@@ -159,7 +159,7 @@ function Merch({ goTo }) {
             {shopItems.map((item, i) => {
               const selectedSize = getSelectedSize(item)
               return (
-                <article key={item.id || item.name} className={`shop-card rv rv-d${Math.min((i % 3) + 1, 3)}`}>
+                <article key={item.id || item.name} className={`shop-card rv rv-d${Math.min((i % 3) + 1, 3)}`} style={{borderRadius: '8px'}}>
                   <div className="s-photo">
                     <img src={item.photo} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     <div className="s-photo-overlay" />

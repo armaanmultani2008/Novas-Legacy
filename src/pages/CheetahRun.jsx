@@ -33,7 +33,7 @@ function CheetahRun({ goTo }) {
 
   return (
     <>
-      <div className="page-hero-img" style={{ position: 'relative', overflow: 'hidden' }}>
+      <div className="page-hero-img" style={{ position: 'relative', overflow: 'hidden', height: '75vh' }}>
         {SLIDE_IMGS.map((src, i) => (
           <img
             key={src}
@@ -85,11 +85,20 @@ function CheetahRun({ goTo }) {
         </div>
       </div>
 
-      <div className="page-content">
+      <div className="page-content" style={{ padding: '4rem 1.5rem', alignContent: 'center' }}>
         <div className="container">
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
-          <h2>Il <em>{t('cheetah_run.title')}</em></h2>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <a href="mailto:kim@novaslegacy.co.za" className="btn btn-dark">
+              {t('cheetah_run.btn1')}
+            </a>
+            <button className="btn btn-outline-dark" onClick={() => goTo('nova-story')}>
+              {t('cheetah_run.btn2')}
+            </button>
+          </div>
+
+          <h2>{t('cheetah_run.title').split(' ').slice(0, -2).join(' ')} <em>{t('cheetah_run.title').split(' ').slice(1, 3).join(' ')}</em></h2>
           <p>{t('cheetah_run.p1')}</p>
 
           <div className="highlight">
@@ -118,17 +127,44 @@ function CheetahRun({ goTo }) {
             ))}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', margin: '2.5rem 0' }}>
+          <style>{`
+            .run-grid-imgs {
+              display: grid;
+              grid-template-columns: 1fr 1fr; /* 2 colonne su desktop */
+              gap: 6px;
+              margin: 2.5rem 0;
+            }
+            
+            @media (max-width: 900px) {
+              .run-grid-imgs {
+                grid-template-columns: 1fr; /* 1 elemento per riga sotto i 900px */
+              }
+            }
+          `}</style>
+
+          <div className="run-grid-imgs">
             {[
               { src: '/img/ghepardo-corsa-erba-gialla.png', cap: t('cheetah_run.stat_labels', { returnObjects: true })[0] },
               { src: '/img/volontarie-ghepardo.png',        cap: t('cheetah_run.hero_sub') },
             ].map((p, i) => (
-              <div key={i} style={{ height: '280px', overflow: 'hidden', position: 'relative' }}>
-                <img src={p.src} alt={p.cap} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}
-                  onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
-                  onMouseLeave={e => e.target.style.transform = 'none'} />
-                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)', padding: '0.8rem', color: 'rgba(255,255,255,0.8)', fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', pointerEvents: 'none' }}>{p.cap}</div>
-              </div>
+                <div key={i} style={{ height: '280px', overflow: 'hidden', position: 'relative', borderRadius: '6px' }}>
+                  <img
+                      src={p.src}
+                      alt={p.cap}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}
+                      onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
+                      onMouseLeave={e => e.target.style.transform = 'none'}
+                  />
+                  <div style={{
+                    position: 'absolute', bottom: 0, left: 0, right: 0,
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)',
+                    padding: '0.8rem', color: 'rgba(255,255,255,0.8)',
+                    fontSize: '0.68rem', letterSpacing: '0.1em',
+                    textTransform: 'uppercase', pointerEvents: 'none'
+                  }}>
+                    {p.cap}
+                  </div>
+                </div>
             ))}
           </div>
 
@@ -137,15 +173,6 @@ function CheetahRun({ goTo }) {
 
           <div className="highlight">
             <p>{t('cheetah_run.booking_highlight')}</p>
-          </div>
-
-          <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <a href="mailto:kim@novaslegacy.co.za" className="btn btn-dark">
-              {t('cheetah_run.btn1')}
-            </a>
-            <button className="btn btn-outline-dark" onClick={() => goTo('nova-story')}>
-              {t('cheetah_run.btn2')}
-            </button>
           </div>
         </div>
       </div>

@@ -50,6 +50,7 @@ function Blog({ goTo }) {
                 style={{
                   background: 'var(--off-white)',
                   border: '1px solid #EDE5D8',
+                  borderRadius: '6px',
                   overflow: 'hidden',
                   cursor: 'pointer',
                   transition: 'transform 0.3s',

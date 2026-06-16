@@ -76,7 +76,6 @@ function Donate({ goTo }) {
 
   return (
       <>
-        {/* ── HERO ── */}
         <div className="page-hero-img" style={{ height: '65vh' }}>
           <img src="/img/support.png" alt="Donazioni Nova's Legacy" style={{ objectPosition: 'center 30%' }} />
           <div className="page-hero-img-overlay" />
@@ -88,7 +87,7 @@ function Donate({ goTo }) {
         </div>
 
         <div className="donate-page">
-          <div style={{ maxWidth: '820px', margin: '0 auto', padding: '0 1.5rem' }}>
+          <div style={{ maxWidth: '860px', margin: '0 auto', padding: '0 1.5rem' }}>
             <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
             <div className="rv" style={{ marginBottom: '2.5rem', textAlign: 'center' }}>

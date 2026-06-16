@@ -497,7 +497,7 @@ function Home({ goTo }) {
             <div className="marquee-track">
               {[...Array(2)].flatMap((_, rep) =>
                   ANIMALS_NAMES.map((name, i) => (
-                      <div key={`${rep}-${name}`} className="animal-card" onClick={() => setLbIdx(i)} style={{ cursor: 'pointer', borderRadius: '8px' }} key={`${name}-${i}`}>
+                      <div key={`${rep}-${name}-${i}`} className="animal-card" onClick={() => setLbIdx(i)} style={{ cursor: 'pointer', borderRadius: '8px' }} >
                         <div className="animal-photo">
                           <img src={ANIMALS_SRCS[i]} alt={name} />
                         </div>

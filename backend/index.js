@@ -109,37 +109,75 @@ async function sendAdoptionWelcome(toEmail, toName, animalName, animalSpecies, m
     await transporter.sendMail({
         from: `"Nova's Legacy" <${envVars.EMAIL_USER}>`,
         to: toEmail,
-        subject: `Benvenuto nella famiglia di ${animalName} — Nova's Legacy`,
+        subject: `Welcome to ${animalName}'s family — Nova's Legacy`,
         html: `
       <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#111">
-        <h2 style="color:#C8880A">Grazie, ${toName || 'nuovo adottante'}!</h2>
-        <p>Hai appena adottato simbolicamente <strong>${animalName}</strong> (${animalSpecies}) a Nova's Legacy.</p>
-        <p>Il tuo contributo di <strong>€${monthlyEur}/mese</strong> va direttamente alle cure quotidiane di ${animalName}.</p>
-        <p>Riceverai aggiornamenti mensili con foto e notizie dal campo. Per domande scrivi a
+        <h2 style="color:#C8880A">Thank you, ${toName || 'new supporter'}!</h2>
+        <p>You have symbolically adopted <strong>${animalName}</strong> (${animalSpecies}) at Nova's Legacy.</p>
+        <p>Your contribution of <strong>€${monthlyEur}/month</strong> goes directly towards ${animalName}'s daily care.</p>
+        <p>You will receive monthly updates with photos and news from the reserve. For any questions, write to
            <a href="mailto:kim@novaslegacy.co.za">kim@novaslegacy.co.za</a>.</p>
-        <p>Per gestire o disdire il tuo abbonamento in qualsiasi momento, usa il link che trovi
-           nella sezione "Gestisci adozione" su <a href="https://novaslegacy.co.za">novaslegacy.co.za</a>.</p>
+        <p>To manage or cancel your adoption at any time, use the "Manage adoption" link on our website.</p>
         <p style="margin-top:2rem;font-size:0.85rem;color:#888">Nova's Legacy — Bela-Bela, Limpopo, South Africa</p>
       </div>`,
     });
 }
 
-async function notifyKim(toName, toEmail, animalName, monthlyEur) {
+async function notifyKimAdoption(toName, toEmail, animalName, monthlyEur) {
     if (!envVars.EMAIL_USER || !envVars.EMAIL_PASS) return;
     await transporter.sendMail({
-        from: `"Nova's Legacy System" <${envVars.EMAIL_USER}>`,
+        from: `"Nova's Legacy" <${envVars.EMAIL_USER}>`,
         to: envVars.EMAIL_TO || 'kim@novaslegacy.co.za',
-        subject: `Nuova adozione: ${animalName} da ${toName || toEmail}`,
+        subject: `New adoption: ${animalName} by ${toName || toEmail}`,
         html: `
       <div style="font-family:sans-serif;max-width:480px">
-        <h3>Nuova adozione simbolica</h3>
+        <h3>New symbolic adoption</h3>
         <ul>
-          <li><strong>Animale:</strong> ${animalName}</li>
-          <li><strong>Adottante:</strong> ${toName || '—'}</li>
+          <li><strong>Animal:</strong> ${animalName}</li>
+          <li><strong>Adopter:</strong> ${toName || '—'}</li>
           <li><strong>Email:</strong> ${toEmail}</li>
-          <li><strong>Importo:</strong> €${monthlyEur}/mese</li>
+          <li><strong>Amount:</strong> €${monthlyEur}/month</li>
         </ul>
-        <p>Puoi vedere tutti i dettagli nel <a href="https://dashboard.stripe.com">Dashboard Stripe</a>.</p>
+        <p>See full details in your <a href="https://dashboard.stripe.com">Stripe Dashboard</a>.</p>
+      </div>`,
+    });
+}
+
+async function sendOrderConfirmation(toEmail, toName, productName, amount) {
+    if (!envVars.EMAIL_USER || !envVars.EMAIL_PASS) return;
+    await transporter.sendMail({
+        from: `"Nova's Legacy" <${envVars.EMAIL_USER}>`,
+        to: toEmail,
+        subject: `Your order is confirmed — Nova's Legacy`,
+        html: `
+      <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#111">
+        <h2 style="color:#C8880A">Thank you for your order, ${toName || 'friend'}!</h2>
+        <p>We have received your order for <strong>${productName}</strong> (€${(amount / 100).toFixed(2)}).</p>
+        <p>Printful will print and ship your item directly to you. You will receive a shipping confirmation with tracking once it's on its way.</p>
+        <p>For any questions about your order, write to <a href="mailto:kim@novaslegacy.co.za">kim@novaslegacy.co.za</a>.</p>
+        <p style="margin-top:2rem;font-size:0.85rem;color:#888">Nova's Legacy — Bela-Bela, Limpopo, South Africa</p>
+      </div>`,
+    });
+}
+
+async function notifyKimOrder(toName, toEmail, productName, amount, address) {
+    if (!envVars.EMAIL_USER || !envVars.EMAIL_PASS) return;
+    await transporter.sendMail({
+        from: `"Nova's Legacy" <${envVars.EMAIL_USER}>`,
+        to: envVars.EMAIL_TO || 'kim@novaslegacy.co.za',
+        subject: `New shop order: ${productName} from ${toName || toEmail}`,
+        html: `
+      <div style="font-family:sans-serif;max-width:480px">
+        <h3>New shop order</h3>
+        <ul>
+          <li><strong>Product:</strong> ${productName}</li>
+          <li><strong>Customer:</strong> ${toName || '—'}</li>
+          <li><strong>Email:</strong> ${toEmail}</li>
+          <li><strong>Amount:</strong> €${(amount / 100).toFixed(2)}</li>
+          <li><strong>Ship to:</strong> ${address || '—'}</li>
+        </ul>
+        <p>Printful will handle printing and shipping automatically.</p>
+        <p>See full details in your <a href="https://dashboard.stripe.com">Stripe Dashboard</a>.</p>
       </div>`,
     });
 }
@@ -356,7 +394,7 @@ app.post('/api/stripe/webhook',
             const adopterName = s.customer_details?.name || '';
             await Promise.all([
               sendAdoptionWelcome(adopterEmail, adopterName, animalName, animalSpecies, monthlyEur),
-              notifyKim(adopterName, adopterEmail, animalName, monthlyEur),
+              notifyKimAdoption(adopterName, adopterEmail, animalName, monthlyEur),
             ]);
           }
 
@@ -365,9 +403,17 @@ app.post('/api/stripe/webhook',
             const qty = parseInt(s.metadata.quantity || '1');
             const addr = s.shipping_details?.address;
             const recipientName = s.shipping_details?.name || s.customer_details?.name || '';
+            const customerEmail = s.customer_details?.email || '';
+            const productName = s.metadata?.productName || 'Nova\'s Legacy product';
+            const amount = s.amount_total || 0;
+            const addrString = addr
+              ? `${addr.line1}, ${addr.city}, ${addr.country} ${addr.postal_code}`
+              : '—';
+
+            let printfulOk = false;
             if (addr && envVars.PRINTFUL_API_KEY) {
               try {
-                await fetch(`${PRINTFUL_BASE}/orders`, {
+                const pfRes = await fetch(`${PRINTFUL_BASE}/orders`, {
                   method: 'POST',
                   headers: {
                     'Authorization': `Bearer ${envVars.PRINTFUL_API_KEY}`,
@@ -382,14 +428,28 @@ app.post('/api/stripe/webhook',
                       state_code: addr.state || '',
                       country_code: addr.country,
                       zip: addr.postal_code,
-                      email: s.customer_details?.email || '',
+                      email: customerEmail,
                     },
                     items: [{ sync_variant_id: variantId, quantity: qty }],
                   }),
                 });
+                printfulOk = pfRes.ok;
+                if (!pfRes.ok) {
+                  const pfErr = await pfRes.json().catch(() => ({}));
+                  console.error('Printful order error:', pfErr);
+                }
               } catch (err) {
                 console.error('Printful order error:', err.message);
               }
+            }
+
+            await Promise.all([
+              sendOrderConfirmation(customerEmail, recipientName, productName, amount),
+              notifyKimOrder(recipientName, customerEmail, productName, amount, addrString),
+            ]);
+
+            if (!printfulOk) {
+              console.error(`ALERT: Printful order FAILED for Stripe session ${s.id} — manual action required`);
             }
           }
         }
@@ -423,7 +483,7 @@ app.post('/api/stripe/checkout', async (req, res) => {
             sessionData.shipping_address_collection = {
                 allowed_countries: ['AT','AU','BE','CA','CH','CZ','DE','DK','ES','FI','FR','GB','GR','HU','IE','IT','JP','NL','NO','NZ','PL','PT','RO','SE','SG','SK','US','ZA'],
             };
-            sessionData.metadata = { variantId: String(variantId), quantity: String(quantity) };
+            sessionData.metadata = { variantId: String(variantId), quantity: String(quantity), productName: name };
         }
 
         const session = await stripe.checkout.sessions.create(sessionData);

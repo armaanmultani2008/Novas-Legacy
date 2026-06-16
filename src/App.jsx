@@ -47,16 +47,17 @@ function App() {
   const [pendingSection, setPendingSection] = useState(null)
   const [postId, setPostId] = useState(0)
   const [transitioning, setTransitioning] = useState(false)
+  const [successBanner, setSuccessBanner] = useState(null)
 
   useEffect(() => {
     if (window.location.hash === '#admin') setCurrentPage('admin')
     const params = new URLSearchParams(window.location.search)
     if (params.get('payment') === 'success') {
-      alert('Pagamento completato! Grazie per il tuo acquisto da Nova\'s Legacy.')
+      setSuccessBanner({ type: 'order', msg: "Thank you for your order! You'll receive a confirmation email shortly. Printful will ship your item directly to you." })
       window.history.replaceState({}, '', '/')
     } else if (params.get('adoption') === 'success') {
-      const animal = params.get('animal') || 'animale'
-      alert(`Benvenuto nella famiglia di ${animal}! Controlla la tua email — riceverai presto il certificato di adozione.`)
+      const animal = params.get('animal') || 'your animal'
+      setSuccessBanner({ type: 'adoption', msg: `Welcome to ${animal}'s family! Check your email — your adoption confirmation is on its way.` })
       window.history.replaceState({}, '', '/')
     } else if (params.get('payment') === 'cancel' || params.get('adoption') === 'cancel') {
       window.history.replaceState({}, '', '/')
@@ -93,7 +94,28 @@ function App() {
   return (
     <>
       <Navbar goTo={goTo} />
-      <div className={`page-wrap ${transitioning ? 'page-wrap--out' : 'page-wrap--in'}`}>
+      {successBanner && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999,
+          background: successBanner.type === 'adoption' ? '#1a6b3a' : '#1a4b6b',
+          color: '#fff', padding: '1rem 1.5rem',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.2)',
+        }}>
+          <span style={{ fontSize: '0.95rem', lineHeight: 1.4 }}>
+            {successBanner.type === 'adoption' ? '🐆 ' : '✓ '}{successBanner.msg}
+          </span>
+          <button
+            onClick={() => setSuccessBanner(null)}
+            style={{ background: 'none', border: '1px solid rgba(255,255,255,0.5)', color: '#fff',
+              borderRadius: 4, padding: '0.2rem 0.6rem', cursor: 'pointer', flexShrink: 0, fontSize: '0.85rem' }}
+          >
+            Close
+          </button>
+        </div>
+      )}
+      <div className={`page-wrap ${transitioning ? 'page-wrap--out' : 'page-wrap--in'}`}
+           style={successBanner ? { paddingTop: '3.5rem' } : {}}>
         <PageComponent key={currentPage} goTo={goTo} postId={postId} />
       </div>
       <Footer goTo={goTo} />

@@ -183,7 +183,11 @@ async function notifyKimOrder(toName, toEmail, productName, amount, address) {
 }
 
 app.use(cors());
-app.use(express.json());
+// express.json() must NOT apply to /api/stripe/webhook (needs raw body for signature verification)
+app.use((req, res, next) => {
+    if (req.path === '/api/stripe/webhook') return next();
+    express.json()(req, res, next);
+});
 
 let adminPasswordHash = envVars.ADMIN_PASSWORD_HASH || "";
 let adminRecoveryKey  = envVars.ADMIN_RECOVERY_KEY  || "nova_backup";

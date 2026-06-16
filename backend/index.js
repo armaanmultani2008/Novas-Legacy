@@ -7,7 +7,6 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import Stripe from 'stripe';
-import { Resend } from 'resend';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -95,16 +94,32 @@ const printfulGet = (path) =>
     headers: { 'Authorization': `Bearer ${envVars.PRINTFUL_API_KEY}` },
   }).then(r => r.json());
 
-// ── Resend (HTTP API — works on Render, no SMTP blocking) ────────────────────
-const resend = new Resend(envVars.RESEND_API_KEY);
+// ── Brevo (HTTP API — no domain needed, just verify sender email) ─────────────
+const EMAIL_FROM_NAME = "Nova's Legacy";
+const EMAIL_FROM_ADDR = envVars.EMAIL_FROM || 'armaanmultani2008@gmail.com';
 
-// TODO: change to noreply@novaslegacy.co.za once DNS is verified on Resend
-const EMAIL_FROM = envVars.EMAIL_FROM || 'Nova\'s Legacy <onboarding@resend.dev>';
+async function sendEmail({ to, subject, html, replyTo }) {
+    if (!envVars.BREVO_API_KEY) { console.warn('[email] BREVO_API_KEY not set'); return; }
+    const body = {
+        sender: { name: EMAIL_FROM_NAME, email: EMAIL_FROM_ADDR },
+        to: [{ email: to }],
+        subject,
+        htmlContent: html,
+    };
+    if (replyTo) body.replyTo = { email: replyTo };
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: { 'api-key': envVars.BREVO_API_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(JSON.stringify(err));
+    }
+}
 
 async function sendAdoptionWelcome(toEmail, toName, animalName, animalSpecies, monthlyEur) {
-    if (!envVars.RESEND_API_KEY) return;
-    await resend.emails.send({
-        from: EMAIL_FROM,
+    await sendEmail({
         to: toEmail,
         subject: `Welcome to ${animalName}'s family — Nova's Legacy`,
         html: `
@@ -121,9 +136,7 @@ async function sendAdoptionWelcome(toEmail, toName, animalName, animalSpecies, m
 }
 
 async function notifyKimAdoption(toName, toEmail, animalName, monthlyEur) {
-    if (!envVars.RESEND_API_KEY) return;
-    await resend.emails.send({
-        from: EMAIL_FROM,
+    await sendEmail({
         to: envVars.EMAIL_TO || 'kim@novaslegacy.co.za',
         subject: `New adoption: ${animalName} by ${toName || toEmail}`,
         html: `
@@ -141,9 +154,7 @@ async function notifyKimAdoption(toName, toEmail, animalName, monthlyEur) {
 }
 
 async function sendOrderConfirmation(toEmail, toName, productName, amount) {
-    if (!envVars.RESEND_API_KEY) return;
-    await resend.emails.send({
-        from: EMAIL_FROM,
+    await sendEmail({
         to: toEmail,
         subject: `Your order is confirmed — Nova's Legacy`,
         html: `
@@ -158,9 +169,7 @@ async function sendOrderConfirmation(toEmail, toName, productName, amount) {
 }
 
 async function notifyKimOrder(toName, toEmail, productName, amount, address) {
-    if (!envVars.RESEND_API_KEY) return;
-    await resend.emails.send({
-        from: EMAIL_FROM,
+    await sendEmail({
         to: envVars.EMAIL_TO || 'kim@novaslegacy.co.za',
         subject: `New shop order: ${productName} from ${toName || toEmail}`,
         html: `
@@ -511,14 +520,13 @@ app.post('/api/stripe/checkout', async (req, res) => {
 app.post('/api/contact', async (req, res) => {
     const { name, surname, email, phone, reason, message } = req.body;
     if (!name || !email) return res.status(400).json({ error: 'Nome ed email richiesti' });
-    if (!envVars.RESEND_API_KEY) {
+    if (!envVars.BREVO_API_KEY) {
         return res.status(503).json({ error: 'Email non configurata sul server' });
     }
     try {
-        await resend.emails.send({
-            from: EMAIL_FROM,
+        await sendEmail({
             to: 'armaanmultani2008@gmail.com',
-            reply_to: email,
+            replyTo: email,
             subject: `Nuovo contatto: ${reason || 'Richiesta generica'} — ${name} ${surname || ''}`.trim(),
             html: `
         <div style="font-family:sans-serif;max-width:520px;color:#111">

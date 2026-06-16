@@ -244,8 +244,9 @@ app.put('/api/admin/paypal-config', (req, res) => {
 // ── Printful: prodotti dello store ───────────────────────────────────────────
 app.get('/api/printful/products', async (_req, res) => {
   try {
-    const { result: list } = await printfulGet('/store/products');
-    if (!list?.length) return res.json([]);
+    const raw = await printfulGet('/store/products');
+    const list = Array.isArray(raw.result) ? raw.result : raw.result?.sync_products ?? [];
+    if (!list.length) return res.json([]);
 
     const products = await Promise.all(list.map(async (p) => {
       const { result } = await printfulGet(`/store/products/${p.id}`);

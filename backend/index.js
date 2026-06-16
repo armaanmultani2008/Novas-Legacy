@@ -241,6 +241,16 @@ app.put('/api/admin/paypal-config', (req, res) => {
     res.json({ ok: true });
 });
 
+// ── Printful: debug risposta grezza ──────────────────────────────────────────
+app.get('/api/printful/debug', async (_req, res) => {
+  try {
+    const raw = await printfulGet('/store/products');
+    res.json(raw);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ── Printful: prodotti dello store ───────────────────────────────────────────
 app.get('/api/printful/products', async (_req, res) => {
   try {

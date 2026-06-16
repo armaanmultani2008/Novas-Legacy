@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import Stripe from 'stripe';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -95,23 +95,15 @@ const printfulGet = (path) =>
     headers: { 'Authorization': `Bearer ${envVars.PRINTFUL_API_KEY}` },
   }).then(r => r.json());
 
-// ── Nodemailer (Gmail App Password) ──────────────────────────────────────────
-// force IPv4: Render free tier does not support outbound IPv6 (ENETUNREACH)
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    family: 4,
-    auth: {
-        user: envVars.EMAIL_USER,
-        pass: envVars.EMAIL_PASS,
-    },
-});
+// ── Resend (HTTP API — works on Render, no SMTP blocking) ────────────────────
+const resend = new Resend(envVars.RESEND_API_KEY);
+
+const EMAIL_FROM = 'Nova\'s Legacy <noreply@novaslegacy.co.za>';
 
 async function sendAdoptionWelcome(toEmail, toName, animalName, animalSpecies, monthlyEur) {
-    if (!envVars.EMAIL_USER || !envVars.EMAIL_PASS) return;
-    await transporter.sendMail({
-        from: `"Nova's Legacy" <${envVars.EMAIL_USER}>`,
+    if (!envVars.RESEND_API_KEY) return;
+    await resend.emails.send({
+        from: EMAIL_FROM,
         to: toEmail,
         subject: `Welcome to ${animalName}'s family — Nova's Legacy`,
         html: `
@@ -128,9 +120,9 @@ async function sendAdoptionWelcome(toEmail, toName, animalName, animalSpecies, m
 }
 
 async function notifyKimAdoption(toName, toEmail, animalName, monthlyEur) {
-    if (!envVars.EMAIL_USER || !envVars.EMAIL_PASS) return;
-    await transporter.sendMail({
-        from: `"Nova's Legacy" <${envVars.EMAIL_USER}>`,
+    if (!envVars.RESEND_API_KEY) return;
+    await resend.emails.send({
+        from: EMAIL_FROM,
         to: envVars.EMAIL_TO || 'kim@novaslegacy.co.za',
         subject: `New adoption: ${animalName} by ${toName || toEmail}`,
         html: `
@@ -148,9 +140,9 @@ async function notifyKimAdoption(toName, toEmail, animalName, monthlyEur) {
 }
 
 async function sendOrderConfirmation(toEmail, toName, productName, amount) {
-    if (!envVars.EMAIL_USER || !envVars.EMAIL_PASS) return;
-    await transporter.sendMail({
-        from: `"Nova's Legacy" <${envVars.EMAIL_USER}>`,
+    if (!envVars.RESEND_API_KEY) return;
+    await resend.emails.send({
+        from: EMAIL_FROM,
         to: toEmail,
         subject: `Your order is confirmed — Nova's Legacy`,
         html: `
@@ -165,9 +157,9 @@ async function sendOrderConfirmation(toEmail, toName, productName, amount) {
 }
 
 async function notifyKimOrder(toName, toEmail, productName, amount, address) {
-    if (!envVars.EMAIL_USER || !envVars.EMAIL_PASS) return;
-    await transporter.sendMail({
-        from: `"Nova's Legacy" <${envVars.EMAIL_USER}>`,
+    if (!envVars.RESEND_API_KEY) return;
+    await resend.emails.send({
+        from: EMAIL_FROM,
         to: envVars.EMAIL_TO || 'kim@novaslegacy.co.za',
         subject: `New shop order: ${productName} from ${toName || toEmail}`,
         html: `
@@ -398,9 +390,7 @@ app.post('/api/stripe/webhook',
 
         if (event.type === 'checkout.session.completed') {
           // Retrieve full session so shipping_details is always populated
-          const s = await stripe.checkout.sessions.retrieve(event.data.object.id, {
-            expand: ['shipping_details', 'customer_details'],
-          });
+          const s = await stripe.checkout.sessions.retrieve(event.data.object.id);
           console.log('[webhook] session mode:', s.mode, '| variantId:', s.metadata?.variantId, '| email:', s.customer_details?.email);
 
           if (s.mode === 'subscription') {
@@ -418,9 +408,10 @@ app.post('/api/stripe/webhook',
           if (s.mode === 'payment' && s.metadata?.variantId) {
             const variantId = parseInt(s.metadata.variantId);
             const qty = parseInt(s.metadata.quantity || '1');
-            const addr = s.shipping_details?.address;
-            console.log('[webhook] payment | variantId:', variantId, '| addr:', addr ? 'OK' : 'MISSING', '| PRINTFUL_API_KEY:', envVars.PRINTFUL_API_KEY ? 'set' : 'MISSING');
+            // shipping_details preferred, fall back to customer_details.address (where Stripe puts it when billing=shipping)
+            const addr = s.shipping_details?.address || s.shipping?.address || s.customer_details?.address || null;
             const recipientName = s.shipping_details?.name || s.customer_details?.name || '';
+            console.log('[webhook] payment | variantId:', variantId, '| addr:', addr ? `OK (${addr.city})` : 'MISSING', '| PRINTFUL_API_KEY:', envVars.PRINTFUL_API_KEY ? 'set' : 'MISSING');
             const customerEmail = s.customer_details?.email || '';
             const productName = s.metadata?.productName || 'Nova\'s Legacy product';
             const amount = s.amount_total || 0;
@@ -519,14 +510,14 @@ app.post('/api/stripe/checkout', async (req, res) => {
 app.post('/api/contact', async (req, res) => {
     const { name, surname, email, phone, reason, message } = req.body;
     if (!name || !email) return res.status(400).json({ error: 'Nome ed email richiesti' });
-    if (!envVars.EMAIL_USER || !envVars.EMAIL_PASS) {
+    if (!envVars.RESEND_API_KEY) {
         return res.status(503).json({ error: 'Email non configurata sul server' });
     }
     try {
-        await transporter.sendMail({
-            from: `"Nova's Legacy Form" <${envVars.EMAIL_USER}>`,
+        await resend.emails.send({
+            from: EMAIL_FROM,
             to: 'armaanmultani2008@gmail.com',
-            replyTo: email,
+            reply_to: email,
             subject: `Nuovo contatto: ${reason || 'Richiesta generica'} — ${name} ${surname || ''}`.trim(),
             html: `
         <div style="font-family:sans-serif;max-width:520px;color:#111">

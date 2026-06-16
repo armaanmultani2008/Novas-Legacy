@@ -99,8 +99,8 @@ const printfulGet = (path) =>
 // force IPv4: Render free tier does not support outbound IPv6 (ENETUNREACH)
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
+    port: 465,
+    secure: true,
     family: 4,
     auth: {
         user: envVars.EMAIL_USER,
@@ -416,8 +416,10 @@ app.post('/api/stripe/webhook',
           if (s.mode === 'payment' && s.metadata?.variantId) {
             const variantId = parseInt(s.metadata.variantId);
             const qty = parseInt(s.metadata.quantity || '1');
-            const addr = s.shipping_details?.address;
+            // shipping_details (new API) or shipping (old API fallback)
+            const addr = s.shipping_details?.address || s.shipping?.address || null;
             console.log('[webhook] payment | variantId:', variantId, '| addr:', addr ? 'OK' : 'MISSING', '| PRINTFUL_API_KEY:', envVars.PRINTFUL_API_KEY ? 'set' : 'MISSING');
+            console.log('[webhook] session keys with shipping:', JSON.stringify({ shipping_details: s.shipping_details, shipping: s.shipping, customer_details: s.customer_details }));
             const recipientName = s.shipping_details?.name || s.customer_details?.name || '';
             const customerEmail = s.customer_details?.email || '';
             const productName = s.metadata?.productName || 'Nova\'s Legacy product';

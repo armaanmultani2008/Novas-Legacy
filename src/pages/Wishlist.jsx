@@ -10,7 +10,7 @@ function Wishlist({ goTo }) {
   return (
     <>
       <div className="page-hero-img" style={{ height: '52vh' }}>
-        <img src="/img/chalet-esterno.png" alt="Wishlist Nova's Legacy" />
+        <img src="/img/kim-savana.svg" alt="Wishlist Nova's Legacy" />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">{t('donate.wishlist.sub_label')}</span>
@@ -21,7 +21,7 @@ function Wishlist({ goTo }) {
       </div>
 
       <div className="donate-page">
-        <div style={{ maxWidth: '820px', margin: '0 auto', padding: '0 1.5rem' }}>
+        <div style={{ maxWidth: '860px', margin: '0 auto', padding: '1rem 1.5rem' }}>
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
           <div className="rv" style={{ color: '#555', lineHeight: '1.7', fontWeight: 300, fontSize: '0.95rem', marginBottom: '2rem' }}>

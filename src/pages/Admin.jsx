@@ -612,86 +612,139 @@ function BlogForm({ post, onSave, onClose, saving }) {
 }
 
 // ── Shop tab ──────────────────────────────────────────────────────────────────
-function ShopTab({ token }) {
-  const { items: products, saving, msg, persist } = useCMS('products', token)
-  const [editing, setEditing] = useState(null)
+const SHOP_CATEGORIES = [
+  { key: 'tshirts',  label: 'T-Shirts' },
+  { key: 'hoodies',  label: 'Hoodies' },
+  { key: 'headwear', label: 'Headwear' },
+  { key: 'mugs',     label: 'Mugs' },
+  { key: 'bottles',  label: 'Bottles' },
+  { key: 'other',    label: 'Accessories' },
+]
 
-  const del = id => { if (!confirm('Delete this product?')) return; persist(products.filter(p => p.id !== id)) }
-  const upsert = prod => {
-    const list = products.find(p => p.id === prod.id)
-      ? products.map(p => p.id === prod.id ? prod : p)
-      : [...products, { ...prod, id: uid() }]
-    persist(list); setEditing(null)
+const CATEGORY_RULES_ADMIN = [
+  { key: 'tshirts',  match: /t-?shirt|\btee\b/i },
+  { key: 'hoodies',  match: /hoodie|sweatshirt|crewneck/i },
+  { key: 'headwear', match: /\bcap\b|hat|beanie|bucket|twill/i },
+  { key: 'mugs',     match: /\bmug\b|cup/i },
+  { key: 'bottles',  match: /bottle|flask/i },
+  { key: 'other',    match: /bag|tote|sticker|poster|phone|pillow|print/i },
+]
+
+function autoCat(name) {
+  for (const r of CATEGORY_RULES_ADMIN) if (r.match.test(name)) return r.key
+  return 'other'
+}
+
+function ShopTab({ token }) {
+  const [products, setProducts] = useState(null)
+  const [overrides, setOverrides] = useState({})
+  const [localOv, setLocalOv] = useState({})
+  const [error, setError] = useState(null)
+  const [saving, setSaving] = useState(false)
+  const [msg, setMsg] = useState(null)
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  useEffect(() => {
+    setProducts(null); setError(null)
+    Promise.all([
+      fetch(`${API}/api/printful/products`).then(r => r.json()),
+      fetch(`${API}/api/cms`).then(r => r.json()),
+    ]).then(([pf, cms]) => {
+      if (pf.error) throw new Error(pf.error)
+      setProducts(Array.isArray(pf) ? pf : [])
+      const ov = cms.productOverrides || {}
+      setOverrides(ov)
+      setLocalOv(ov)
+    }).catch(err => setError(err.message))
+  }, [refreshKey])
+
+  const setOv = (id, field, value) =>
+    setLocalOv(prev => ({ ...prev, [id]: { ...prev[id], [field]: value } }))
+
+  const save = async () => {
+    setSaving(true); setMsg(null)
+    try {
+      const r = await fetch(`${API}/api/cms/productOverrides`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(localOv),
+      })
+      if (r.ok) { setOverrides(localOv); setMsg('ok') }
+      else setMsg('error')
+    } catch { setMsg('error') }
+    setSaving(false)
   }
+
+  const isDirty = JSON.stringify(localOv) !== JSON.stringify(overrides)
 
   return (
     <div>
-      {msg === 'local' && <div className="adm-offline">Saved locally. Deploy the backend to make changes visible to everyone.</div>}
-      {msg === 'ok'    && <div className="adm-ok">Saved to server.</div>}
       <div className="adm-section-head">
-        <h2>Shop Products {products && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({products.length})</span>}</h2>
-        <button className="btn-add" onClick={() => setEditing({})}>+ New Product</button>
+        <h2>
+          Shop Products
+          {products && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}> ({products.length})</span>}
+        </h2>
+        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+          {msg === 'ok'    && <span style={{ color: '#27ae60', fontSize: '0.82rem' }}>Saved</span>}
+          {msg === 'error' && <span style={{ color: '#c0392b', fontSize: '0.82rem' }}>Error saving</span>}
+          <button className="btn-sm" onClick={() => setRefreshKey(k => k + 1)}>Refresh</button>
+          {isDirty && <button className="btn-add" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save changes'}</button>}
+          <a href="https://www.printful.com/dashboard/products" target="_blank" rel="noopener noreferrer"
+            className="btn-sm" style={{ textDecoration: 'none' }}>Manage on Printful ↗</a>
+        </div>
       </div>
-      {products === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Loading<Dots /></p>}
-      {products?.length === 0 && <p className="adm-empty">No products yet.</p>}
+
+      <p style={{ color: '#888', fontSize: '0.82rem', marginBottom: '1.2rem' }}>
+        Products sync live from Printful. Change category or hide products below — new products are auto-categorised by name.
+      </p>
+
+      {products === null && !error && <p style={{ color: '#999', fontSize: '0.85rem' }}>Loading<Dots /></p>}
+      {error && <p style={{ color: '#c0392b', fontSize: '0.85rem' }}>Error: {error}</p>}
+      {products?.length === 0 && <p className="adm-empty">No products found in Printful store.</p>}
+
       <div className="adm-list">
-        {products?.map(p => (
-          <div key={p.id} className="adm-item">
-            <div className="adm-item-thumb">{p.photo && <img src={p.photo} alt="" />}</div>
-            <div className="adm-item-info">
-              <div className="adm-item-name">{p.name}</div>
-              <div className="adm-item-meta">
-                €{p.price}{p.priceZar ? ` · R ${p.priceZar}` : ''}
-                {p.sizes?.length > 0 ? ` · ${p.sizes.join(', ')}` : ''}
+        {products?.map(p => {
+          const ov = localOv[p.id] || {}
+          const available = ov.available !== false
+          const catAuto = autoCat(p.name)
+          const catLabel = SHOP_CATEGORIES.find(c => c.key === catAuto)?.label || 'Accessories'
+          const minPrice = p.variants?.length ? Math.min(...p.variants.map(v => v.price)) : null
+          const maxPrice = p.variants?.length ? Math.max(...p.variants.map(v => v.price)) : null
+          const priceLabel = minPrice === maxPrice ? `€${minPrice?.toFixed(2)}` : `€${minPrice?.toFixed(2)} – €${maxPrice?.toFixed(2)}`
+
+          return (
+            <div key={p.id} className="adm-item" style={{ opacity: available ? 1 : 0.45, alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.6rem' }}>
+              <div className="adm-item-thumb">
+                {p.thumbnail && <img src={p.thumbnail} alt={p.name} />}
+              </div>
+              <div className="adm-item-info" style={{ flex: 1, minWidth: 0 }}>
+                <div className="adm-item-name">{p.name}</div>
+                <div className="adm-item-meta">{priceLabel}</div>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0 }}>
+                <select
+                  value={ov.category || ''}
+                  onChange={e => setOv(p.id, 'category', e.target.value || undefined)}
+                  style={{ fontSize: '0.8rem', padding: '0.3rem 0.5rem', borderRadius: 5, border: '1.5px solid #ddd', fontFamily: 'inherit' }}
+                >
+                  <option value="">Auto: {catLabel}</option>
+                  {SHOP_CATEGORIES.map(c => (
+                    <option key={c.key} value={c.key}>{c.label}</option>
+                  ))}
+                </select>
+                <button
+                  className={`btn-sm${available ? '' : ' btn-del'}`}
+                  onClick={() => setOv(p.id, 'available', !available)}
+                  style={{ minWidth: 80 }}
+                >
+                  {available ? '● Visible' : '○ Hidden'}
+                </button>
               </div>
             </div>
-            <div className="adm-item-btns">
-              <button className="btn-sm" onClick={() => setEditing(p)}>Edit</button>
-              <button className="btn-sm btn-del" onClick={() => del(p.id)}>Delete</button>
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
-      {editing && <ShopForm prod={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} />}
     </div>
-  )
-}
-
-function ShopForm({ prod, onSave, onClose, saving }) {
-  const [f, setF] = useState({
-    id: prod.id || '', name: prod.name || '',
-    price: prod.price ?? '', priceZar: prod.priceZar ?? '',
-    sizes: Array.isArray(prod.sizes) ? prod.sizes.join(', ') : '',
-    photo: prod.photo || '',
-  })
-  const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
-  const save = () => {
-    if (!f.name.trim()) return alert('Please enter a product name.')
-    if (!f.price) return alert('Please enter a price.')
-    onSave({
-      ...f, price: parseFloat(f.price) || 0, priceZar: parseFloat(f.priceZar) || 0,
-      sizes: f.sizes ? f.sizes.split(',').map(s => s.trim()).filter(Boolean) : [],
-    })
-  }
-  return (
-    <Modal title={f.id ? 'Edit product' : 'New product'} onClose={onClose} onSave={save} saving={saving}>
-      <div className="adm-field"><label>Product name *</label><input value={f.name} onChange={set('name')} /></div>
-      <div className="adm-grid2">
-        <div className="adm-field">
-          <label>Price Euro (€) *</label>
-          <input type="number" min="0" step="0.01" value={f.price} onChange={set('price')} placeholder="22" />
-        </div>
-        <div className="adm-field">
-          <label>Price Rand (R)</label>
-          <input type="number" min="0" step="1" value={f.priceZar} onChange={set('priceZar')} placeholder="350" />
-        </div>
-      </div>
-      <div className="adm-field">
-        <label>Sizes (comma-separated — leave empty if n/a)</label>
-        <input value={f.sizes} onChange={set('sizes')} placeholder="XS, S, M, L, XL" />
-      </div>
-      <ImageUpload label="Product photo" value={f.photo} onChange={v => setF(p => ({ ...p, photo: v }))} />
-    </Modal>
   )
 }
 
@@ -1164,7 +1217,7 @@ export default function Admin({ goTo }) {
         </div>
         <div className="adm-body">
           {tab === 0 && <BlogTab     token={token} />}
-          {tab === 1 && <ShopTab     token={token} />}
+          {tab === 1 && <ShopTab token={token} />}
           {tab === 2 && <AnimaliTab  token={token} />}
           {tab === 3 && <ContentTab  token={token} />}
           {tab === 4 && <SettingsTab token={token} />}

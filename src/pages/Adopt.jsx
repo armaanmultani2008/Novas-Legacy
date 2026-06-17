@@ -70,7 +70,7 @@ function Adopt({ goTo }) {
 
   return (
       <>
-        <div className="page-hero-img">
+        <div className="page-hero-img" style={{height: '65vh'}}>
           <img src="/img/ghepardo-corsa-erba-gialla.png" alt="Adotta un animale" style={{ objectPosition: 'center 40%' }} />
           <div className="page-hero-img-overlay" />
           <div className="page-hero-text">
@@ -95,6 +95,7 @@ function Adopt({ goTo }) {
                         style={{
                           background: 'var(--off-white)',
                           border: '1px solid #EDE5D8',
+                          borderRadius: '8px',
                           overflow: 'hidden',
                           transition: 'all 0.3s',
                         }}

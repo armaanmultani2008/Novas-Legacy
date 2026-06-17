@@ -28,19 +28,44 @@ async function startCheckout(name, price, variantId, quantity, errCheckout, errB
   }
 }
 
+const CATEGORY_RULES = [
+  { key: 'tshirts',  label: 'T-Shirts',    match: /t-?shirt|\btee\b/i },
+  { key: 'hoodies',  label: 'Hoodies',     match: /hoodie|sweatshirt|crewneck/i },
+  { key: 'headwear', label: 'Headwear',    match: /\bcap\b|hat|beanie|bucket|twill/i },
+  { key: 'mugs',     label: 'Mugs',        match: /\bmug\b|cup/i },
+  { key: 'bottles',  label: 'Bottles',     match: /bottle|flask/i },
+  { key: 'other',    label: 'Accessories', match: /bag|tote|sticker|poster|phone|pillow|print/i },
+]
+
+function getCategory(name) {
+  for (const rule of CATEGORY_RULES) {
+    if (rule.match.test(name)) return rule.key
+  }
+  return 'other'
+}
+
+function getEffectiveCategory(item, overrides) {
+  return overrides[item.id]?.category || getCategory(item.name)
+}
+
 function Merch({ goTo }) {
   useScrollReveal()
   const { t } = useTranslation()
   const [loading, setLoading] = useState(null)
   const [cmsItems, setCmsItems] = useState(null)
+  const [overrides, setOverrides] = useState({})
   const [printfulItems, setPrintfulItems] = useState(null)
   const [selectedVariants, setSelectedVariants] = useState({})
   const [selectedSizes, setSelectedSizes] = useState({})
+  const [activeFilter, setActiveFilter] = useState('all')
 
   useEffect(() => {
     fetch(`${API}/api/cms`)
       .then(r => r.json())
-      .then(d => { if (d.products?.length) setCmsItems(d.products) })
+      .then(d => {
+        if (d.products?.length) setCmsItems(d.products)
+        if (d.productOverrides) setOverrides(d.productOverrides)
+      })
       .catch(() => {})
   }, [])
 
@@ -68,13 +93,23 @@ function Merch({ goTo }) {
       photo: p.thumbnail,
       price: activeVariant?.price ?? 0,
       priceZar: null,
-      sizes: p.variants?.map(v => v.size).filter(Boolean) ?? [],
+      sizes: [...new Set(p.variants?.map(v => v.size).filter(Boolean) ?? [])],
       variants: p.variants,
       isPrintful: true,
     }
   })
 
-  const shopItems = normalizedPrintful || cmsItems || FALLBACK_ITEMS
+  const allItems = (normalizedPrintful || cmsItems || FALLBACK_ITEMS)
+    .filter(item => overrides[item.id]?.available !== false)
+
+  const availableCategories = CATEGORY_RULES.filter(r =>
+    allItems.some(item => getEffectiveCategory(item, overrides) === r.key)
+  )
+
+  const shopItems = activeFilter === 'all'
+    ? allItems
+    : allItems.filter(item => getEffectiveCategory(item, overrides) === activeFilter)
+
   const infoStrip = t('merch.info', { returnObjects: true })
 
   const handleSizeSelect = (productId, size, isPrintful) => {
@@ -120,6 +155,43 @@ function Merch({ goTo }) {
           border-color: var(--dark);
         }
         .s-size { cursor: pointer; }
+        .shop-filter-bar {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-bottom: 2rem;
+          flex-wrap: wrap;
+        }
+        .shop-filter-label {
+          font-size: 0.8rem;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: var(--gray);
+        }
+        .shop-filter-select {
+          appearance: none;
+          -webkit-appearance: none;
+          background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23333' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 0.9rem center;
+          border: 1.5px solid #ddd;
+          border-radius: 6px;
+          padding: 0.5rem 2.4rem 0.5rem 0.9rem;
+          font-size: 0.88rem;
+          font-family: inherit;
+          color: var(--dark);
+          cursor: pointer;
+          transition: border-color 0.2s;
+          min-width: 160px;
+        }
+        .shop-filter-select:focus {
+          outline: none;
+          border-color: var(--gold);
+        }
+        .shop-count {
+          margin-left: auto;
+          font-size: 0.8rem;
+          color: var(--gray);
+        }
       `}</style>
 
       <div className="page-hero-img" style={{
@@ -145,7 +217,7 @@ function Merch({ goTo }) {
       </div>
 
       <div className="shop-page">
-        <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '1120px', margin: '0 auto', padding: '1rem 1.5rem' }}>
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
           <div className="rv" style={{ marginBottom: '2.5rem' }}>
@@ -155,11 +227,28 @@ function Merch({ goTo }) {
             </h2>
           </div>
 
+          {availableCategories.length > 0 && (
+            <div className="shop-filter-bar rv">
+              <span className="shop-filter-label">Filter</span>
+              <select
+                className="shop-filter-select"
+                value={activeFilter}
+                onChange={e => setActiveFilter(e.target.value)}
+              >
+                <option value="all">All products</option>
+                {availableCategories.map(c => (
+                  <option key={c.key} value={c.key}>{c.label}</option>
+                ))}
+              </select>
+              <span className="shop-count">{shopItems.length} product{shopItems.length !== 1 ? 's' : ''}</span>
+            </div>
+          )}
+
           <div className="shop-grid">
             {shopItems.map((item, i) => {
               const selectedSize = getSelectedSize(item)
               return (
-                <article key={item.id || item.name} className={`shop-card rv rv-d${Math.min((i % 3) + 1, 3)}`}>
+                <article key={item.id || item.name} className={`shop-card rv rv-d${Math.min((i % 3) + 1, 3)}`} style={{borderRadius: '8px'}}>
                   <div className="s-photo">
                     <img src={item.photo} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     <div className="s-photo-overlay" />

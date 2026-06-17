@@ -1668,7 +1668,8 @@ footer {
 }
 
 .page-content {
-  padding: 5rem 3rem;
+  padding: 4rem 1.5rem;
+  align-content: center;
   background: var(--white);
 }
 
@@ -1891,7 +1892,7 @@ footer {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
-  margin: 2rem 0 3rem;
+  margin: 2rem 0 1.5rem;
 }
 
 @media (max-width: 900px) {

@@ -8,7 +8,7 @@ function Visit({ goTo }) {
 
   return (
     <>
-      <div className="page-hero-img" style={{height: '65vh'}}>
+      <div className="page-hero-img" style={{height: '75vh'}}>
         <img src={cmsImages.visit_hero || '/img/chalet-esterno.png'} alt="Stay at Nova's Legacy" />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
@@ -33,7 +33,7 @@ function Visit({ goTo }) {
 
           <div className="chalets-grid">
             {chalets.map(c => (
-              <div key={c.name} style={{ border: '1px solid #EDE5D8', overflow: 'hidden', background: 'var(--off-white)', borderRadius: '8px' }}>
+              <div key={c.name} style={{ border: '1px solid #EDE5D8', overflow: 'overflow', background: 'var(--off-white)', borderRadius: '8px' }}>
                 <div style={{ height: '320px', overflow: 'hidden' }}>
                   {c.name === 'Chalet Nova' && <img src="/img/chalet-cucina.png" alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                   {c.name === 'Chalet Bush' && <img src="/img/chalet-esterno-2.png" alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
@@ -48,17 +48,43 @@ function Visit({ goTo }) {
             ))}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', margin: '2.5rem 0' }}>
+          <style>{`
+            .chalet-grid-imgs {
+              display: grid;
+              grid-template-columns: 1fr 1fr; /* 2 colonne su desktop */
+              gap: 6px;
+              margin: 2.5rem 0;
+            }
+            
+            @media (max-width: 900px) {
+              .chalet-grid-imgs {
+                grid-template-columns: 1fr; /* 1 colonna sotto i 900px */
+              }
+            }
+          `}</style>
+          <div className="chalet-grid-imgs">
             {[
-              { src: '/img/chalet-esterno-2.png', cap: 'External space' },
-              { src: '/img/chalet-camera.png',    cap: 'Chalet room' },Room
+              { src: '/img/external.jpg', cap: 'External space' },
+              { src: '/img/thutlwa.jpg',    cap: 'Peaceful place' },
             ].map((p, i) => (
-              <div key={i} style={{ height: '300px', overflow: 'hidden', position: 'relative' }}>
-                <img src={p.src} alt={p.cap} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}
-                  onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
-                  onMouseLeave={e => e.target.style.transform = 'none'} />
-                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)', padding: '0.8rem', color: 'rgba(255,255,255,0.8)', fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', pointerEvents: 'none' }}>{p.cap}</div>
-              </div>
+                <div key={i} style={{ height: '300px', overflow: 'hidden', position: 'relative', borderRadius: '6px' }}>
+                  <img
+                      src={p.src}
+                      alt={p.cap}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s', objectPosition: i === 0 ? 'center 110%' : 'center' }}
+                      onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
+                      onMouseLeave={e => e.target.style.transform = 'none'}
+                  />
+                  <div style={{
+                    position: 'absolute', bottom: 0, left: 0, right: 0,
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)',
+                    padding: '0.8rem', color: 'rgba(255,255,255,0.8)',
+                    fontSize: '0.68rem', letterSpacing: '0.1em',
+                    textTransform: 'uppercase', pointerEvents: 'none'
+                  }}>
+                    {p.cap}
+                  </div>
+                </div>
             ))}
           </div>
 
@@ -71,7 +97,7 @@ function Visit({ goTo }) {
               src="https://maps.google.com/maps?q=-24.845059,28.240967&z=14&output=embed"
               width="100%"
               height="320"
-              style={{ border: 0, display: 'block' }}
+              style={{ border: 0, display: 'block', borderRadius: '8px' }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

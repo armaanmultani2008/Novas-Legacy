@@ -34,7 +34,7 @@ function BlogPost({ goTo, postId }) {
 
   return (
     <>
-      <div className="page-hero-img" style={{ height: '50vh' }}>
+      <div className="page-hero-img" style={{ height: '65vh' }}>
         <img src={img} alt={post.title} style={{ objectPosition: 'center 40%' }} />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
@@ -45,8 +45,24 @@ function BlogPost({ goTo, postId }) {
       </div>
 
       <div className="page-content">
-        <div className="container" style={{ maxWidth: '740px' }}>
-          <span className="back-btn" onClick={() => goTo('blog')}>{t('blog.back_to_blog')}</span>
+        <div className="container">
+          <div style={{ marginTop: '1rem', paddingTop: '2rem', borderTop: '1px solid #EDE5D8', display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+            <button className="btn btn-outline-dark" onClick={() => goTo('blog')}>
+              ← {t('blog.back_to_blog')}
+            </button>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              {idx > 0 && (
+                  <button className="btn btn-outline-dark" onClick={() => goTo('blog-post', null, idx - 1)}>
+                    ‹ {t('blog.prev_post')}
+                  </button>
+              )}
+              {idx < items.length - 1 && (
+                  <button className="btn btn-dark" onClick={() => goTo('blog-post', null, idx + 1)}>
+                    {t('blog.next_post')} ›
+                  </button>
+              )}
+            </div>
+          </div>
 
           <div className="highlight" style={{ margin: '2rem 0' }}>
             <p style={{ fontStyle: 'italic' }}>{post.excerpt}</p>
@@ -55,24 +71,6 @@ function BlogPost({ goTo, postId }) {
           {body.map((para, i) => (
             <p key={i} style={{ lineHeight: '1.8', marginBottom: '1.2rem', color: '#333' }}>{para}</p>
           ))}
-
-          <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid #EDE5D8', display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-            <button className="btn btn-outline-dark" onClick={() => goTo('blog')}>
-              ← {t('blog.back_to_blog')}
-            </button>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              {idx > 0 && (
-                <button className="btn btn-outline-dark" onClick={() => goTo('blog-post', null, idx - 1)}>
-                  ‹ {t('blog.prev_post')}
-                </button>
-              )}
-              {idx < items.length - 1 && (
-                <button className="btn btn-dark" onClick={() => goTo('blog-post', null, idx + 1)}>
-                  {t('blog.next_post')} ›
-                </button>
-              )}
-            </div>
-          </div>
         </div>
       </div>
     </>

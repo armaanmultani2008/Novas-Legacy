@@ -51,7 +51,7 @@ function Internship({ goTo }) {
         }
       `}</style>
 
-        <div className="page-hero-img" style={{height: "65vh"}}>
+        <div className="page-hero-img" style={{height: "65dvh"}}>
           <img src="/img/internship-hero.png" alt="Internship Nova's Legacy" style={{ objectPosition: 'center 40%' }} />
           <div className="page-hero-img-overlay" />
           <div className="page-hero-text">
@@ -62,7 +62,7 @@ function Internship({ goTo }) {
         </div>
 
         <div className="page-content" style={{ padding: '4rem 1.5rem'}}>
-          <div className="container">
+          <div className="container" style={{maxWidth: '1100px', margin: '0 auto'}}>
             <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>

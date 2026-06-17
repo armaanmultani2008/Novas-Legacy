@@ -70,7 +70,7 @@ function Adopt({ goTo }) {
 
   return (
       <>
-        <div className="page-hero-img" style={{height: '65vh'}}>
+        <div className="page-hero-img" style={{height: '75dvh'}}>
           <img src="/img/ghepardo-corsa-erba-gialla.png" alt="Adotta un animale" style={{ objectPosition: 'center 40%' }} />
           <div className="page-hero-img-overlay" />
           <div className="page-hero-text">
@@ -81,7 +81,7 @@ function Adopt({ goTo }) {
         </div>
 
         <div className="page-content">
-          <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 3rem' }}>
+          <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0rem 3rem' }}>
             <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
             <p style={{ fontSize: '1rem', lineHeight: '1.85', color: '#555', fontWeight: 300, maxWidth: '680px', marginBottom: '2.5rem' }}>

@@ -8,7 +8,7 @@ function Horses({ goTo }) {
   return (
       <>
         <div className="page-hero-img" style={{
-          height: '75vh',
+          height: '75dvh',
           minHeight: '450px',
           position: 'relative',
           overflow: 'hidden'
@@ -23,7 +23,7 @@ function Horses({ goTo }) {
         </div>
 
         <div className="page-content" style={{ padding: '4rem 1.5rem' }}>
-          <div className="container">
+          <div className="container" style={{ maxWidth: '1100px', margin: '0 auto'}}>
             <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -62,13 +62,13 @@ function Horses({ goTo }) {
             <p>{t('horses.vol_p1')}</p>
             <p>{t('horses.vol_p2')}</p>
 
-            <div style={{ height: '480px', overflow: 'hidden', position: 'relative', margin: '2.5rem 0', borderRadius: '6px' }}>
-              <img className={'horses-img'} src="/img/horse-project.png" alt="Waterberg Reserve" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <div style={{overflow: 'hidden', position: 'relative', margin: '2.5rem 0', borderRadius: '6px' }}>
+              <img className={'horses-img'} src="/img/horse-project.png" alt="Waterberg Reserve" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', maxHeight: '500px' }} />
               <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)', padding: '0.8rem 1.2rem', color: 'rgba(255,255,255,0.8)', fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', pointerEvents: 'none' }}>Nova&apos;s Legacy — Waterberg, Limpopo</div>
             </div>
 
             <style>{`
-              .@media (max-width: 768px) { .horses-img {object-position: 35% center !important;}}
+              .@media (max-width: 768px) { .horses-img {object-position: 45% center !important; max-height: 400px !important;}}
             `}</style>
 
             <h2>{t('horses.ecosystem_title').split(' ').slice(0,-1).join(' ')} <em>{t('horses.ecosystem_title').split(' ').slice(-1)}</em></h2>

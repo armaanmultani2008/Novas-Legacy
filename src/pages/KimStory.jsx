@@ -12,7 +12,7 @@ function KimStory({ goTo }) {
 
   return (
     <>
-      <div className="page-hero-img" style={{ height: '52vh' }}>
+      <div className="page-hero-img" style={{ height: '52dvh' }}>
         <img src={cmsImages.kim_story_hero || KIM_HERO_BG} alt="Savana al tramonto — Nova's Legacy" style={{ objectPosition: 'center 55%' }} />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">

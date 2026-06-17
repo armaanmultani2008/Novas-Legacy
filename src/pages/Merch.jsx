@@ -195,7 +195,7 @@ function Merch({ goTo }) {
       `}</style>
 
       <div className="page-hero-img" style={{
-        height: '65vh',
+        height: '65dvh',
         minHeight: '450px',
         position: 'relative',
         overflow: 'hidden'
@@ -252,7 +252,6 @@ function Merch({ goTo }) {
                   <div className="s-photo">
                     <img src={item.photo} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     <div className="s-photo-overlay" />
-                    <div className="s-emoji-wrap"><div className="s-emoji">◆</div></div>
                     <div className="s-brand">Nova&apos;s Legacy</div>
                   </div>
 

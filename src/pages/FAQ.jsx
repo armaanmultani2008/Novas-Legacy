@@ -13,15 +13,12 @@ function FAQ({ goTo }) {
     const toggleAccordion = (index) => {
         setOpenIndex(openIndex === index ? null : index)
     }
-
-    // Recupera la lista di domande e risposte per la categoria attiva dal file di traduzione
     const currentFaqs = t(`faq.categories.${activeCategory}.questions`, { returnObjects: true }) || []
 
     return (
         <>
-            {/* ── HERO SECTION ── */}
-            <div className="page-hero-img" style={{ height: '45vh' }}>
-                <img src="/img/ghepardo-visita-vet.png" alt="FAQ Nova's Legacy" style={{ objectPosition: 'center 35%' }} />
+            <div className="page-hero-img" style={{ height: '65dvh' }}>
+                <img className={"page-hero-img-photo"} src="/img/nova-sdraiata.png" alt="FAQ Nova's Legacy" style={{ objectPosition: 'center 40%' }} />
                 <div className="page-hero-img-overlay" />
                 <div className="page-hero-text">
                     <span className="label label-light">{t('faq.hero_label')}</span>
@@ -30,11 +27,14 @@ function FAQ({ goTo }) {
                 </div>
             </div>
 
-            <div className="page-content" style={{ paddingBottom: '5rem' }}>
+            <style>{`
+                @media(max-width: 1080px) { .page-hero-img-photo {object-position: 90% center !important; }}
+            `}</style>
+
+            <div className="page-content" style={{ padding: '3rem 1.5rem' }}>
                 <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 1.5rem' }}>
                     <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
-                    {/* ── CATEGORY TABS ── */}
                     <div
                         className="rv"
                         style={{
@@ -66,7 +66,6 @@ function FAQ({ goTo }) {
                         ))}
                     </div>
 
-                    {/* ── ACCORDION ITEMS ── */}
                     <div className="rv" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {currentFaqs.map((faq, idx) => {
                             const isOpen = openIndex === idx
@@ -81,7 +80,6 @@ function FAQ({ goTo }) {
                                         transition: 'all 0.3s'
                                     }}
                                 >
-                                    {/* Intestazione Domanda */}
                                     <div
                                         onClick={() => toggleAccordion(idx)}
                                         style={{
@@ -115,8 +113,6 @@ function FAQ({ goTo }) {
                       ◆
                     </span>
                                     </div>
-
-                                    {/* Corpo Risposta */}
                                     <div
                                         style={{
                                             maxHeight: isOpen ? '500px' : '0',
@@ -140,8 +136,6 @@ function FAQ({ goTo }) {
                             )
                         })}
                     </div>
-
-                    {/* ── CONTATTI DI SUPPORTO IN FONDO ── */}
                     <div
                         className="highlight rv"
                         style={{

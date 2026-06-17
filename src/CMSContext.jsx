@@ -9,7 +9,6 @@ export function CMSProvider({ children }) {
   const [images, setImages] = useState({})
 
   useEffect(() => {
-    // Carica contenuto personalizzato e sovrascrive i18n
     const saved = (() => {
       try { return JSON.parse(localStorage.getItem('nl_content')) } catch { return null }
     })()

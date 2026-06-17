@@ -68,7 +68,6 @@ async function initDB() {
                 _cms = data;
                 console.log('[DB] Connesso a MongoDB Atlas e dati sincronizzati.');
             } else {
-                // MIGRAZIONE FORZATA: Se Atlas non ha il documento 'cms', carichiamo quello locale subito
                 console.log('[DB] Connesso ad Atlas. Documento cms non trovato. Avvio migrazione del cms.json locale...');
                 await _db.collection('store').replaceOne({ _id: 'cms' }, { _id: 'cms', ..._cms }, { upsert: true });
                 console.log('[DB] Migrazione completata: I dati locali ora sono al sicuro su Atlas.');
@@ -90,11 +89,11 @@ const stripe = new Stripe(envVars.STRIPE_SECRET_KEY);
 
 const PRINTFUL_BASE = 'https://api.printful.com';
 const printfulGet = (path) =>
-  fetch(`${PRINTFUL_BASE}${path}`, {
-    headers: { 'Authorization': `Bearer ${envVars.PRINTFUL_API_KEY}` },
-  }).then(r => r.json());
+    fetch(`${PRINTFUL_BASE}${path}`, {
+        headers: { 'Authorization': `Bearer ${envVars.PRINTFUL_API_KEY}` },
+    }).then(r => r.json());
 
-// ── Brevo (HTTP API — no domain needed, just verify sender email) ─────────────
+// ── Brevo (HTTP API — Mittente dinamico da Render) ───────────────────────────
 const EMAIL_FROM_NAME = "Nova's Legacy";
 const EMAIL_FROM_ADDR = envVars.EMAIL_FROM || 'armaanmultani2008@gmail.com';
 
@@ -168,28 +167,7 @@ async function sendOrderConfirmation(toEmail, toName, productName, amount) {
     });
 }
 
-async function notifyKimOrder(toName, toEmail, productName, amount, address) {
-    await sendEmail({
-        to: envVars.EMAIL_TO || 'kim@novaslegacy.co.za',
-        subject: `New shop order: ${productName} from ${toName || toEmail}`,
-        html: `
-      <div style="font-family:sans-serif;max-width:480px">
-        <h3>New shop order</h3>
-        <ul>
-          <li><strong>Product:</strong> ${productName}</li>
-          <li><strong>Customer:</strong> ${toName || '—'}</li>
-          <li><strong>Email:</strong> ${toEmail}</li>
-          <li><strong>Amount:</strong> €${(amount / 100).toFixed(2)}</li>
-          <li><strong>Ship to:</strong> ${address || '—'}</li>
-        </ul>
-        <p>Printful will handle printing and shipping automatically.</p>
-        <p>See full details in your <a href="https://dashboard.stripe.com">Stripe Dashboard</a>.</p>
-      </div>`,
-    });
-}
-
 app.use(cors());
-// express.json() must NOT apply to /api/stripe/webhook (needs raw body for signature verification)
 app.use((req, res, next) => {
     if (req.path === '/api/stripe/webhook') return next();
     express.json()(req, res, next);
@@ -221,17 +199,14 @@ app.get('/api/paypal-config', (req, res) => {
 
 app.post('/api/admin/login', async (req, res) => {
     const { password } = req.body;
-
     if (!adminPasswordHash) {
         return res.status(400).json({ error: "Configura l'ADMIN_PASSWORD_HASH nel file .env di Render." });
     }
-
     const valid = await bcrypt.compare(password || '', adminPasswordHash);
     if (valid) {
         const token = jwt.sign({ role: 'admin' }, envVars.JWT_SECRET || 'secret_provvisorio', { expiresIn: '1h' });
         return res.json({ token });
     }
-
     return res.status(401).json({ error: 'Password errata' });
 });
 
@@ -260,7 +235,6 @@ app.post('/api/admin/recover', async (req, res) => {
     if (!newPassword || newPassword.length < 8) {
         return res.status(400).json({ error: 'La nuova password deve avere almeno 8 caratteri.' });
     }
-
     adminPasswordHash = await bcrypt.hash(newPassword, 10);
     const token = jwt.sign({ role: 'admin' }, envVars.JWT_SECRET || 'secret_provvisorio', { expiresIn: '1h' });
     res.json({ ok: true, token });
@@ -291,41 +265,41 @@ app.put('/api/admin/paypal-config', (req, res) => {
 
 // ── Printful: debug risposta grezza ──────────────────────────────────────────
 app.get('/api/printful/debug', async (_req, res) => {
-  try {
-    const raw = await printfulGet('/store/products');
-    res.json(raw);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    try {
+        const raw = await printfulGet('/store/products');
+        res.json(raw);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 // ── Printful: prodotti dello store ───────────────────────────────────────────
 app.get('/api/printful/products', async (_req, res) => {
-  try {
-    const raw = await printfulGet('/store/products');
-    const list = Array.isArray(raw.result) ? raw.result : raw.result?.sync_products ?? [];
-    if (!list.length) return res.json([]);
+    try {
+        const raw = await printfulGet('/store/products');
+        const list = Array.isArray(raw.result) ? raw.result : raw.result?.sync_products ?? [];
+        if (!list.length) return res.json([]);
 
-    const products = await Promise.all(list.map(async (p) => {
-      const { result } = await printfulGet(`/store/products/${p.id}`);
-      const sp = result.sync_product;
-      return {
-        id: sp.id,
-        name: sp.name,
-        thumbnail: sp.thumbnail_url,
-        variants: result.sync_variants.map(v => ({
-          id: v.id,
-          name: v.name,
-          price: parseFloat(v.retail_price),
-          size: v.size || null,
-        })),
-      };
-    }));
+        const products = await Promise.all(list.map(async (p) => {
+            const { result } = await printfulGet(`/store/products/${p.id}`);
+            const sp = result.sync_product;
+            return {
+                id: sp.id,
+                name: sp.name,
+                thumbnail: sp.thumbnail_url,
+                variants: result.sync_variants.map(v => ({
+                    id: v.id,
+                    name: v.name,
+                    price: parseFloat(v.retail_price),
+                    size: v.size || null,
+                })),
+            };
+        }));
 
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+        res.json(products);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 // ── Stripe: abbonamento adozione ─────────────────────────────────────────────
@@ -379,6 +353,7 @@ app.post('/api/stripe/portal', async (req, res) => {
     }
 });
 
+// ── Stripe Webhook ───────────────────────────────────────────────────────────
 app.post('/api/stripe/webhook',
     express.raw({ type: 'application/json' }),
     async (req, res) => {
@@ -393,90 +368,82 @@ app.post('/api/stripe/webhook',
             return res.status(400).json({ error: err.message });
         }
 
-        // Respond immediately — Stripe requires <30s response
         res.json({ received: true });
-
         console.log('[webhook] event received:', event.type);
 
         if (event.type === 'checkout.session.completed') {
-          // Retrieve full session so shipping_details is always populated
-          const s = await stripe.checkout.sessions.retrieve(event.data.object.id);
-          console.log('[webhook] session mode:', s.mode, '| variantId:', s.metadata?.variantId, '| email:', s.customer_details?.email);
+            const s = await stripe.checkout.sessions.retrieve(event.data.object.id);
+            console.log('[webhook] session mode:', s.mode, '| variantId:', s.metadata?.variantId, '| email:', s.customer_details?.email);
 
-          if (s.mode === 'subscription') {
-            const animalName = s.metadata?.animalName || '—';
-            const animalSpecies = s.metadata?.animalSpecies || '—';
-            const monthlyEur = s.metadata?.monthlyEur || '—';
-            const adopterEmail = s.customer_details?.email || s.customer_email || '';
-            const adopterName = s.customer_details?.name || '';
-            await Promise.all([
-              sendAdoptionWelcome(adopterEmail, adopterName, animalName, animalSpecies, monthlyEur),
-              notifyKimAdoption(adopterName, adopterEmail, animalName, monthlyEur),
-            ]);
-          }
+            // FLUSSO ABBONAMENTI ADOZIONE
+            if (s.mode === 'subscription') {
+                const animalName = s.metadata?.animalName || '—';
+                const animalSpecies = s.metadata?.animalSpecies || '—';
+                const monthlyEur = s.metadata?.monthlyEur || '—';
+                const adopterEmail = s.customer_details?.email || s.customer_email || '';
+                const adopterName = s.customer_details?.name || '';
+                await Promise.all([
+                    sendAdoptionWelcome(adopterEmail, adopterName, animalName, animalSpecies, monthlyEur),
+                    notifyKimAdoption(adopterName, adopterEmail, animalName, monthlyEur),
+                ]);
+            }
 
-          if (s.mode === 'payment' && s.metadata?.variantId) {
-            const variantId = parseInt(s.metadata.variantId);
-            const qty = parseInt(s.metadata.quantity || '1');
-            // shipping_details preferred, fall back to customer_details.address (where Stripe puts it when billing=shipping)
-            const addr = s.shipping_details?.address || s.shipping?.address || s.customer_details?.address || null;
-            const recipientName = s.shipping_details?.name || s.customer_details?.name || '';
-            console.log('[webhook] payment | variantId:', variantId, '| addr:', addr ? `OK (${addr.city})` : 'MISSING', '| PRINTFUL_API_KEY:', envVars.PRINTFUL_API_KEY ? 'set' : 'MISSING');
-            const customerEmail = s.customer_details?.email || '';
-            const productName = s.metadata?.productName || 'Nova\'s Legacy product';
-            const amount = s.amount_total || 0;
-            const addrString = addr
-              ? `${addr.line1}, ${addr.city}, ${addr.country} ${addr.postal_code}`
-              : '—';
+            // FLUSSO SHOP PRODOTTI (PRINTFUL)
+            if (s.mode === 'payment' && s.metadata?.variantId) {
+                const variantId = parseInt(s.metadata.variantId);
+                const qty = parseInt(s.metadata.quantity || '1');
+                const addr = s.shipping_details?.address || s.shipping?.address || s.customer_details?.address || null;
+                const recipientName = s.shipping_details?.name || s.customer_details?.name || '';
+                const customerEmail = s.customer_details?.email || '';
+                const productName = s.metadata?.productName || 'Nova\'s Legacy product';
+                const amount = s.amount_total || 0;
 
-            let printfulOk = false;
-            if (addr && envVars.PRINTFUL_API_KEY) {
-              try {
-                const pfRes = await fetch(`${PRINTFUL_BASE}/orders`, {
-                  method: 'POST',
-                  headers: {
-                    'Authorization': `Bearer ${envVars.PRINTFUL_API_KEY}`,
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    recipient: {
-                      name: recipientName,
-                      address1: addr.line1,
-                      address2: addr.line2 || '',
-                      city: addr.city,
-                      state_code: addr.state || '',
-                      country_code: addr.country,
-                      zip: addr.postal_code,
-                      email: customerEmail,
-                    },
-                    items: [{ sync_variant_id: variantId, quantity: qty }],
-                  }),
-                });
-                printfulOk = pfRes.ok;
-                if (!pfRes.ok) {
-                  const pfErr = await pfRes.json().catch(() => ({}));
-                  console.error('Printful order error:', pfErr);
+                let printfulOk = false;
+                if (addr && envVars.PRINTFUL_API_KEY) {
+                    try {
+                        const pfRes = await fetch(`${PRINTFUL_BASE}/orders`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${envVars.PRINTFUL_API_KEY}`,
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                recipient: {
+                                    name: recipientName,
+                                    address1: addr.line1,
+                                    address2: addr.line2 || '',
+                                    city: addr.city,
+                                    state_code: addr.state || '',
+                                    country_code: addr.country,
+                                    zip: addr.postal_code,
+                                    email: customerEmail,
+                                },
+                                items: [{ sync_variant_id: variantId, quantity: qty }],
+                            }),
+                        });
+                        printfulOk = pfRes.ok;
+                        if (!pfRes.ok) {
+                            const pfErr = await pfRes.json().catch(() => ({}));
+                            console.error('Printful order error:', pfErr);
+                        }
+                    } catch (err) {
+                        console.error('Printful order error:', err.message);
+                    }
                 }
-              } catch (err) {
-                console.error('Printful order error:', err.message);
-              }
-            }
 
-            console.log('[webhook] sending emails to:', customerEmail, '| printfulOk:', printfulOk);
-            try {
-              await Promise.all([
-                sendOrderConfirmation(customerEmail, recipientName, productName, amount),
-                notifyKimOrder(recipientName, customerEmail, productName, amount, addrString),
-              ]);
-              console.log('[webhook] emails sent OK');
-            } catch (emailErr) {
-              console.error('[webhook] email error:', emailErr.message);
-            }
+                // Invio email SOLO al cliente (Kim riceve già la notifica automatica da Printful)
+                console.log('[webhook] sending confirmation email to customer:', customerEmail);
+                try {
+                    await sendOrderConfirmation(customerEmail, recipientName, productName, amount);
+                    console.log('[webhook] customer email sent OK');
+                } catch (emailErr) {
+                    console.error('[webhook] customer email error:', emailErr.message);
+                }
 
-            if (!printfulOk) {
-              console.error(`ALERT: Printful order FAILED for Stripe session ${s.id} — manual action required`);
+                if (!printfulOk) {
+                    console.error(`ALERT: Printful order FAILED for Stripe session ${s.id} — manual action required`);
+                }
             }
-          }
         }
     }
 );
@@ -517,6 +484,7 @@ app.post('/api/stripe/checkout', async (req, res) => {
     }
 });
 
+// ── Modulo Contatti ──────────────────────────────────────────────────────────
 app.post('/api/contact', async (req, res) => {
     const { name, surname, email, phone, reason, message } = req.body;
     if (!name || !email) return res.status(400).json({ error: 'Nome ed email richiesti' });
@@ -525,8 +493,9 @@ app.post('/api/contact', async (req, res) => {
     }
     try {
         await sendEmail({
-            to: 'armaanmultani2008@gmail.com',
-            replyTo: email,
+            // Invia dinamicamente a EMAIL_TO configurata su Render (Kim)
+            to: envVars.EMAIL_TO || 'kim@novaslegacy.co.za',
+            replyTo: email, // Permette di rispondere direttamente alla mail dell'utente cliccando su "Rispondi"
             subject: `Nuovo contatto: ${reason || 'Richiesta generica'} — ${name} ${surname || ''}`.trim(),
             html: `
         <div style="font-family:sans-serif;max-width:520px;color:#111">

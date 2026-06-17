@@ -124,6 +124,32 @@ async function sendAdoptionWelcome(toEmail, toName, animalName, animalSpecies, m
     });
 }
 
+async function sendMerchConfirmation(toEmail, toName, productName, quantity, address) {
+    if (!envVars.EMAIL_USER || !envVars.EMAIL_PASS) return;
+    const addrLine = address
+        ? `${address.line1}${address.line2 ? ', ' + address.line2 : ''}, ${address.city}, ${address.country}`
+        : '—';
+    await transporter.sendMail({
+        from: `"Nova's Legacy" <${envVars.EMAIL_USER}>`,
+        to: toEmail,
+        subject: `Order confirmed — Nova's Legacy`,
+        html: `
+      <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#111">
+        <h2 style="color:#C8880A">Thank you${toName ? ', ' + toName : ''}!</h2>
+        <p>Your order has been received and is being prepared.</p>
+        <table style="border-collapse:collapse;width:100%;margin:1rem 0">
+          <tr><td style="padding:6px 12px;font-weight:bold">Product</td><td style="padding:6px 12px">${productName}</td></tr>
+          <tr style="background:#f5f5f5"><td style="padding:6px 12px;font-weight:bold">Quantity</td><td style="padding:6px 12px">${quantity}</td></tr>
+          <tr><td style="padding:6px 12px;font-weight:bold">Ship to</td><td style="padding:6px 12px">${addrLine}</td></tr>
+        </table>
+        <p>You will receive a shipping notification once your order is on its way. For any questions write to
+           <a href="mailto:kim@novaslegacy.co.za">kim@novaslegacy.co.za</a>.</p>
+        <p>Every purchase directly supports the animals at Nova's Legacy — thank you for making a difference!</p>
+        <p style="margin-top:2rem;font-size:0.85rem;color:#888">Nova's Legacy — Bela-Bela, Limpopo, South Africa</p>
+      </div>`,
+    });
+}
+
 async function notifyKim(toName, toEmail, animalName, monthlyEur) {
     if (!envVars.EMAIL_USER || !envVars.EMAIL_PASS) return;
     await transporter.sendMail({
@@ -352,8 +378,11 @@ app.post('/api/stripe/webhook',
           if (s.mode === 'payment' && s.metadata?.variantId) {
             const variantId = parseInt(s.metadata.variantId);
             const qty = parseInt(s.metadata.quantity || '1');
+            const productName = s.metadata?.productName || 'Merch';
             const addr = s.shipping_details?.address;
             const recipientName = s.shipping_details?.name || s.customer_details?.name || '';
+            const buyerEmail = s.customer_details?.email || '';
+
             if (addr && envVars.PRINTFUL_API_KEY) {
               try {
                 await fetch(`${PRINTFUL_BASE}/orders`, {
@@ -371,7 +400,7 @@ app.post('/api/stripe/webhook',
                       state_code: addr.state || '',
                       country_code: addr.country,
                       zip: addr.postal_code,
-                      email: s.customer_details?.email || '',
+                      email: buyerEmail,
                     },
                     items: [{ sync_variant_id: variantId, quantity: qty }],
                   }),
@@ -379,6 +408,10 @@ app.post('/api/stripe/webhook',
               } catch (err) {
                 console.error('Printful order error:', err.message);
               }
+            }
+
+            if (buyerEmail) {
+              await sendMerchConfirmation(buyerEmail, recipientName, productName, qty, addr);
             }
           }
         }
@@ -412,7 +445,7 @@ app.post('/api/stripe/checkout', async (req, res) => {
             sessionData.shipping_address_collection = {
                 allowed_countries: ['AT','AU','BE','CA','CH','CZ','DE','DK','ES','FI','FR','GB','GR','HU','IE','IT','JP','NL','NO','NZ','PL','PT','RO','SE','SG','SK','US','ZA'],
             };
-            sessionData.metadata = { variantId: String(variantId), quantity: String(quantity) };
+            sessionData.metadata = { variantId: String(variantId), quantity: String(quantity), productName: name };
         }
 
         const session = await stripe.checkout.sessions.create(sessionData);

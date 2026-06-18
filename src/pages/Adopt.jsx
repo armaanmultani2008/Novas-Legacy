@@ -139,30 +139,28 @@ function Adopt({ goTo }) {
               </p>
             </div>
 
-            <div style={{ marginTop: '4rem', padding: '2.5rem', background: '#F7F3EE', border: '1px solid #EDE5D8' }}>
+            <div className="portal-box">
               <h2 style={{ fontFamily: 'var(--serif)', fontSize: '1.5rem', marginBottom: '0.5rem', color: 'var(--dark)' }}>
                 {t('adopt.portal_title')} <em>{t('adopt.portal_title_em')}</em>
               </h2>
               <p style={{ fontSize: '0.88rem', color: '#777', marginBottom: '1.5rem', fontWeight: 300 }}>
                 {t('adopt.portal_desc')}
               </p>
-              <form onSubmit={handlePortal} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+              <form onSubmit={handlePortal} className="portal-form">
                 <input
                     type="email"
                     required
                     placeholder={t('adopt.portal_email_placeholder')}
                     value={portalEmail}
                     onChange={e => { setPortalEmail(e.target.value); setPortalError(null) }}
+                    className="portal-input"
                     style={{
-                      flex: 1, minWidth: '240px', padding: '0.75rem 1rem',
                       border: portalError ? '1px solid #c0392b' : '1px solid #C8880A',
-                      background: '#fff', fontSize: '0.9rem', fontFamily: 'var(--sans)',
-                      outline: 'none',
                     }}
                 />
                 <button
                     type="submit"
-                    className="btn btn-dark"
+                    className="btn btn-dark portal-btn"
                     disabled={portalLoading}
                     style={{ opacity: portalLoading ? 0.6 : 1 }}
                 >

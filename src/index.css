@@ -1918,6 +1918,45 @@ footer {
   .adopt-content { padding: 2rem 1.2rem; }
 }
 
+.portal-box {
+  margin-top: 4rem;
+  padding: 2.5rem;
+  background: #F7F3EE;
+  border: 1px solid #EDE5D8;
+}
+@media (max-width: 600px) {
+  .portal-box { padding: 1.5rem; }
+}
+
+.portal-form {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.portal-input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  font-size: 0.9rem;
+  font-family: var(--sans);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.portal-btn {
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .portal-form { flex-direction: column; }
+  .portal-input { width: 100%; }
+  .portal-btn   { width: 100%; }
+}
+
 @media (max-width: 900px) {
   .page-grid-3  { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
   .chalets-grid { grid-template-columns: repeat(2, 1fr); }

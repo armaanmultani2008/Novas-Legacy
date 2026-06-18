@@ -20,7 +20,6 @@ function Navbar({ goTo }) {
       children: [
         { label: t('nav.cheetah_project'), page: 'conservation', sym: '◆' },
         { label: t('nav.horses'),          page: 'horses',       sym: '◆' },
-        /* ── NUOVA PAGINA AGGIUNTA QUI ── */
         { label: t('nav.other_animals', 'Other Animals'), page: 'other-animals', sym: '◆' },
       ],
     },
@@ -32,6 +31,7 @@ function Navbar({ goTo }) {
         { label: t('nav.internship'),  page: 'internship',  sym: '→' },
         { label: t('nav.stay'),        page: 'visit',       sym: '→' },
         { label: t('nav.cheetah_run'), page: 'cheetah-run', sym: '→' },
+        { label: t('nav.FAQ'), page: 'faq', sym: '→'},
       ],
     },
     { label: t('nav.blog'), page: 'blog' },
@@ -70,11 +70,9 @@ function Navbar({ goTo }) {
 
   return (
       <>
-        {/* ── TOP BAR ── */}
         <nav className={`nn ${solid || menuOpen ? 'nn--solid' : ''}`}>
           <div className="nn__wrap">
 
-            {/* Logo */}
             <div className="nn__logo" onClick={() => handleNav('home')}>
               Nova&apos;s <em>Legacy</em>
             </div>
@@ -136,7 +134,6 @@ function Navbar({ goTo }) {
                         : handleNav(item.page)
                     }
                 >
-                  <span className="ovmenu__n">{String(idx + 1).padStart(2, '0')}</span>
                   {item.label}
                   {item.children && (
                       <span className="ovmenu__toggle">{activeDropdown === item.label ? '−' : '+'}</span>

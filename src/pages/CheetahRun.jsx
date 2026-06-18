@@ -33,7 +33,7 @@ function CheetahRun({ goTo }) {
 
   return (
     <>
-      <div className="page-hero-img" style={{ position: 'relative', overflow: 'hidden', height: '75vh' }}>
+      <div className="page-hero-img" style={{ position: 'relative', overflow: 'hidden', height: '75dvh' }}>
         {SLIDE_IMGS.map((src, i) => (
           <img
             key={src}
@@ -86,7 +86,7 @@ function CheetahRun({ goTo }) {
       </div>
 
       <div className="page-content" style={{ padding: '4rem 1.5rem', alignContent: 'center' }}>
-        <div className="container">
+        <div className="container" style={{ maxWidth: '1100px', margin: '0 auto'}}>
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>

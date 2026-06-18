@@ -25,12 +25,12 @@ function Blog({ goTo }) {
       .catch(() => {})
   }, [])
 
-  const items = posts || fallback.map((p, i) => ({ ...p, id: String(i), img: FALLBACK_IMGS[i] }))
+  const items = posts || (Array.isArray(fallback) ? fallback.map((p, i) => ({ ...p, id: String(i), img: FALLBACK_IMGS[i] })) : []);
 
   return (
     <>
-      <div className="page-hero-img">
-        <img src="/img/ghepardo-corsa-2.png" alt="Blog Nova's Legacy" style={{ objectPosition: 'center 40%' }} />
+      <div className="page-hero-img" style={{height: '65dvh'}}>
+        <img src="/img/ghepardo-corsa-2.png" alt="Blog Nova's Legacy" style={{ objectPosition: 'center 20%' }} />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">{t('blog.hero_label')}</span>

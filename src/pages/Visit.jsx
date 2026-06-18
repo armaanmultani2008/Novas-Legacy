@@ -8,7 +8,7 @@ function Visit({ goTo }) {
 
   return (
     <>
-      <div className="page-hero-img" style={{height: '75vh'}}>
+      <div className="page-hero-img" style={{height: '75dvh'}}>
         <img src={cmsImages.visit_hero || '/img/chalet-esterno.png'} alt="Stay at Nova's Legacy" />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
@@ -19,7 +19,7 @@ function Visit({ goTo }) {
       </div>
 
       <div className="page-content" style={{ padding: '4rem 1.5rem'}}>
-        <div className="container">
+        <div className="container" style={{maxWidth: '1100px'}}>
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
           <div style={{display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>

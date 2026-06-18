@@ -62,7 +62,7 @@ function OtherAnimals({ goTo }) {
                 .responsive-grid-3 {
                   display: grid;
                   grid-template-columns: 1fr; 
-                  gap: 6px; /* Gap identico a NovaStory */
+                  gap: 6px; 
                   margin: 2.5rem 0;
                 }
                 .responsive-grid-2 {
@@ -85,7 +85,7 @@ function OtherAnimals({ goTo }) {
                 }
             `}</style>
 
-            <div className="page-hero-img" style={{ height: '75vh', minHeight: '450px', position: 'relative', overflow: 'hidden' }}>
+            <div className="page-hero-img" style={{ height: '75dvh', minHeight: '450px', position: 'relative', overflow: 'hidden' }}>
                 <picture style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}>
                     <source media="(max-width: 768px)" srcSet="/img/leoni-cuccioli.png" />
                     <img
@@ -104,7 +104,7 @@ function OtherAnimals({ goTo }) {
             </div>
 
             <div className="page-content" style={{padding: '4rem 1.5rem'}}>
-                <div className="container">
+                <div className="container" style={{maxWidth: '1100px', margin: '0 auto'}}>
                     <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
                     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '3rem' }}>
@@ -120,7 +120,7 @@ function OtherAnimals({ goTo }) {
                     <p>{t('other_animals.sanctuary_p1', 'In addition to cheetahs, we provide a lifelong home to many other animal species. Lions, tigers, and small wild cats all find the care and protection they deserve here. Alongside them, we also care for numerous free-roaming herbivores, offering them a safe place to live out their lives.')}</p>
 
                     <div className="highlight">
-                        <h3 style={{ color: 'var(--dark)', marginBottom: '0.5rem'}}>
+                        <h3 style={{ color: 'var(--dark)', marginBottom: '0.5rem', fontFamily: 'var(--serif)'}}>
                             {t('other_animals.feracare_title', 'In Partnership with FeraCare Wildlife Centre')}
                         </h3>
                         <p style={{ fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
@@ -173,7 +173,10 @@ function OtherAnimals({ goTo }) {
                                 <img
                                     src={ALL_PHOTOS[i]}
                                     alt={photoCaps[i]}
-                                    style={imgStyle}
+                                    style={{
+                                        ...imgStyle,
+                                        objectPosition: i === 7 ? '100% center' : imgStyle.objectPosition || 'center'
+                                    }}
                                     onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
                                     onMouseLeave={e => e.target.style.transform = 'none'}
                                 />

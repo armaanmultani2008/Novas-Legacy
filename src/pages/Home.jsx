@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import Turnstile from "react-turnstile";
 import Lightbox from '../components/Lightbox'
 import { useCMSImages } from '../CMSContext'
 
@@ -116,6 +117,7 @@ function Home({ goTo }) {
 
   const [contactForm, setContactForm] = useState({ name: '', surname: '', email: '', phone: '', reason: '', message: '' })
   const [contactStatus, setContactStatus] = useState(null)
+  const [turnstileToken, setTurnstileToken] = useState(null)
   async function handleContactSubmit(e) {
     e.preventDefault()
     setContactStatus('sending')
@@ -123,13 +125,17 @@ function Home({ goTo }) {
       const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://novas-legacy-api.onrender.com'}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(contactForm),
+        body: JSON.stringify({
+          ...contactForm,
+          turnstileToken: turnstileToken,
+        }),
       })
       if (!res.ok) throw new Error('server')
       setContactStatus('ok')
       setContactForm({ name: '', surname: '', email: '', phone: '', reason: '', message: '' })
     } catch {
       setContactStatus('error')
+      window.turnstile?.reset()
     }
   }
 
@@ -565,7 +571,7 @@ function Home({ goTo }) {
         <style>{`
           @media (max-width: 1200px) {
             .big-cta { height: 480px !important; }
-            .big-cta-img { object-position: 45% center !important; }}
+            .big-cta-img { object-position: 25% center !important; }}
         `}</style>
 
         <section className="contact-section" id="contact">
@@ -666,6 +672,13 @@ function Home({ goTo }) {
                     value={contactForm.message}
                     onChange={e => setContactForm(f => ({ ...f, message: e.target.value }))}
                 />
+                <div style={{marginBotttom: '1.5rem', display: 'flex', justifyContent: 'center'}}>
+                  <Turnstile
+                      sitekey={"0x4AAAAAADmhMcdVflcdShPP"}
+                      onVerify={(token) => setTurnstileToken(token)}
+                      onExpire={()=> setTurnstileToken(null)}
+                  />
+                </div>
                 {contactStatus === 'ok' && (
                     <p style={{ color: '#3a7d44', fontFamily: 'Outfit,sans-serif', margin: '0 0 0.5rem' }}>
                       {t('home.form_success')}
@@ -679,7 +692,7 @@ function Home({ goTo }) {
                 <button
                     type="submit"
                     className="btn btn-dark"
-                    disabled={contactStatus === 'sending'}
+                    disabled={contactStatus === 'sending' || !turnstileToken}
                 >
                   {contactStatus === 'sending' ? '...' : t('common.send_message')}
                 </button>

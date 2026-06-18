@@ -8,7 +8,7 @@ function Conservation({ goTo }) {
   return (
       <>
         <div className="page-hero-img" style={{
-          height: '65vh',
+          height: '65dvh',
           minHeight: '450px',
           position: 'relative',
           overflow: 'hidden'
@@ -38,11 +38,11 @@ function Conservation({ goTo }) {
         </div>
 
         <style>{`
-          @media (max-width: 768px) { .page-hero-img-photo { object-position: 40% center !important} }
+          @media (max-width: 768px) { .page-hero-img-photo { object-position: 40% center !important;} }
         `}</style>
 
         <div className="page-content" style={{ padding: '4rem 1.5rem' }}>
-          <div className="container">
+          <div className="container" style={{ maxWidth: '1100px', margin: '0 auto'}}>
             <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>

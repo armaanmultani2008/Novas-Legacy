@@ -1136,6 +1136,10 @@ function SettingsTab({ token }) {
   const [loading, setLoading] = useState(false)
   const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
 
+  const [logIdInput, setLogIdInput] = useState('')
+  const [securityMsg, setSecurityMsg] = useState(null)
+  const [securityLoading, setSecurityLoading] = useState(false)
+
   const change = async e => {
     e.preventDefault(); setMsg(null)
     if (f.newpw !== f.confirm) return setMsg({ err: 'Passwords do not match.' })
@@ -1159,29 +1163,92 @@ function SettingsTab({ token }) {
     setLoading(false)
   }
 
+  const handleBanUser = async (e) => {
+    e.preventDefault()
+    if (!logIdInput.trim()) return
+
+    setSecurityLoading(true)
+    setSecurityMsg(null)
+
+    try {
+      const res = await fetch(`${API}/api/admin/blacklist-by-log`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ logId: logIdInput.trim() }),
+      })
+
+      const data = await res.json()
+
+      if (res.ok) {
+        setSecurityMsg({ ok: data.message || 'The IP adress of the user has been inserted in blacklist.' })
+        setLogIdInput('')
+      } else {
+        setSecurityMsg({ err: data.error || 'An Error occured during the Block operation.' })
+      }
+    } catch {
+      setSecurityMsg({ err: 'Server unreachable.' })
+    } finally {
+      setSecurityLoading(false)
+    }
+  }
+
   return (
-    <div className="adm-settings">
-      <div className="adm-section-head" style={{ marginBottom: '1.3rem' }}><h2>Settings</h2></div>
-      <h3>Change password</h3>
-      {msg?.ok  && <div className="adm-ok">{msg.ok}</div>}
-      {msg?.err && <div className="adm-err">{msg.err}</div>}
-      <form onSubmit={change}>
-        <div className="adm-field"><label>Current password</label>
-          <input type="password" value={f.current} onChange={set('current')} required placeholder="••••••••" /></div>
-        <div className="adm-field"><label>New password (min. 8 characters)</label>
-          <input type="password" value={f.newpw} onChange={set('newpw')} required minLength={8} placeholder="••••••••" /></div>
-        <div className="adm-field"><label>Confirm new password</label>
-          <input type="password" value={f.confirm} onChange={set('confirm')} required placeholder="••••••••" /></div>
-        <div className="adm-field">
-          <label>New recovery keyword (optional)</label>
-          <input type="text" value={f.newKey} onChange={set('newKey')} placeholder="leave empty to keep current" autoComplete="off" />
-          <div className="adm-field-hint">Used to recover access if you forget your password.</div>
-        </div>
-        <button type="submit" className="btn-primary" disabled={loading}>
-          {loading ? <Dots /> : 'Save changes'}
-        </button>
-      </form>
-    </div>
+      <div className="adm-settings">
+        <div className="adm-section-head" style={{ marginBottom: '1.3rem' }}><h2>Settings</h2></div>
+
+        <h3>Change password</h3>
+        {msg?.ok  && <div className="adm-ok">{msg.ok}</div>}
+        {msg?.err && <div className="adm-err">{msg.err}</div>}
+        <form onSubmit={change} style={{ marginBottom: '2.5rem' }}>
+          <div className="adm-field"><label>Current password</label>
+            <input type="password" value={f.current} onChange={set('current')} required placeholder="••••••••" /></div>
+          <div className="adm-field"><label>New password (min. 8 characters)</label>
+            <input type="password" value={f.newpw} onChange={set('newpw')} required minLength={8} placeholder="••••••••" /></div>
+          <div className="adm-field"><label>Confirm new password</label>
+            <input type="password" value={f.confirm} onChange={set('confirm')} required placeholder="••••••••" /></div>
+          <div className="adm-field">
+            <label>New recovery keyword (optional)</label>
+            <input type="text" value={f.newKey} onChange={set('newKey')} placeholder="leave empty to keep current" autoComplete="off" />
+            <div className="adm-field-hint">Used to recover access if you forget your password.</div>
+          </div>
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? <Dots /> : 'Save changes'}
+          </button>
+        </form>
+
+        <h3 style={{ color: '#b03020' }}>Anti-Spam Security</h3>
+        <p style={{ fontSize: '0.78rem', color: '#666', lineHeight: '1.4', marginBottom: '1rem' }}>
+          Paste here the numeric/alphanumeric code present in the red box at the end of the spam/hate email received. The server will search for the IP address connected to the user who sent it, banning him instanstly.
+        </p>
+
+        {securityMsg?.ok  && <div className="adm-ok">{securityMsg.ok}</div>}
+        {securityMsg?.err && <div className="adm-err">{securityMsg.err}</div>}
+
+        <form onSubmit={handleBanUser} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+          <div className="adm-field" style={{ flex: 1, marginBottom: 0 }}>
+            <input
+                type="text"
+                placeholder="Esempio: 666ff45c92ba3c11..."
+                value={logIdInput}
+                onChange={(e) => setLogIdInput(e.target.value)}
+                disabled={securityLoading}
+                style={{ fontFamily: 'monospace', fontSize: '0.82rem' }}
+                required
+            />
+          </div>
+          <button
+              type="submit"
+              className="btn-primary"
+              style={{ background: '#b03020', borderColor: '#b03020', padding: '0.52rem 1.2rem', fontSize: '0.83rem' }}
+              disabled={securityLoading || !logIdInput.trim()}
+          >
+            {securityLoading ? <Dots /> : 'Block IP'}
+          </button>
+        </form>
+      </div>
   )
 }
 

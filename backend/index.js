@@ -11,6 +11,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { MongoClient } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CMS_FILE  = path.join(__dirname, 'cms.json');
@@ -64,20 +65,21 @@ async function initDB() {
             const doc = await _db.collection('store').findOne({ _id: 'cms' });
 
             if (doc) {
-                const { _id, ...data } = doc;
-                _cms = data;
-                console.log('[DB] Connesso a MongoDB Atlas e dati sincronizzati.');
+                const { _id, ...atlasData } = doc;
+                _cms = { ..._cms, ...atlasData };
+                console.log('[DB] Successfully connected to MongoDB Atlas and synchronized data.');
+                await _db.collection('store').replaceOne({_id:'cms'}, {_id:'cms', ..._cms}, { upsert: true });
             } else {
-                console.log('[DB] Connesso ad Atlas. Documento cms non trovato. Avvio migrazione del cms.json locale...');
+                console.log('[DB] Successfully connected to MongoDB Atlas. CMS file not found. Starting migration process of local cms.json...');
                 await _db.collection('store').replaceOne({ _id: 'cms' }, { _id: 'cms', ..._cms }, { upsert: true });
-                console.log('[DB] Migrazione completata: I dati locali ora sono al sicuro su Atlas.');
+                console.log('[DB] Migration completed successfully: local data is now secure on MongoDB Atlas.');
             }
 
         } catch (err) {
-            console.error('[DB] Connessione ad Atlas fallita. Fallback di emergenza locale:', err.message);
+            console.error('[DB] Connection to MongoDB Atlas failed. Emergency local fallback:', err.message);
         }
     } else {
-        console.warn('[DB] MONGODB_URI non trovata nelle ENV.');
+        console.warn('[DB] MONGODB_URI not found in ENV.');
     }
 }
 
@@ -262,6 +264,36 @@ app.put('/api/admin/paypal-config', (req, res) => {
     }
     res.json({ ok: true });
 });
+
+app.post('api/admin/blacklist-by-log', requireAdmin, async (req, res) => {
+    const {logId} = req.body;
+    if(!logId) return res.status(400).json({error:"ID del log richiesto."});
+    if(!_db) return res.status(503).json({error:"Database non connesso."});
+
+    try{
+        const log = await _db.collection('contact_logs').findOne({_id: new ObjectId(logId)});
+        if(!log){
+            return res.status(404).json({error:"Message Code not found in server log."})
+        }
+        const targetIp = log.ip;
+        if(!targetIp){
+            return res.status(400).json({error:"No valid IP address found in this log."})
+        }
+        await _db.collection('blacklist').updateOne(
+            { value: targetIp, type: 'ip' },
+            { $set: { value: targetIp, type: 'ip', bannedAt: new Date(), reason: `Banned via log ID ${logId}` } },
+            { upsert: true }
+        );
+
+        console.log(`[SECURITY] IP address ${targetIp} successfully banned using Log ID automation: ${logId}`);
+
+        res.json({ ok: true, message: `IP adress (${targetIp}) has been inserted in the blacklist successfully.` });
+
+    } catch (err) {
+        console.error('[SECURITY] Blacklist automation process Error:', err.message);
+        res.status(500).json({ error: "Errore interno del server durante il blocco." });
+    }
+})
 
 // ── Printful: debug risposta grezza ──────────────────────────────────────────
 app.get('/api/printful/debug', async (_req, res) => {
@@ -484,32 +516,107 @@ app.post('/api/stripe/checkout', async (req, res) => {
     }
 });
 
-// ── Modulo Contatti ──────────────────────────────────────────────────────────
+//Modulo Contatti
 app.post('/api/contact', async (req, res) => {
-    const { name, surname, email, phone, reason, message } = req.body;
-    if (!name || !email) return res.status(400).json({ error: 'Nome ed email richiesti' });
+    const { name, surname, email, phone, reason, message, turnstileToken } = req.body;
+    if (!name || !email) return res.status(400).json({ error: 'Name and email required' });
+
+    const clientIP = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.ip;
+    if(_db){
+        try{
+            const isBlackListed = await _db.collection('blacklist').findOne({
+                $or:[
+                    {value: clientIP, type: 'ip'},
+                    {value: email.toLowerCase().trim(), type: 'email'}
+                ]
+            });
+            if(isBlackListed){
+                console.warn(`[SECURITY] Attempt to send from blacklisted entity: IP=${clientIP}, Email=${email}`);
+                return res.status(403).json({error: "Unable to process your request. Connection unauthorized."})
+            }
+        } catch(dbErr){
+            console.error("[DB] Error during blacklist check:", dbErr.message);
+        }
+    }
+    let isHuman = true;
+    let securityDetails = "Passed";
+
+    const turnstileSecret = envVars.TURNSTILE_SECRET_KEY;
+    if(turnstileSecret){
+        if(!turnstileToken){
+            isHuman = false;
+            securityDetails = "Missing Token";
+        } else {
+            try{
+                const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+                    method: 'POST',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({
+                        secret: turnstileSecret,
+                        response: turnstileToken,
+                        remoteip: clientIP
+                    })
+                })
+                const verifyData = await verifyRes.json();
+                if(!verifyData.success){
+                    isHuman = false;
+                    securityDetails = `Failed: ${JSON.stringify(verifyData['error-codes'] || 'unknown')}`;
+                }
+            } catch (err){
+                securityDetails = `Turnstile API Error: ${err.message}`;
+            }
+        }
+    }
+    let logID = null;
+    if(_db){
+        try{
+            const logResult = await _db.collection('contact_logs').insertOne({
+                createdAt: new Date(),
+                ip: clientIP,
+                email: email.toLowerCase().trim(),
+                name: `${name} ${surname || ''}`.trim(),
+                phone: phone || null,
+                reason: reason || 'Generic',
+                messageSnippet: isHuman ? message : (message ? message.substring(0, 100) + '...' : '(empty)'),
+                isHuman,
+                securityDetails
+            });
+            logID = logResult.insertedId;
+        } catch (logErr){
+            console.error("[DB] Contact log save failed:", logErr.message);
+        }
+    }
+    if(!isHuman){
+        return res.status(403).json({error: 'Antispam verification failed. Please refresh the page.'})
+    }
     if (!envVars.BREVO_API_KEY) {
-        return res.status(503).json({ error: 'Email non configurata sul server' });
+        return res.status(503).json({ error: "Email isn't configured on the system" });
     }
     try {
         await sendEmail({
-            // Invia dinamicamente a EMAIL_TO configurata su Render (Kim)
             to: envVars.EMAIL_TO || 'kim@novaslegacy.co.za',
-            replyTo: email, // Permette di rispondere direttamente alla mail dell'utente cliccando su "Rispondi"
-            subject: `Nuovo contatto: ${reason || 'Richiesta generica'} — ${name} ${surname || ''}`.trim(),
+            replyTo: email,
+            subject: `New contact: ${reason || 'Generic request'} — ${name} ${surname || ''}`.trim(),
             html: `
         <div style="font-family:sans-serif;max-width:520px;color:#111">
-          <h3 style="color:#C8880A">Nuovo messaggio dal sito Nova's Legacy</h3>
+          <h3 style="color:#C8880A">New Message from Nova's Legacy website</h3>
           <table style="border-collapse:collapse;width:100%">
-            <tr><td style="padding:6px 12px;font-weight:bold">Nome</td><td style="padding:6px 12px">${name} ${surname || ''}</td></tr>
+            <tr><td style="padding:6px 12px;font-weight:bold">Name</td><td style="padding:6px 12px">${name} ${surname || ''}</td></tr>
             <tr style="background:#f5f5f5"><td style="padding:6px 12px;font-weight:bold">Email</td><td style="padding:6px 12px"><a href="mailto:${email}">${email}</a></td></tr>
-            <tr><td style="padding:6px 12px;font-weight:bold">Telefono</td><td style="padding:6px 12px">${phone || '—'}</td></tr>
-            <tr style="background:#f5f5f5"><td style="padding:6px 12px;font-weight:bold">Motivo</td><td style="padding:6px 12px">${reason || '—'}</td></tr>
+            <tr><td style="padding:6px 12px;font-weight:bold">Phone Number</td><td style="padding:6px 12px">${phone || '—'}</td></tr>
+            <tr style="background:#f5f5f5"><td style="padding:6px 12px;font-weight:bold">Reason</td><td style="padding:6px 12px">${reason || '—'}</td></tr>
           </table>
           <div style="margin-top:1rem;padding:1rem;background:#fafafa;border-left:3px solid #C8880A">
-            <p style="margin:0;white-space:pre-wrap">${message || '(nessun messaggio)'}</p>
+            <p style="margin:0;white-space:pre-wrap">${message || '(no message)'}</p>
           </div>
-          <p style="margin-top:1.5rem;font-size:0.8rem;color:#999">Inviato tramite novaslegacy.co.za</p>
+          ${logID ? `
+          <div style="margin-top:2rem;padding:12px;background:#fff5f5;border:1px dashed #cc0000;border-radius:4px;font-size:0.85rem;color:#333">
+            <strong style="color:#cc0000">Admin Security Log</strong><br/>
+            To block this user or IP, copy the ID below and paste it into the Admin Settings Dashboard:<br/>
+            <code style="display:inline-block;margin-top:6px;padding:4px 8px;background:#eee;border-radius:3px;font-weight:bold;font-family:monospace;font-size:0.95rem">${logID.toString()}</code>
+          </div>
+          ` : ''}
+          <p style="margin-top:1.5rem;font-size:0.8rem;color:#999">Sent by novaslegacy.co.za</p>
         </div>`,
         });
         res.json({ ok: true });
@@ -520,12 +627,12 @@ app.post('/api/contact', async (req, res) => {
 
 function requireAdmin(req, res, next) {
     const auth = req.headers.authorization;
-    if (!auth?.startsWith('Bearer ')) return res.status(401).json({ error: 'Non autorizzato' });
+    if (!auth?.startsWith('Bearer ')) return res.status(401).json({ error: 'Not autorized' });
     try {
         jwt.verify(auth.slice(7), envVars.JWT_SECRET || 'dev_secret');
         next();
     } catch {
-        res.status(401).json({ error: 'Token non valido' });
+        res.status(401).json({ error: 'Invalid Token' });
     }
 }
 

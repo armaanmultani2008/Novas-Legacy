@@ -5,12 +5,6 @@ import { useScrollReveal } from '../hooks/useScrollReveal.js'
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 const FALLBACK_ITEMS = [
-  { id: '1', name: 'Classic Tee',      price: 22, priceZar: 350, sizes: ['XS','S','M','L','XL'],    photo: '/img/merch-tee.jpg' },
-  { id: '2', name: 'Coalition Hoodie', price: 40, priceZar: 650, sizes: ['S','M','L','XL','XXL'],   photo: '/img/merch-hoodie.jpg' },
-  { id: '3', name: 'Bush Cap',         price: 16, priceZar: 250, sizes: ['UNICA'],                  photo: '/img/merch-cap.jpg' },
-  { id: '4', name: 'Field Tote Bag',   price: 18, priceZar: 280, sizes: [],                         photo: '/img/merch-tote.jpg' },
-  { id: '5', name: 'Safari Mug',       price: 12, priceZar: 180, sizes: [],                         photo: '/img/merch-mug.jpg' },
-  { id: '6', name: 'Sticker Pack',     price: 5,  priceZar: 80,  sizes: [],                         photo: '/img/merch-sticker.jpg' },
 ]
 
 async function startCheckout(name, price, variantId, quantity, errCheckout, errBackend) {
@@ -195,7 +189,7 @@ function Merch({ goTo }) {
       `}</style>
 
       <div className="page-hero-img" style={{
-        height: '65vh',
+        height: '65dvh',
         minHeight: '450px',
         position: 'relative',
         overflow: 'hidden'
@@ -252,7 +246,6 @@ function Merch({ goTo }) {
                   <div className="s-photo">
                     <img src={item.photo} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     <div className="s-photo-overlay" />
-                    <div className="s-emoji-wrap"><div className="s-emoji">◆</div></div>
                     <div className="s-brand">Nova&apos;s Legacy</div>
                   </div>
 

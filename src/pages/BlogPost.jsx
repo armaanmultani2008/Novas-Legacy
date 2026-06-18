@@ -34,7 +34,7 @@ function BlogPost({ goTo, postId }) {
 
   return (
     <>
-      <div className="page-hero-img" style={{ height: '65vh' }}>
+      <div className="page-hero-img" style={{ height: '65dvh' }}>
         <img src={img} alt={post.title} style={{ objectPosition: 'center 40%' }} />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
@@ -45,7 +45,7 @@ function BlogPost({ goTo, postId }) {
       </div>
 
       <div className="page-content">
-        <div className="container">
+        <div className="container" >
           <div style={{ marginTop: '1rem', paddingTop: '2rem', borderTop: '1px solid #EDE5D8', display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'space-between' }}>
             <button className="btn btn-outline-dark" onClick={() => goTo('blog')}>
               ← {t('blog.back_to_blog')}

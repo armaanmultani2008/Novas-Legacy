@@ -80,7 +80,7 @@ function NovaStory({ goTo }) {
             <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-              <button className="btn btn-dark" onClick={() => goTo('cheetah-run')}>
+              <button className="btn btn-dark" onClick={() => goTo('kim-story')}>
                 {t('nova_story.btn1')}
               </button>
               <button className="btn btn-outline-dark" onClick={() => goTo('adopt')}>

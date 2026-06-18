@@ -21,9 +21,11 @@ function Adopt({ goTo }) {
 
   useEffect(() => {
     fetch(`${API}/api/cms`)
-      .then(r => r.json())
-      .then(d => { if (d.animals?.length) setCmsAnimals(d.animals) })
-      .catch(() => {})
+        .then(r => r.json())
+        .then(d => {
+          if (d.animals?.length) setCmsAnimals(d.animals)
+        })
+        .catch(() => {})
   }, [])
 
   const animals = cmsAnimals || FALLBACK_ANIMALS
@@ -89,47 +91,47 @@ function Adopt({ goTo }) {
             </p>
 
             <div className="page-grid-3" style={{ gap: '1.5rem' }}>
-              {animals.map(a => (
-                    <div
-                        key={a.id || a.name}
-                        style={{
-                          background: 'var(--off-white)',
-                          border: '1px solid #EDE5D8',
-                          borderRadius: '8px',
-                          overflow: 'hidden',
-                          transition: 'all 0.3s',
-                        }}
-                        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.07)' }}
-                        onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none' }}
-                    >
-                      <div style={{ height: '280px', overflow: 'hidden', position: 'relative' }}>
-                        <img
-                            src={a.img}
-                            alt={a.name}
-                            style={{
-                              width: '100%',
-                              height: '100%',
-                              objectFit: 'cover',
-                              objectPosition: 'center 20%',
-                            }}
-                        />
-                        <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', background: 'var(--gold)', color: '#fff', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.1em', padding: '0.25rem 0.65rem', textTransform: 'uppercase' }}>
-                          €{a.price}/{t('adopt.per_month')}
-                        </div>
-                      </div>
-                      <div style={{ padding: '1.5rem' }}>
-                        <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.3rem' }}>{a.species}</div>
-                        <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--dark)' }}>{a.name}</h3>
-                        <button
-                            className="btn btn-dark btn-sm"
-                            style={{ width: '100%', opacity: loading === a.name ? 0.6 : 1 }}
-                            onClick={() => handleAdopt(a)}
-                            disabled={loading === a.name}
-                        >
-                          {loading === a.name ? t('adopt.loading') : `${t('adopt.adopt_btn')} ${a.name} — €${a.price}/${t('adopt.per_month')}`}
-                        </button>
+              {animals.map((a, i) => (
+                  <div
+                      key={a.id || a.name || i}
+                      style={{
+                        background: 'var(--off-white)',
+                        border: '1px solid #EDE5D8',
+                        borderRadius: '8px',
+                        overflow: 'hidden',
+                        transition: 'all 0.3s',
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.07)' }}
+                      onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none' }}
+                  >
+                    <div style={{ height: '280px', overflow: 'hidden', position: 'relative' }}>
+                      <img
+                          src={a.img || (FALLBACK_ANIMALS[i] ? FALLBACK_ANIMALS[i].img : FALLBACK_ANIMALS[0].img)}
+                          alt={a.name}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            objectPosition: 'center 20%',
+                          }}
+                      />
+                      <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', background: 'var(--gold)', color: '#fff', fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.1em', padding: '0.25rem 0.65rem', textTransform: 'uppercase' }}>
+                        €{a.price}/{t('adopt.per_month')}
                       </div>
                     </div>
+                    <div style={{ padding: '1.5rem' }}>
+                      <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.3rem' }}>{a.species}</div>
+                      <h3 style={{ fontFamily: 'var(--serif)', fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--dark)' }}>{a.name}</h3>
+                      <button
+                          className="btn btn-dark btn-sm"
+                          style={{ width: '100%', opacity: loading === a.name ? 0.6 : 1 }}
+                          onClick={() => handleAdopt(a)}
+                          disabled={loading === a.name}
+                      >
+                        {loading === a.name ? t('adopt.loading') : `${t('adopt.adopt_btn')} ${a.name} — €${a.price}/${t('adopt.per_month')}`}
+                      </button>
+                    </div>
+                  </div>
               ))}
             </div>
 

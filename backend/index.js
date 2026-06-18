@@ -65,20 +65,21 @@ async function initDB() {
             const doc = await _db.collection('store').findOne({ _id: 'cms' });
 
             if (doc) {
-                const { _id, ...data } = doc;
-                _cms = data;
-                console.log('[DB] Connesso a MongoDB Atlas e dati sincronizzati.');
+                const { _id, ...atlasData } = doc;
+                _cms = { ..._cms, ...atlasData };
+                console.log('[DB] Successfully connected to MongoDB Atlas and synchronized data.');
+                await _db.collection('store').replaceOne({_id:'cms'}, {_id:'cms', ..._cms}, { upsert: true });
             } else {
-                console.log('[DB] Connesso ad Atlas. Documento cms non trovato. Avvio migrazione del cms.json locale...');
+                console.log('[DB] Successfully connected to MongoDB Atlas. CMS file not found. Starting migration process of local cms.json...');
                 await _db.collection('store').replaceOne({ _id: 'cms' }, { _id: 'cms', ..._cms }, { upsert: true });
-                console.log('[DB] Migrazione completata: I dati locali ora sono al sicuro su Atlas.');
+                console.log('[DB] Migration completed successfully: local data is now secure on MongoDB Atlas.');
             }
 
         } catch (err) {
-            console.error('[DB] Connessione ad Atlas fallita. Fallback di emergenza locale:', err.message);
+            console.error('[DB] Connection to MongoDB Atlas failed. Emergency local fallback:', err.message);
         }
     } else {
-        console.warn('[DB] MONGODB_URI non trovata nelle ENV.');
+        console.warn('[DB] MONGODB_URI not found in ENV.');
     }
 }
 

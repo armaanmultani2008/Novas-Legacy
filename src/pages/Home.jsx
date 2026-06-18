@@ -189,6 +189,66 @@ function Home({ goTo }) {
 
   const [lbIdx, setLbIdx] = useState(null)
 
+  const marqueeRef = useRef(null)
+  const marqueeState = useRef({ dragging: false, hasDragged: false, startX: 0, startOffset: 0, offset: 0, lastTime: null })
+
+  useEffect(() => {
+    const track = marqueeRef.current
+    if (!track) return
+
+    // Stop CSS animation, drive position via rAF
+    track.style.animationPlayState = 'paused'
+    track.style.transform = 'translateX(0px)'
+
+    let rafId
+    function tick(now) {
+      const s = marqueeState.current
+      if (!s.dragging) {
+        const dt = s.lastTime ? Math.min(now - s.lastTime, 50) : 0
+        const halfWidth = track.scrollWidth / 2
+        if (halfWidth > 0) s.offset -= (halfWidth / 40000) * dt
+      }
+      s.lastTime = now
+      const halfWidth = track.scrollWidth / 2
+      if (halfWidth > 0) {
+        s.offset = ((s.offset % halfWidth) + halfWidth) % halfWidth - halfWidth
+      }
+      track.style.transform = `translateX(${s.offset}px)`
+      rafId = requestAnimationFrame(tick)
+    }
+    rafId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafId)
+  }, [])
+
+  function onMarqueePointerDown(e) {
+    const s = marqueeState.current
+    s.dragging = true
+    s.hasDragged = false
+    s.startX = e.clientX
+    s.startOffset = s.offset
+    e.currentTarget.setPointerCapture(e.pointerId)
+    e.currentTarget.style.cursor = 'grabbing'
+  }
+
+  function onMarqueePointerMove(e) {
+    const s = marqueeState.current
+    if (!s.dragging) return
+    const delta = e.clientX - s.startX
+    if (Math.abs(delta) > 5) s.hasDragged = true
+    const track = marqueeRef.current
+    if (!track) return
+    const halfWidth = track.scrollWidth / 2
+    let newOffset = s.startOffset + delta
+    if (halfWidth > 0) newOffset = ((newOffset % halfWidth) + halfWidth) % halfWidth - halfWidth
+    s.offset = newOffset
+  }
+
+  function onMarqueePointerUp(e) {
+    const s = marqueeState.current
+    s.dragging = false
+    if (marqueeRef.current) marqueeRef.current.style.cursor = 'grab'
+  }
+
   const [contactForm, setContactForm] = useState({ name: '', surname: '', email: '', dialCode: '+27', phone: '', reason: '', message: '' })
   const [contactStatus, setContactStatus] = useState(null)
   const [turnstileToken, setTurnstileToken] = useState(null)
@@ -575,12 +635,25 @@ function Home({ goTo }) {
           </div>
 
           <div className="marquee-wrapper">
-            <div className="marquee-track">
+            <div
+              className="marquee-track"
+              ref={marqueeRef}
+              onPointerDown={onMarqueePointerDown}
+              onPointerMove={onMarqueePointerMove}
+              onPointerUp={onMarqueePointerUp}
+              onPointerCancel={onMarqueePointerUp}
+              style={{ cursor: 'grab', userSelect: 'none', touchAction: 'none' }}
+            >
               {[...Array(2)].flatMap((_, rep) =>
                   ANIMALS_NAMES.map((name, i) => (
-                      <div key={`${rep}-${name}-${i}`} className="animal-card" onClick={() => setLbIdx(i)} style={{ cursor: 'pointer', borderRadius: '8px' }} >
+                      <div
+                        key={`${rep}-${name}-${i}`}
+                        className="animal-card"
+                        onClick={() => { if (!marqueeState.current.hasDragged) setLbIdx(i) }}
+                        style={{ borderRadius: '8px' }}
+                      >
                         <div className="animal-photo">
-                          <img src={ANIMALS_SRCS[i]} alt={name} />
+                          <img src={ANIMALS_SRCS[i]} alt={name} draggable={false} />
                         </div>
                         <div className="animal-info">
                           <h4>{name}</h4>

@@ -25,7 +25,7 @@ function Blog({ goTo }) {
       .catch(() => {})
   }, [])
 
-  const items = posts || fallback.map((p, i) => ({ ...p, id: String(i), img: FALLBACK_IMGS[i] }))
+  const items = posts || (Array.isArray(fallback) ? fallback.map((p, i) => ({ ...p, id: String(i), img: FALLBACK_IMGS[i] })) : []);
 
   return (
     <>

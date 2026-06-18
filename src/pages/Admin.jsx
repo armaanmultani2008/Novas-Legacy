@@ -1175,7 +1175,7 @@ function SettingsTab({ token }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // Passiamo il token di autenticazione di Kim
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ logId: logIdInput.trim() }),
       })
@@ -1183,13 +1183,13 @@ function SettingsTab({ token }) {
       const data = await res.json()
 
       if (res.ok) {
-        setSecurityMsg({ ok: data.message || 'L\'indirizzo IP dell\'utente è stato inserito in blacklist.' })
-        setLogIdInput('') // Svuota il campo di testo dopo il successo
+        setSecurityMsg({ ok: data.message || 'The IP adress of the user has been inserted in blacklist.' })
+        setLogIdInput('')
       } else {
-        setSecurityMsg({ err: data.error || 'Si è verificato un errore durante il blocco.' })
+        setSecurityMsg({ err: data.error || 'An Error occured during the Block operation.' })
       }
     } catch {
-      setSecurityMsg({ err: 'Impossibile connettersi al server.' })
+      setSecurityMsg({ err: 'Server unreachable.' })
     } finally {
       setSecurityLoading(false)
     }
@@ -1221,7 +1221,7 @@ function SettingsTab({ token }) {
 
         <h3 style={{ color: '#b03020' }}>Anti-Spam Security</h3>
         <p style={{ fontSize: '0.78rem', color: '#666', lineHeight: '1.4', marginBottom: '1rem' }}>
-          Incolla qui il codice numerico/alfanumerico presente nel box rosso in fondo all&apos;email di insulti ricevuta. Il server cercherà l&apos;IP reale associato a quel messaggio e lo bannerà all&apos;istante.
+          Paste here the numeric/alphanumeric code present in the red box at the end of the spam/hate email received. The server will search for the IP address connected to the user who sent it, banning him instanstly.
         </p>
 
         {securityMsg?.ok  && <div className="adm-ok">{securityMsg.ok}</div>}

@@ -609,6 +609,13 @@ app.post('/api/contact', async (req, res) => {
           <div style="margin-top:1rem;padding:1rem;background:#fafafa;border-left:3px solid #C8880A">
             <p style="margin:0;white-space:pre-wrap">${message || '(no message)'}</p>
           </div>
+          ${logID ? `
+          <div style="margin-top:2rem;padding:12px;background:#fff5f5;border:1px dashed #cc0000;border-radius:4px;font-size:0.85rem;color:#333">
+            <strong style="color:#cc0000">Admin Security Log</strong><br/>
+            To block this user or IP, copy the ID below and paste it into the Admin Settings Dashboard:<br/>
+            <code style="display:inline-block;margin-top:6px;padding:4px 8px;background:#eee;border-radius:3px;font-weight:bold;font-family:monospace;font-size:0.95rem">${logID.toString()}</code>
+          </div>
+          ` : ''}
           <p style="margin-top:1.5rem;font-size:0.8rem;color:#999">Sent by novaslegacy.co.za</p>
         </div>`,
         });

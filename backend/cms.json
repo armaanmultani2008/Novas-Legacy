@@ -1,91 +1,100 @@
 {
   "_id": "cms",
-  "blog": [
-    {
-      "id": "1",
-      "tag": "News",
-      "date": "May 15, 2025",
-      "title": "New cheetah cubs born at Nova's Legacy",
-      "excerpt": "Great joy in the reserve: our female Amira has given birth to three healthy cubs. The veterinary team is monitoring them 24 hours a day. Updates to follow.",
-      "body": [
-        "On the morning of 12 May 2025, at around 5:30 am, Kim noticed the first signs of Amira's labour. Three hours later, three cubs — two males and one female — opened their eyes to the world for the first time.",
-        "The birth of cheetah cubs is always a delicate moment. Cubs weigh between 200 and 300 grams at birth and in the first days depend entirely on their mother for warmth and nourishment. Our veterinary team is present 24 hours a day to monitor vital signs and intervene if necessary.",
-        "Amira is an attentive and protective mother. In the days following the birth she has already shown a very strong maternal instinct, regularly nursing all three cubs. Infant mortality in cheetahs is unfortunately high in the wild — between 50% and 70% in the first year — but in a controlled environment like ours, survival rates increase significantly.",
-        "Follow our social channels for weekly updates on Amira and her cubs. We will also soon announce the names — and you can take part in choosing them!"
-      ],
-      "img": "/img/cucciolata.png"
-    },
-    {
-      "id": "2",
-      "tag": "Volunteering",
-      "date": "April 3, 2025",
-      "title": "Testimonial: six weeks in the bush with the cheetahs",
-      "excerpt": "Marco, 24, a biology student from Turin, tells us about his volunteering experience.",
-      "body": [
-        "\"I arrived with a rucksack full of expectations and some fear. First morning, up at 6, straight to work: cleaning the enclosures, preparing food, behavioural observation. There was no time for anxiety.\"",
-        "Marco spent six weeks at Nova's Legacy as part of his master's degree in conservation biology. During his stay he assisted Kim with veterinary visits, contributed to data collection on cheetah behaviour and participated in the environmental education programme for local schools.",
-        "\"The thing that struck me most wasn't the cheetahs — even though running alongside Nova is an experience I'll carry forever. It was the humanity of the place. Kim knows every animal by name, knows their history, habits, character. It's not a reserve, it's a family.\"",
-        "Marco will return to Nova's Legacy in autumn to complete his data collection for his thesis. In the meantime, we recommend his account to anyone considering a volunteering experience: his words describe better than any brochure what it truly means to be part of the Coalition."
-      ],
-      "img": "/img/blog-post.png"
-    },
-    {
-      "id": "3",
-      "tag": "Conservation",
-      "date": "March 18, 2025",
-      "title": "Why the cheetah is more at risk than the lion",
-      "excerpt": "An in-depth look at the factors that make the cheetah particularly vulnerable: from low genetic diversity to conflict with farmers.",
-      "body": [
-        "The lion is the symbol of Africa, yet it is the cheetah — with fewer than 7,000 individuals remaining — that is classified as Vulnerable by the IUCN. Why?",
-        "The first factor is genetic. Cheetahs went through one or more evolutionary bottlenecks around 10,000 years ago, drastically reducing the species' genetic diversity. This makes them particularly vulnerable to disease and environmental change: two genetically similar individuals respond in the same way to the same pathogen.",
-        "The second factor is territorial. Unlike lions and leopards, cheetahs need large open spaces to hunt and live at very low densities. Agricultural expansion has reduced and fragmented their natural habitat, forcing them increasingly into inhabited areas and farmland.",
-        "Conflict with farmers is the third major problem. A cheetah that kills goats or calves is often eliminated by the landowner — and since cheetahs live 77% of the time outside protected areas, this type of conflict is very common. Nova's Legacy actively works with local communities to develop coexistence strategies that protect both the animals and the livelihoods of local families."
-      ],
-      "img": "/img/cheetah-blog.png"
-    },
-    {
-      "id": "4",
-      "tag": "Horse Project",
-      "date": "February 7, 2025",
-      "title": "Spirit finds a home: the story of a rescued horse",
-      "excerpt": "Spirit arrived with us in poor condition. Six months later, he trots freely in the reserve. The story of his rehabilitation.",
-      "body": [
-        "Spirit arrived at Nova's Legacy in July 2024, referred by a local vet. He was underweight, had hoof problems and clear signs of neglect. Kim welcomed him without hesitation.",
-        "The first weeks were the hardest. Spirit was distrustful of humans and showed anxious behaviours typical of an animal with a difficult history. The team worked patiently, giving him his own time, offering quality food and regular veterinary care.",
-        "The turning point came after about a month. Spirit began spontaneously approaching volunteers during morning feeding. From that moment, his trust grew quickly.",
-        "Today Spirit weighs 480 kg, has a shiny coat and healthy hooves. Every morning he trots the perimeter of the reserve, as if checking that everything is in its place. He has become a favourite with the children who visit the reserve on school trips — and perhaps one of the most effective ambassadors for our rehabilitation programme."
-      ],
-      "img": "/img/cavallo-puledro.png"
-    },
-    {
-      "id": "5",
-      "tag": "Education",
-      "date": "January 22, 2025",
-      "title": "200 children visit from the Bela-Bela school",
-      "excerpt": "Our educational programme welcomed 200 local students. For many of them, it was the first time they had ever seen a cheetah up close.",
-      "body": [
-        "On 20 January 2025, Nova's Legacy opened its gates to 200 primary school students from Bela-Bela, aged 7 to 12. It was the largest educational day in our history.",
-        "The programme included four stations: an introduction to cheetah biology given by Kim, a bush tracking demonstration, observation of the cheetahs in the enclosure and a practical workshop on how to build a wildlife shelter using natural materials.",
-        "For many children — particularly those who grew up in urban areas — it was the first time they had been within a few metres of a large cat. Reactions always vary: some approach with curiosity, some stop at a safe distance with wide eyes, some fire questions that even test Kim.",
-        "\"Education is the foundation of every conservation project,\" says Kim. \"If these children grow up with a real understanding of what the cheetah is — not the stylised image on a T-shirt, but the real animal, with its needs and its fragility — then the future of the species is in better hands.\""
-      ],
-      "img": "/img/children-visit.png"
-    },
-    {
-      "id": "6",
-      "tag": "Cheetah Run",
-      "date": "January 10, 2025",
-      "title": "The Cheetah Run: how it works and how to prepare",
-      "excerpt": "Everything you need to know before running alongside the fastest cheetah in the world. Tips, FAQ and booking.",
-      "body": [
-        "The Cheetah Run is the most thrilling experience we offer at Nova's Legacy. For 60 metres, you run alongside a cheetah at full speed. It lasts about 8 seconds. People talk about it for years.",
-        "How it works: arrive at the reserve at least 30 minutes before your booked time. Kim or one of the trainers explains the safety rules and introduces you to the cheetah you'll be running with. The track is flat, bounded by a low fence on the cheetah's side. On the signal, you both go. The cheetah is guided by a visual lure and an experienced trainer.",
-        "What to expect physically: the cheetah starts slow, then accelerates. Even at reduced speed — it never reaches 112 km/h in this setup — it's an intense sensory experience. The sound of paws on the dry ground, the dust thrown up, the feeling of running alongside something much, much faster than you.",
-        "Practical tips: wear closed running shoes and comfortable clothing. Bring water. Don't wear strong perfume. If you have knee or back problems, check with us before booking. Minimum age: 12. No athletic preparation required — the cheetah sets the pace."
-      ],
-      "img": "/img/ghepardo-corsa-recinzione.png"
-    }
-  ],
+  "blog": {
+    "hero_label": "~ From the Field ~",
+    "hero_title": "News & Stories",
+    "hero_sub": "Updates, news and stories from the heart of the Waterberg.",
+    "read_all": "Read more →",
+    "back_to_blog": "Back to Blog",
+    "prev_post": "Previous article",
+    "next_post": "Next article",
+    "posts": [
+      {
+        "id": "1",
+        "tag": "News",
+        "date": "May 15, 2025",
+        "title": "New cheetah cubs born at Nova's Legacy",
+        "excerpt": "Great joy in the reserve: our female Amira has given birth to three healthy cubs. The veterinary team is monitoring them 24 hours a day. Updates to follow.",
+        "body": [
+          "On the morning of 12 May 2025, at around 5:30 am, Kim noticed the first signs of Amira's labour. Three hours later, three cubs — two males and one female — opened their eyes to the world for the first time.",
+          "The birth of cheetah cubs is always a delicate moment. Cubs weigh between 200 and 300 grams at birth and in the first days depend entirely on their mother for warmth and nourishment. Our veterinary team is present 24 hours a day to monitor vital signs and intervene if necessary.",
+          "Amira is an attentive and protective mother. In the days following the birth she has already shown a very strong maternal instinct, regularly nursing all three cubs. Infant mortality in cheetahs is unfortunately high in the wild — between 50% and 70% in the first year — but in a controlled environment like ours, survival rates increase significantly.",
+          "Follow our social channels for weekly updates on Amira and her cubs. We will also soon announce the names — and you can take part in choosing them!"
+        ],
+        "img": "/img/cucciolata.png"
+      },
+      {
+        "id": "2",
+        "tag": "Volunteering",
+        "date": "April 3, 2025",
+        "title": "Testimonial: six weeks in the bush with the cheetahs",
+        "excerpt": "Marco, 24, a biology student from Turin, tells us about his volunteering experience. \"I learned things I will never find in a textbook.\"",
+        "body": [
+          "\"I arrived with a rucksack full of expectations and some fear. First morning, up at 6, straight to work: cleaning the enclosures, preparing food, behavioural observation. There was no time for anxiety.\"",
+          "Marco spent six weeks at Nova's Legacy as part of his master's degree in conservation biology. During his stay he assisted Kim with veterinary visits, contributed to data collection on cheetah behaviour and participated in the environmental education programme for local schools.",
+          "\"The thing that struck me most wasn't the cheetahs — even though running alongside Nova is an experience I'll carry forever. It was the humanity of the place. Kim knows every animal by name, knows their history, habits, character. It's not a reserve, it's a family.\"",
+          "Marco will return to Nova's Legacy in autumn to complete his data collection for his thesis. In the meantime, we recommend his account to anyone considering a volunteering experience: his words describe better than any brochure what it truly means to be part of the Coalition."
+        ],
+        "img": "/img/blog-post.png"
+      },
+      {
+        "id": "3",
+        "tag": "Conservation",
+        "date": "March 18, 2025",
+        "title": "Why the cheetah is more at risk than the lion",
+        "excerpt": "An in-depth look at the factors that make the cheetah particularly vulnerable: from low genetic diversity to conflict with farmers.",
+        "body": [
+          "The lion is the symbol of Africa, yet it is the cheetah — with fewer than 7,000 individuals remaining — that is classified as Vulnerable by the IUCN. Why?",
+          "The first factor is genetic. Cheetahs went through one or more evolutionary bottlenecks around 10,000 years ago, drastically reducing the species' genetic diversity. This makes them particularly vulnerable to disease and environmental change: two genetically similar individuals respond in the same way to the same pathogen.",
+          "The second factor is territorial. Unlike lions and leopards, cheetahs need large open spaces to hunt and live at very low densities. Agricultural expansion has reduced and fragmented their natural habitat, forcing them increasingly into inhabited areas and farmland.",
+          "Conflict with farmers is the third major problem. A cheetah that kills goats or calves is often eliminated by the landowner — and since cheetahs live 77% of the time outside protected areas, this type of conflict is very common. Nova's Legacy actively works with local communities to develop coexistence strategies that protect both the animals and the livelihoods of local families."
+        ],
+        "img": "/img/cheetah-blog.png"
+      },
+      {
+        "id": "4",
+        "tag": "Horse Project",
+        "date": "February 7, 2025",
+        "title": "Spirit finds a home: the story of a rescued horse",
+        "excerpt": "Spirit arrived with us in poor condition. Six months later, he trots freely in the reserve. The story of his rehabilitation.",
+        "body": [
+          "Spirit arrived at Nova's Legacy in July 2024, referred by a local vet. He was underweight, had hoof problems and clear signs of neglect. Kim welcomed him without hesitation.",
+          "The first weeks were the hardest. Spirit was distrustful of humans and showed anxious behaviours typical of an animal with a difficult history. The team worked patiently, giving him his own time, offering quality food and regular veterinary care.",
+          "The turning point came after about a month. Spirit began spontaneously approaching volunteers during morning feeding. From that moment, his trust grew quickly.",
+          "Today Spirit weighs 480 kg, has a shiny coat and healthy hooves. Every morning he trots the perimeter of the reserve, as if checking that everything is in its place. He has become a favourite with the children who visit the reserve on school trips — and perhaps one of the most effective ambassadors for our rehabilitation programme."
+        ],
+        "img": "/img/cavallo-puledro.png"
+      },
+      {
+        "id": "5",
+        "tag": "Education",
+        "date": "January 22, 2025",
+        "title": "200 children visit from the Bela-Bela school",
+        "excerpt": "Our educational programme welcomed 200 local students. For many of them, it was the first time they had ever seen a cheetah up close.",
+        "body": [
+          "On 20 January 2025, Nova's Legacy opened its gates to 200 primary school students from Bela-Bela, aged 7 to 12. It was the largest educational day in our history.",
+          "The programme included four stations: an introduction to cheetah biology given by Kim, a bush tracking demonstration, observation of the cheetahs in the enclosure and a practical workshop on how to build a wildlife shelter using natural materials.",
+          "For many children — particularly those who grew up in urban areas — it was the first time they had been within a few metres of a large cat. Reactions always vary: some approach with curiosity, some stop at a safe distance with wide eyes, some fire questions that even test Kim.",
+          "\"Education is the foundation of every conservation project,\" says Kim. \"If these children grow up with a real understanding of what the cheetah is — not the stylised image on a T-shirt, but the real animal, with its needs and its fragility — then the future of the species is in better hands.\""
+        ],
+        "img": "/img/children-visit.png"
+      },
+      {
+        "id": "6",
+        "tag": "Cheetah Run",
+        "date": "January 10, 2025",
+        "title": "The Cheetah Run: how it works and how to prepare",
+        "excerpt": "Everything you need to know before running alongside the fastest cheetah in the world. Tips, FAQ and booking.",
+        "body": [
+          "The Cheetah Run is the most thrilling experience we offer at Nova's Legacy. For 60 metres, you run alongside a cheetah at full speed. It lasts about 8 seconds. People talk about it for years.",
+          "How it works: arrive at the reserve at least 30 minutes before your booked time. Kim or one of the trainers explains the safety rules and introduces you to the cheetah you'll be running with. The track is flat, bounded by a low fence on the cheetah's side. On the signal, you both go. The cheetah is guided by a visual lure and an experienced trainer.",
+          "What to expect physically: the cheetah starts slow, then accelerates. Even at reduced speed — it never reaches 112 km/h in this setup — it's an intense sensory experience. The sound of paws on the dry ground, the dust thrown up, the feeling of running alongside something much, much faster than you.",
+          "Practical tips: wear closed running shoes and comfortable clothing. Bring water. Don't wear strong perfume. If you have knee or back problems, check with us before booking. Minimum age: 12. No athletic preparation required — the cheetah sets the pace."
+        ],
+        "img": "/img/ghepardo-corsa-recinzione.png"
+      }
+    ]
+  },
   "products": [
   ],
   "animals": [

@@ -34,6 +34,80 @@ const ANIMALS_SRCS = [
 
 const ANIMALS_NAMES = ['Nova', 'Shira', 'Ghost Pack', 'Tumelo', 'Spirit', 'Sandy', 'Caracal', 'Serval']
 
+const DIAL_CODES = [
+  { name: 'Afghanistan',    code: '+93',  flag: '🇦🇫' },
+  { name: 'Albania',        code: '+355', flag: '🇦🇱' },
+  { name: 'Algeria',        code: '+213', flag: '🇩🇿' },
+  { name: 'Argentina',      code: '+54',  flag: '🇦🇷' },
+  { name: 'Australia',      code: '+61',  flag: '🇦🇺' },
+  { name: 'Austria',        code: '+43',  flag: '🇦🇹' },
+  { name: 'Belgium',        code: '+32',  flag: '🇧🇪' },
+  { name: 'Bolivia',        code: '+591', flag: '🇧🇴' },
+  { name: 'Brazil',         code: '+55',  flag: '🇧🇷' },
+  { name: 'Canada',         code: '+1',   flag: '🇨🇦' },
+  { name: 'Chile',          code: '+56',  flag: '🇨🇱' },
+  { name: 'China',          code: '+86',  flag: '🇨🇳' },
+  { name: 'Colombia',       code: '+57',  flag: '🇨🇴' },
+  { name: 'Croatia',        code: '+385', flag: '🇭🇷' },
+  { name: 'Czech Republic', code: '+420', flag: '🇨🇿' },
+  { name: 'Denmark',        code: '+45',  flag: '🇩🇰' },
+  { name: 'Ecuador',        code: '+593', flag: '🇪🇨' },
+  { name: 'Egypt',          code: '+20',  flag: '🇪🇬' },
+  { name: 'Ethiopia',       code: '+251', flag: '🇪🇹' },
+  { name: 'Finland',        code: '+358', flag: '🇫🇮' },
+  { name: 'France',         code: '+33',  flag: '🇫🇷' },
+  { name: 'Germany',        code: '+49',  flag: '🇩🇪' },
+  { name: 'Ghana',          code: '+233', flag: '🇬🇭' },
+  { name: 'Greece',         code: '+30',  flag: '🇬🇷' },
+  { name: 'Hungary',        code: '+36',  flag: '🇭🇺' },
+  { name: 'India',          code: '+91',  flag: '🇮🇳' },
+  { name: 'Indonesia',      code: '+62',  flag: '🇮🇩' },
+  { name: 'Iran',           code: '+98',  flag: '🇮🇷' },
+  { name: 'Ireland',        code: '+353', flag: '🇮🇪' },
+  { name: 'Israel',         code: '+972', flag: '🇮🇱' },
+  { name: 'Italy',          code: '+39',  flag: '🇮🇹' },
+  { name: 'Japan',          code: '+81',  flag: '🇯🇵' },
+  { name: 'Kenya',          code: '+254', flag: '🇰🇪' },
+  { name: 'Malaysia',       code: '+60',  flag: '🇲🇾' },
+  { name: 'Mexico',         code: '+52',  flag: '🇲🇽' },
+  { name: 'Morocco',        code: '+212', flag: '🇲🇦' },
+  { name: 'Netherlands',    code: '+31',  flag: '🇳🇱' },
+  { name: 'New Zealand',    code: '+64',  flag: '🇳🇿' },
+  { name: 'Nigeria',        code: '+234', flag: '🇳🇬' },
+  { name: 'Norway',         code: '+47',  flag: '🇳🇴' },
+  { name: 'Pakistan',       code: '+92',  flag: '🇵🇰' },
+  { name: 'Paraguay',       code: '+595', flag: '🇵🇾' },
+  { name: 'Peru',           code: '+51',  flag: '🇵🇪' },
+  { name: 'Philippines',    code: '+63',  flag: '🇵🇭' },
+  { name: 'Poland',         code: '+48',  flag: '🇵🇱' },
+  { name: 'Portugal',       code: '+351', flag: '🇵🇹' },
+  { name: 'Romania',        code: '+40',  flag: '🇷🇴' },
+  { name: 'Russia',         code: '+7',   flag: '🇷🇺' },
+  { name: 'Saudi Arabia',   code: '+966', flag: '🇸🇦' },
+  { name: 'Serbia',         code: '+381', flag: '🇷🇸' },
+  { name: 'Singapore',      code: '+65',  flag: '🇸🇬' },
+  { name: 'Slovakia',       code: '+421', flag: '🇸🇰' },
+  { name: 'Slovenia',       code: '+386', flag: '🇸🇮' },
+  { name: 'South Africa',   code: '+27',  flag: '🇿🇦' },
+  { name: 'South Korea',    code: '+82',  flag: '🇰🇷' },
+  { name: 'Spain',          code: '+34',  flag: '🇪🇸' },
+  { name: 'Sweden',         code: '+46',  flag: '🇸🇪' },
+  { name: 'Switzerland',    code: '+41',  flag: '🇨🇭' },
+  { name: 'Taiwan',         code: '+886', flag: '🇹🇼' },
+  { name: 'Tanzania',       code: '+255', flag: '🇹🇿' },
+  { name: 'Thailand',       code: '+66',  flag: '🇹🇭' },
+  { name: 'Turkey',         code: '+90',  flag: '🇹🇷' },
+  { name: 'UAE',            code: '+971', flag: '🇦🇪' },
+  { name: 'Uganda',         code: '+256', flag: '🇺🇬' },
+  { name: 'Ukraine',        code: '+380', flag: '🇺🇦' },
+  { name: 'United Kingdom', code: '+44',  flag: '🇬🇧' },
+  { name: 'United States',  code: '+1',   flag: '🇺🇸' },
+  { name: 'Uruguay',        code: '+598', flag: '🇺🇾' },
+  { name: 'Venezuela',      code: '+58',  flag: '🇻🇪' },
+  { name: 'Vietnam',        code: '+84',  flag: '🇻🇳' },
+  { name: 'Zimbabwe',       code: '+263', flag: '🇿🇼' },
+]
+
 const PROG_PAGES = ['cheetah-run', 'volunteer', 'visit', 'internship', 'adopt', 'conservation']
 const PROG_IMGS  = [DEFAULTS.progRun, DEFAULTS.progVol, DEFAULTS.progChalet, DEFAULTS.progInt, DEFAULTS.progAdopt, DEFAULTS.progBreed]
 
@@ -115,7 +189,7 @@ function Home({ goTo }) {
 
   const [lbIdx, setLbIdx] = useState(null)
 
-  const [contactForm, setContactForm] = useState({ name: '', surname: '', email: '', phone: '', reason: '', message: '' })
+  const [contactForm, setContactForm] = useState({ name: '', surname: '', email: '', dialCode: '+27', phone: '', reason: '', message: '' })
   const [contactStatus, setContactStatus] = useState(null)
   const [turnstileToken, setTurnstileToken] = useState(null)
   async function handleContactSubmit(e) {
@@ -127,12 +201,13 @@ function Home({ goTo }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...contactForm,
+          phone: contactForm.phone ? `${contactForm.dialCode}${contactForm.phone}` : '',
           turnstileToken: turnstileToken,
         }),
       })
       if (!res.ok) throw new Error('server')
       setContactStatus('ok')
-      setContactForm({ name: '', surname: '', email: '', phone: '', reason: '', message: '' })
+      setContactForm({ name: '', surname: '', email: '', dialCode: '+27', phone: '', reason: '', message: '' })
     } catch {
       setContactStatus('error')
       window.turnstile?.reset()
@@ -649,11 +724,26 @@ function Home({ goTo }) {
                     value={contactForm.email}
                     onChange={e => setContactForm(f => ({ ...f, email: e.target.value }))}
                 />
-                <input
-                    type="tel" placeholder={t('home.form_phone')}
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <select
+                    value={contactForm.dialCode}
+                    onChange={e => setContactForm(f => ({ ...f, dialCode: e.target.value }))}
+                    style={{ width: '130px', flexShrink: 0 }}
+                  >
+                    {DIAL_CODES.map(({ name, code, flag }) => (
+                      <option key={`${code}-${name}`} value={code}>
+                        {flag} {code} {name}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="tel"
+                    placeholder={t('home.form_phone')}
                     value={contactForm.phone}
                     onChange={e => setContactForm(f => ({ ...f, phone: e.target.value }))}
-                />
+                    style={{ flex: 1 }}
+                  />
+                </div>
                 <select
                     value={contactForm.reason}
                     onChange={e => setContactForm(f => ({ ...f, reason: e.target.value }))}

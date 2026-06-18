@@ -2,24 +2,27 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
 import Lightbox from '../components/Lightbox'
+import { useCMSImages } from '../CMSContext'
 
-const PHOTOS = [
+const PHOTOS_DEFAULT = [
   '/img/internship.png',
   '/img/internship2.png',
 ]
 
-const FOTO_SOTTO = [
+const FOTO_SOTTO_DEFAULT = [
   '/img/medicine-internship.png',
   '/img/hard-work-internship.png',
 ]
 
-const ALL_IMGS = [...PHOTOS, ...FOTO_SOTTO]
-
 function Internship({ goTo }) {
   useScrollReveal()
   const { t } = useTranslation()
+  const cmsImages = useCMSImages()
   const fieldLabels = t('internship.field_labels', { returnObjects: true })
   const [lbIdx, setLbIdx] = useState(null)
+  const photos    = PHOTOS_DEFAULT.map((def, i) => cmsImages[`internship_photo_${i + 1}`] || def)
+  const fotoSotto = FOTO_SOTTO_DEFAULT.map((def, i) => cmsImages[`internship_photo_${PHOTOS_DEFAULT.length + i + 1}`] || def)
+  const allImgs   = [...photos, ...fotoSotto]
 
   return (
       <>
@@ -52,7 +55,7 @@ function Internship({ goTo }) {
       `}</style>
 
         <div className="page-hero-img" style={{height: "65dvh"}}>
-          <img src="/img/internship-hero.png" alt="Internship Nova's Legacy" style={{ objectPosition: 'center 40%' }} />
+          <img src={cmsImages.internship_hero || '/img/internship-hero.png'} alt="Internship Nova's Legacy" style={{ objectPosition: 'center 40%' }} />
           <div className="page-hero-img-overlay" />
           <div className="page-hero-text">
             <span className="label label-light">{t('internship.hero_label')}</span>
@@ -79,7 +82,7 @@ function Internship({ goTo }) {
             <p>{t('internship.learn_p2')}</p>
 
             <div className="grid-2-col">
-              {PHOTOS.map((src, i) => (
+              {photos.map((src, i) => (
                   <div
                       key={i}
                       className="rv"
@@ -136,10 +139,10 @@ function Internship({ goTo }) {
             <div className="new-images-container">
               <div
                   style={{ height: '320px', overflow: 'hidden', borderRadius: '4px', cursor: 'pointer' }}
-                  onClick={() => setLbIdx(PHOTOS.length + 0)}
+                  onClick={() => setLbIdx(photos.length + 0)}
               >
                 <img
-                    src={FOTO_SOTTO[0]}
+                    src={fotoSotto[0]}
                     alt="Internship section detail 1"
                     style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.4s' }}
                     onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
@@ -148,10 +151,10 @@ function Internship({ goTo }) {
               </div>
               <div
                   style={{ height: '320px', overflow: 'hidden', borderRadius: '4px', cursor: 'pointer' }}
-                  onClick={() => setLbIdx(PHOTOS.length + 1)}
+                  onClick={() => setLbIdx(photos.length + 1)}
               >
                 <img
-                    src={FOTO_SOTTO[1]}
+                    src={fotoSotto[1]}
                     alt="Internship section detail 2"
                     style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.4s' }}
                     onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
@@ -161,7 +164,7 @@ function Internship({ goTo }) {
             </div>
 
             {lbIdx !== null && (
-                <Lightbox srcs={ALL_IMGS} idx={lbIdx} setIdx={setLbIdx} />
+                <Lightbox srcs={allImgs} idx={lbIdx} setIdx={setLbIdx} />
             )}
 
             <h2>{t('internship.includes_title')}</h2>

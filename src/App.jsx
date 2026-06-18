@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ChatbaseBot from "./components/ChatbaseBot.jsx";
 import Lightbox from "./components/Lightbox.jsx";
+import WhatsappButton from "./components/WhatsappButton.jsx";
 import Home from './pages/Home'
 import Cheetah from './pages/Cheetah'
 import CheetahRun from './pages/CheetahRun'
@@ -163,6 +164,7 @@ function App() {
         </div>
         <Footer goTo={goTo} />
         <ChatbaseBot />
+        <WhatsappButton />
       </>
   )
 }

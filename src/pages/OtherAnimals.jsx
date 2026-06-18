@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Lightbox from '../components/Lightbox'
+import { useCMSImages } from '../CMSContext'
 
-const ALL_PHOTOS = [
+const ALL_PHOTOS_DEFAULT = [
     '/img/lions.png',
     '/img/ghost-pack.png',
     '/img/lince.png',
@@ -15,9 +16,11 @@ const ALL_PHOTOS = [
 
 function OtherAnimals({ goTo }) {
     const { t } = useTranslation()
+    const cmsImages = useCMSImages()
     const [lbIdx, setLbIdx] = useState(null)
+    const allPhotos = ALL_PHOTOS_DEFAULT.map((def, i) => cmsImages[`other_animals_photo_${i + 1}`] || def)
 
-    const photoCaps = [
+    const photoCapsDefault = [
         t('other_animals.cap_lions', 'Lions Sanctuary'),
         t('other_animals.cap_ghost', 'Ghost Pack Predators'),
         t('other_animals.cap_lince', 'Caracal / Lynx'),
@@ -25,8 +28,9 @@ function OtherAnimals({ goTo }) {
         t('other_animals.cap_porcupine', 'Rescued Porcupine'),
         t('other_animals.cap_dumbo', 'Sanctuary Resident'),
         t('other_animals.cap_antille', 'Antelope Species'),
-        t('other_animals.cap_zebra', 'Free-roaming Zebras')
+        t('other_animals.cap_zebra', 'Free-roaming Zebras'),
     ]
+    const photoCaps = ALL_PHOTOS_DEFAULT.map((_, i) => cmsImages[`cap_other_animals_photo_${i + 1}`] || photoCapsDefault[i] || '')
 
     const cardStyle = {
         height: '320px',
@@ -87,9 +91,9 @@ function OtherAnimals({ goTo }) {
 
             <div className="page-hero-img" style={{ height: '75dvh', minHeight: '450px', position: 'relative', overflow: 'hidden' }}>
                 <picture style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}>
-                    <source media="(max-width: 768px)" srcSet="/img/leoni-cuccioli.png" />
+                    <source media="(max-width: 768px)" srcSet={cmsImages.other_animals_hero_mobile || '/img/leoni-cuccioli.png'} />
                     <img
-                        src="/img/adotta-wild-hearts.png"
+                        src={cmsImages.other_animals_hero || '/img/adotta-wild-hearts.png'}
                         alt="Other Animals Sanctuary"
                         className='page-hero-img-photo'
                         style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', display: 'block' }}
@@ -135,7 +139,7 @@ function OtherAnimals({ goTo }) {
                         {[0, 1, 2].map((i) => (
                             <div key={i} style={cardStyle} onClick={() => setLbIdx(i)}>
                                 <img
-                                    src={ALL_PHOTOS[i]}
+                                    src={allPhotos[i]}
                                     alt={photoCaps[i]}
                                     style={imgStyle}
                                     onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
@@ -153,7 +157,7 @@ function OtherAnimals({ goTo }) {
                         {[3, 4, 5].map((i) => (
                             <div key={i} style={cardStyle} onClick={() => setLbIdx(i)}>
                                 <img
-                                    src={ALL_PHOTOS[i]}
+                                    src={allPhotos[i]}
                                     alt={photoCaps[i]}
                                     style={imgStyle}
                                     onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
@@ -171,7 +175,7 @@ function OtherAnimals({ goTo }) {
                         {[6, 7].map((i) => (
                             <div key={i} style={cardStyle} onClick={() => setLbIdx(i)}>
                                 <img
-                                    src={ALL_PHOTOS[i]}
+                                    src={allPhotos[i]}
                                     alt={photoCaps[i]}
                                     style={{
                                         ...imgStyle,
@@ -186,7 +190,7 @@ function OtherAnimals({ goTo }) {
                     </div>
 
                     {lbIdx !== null && (
-                        <Lightbox srcs={ALL_PHOTOS} captions={photoCaps} idx={lbIdx} setIdx={setLbIdx} />
+                        <Lightbox srcs={allPhotos} captions={photoCaps} idx={lbIdx} setIdx={setLbIdx} />
                     )}
 
                 </div>

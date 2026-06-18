@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useCMSImages } from '../CMSContext'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -13,6 +14,7 @@ const FALLBACK_ANIMALS = [
 
 function Adopt({ goTo }) {
   const { t } = useTranslation()
+  const cmsImages = useCMSImages()
   const [loading, setLoading] = useState(null)
   const [portalEmail, setPortalEmail] = useState('')
   const [portalLoading, setPortalLoading] = useState(false)
@@ -73,7 +75,7 @@ function Adopt({ goTo }) {
   return (
       <>
         <div className="page-hero-img" style={{height: '75dvh'}}>
-          <img src="/img/ghepardo-corsa-erba-gialla.png" alt="Adotta un animale" style={{ objectPosition: 'center 40%' }} />
+          <img src={cmsImages.adopt_hero || '/img/ghepardo-corsa-erba-gialla.png'} alt="Adotta un animale" style={{ objectPosition: 'center 40%' }} />
           <div className="page-hero-img-overlay" />
           <div className="page-hero-text">
             <span className="label label-light">{t('adopt.hero_label')}</span>

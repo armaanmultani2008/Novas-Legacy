@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
+import { useCMSImages } from '../CMSContext'
 
 const PAYPAL_CLIENT_ID = 'BAACTG0ukeM8dKAjsLDCpumLq64_3LVg7oH1hbbQ5tot-aLGXbF4FbP34W4ehWgbRxVtrOerg-NmxlclvY'
 const AMOUNTS = [10, 25, 50, 100]
@@ -15,6 +16,7 @@ const IMPACT = [
 function Donate({ goTo }) {
   useScrollReveal()
   const { t } = useTranslation()
+  const cmsImages = useCMSImages()
   const [amount, setAmount] = useState(25)
   const [custom, setCustom] = useState('')
   const [sdkReady, setSdkReady] = useState(false)
@@ -77,7 +79,7 @@ function Donate({ goTo }) {
   return (
       <>
         <div className="page-hero-img" style={{ height: '65dvh' }}>
-          <img src="/img/support.png" alt="Donazioni Nova's Legacy" style={{ objectPosition: 'center 30%' }} />
+          <img src={cmsImages.donate_hero || '/img/support.png'} alt="Donazioni Nova's Legacy" style={{ objectPosition: 'center 30%' }} />
           <div className="page-hero-img-overlay" />
           <div className="page-hero-text">
             <span className="label label-light">{t('donate.hero_label')}</span>

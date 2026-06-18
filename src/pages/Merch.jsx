@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
+import { useCMSImages } from '../CMSContext'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -45,6 +46,7 @@ function getEffectiveCategory(item, overrides) {
 function Merch({ goTo }) {
   useScrollReveal()
   const { t } = useTranslation()
+  const cmsImages = useCMSImages()
   const [loading, setLoading] = useState(null)
   const [cmsItems, setCmsItems] = useState(null)
   const [overrides, setOverrides] = useState({})
@@ -197,9 +199,9 @@ function Merch({ goTo }) {
         overflow: 'hidden'
       }}>
         <picture style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}>
-          <source media="(max-width: 768px)" srcSet="/img/merch-hero.jpg" />
+          <source media="(max-width: 768px)" srcSet={cmsImages.merch_hero_mobile || '/img/merch-hero.jpg'} />
           <img
-            src="/img/hero.png"
+            src={cmsImages.merch_hero || '/img/hero.png'}
             alt="Shop Nova's Legacy"
             style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', display: 'block' }}
           />

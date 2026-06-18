@@ -109,7 +109,6 @@ const DIAL_CODES = [
 ]
 
 const PROG_PAGES = ['cheetah-run', 'volunteer', 'visit', 'internship', 'adopt', 'conservation']
-const PROG_IMGS  = [DEFAULTS.progRun, DEFAULTS.progVol, DEFAULTS.progChalet, DEFAULTS.progInt, DEFAULTS.progAdopt, DEFAULTS.progBreed]
 
 function useScrollRevealLocal() {
   useEffect(() => {
@@ -163,10 +162,22 @@ function Home({ goTo }) {
   const {t} = useTranslation()
   const cmsImages = useCMSImages()
   const IMG = {
-    ...DEFAULTS,
-    ...(cmsImages.home_hero ? { heroDesktop: cmsImages.home_hero } : {}),
-    ...(cmsImages.home_cta  ? { bigCta: cmsImages.home_cta } : {}),
+    heroDesktop: cmsImages.home_hero_desktop  || DEFAULTS.heroDesktop,
+    heroMobile:  cmsImages.home_hero_mobile   || DEFAULTS.heroMobile,
+    pillar1:     cmsImages.home_pillar1       || DEFAULTS.pillar1,
+    pillar2:     cmsImages.home_pillar2       || DEFAULTS.pillar2,
+    pillar3:     cmsImages.home_pillar3       || DEFAULTS.pillar3,
+    cheetahRun:  cmsImages.home_cheetah_run   || DEFAULTS.cheetahRun,
+    progRun:     cmsImages.home_prog_run      || DEFAULTS.progRun,
+    progVol:     cmsImages.home_prog_volunteer || DEFAULTS.progVol,
+    progChalet:  cmsImages.home_prog_stay     || DEFAULTS.progChalet,
+    progInt:     cmsImages.home_prog_internship || DEFAULTS.progInt,
+    progAdopt:   cmsImages.home_adopt         || DEFAULTS.progAdopt,
+    progBreed:   cmsImages.home_prog_breed    || DEFAULTS.progBreed,
+    bigCta:      cmsImages.home_cta           || DEFAULTS.bigCta,
   }
+  const PROG_IMGS = [IMG.progRun, IMG.progVol, IMG.progChalet, IMG.progInt, IMG.progAdopt, IMG.progBreed]
+  const animalSrcs = ANIMALS_SRCS.map((def, i) => cmsImages[`home_animal_${i + 1}`] || def)
 
   const animalRoles = t('home.animal_roles',   { returnObjects: true })
   const progTags    = t('home.prog_tags',       { returnObjects: true })
@@ -653,7 +664,7 @@ function Home({ goTo }) {
                         style={{ borderRadius: '8px' }}
                       >
                         <div className="animal-photo">
-                          <img src={ANIMALS_SRCS[i]} alt={name} draggable={false} />
+                          <img src={animalSrcs[i]} alt={name} draggable={false} />
                         </div>
                         <div className="animal-info">
                           <h4>{name}</h4>
@@ -699,7 +710,7 @@ function Home({ goTo }) {
         `}</style>
 
         {lbIdx !== null && (
-            <Lightbox srcs={ANIMALS_SRCS} captions={ANIMALS_NAMES} idx={lbIdx} setIdx={setLbIdx} />
+            <Lightbox srcs={animalSrcs} captions={ANIMALS_NAMES} idx={lbIdx} setIdx={setLbIdx} />
         )}
 
         <section className="big-cta" style={{height:'720px'}}>

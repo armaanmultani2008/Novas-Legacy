@@ -673,6 +673,13 @@ app.put('/api/cms/animals', requireAdmin, (req, res) => {
     res.json({ ok: true });
 });
 
+app.put('/api/cms/productOverrides', requireAdmin, (req, res) => {
+    const cms = readCMS();
+    cms.productOverrides = req.body;
+    writeCMS(cms);
+    res.json({ ok: true });
+});
+
 Promise.all([initDB(), initAuth()]).then(() => {
     app.listen(PORT, () => console.log(`Server in esecuzione sulla porta ${PORT}`));
 }).catch(err => {

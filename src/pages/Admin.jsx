@@ -824,8 +824,19 @@ function AnimalForm({ animal, onSave, onClose, saving }) {
 const CURATED = [
   { key: 'home', label: 'Homepage',
     images: [
-      { k: 'home_hero', l: 'Hero banner (main)',       def: '/img/ghepardo-erba.png' },
-      { k: 'home_cta',  l: 'Bottom CTA background',   def: '/img/ghepardo-corsa.png' },
+      { k: 'home_hero_desktop', l: 'Hero banner Desktop', def: '/img/ghepardo-erba.png' },
+      { k: 'home_hero_mobile', l: 'Hero banner Mobile', def: '/img/mother-baby.png' },
+      { k: 'home_cta',  l: 'Bottom CTA background', def: '/img/ghepardo-corsa.png' },
+      { k: 'home_pillar1', l: 'Pillar 1', def: '/img/madre-cucciolo.png' },
+      { k: 'home_pillar2', l: 'Pillar 2', def: '/img/community.png' },
+      { k: 'home_pillar3', l: 'Pillar 3', def: '/img/ghepardo-visita-vet.png' },
+      { k: 'home_cheetah_run', l: 'Cheetah run Background', def: '/img/ghepardo-corsa2.png' },
+      { k: 'home_prog_run', l: 'Project Cheetah Run', def: '/img/ghepardo-corsa-2.png' },
+      { k: 'home_prog_volunteer', l: 'Project Volunteer', def: '/img/volontari-lavoro.png' },
+      { k: 'home_prog_stay', l: 'Project Stay', def: '/img/chalet-esterno.png' },
+      { k: 'home_prog_internship', l: 'Project Internship', def: '/img/volontari-gruppo.png' },
+      { k: 'home_adopt', l: 'Project adopt', def: '/img/ghepardo-cucciolo.png' },
+      { k: 'home_prog_breed', l: 'Project breed', def: '/img/cucciolata.png' },
     ],
     fields: [
       { k: 'hero_title',    l: 'Hero — main title' },

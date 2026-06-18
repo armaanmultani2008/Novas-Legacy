@@ -740,7 +740,9 @@ function Home({ goTo }) {
                     type="tel"
                     placeholder={t('home.form_phone')}
                     value={contactForm.phone}
-                    onChange={e => setContactForm(f => ({ ...f, phone: e.target.value }))}
+                    onChange={e => setContactForm(f => ({ ...f, phone: e.target.value.replace(/[^0-9\s\-\(\)]/g, '') }))}
+                    minLength={4}
+                    maxLength={15}
                     style={{ flex: 1 }}
                   />
                 </div>

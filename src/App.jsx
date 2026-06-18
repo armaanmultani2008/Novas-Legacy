@@ -52,21 +52,40 @@ function App() {
   const [successBanner, setSuccessBanner] = useState(null)
 
   useEffect(() => {
+    // Set initial history state so popstate can restore 'home'
+    if (!window.history.state?.page) {
+      window.history.replaceState({ page: 'home' }, '', window.location.href)
+    }
     if (window.location.hash === '#admin') setCurrentPage('admin')
     const params = new URLSearchParams(window.location.search)
     if (params.get('payment') === 'success') {
       setSuccessBanner({ type: 'order', msg: "Thank you for your order! You'll receive a confirmation email shortly. Printful will ship your item directly to you." })
-      window.history.replaceState({}, '', '/')
+      window.history.replaceState({ page: 'home' }, '', '/')
     } else if (params.get('adoption') === 'success') {
       const animal = params.get('animal') || 'your animal'
       setSuccessBanner({ type: 'adoption', msg: `Welcome to ${animal}'s family! Check your email — your adoption confirmation is on its way.` })
-      window.history.replaceState({}, '', '/')
+      window.history.replaceState({ page: 'home' }, '', '/')
     } else if (params.get('payment') === 'cancel' || params.get('adoption') === 'cancel') {
-      window.history.replaceState({}, '', '/')
+      window.history.replaceState({ page: 'home' }, '', '/')
     }
   }, [])
 
+  // Handle browser back/forward button
+  useEffect(() => {
+    const handlePopState = (e) => {
+      const page = e.state?.page || 'home'
+      const savedPostId = e.state?.postId
+      if (savedPostId != null) setPostId(savedPostId)
+      setCurrentPage(page)
+      window.scrollTo({ top: 0, behavior: 'instant' })
+    }
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
+
   const goTo = (page, section = null, data = null) => {
+    const hash = page === 'home' ? '' : `#${page}`
+    window.history.pushState({ page, postId: data ?? null }, '', hash || '/')
     setTransitioning(true)
     setTimeout(() => {
       if (page === 'blog-post' && data !== null) setPostId(data)

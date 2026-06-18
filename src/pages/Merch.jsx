@@ -78,20 +78,22 @@ function Merch({ goTo }) {
       .catch(() => {})
   }, [])
 
-  const normalizedPrintful = printfulItems?.map(p => {
-    const selectedId = selectedVariants[p.id] || p.variants?.[0]?.id
-    const activeVariant = p.variants?.find(v => v.id === selectedId) || p.variants?.[0]
-    return {
-      id: p.id,
-      name: p.name,
-      photo: p.thumbnail,
-      price: activeVariant?.price ?? 0,
-      priceZar: null,
-      sizes: [...new Set(p.variants?.map(v => v.size).filter(Boolean) ?? [])],
-      variants: p.variants,
-      isPrintful: true,
-    }
-  })
+  const normalizedPrintful = printfulItems
+    ?.filter((p, idx, arr) => arr.findIndex(x => x.id === p.id) === idx)
+    .map(p => {
+      const selectedId = selectedVariants[p.id] || p.variants?.[0]?.id
+      const activeVariant = p.variants?.find(v => v.id === selectedId) || p.variants?.[0]
+      return {
+        id: p.id,
+        name: p.name,
+        photo: p.thumbnail,
+        price: activeVariant?.price ?? 0,
+        priceZar: null,
+        sizes: [...new Set(p.variants?.map(v => v.size).filter(Boolean) ?? [])],
+        variants: p.variants,
+        isPrintful: true,
+      }
+    })
 
   const allItems = (normalizedPrintful || cmsItems || FALLBACK_ITEMS)
     .filter(item => overrides[item.id]?.available !== false)

@@ -80,7 +80,7 @@ function Adopt({ goTo }) {
           </div>
         </div>
 
-        <div className="page-content" style={{padding: '4rem 4rem', alignContent: 'center'}}>
+        <div className="page-content adopt-content">
           <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
             <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
@@ -146,7 +146,7 @@ function Adopt({ goTo }) {
               <p style={{ fontSize: '0.88rem', color: '#777', marginBottom: '1.5rem', fontWeight: 300 }}>
                 {t('adopt.portal_desc')}
               </p>
-              <form onSubmit={handlePortal} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', flexWrap: 'wrap', overflow: 'hidden' }}>
+              <form onSubmit={handlePortal} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
                 <input
                     type="email"
                     required

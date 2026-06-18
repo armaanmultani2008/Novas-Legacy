@@ -1605,6 +1605,18 @@ footer {
   background: var(--white);
   border: 1px solid #E8E0D5;
 }
+@media (max-width: 640px) {
+  .s-info-strip {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+    gap: 1.25rem;
+  }
+}
+@media (min-width: 641px) and (max-width: 900px) {
+  .s-info-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
 .s-info-item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem; }
 
@@ -1893,6 +1905,17 @@ footer {
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   margin: 2rem 0 1.5rem;
+}
+
+.adopt-content {
+  padding: 4rem;
+  align-content: center;
+}
+@media (max-width: 900px) {
+  .adopt-content { padding: 3rem 2rem; }
+}
+@media (max-width: 560px) {
+  .adopt-content { padding: 2rem 1.2rem; }
 }
 
 @media (max-width: 900px) {

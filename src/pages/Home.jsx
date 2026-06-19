@@ -4,7 +4,6 @@ import Turnstile from "react-turnstile";
 import Lightbox from '../components/Lightbox'
 import { useCMSImages } from '../CMSContext'
 
-
 const DEFAULTS = {
   heroDesktop: '/img/ghepardo-erba.png',
   heroMobile:  '/img/mother-baby.png',
@@ -201,25 +200,23 @@ function Home({ goTo }) {
   const [lbIdx, setLbIdx] = useState(null)
 
   const marqueeRef = useRef(null)
-  const marqueeState = useRef({ dragging: false, hasDragged: false, startX: 0, startOffset: 0, offset: 0, lastTime: null })
+  const marqueeState = useRef({ dragging: false, hasDragged: false, startX: 0, startOffset: 0, offset: 0, lastTime: null, isHovered: false })
 
   useEffect(() => {
     const track = marqueeRef.current
     if (!track) return
-
-    // Stop CSS animation, drive position via rAF
-    track.style.animationPlayState = 'paused'
-    track.style.transform = 'translateX(0px)'
+    track.style.transform = `translateX(${marqueeState.current.offset}px)`
 
     let rafId
     function tick(now) {
       const s = marqueeState.current
-      if (!s.dragging) {
-        const dt = s.lastTime ? Math.min(now - s.lastTime, 50) : 0
-        const halfWidth = track.scrollWidth / 2
-        if (halfWidth > 0) s.offset -= (halfWidth / 40000) * dt
-      }
+      const dt = s.lastTime ? Math.min(now - s.lastTime, 50) : 16.66
       s.lastTime = now
+      if (!s.dragging && !s.isHovered) {
+        const halfWidth = track.scrollWidth / 2
+        if (halfWidth > 0)
+          s.offset -= (halfWidth / 35000) * dt
+      }
       const halfWidth = track.scrollWidth / 2
       if (halfWidth > 0) {
         s.offset = ((s.offset % halfWidth) + halfWidth) % halfWidth - halfWidth
@@ -250,14 +247,23 @@ function Home({ goTo }) {
     if (!track) return
     const halfWidth = track.scrollWidth / 2
     let newOffset = s.startOffset + delta
-    if (halfWidth > 0) newOffset = ((newOffset % halfWidth) + halfWidth) % halfWidth - halfWidth
+    if (halfWidth > 0) {
+      newOffset = ((newOffset % halfWidth) + halfWidth) % halfWidth - halfWidth
+    }
     s.offset = newOffset
+    track.style.transform = `translateX(${s.offset}px)`
   }
 
   function onMarqueePointerUp(e) {
     const s = marqueeState.current
     s.dragging = false
-    if (marqueeRef.current) marqueeRef.current.style.cursor = 'grab'
+    s.lastTime = null
+    try{
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    } catch(err) {}
+    if (marqueeRef.current) {
+      marqueeRef.current.style.cursor = s.isHovered ? 'grab' : 'default'
+    }
   }
 
   const [contactForm, setContactForm] = useState({ name: '', surname: '', email: '', dialCode: '+27', phone: '', reason: '', message: '' })
@@ -647,21 +653,32 @@ function Home({ goTo }) {
 
           <div className="marquee-wrapper">
             <div
-              className="marquee-track"
-              ref={marqueeRef}
-              onPointerDown={onMarqueePointerDown}
-              onPointerMove={onMarqueePointerMove}
-              onPointerUp={onMarqueePointerUp}
-              onPointerCancel={onMarqueePointerUp}
-              style={{ cursor: 'grab', userSelect: 'none', touchAction: 'none' }}
+                className="marquee-track"
+                ref={marqueeRef}
+                onPointerDown={onMarqueePointerDown}
+                onPointerMove={onMarqueePointerMove}
+                onPointerUp={onMarqueePointerUp}
+                onPointerCancel={onMarqueePointerUp}
+                onMouseEnter={(e) => {
+                  marqueeState.current.isHovered = true
+                  e.currentTarget.style.cursor = 'grab'
+                }}
+                onMouseLeave={(e) => {
+                  marqueeState.current.isHovered = false
+                  marqueeState.current.lastTime = null
+                  e.currentTarget.style.cursor = 'default'
+                }}
+                style={{ cursor: 'default', userSelect: 'none', touchAction: 'none' }}
             >
               {[...Array(2)].flatMap((_, rep) =>
                   ANIMALS_NAMES.map((name, i) => (
                       <div
-                        key={`${rep}-${name}-${i}`}
-                        className="animal-card"
-                        onClick={() => { if (!marqueeState.current.hasDragged) setLbIdx(i) }}
-                        style={{ borderRadius: '8px' }}
+                          key={`${rep}-${name}-${i}`}
+                          className="animal-card"
+                          onClick={() => {
+                            if (!marqueeState.current.hasDragged) setLbIdx(i)
+                          }}
+                          style={{ borderRadius: '8px' }}
                       >
                         <div className="animal-photo">
                           <img src={animalSrcs[i]} alt={name} draggable={false} />
@@ -699,13 +716,23 @@ function Home({ goTo }) {
             margin-left: -50vw;
             margin-right: -50vw;
             overflow: hidden;
+            touch-action: pan-y;
           }
           .marquee-track {
             display: flex;
             width: max-content;
-            /* Assicurati che non ci siano padding o margini iniziali */
             margin: 0;
             padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+          }
+          .animal-card {
+            user-drag: none;
+            -webkit-user-drag: none;
+          }
+          .animal-card img {
+            pointer-events: none;
+            user-select: none;
           }
         `}</style>
 

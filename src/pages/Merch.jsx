@@ -32,6 +32,14 @@ const CATEGORY_RULES = [
   { key: 'other',    label: 'Accessories', match: /bag|tote|sticker|poster|phone|pillow|print/i },
 ]
 
+const SORT_OPTIONS = [
+  { key: 'featured',   label: 'Featured',          sort: null },
+  { key: 'price-asc',  label: 'Price: Low to High', sort: (a, b) => a.price - b.price },
+  { key: 'price-desc', label: 'Price: High to Low', sort: (a, b) => b.price - a.price },
+  { key: 'name-asc',   label: 'Name: A-Z',          sort: (a, b) => a.name.localeCompare(b.name) },
+  { key: 'name-desc',  label: 'Name: Z-A',          sort: (a, b) => b.name.localeCompare(a.name) },
+]
+
 function getCategory(name) {
   for (const rule of CATEGORY_RULES) {
     if (rule.match.test(name)) return rule.key
@@ -54,6 +62,7 @@ function Merch({ goTo }) {
   const [selectedVariants, setSelectedVariants] = useState({})
   const [selectedSizes, setSelectedSizes] = useState({})
   const [activeFilter, setActiveFilter] = useState('all')
+  const [sortBy, setSortBy] = useState('featured')
 
   useEffect(() => {
     fetch(`${API}/api/cms`)
@@ -80,29 +89,28 @@ function Merch({ goTo }) {
       .catch(() => {})
   }, [])
 
-  const printfulMap = new Map()
+  const printfulGroups = []
 
   if (Array.isArray(printfulItems)) {
     printfulItems.forEach(p => {
       if (!p || !p.id) return
       const idStr = String(p.id)
-      if (!printfulMap.has(idStr)) {
-        printfulMap.set(idStr, {...p, id: idStr, variants: Array.isArray(p.variants) ? [...p.variants] : []})
+      const nameKey = (p.name || '').trim().toLowerCase()
+      const existingProduct = printfulGroups.find(g => g.id === idStr || (nameKey && g.nameKey === nameKey))
+      if (!existingProduct) {
+        printfulGroups.push({...p, id: idStr, nameKey, variants: Array.isArray(p.variants) ? [...p.variants] : []})
       }
-      else {
-        const existingProduct = printfulMap.get(idStr)
-        if (Array.isArray(p.variants)) {
-          p.variants.forEach(variant => {
-            if (variant && variant.id && !existingProduct.variants.some(ev => String(ev.id) === String(variant.id))) {
-              existingProduct.variants.push(variant)
-            }
-          })
-        }
+      else if (Array.isArray(p.variants)) {
+        p.variants.forEach(variant => {
+          if (variant && variant.id && !existingProduct.variants.some(ev => String(ev.id) === String(variant.id))) {
+            existingProduct.variants.push(variant)
+          }
+        })
       }
     })
   }
 
-  const normalizedPrintful = Array.from(printfulMap.values()).map(p => {
+  const normalizedPrintful = printfulGroups.map(p => {
     const idStr = String(p.id)
     const selectedId = selectedVariants[idStr]
         ? String(selectedVariants[idStr]) : (p.variants?.[0]?.id ? String(p.variants[0].id) : null)
@@ -112,7 +120,6 @@ function Merch({ goTo }) {
       name: p.name,
       photo: p.thumbnail,
       price: activeVariant?.price ?? 0,
-      priceZar: null,
       sizes: [...new Set(p.variants?.map(variant => variant.size).filter(Boolean) ?? [])],
       variants: p.variants,
       isPrintful: true,
@@ -131,16 +138,19 @@ function Merch({ goTo }) {
     allItems.some(item => getEffectiveCategory(item, overrides) === r.key)
   )
 
-  const shopItems = activeFilter === 'all'
+  const filteredItems = activeFilter === 'all'
     ? allItems
     : allItems.filter(item => getEffectiveCategory(item, overrides) === activeFilter)
+
+  const activeSort = SORT_OPTIONS.find(s => s.key === sortBy)?.sort
+  const shopItems = activeSort ? [...filteredItems].sort(activeSort) : filteredItems
 
   const infoStrip = t('merch.info', { returnObjects: true })
 
   const handleSizeSelect = (productId, size, isPrintful) => {
     setSelectedSizes(prev => ({ ...prev, [productId]: size }))
     if (!isPrintful) return
-    const item = printfulItems?.find(p => p.id === productId)
+    const item = allItems.find(i => i.id === productId)
     if (!item) return
     const variant = item.variants.find(v => v.size === size)
     if (variant) setSelectedVariants(prev => ({ ...prev, [productId]: variant.id }))
@@ -153,8 +163,8 @@ function Merch({ goTo }) {
     setLoading(null)
   }
 
-  const fmtPrice = p => `€${typeof p === 'number' ? p : p}`
-  const fmtZar   = p => `R ${typeof p === 'number' ? p : p}`
+  const toNumber = p => (typeof p === 'number' ? p : parseFloat(p)) || 0
+  const fmtPrice = p => `$${toNumber(p).toFixed(2)}`
 
   const getSelectedSize = (item) => {
     if (selectedSizes[item.id]) return selectedSizes[item.id]
@@ -265,6 +275,18 @@ function Merch({ goTo }) {
                   <option key={c.key} value={c.key}>{c.label}</option>
                 ))}
               </select>
+
+              <span className="shop-filter-label">Sort</span>
+              <select
+                className="shop-filter-select"
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+              >
+                {SORT_OPTIONS.map(s => (
+                  <option key={s.key} value={s.key}>{s.label}</option>
+                ))}
+              </select>
+
               <span className="shop-count">{shopItems.length} product{shopItems.length !== 1 ? 's' : ''}</span>
             </div>
           )}
@@ -300,7 +322,6 @@ function Merch({ goTo }) {
                     <div className="s-footer">
                       <div className="s-price">
                         {fmtPrice(item.price)}
-                        {item.priceZar && <span>{fmtZar(item.priceZar)} {t('merch.zar_label')}</span>}
                       </div>
                       <button
                         className="btn btn-dark btn-sm"

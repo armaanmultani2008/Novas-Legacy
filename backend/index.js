@@ -309,17 +309,25 @@ app.get('/api/printful/debug', async (_req, res) => {
 app.get('/api/printful/products', async (_req, res) => {
     try {
         const raw = await printfulGet('/store/products');
+        if (raw.code && raw.code !== 200) {
+            console.error('[printful] GET /store/products failed:', raw.code, raw.error?.message || raw.result);
+            return res.status(502).json({ error: raw.error?.message || raw.result || 'Printful API error' });
+        }
         const list = Array.isArray(raw.result) ? raw.result : raw.result?.sync_products ?? [];
         if (!list.length) return res.json([]);
 
         const products = await Promise.all(list.map(async (p) => {
-            const { result } = await printfulGet(`/store/products/${p.id}`);
-            const sp = result.sync_product;
+            const detail = await printfulGet(`/store/products/${p.id}`);
+            if (detail.code && detail.code !== 200) {
+                console.error(`[printful] GET /store/products/${p.id} failed:`, detail.code, detail.error?.message || detail.result);
+                return null;
+            }
+            const sp = detail.result.sync_product;
             return {
                 id: sp.id,
                 name: sp.name,
                 thumbnail: sp.thumbnail_url,
-                variants: result.sync_variants.map(v => ({
+                variants: detail.result.sync_variants.map(v => ({
                     id: v.id,
                     name: v.name,
                     price: parseFloat(v.retail_price),
@@ -328,8 +336,9 @@ app.get('/api/printful/products', async (_req, res) => {
             };
         }));
 
-        res.json(products);
+        res.json(products.filter(Boolean));
     } catch (err) {
+        console.error('[printful] /api/printful/products fatal error:', err.message);
         res.status(500).json({ error: err.message });
     }
 });

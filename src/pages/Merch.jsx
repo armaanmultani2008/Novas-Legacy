@@ -80,25 +80,52 @@ function Merch({ goTo }) {
       .catch(() => {})
   }, [])
 
-  const normalizedPrintful = printfulItems
-    ?.filter((p, idx, arr) => arr.findIndex(x => x.id === p.id) === idx)
-    .map(p => {
-      const selectedId = selectedVariants[p.id] || p.variants?.[0]?.id
-      const activeVariant = p.variants?.find(v => v.id === selectedId) || p.variants?.[0]
-      return {
-        id: p.id,
-        name: p.name,
-        photo: p.thumbnail,
-        price: activeVariant?.price ?? 0,
-        priceZar: null,
-        sizes: [...new Set(p.variants?.map(v => v.size).filter(Boolean) ?? [])],
-        variants: p.variants,
-        isPrintful: true,
+  const printfulMap = new Map()
+
+  if (Array.isArray(printfulItems)) {
+    printfulItems.forEach(p => {
+      if (!p || !p.id) return
+      const idStr = String(p.id)
+      if (!printfulMap.has(idStr)) {
+        printfulMap.set(idStr, {...p, id: idStr, variants: Array.isArray(p.variants) ? [...p.variants] : []})
+      }
+      else {
+        const existingProduct = printfulMap.get(idStr)
+        if (Array.isArray(p.variants)) {
+          p.variants.forEach(variant => {
+            if (variant && variant.id && !existingProduct.variants.some(ev => String(ev.id) === String(variant.id))) {
+              existingProduct.variants.push(variant)
+            }
+          })
+        }
       }
     })
+  }
 
-  const allItems = (normalizedPrintful || cmsItems || FALLBACK_ITEMS)
-    .filter(item => overrides[item.id]?.available !== false)
+  const normalizedPrintful = Array.from(printfulMap.values()).map(p => {
+    const idStr = String(p.id)
+    const selectedId = selectedVariants[idStr]
+        ? String(selectedVariants[idStr]) : (p.variants?.[0]?.id ? String(p.variants[0].id) : null)
+    const activeVariant = p.variants?.find(variant => String(variant.id) === selectedId) || p.variants?.[0]
+    return {
+      id: idStr,
+      name: p.name,
+      photo: p.thumbnail,
+      price: activeVariant?.price ?? 0,
+      priceZar: null,
+      sizes: [...new Set(p.variants?.map(variant => variant.size).filter(Boolean) ?? [])],
+      variants: p.variants,
+      isPrintful: true,
+    }
+  })
+
+  const allItems = [...normalizedPrintful, ...(cmsItems || FALLBACK_ITEMS)]
+      .filter(item => {
+        if(!item) return false
+        const itemIdStr = item.id ? String(item.id) : String(item.name || '')
+        if(!itemIdStr) return false
+        return overrides[itemIdStr]?.available !== false
+      })
 
   const availableCategories = CATEGORY_RULES.filter(r =>
     allItems.some(item => getEffectiveCategory(item, overrides) === r.key)

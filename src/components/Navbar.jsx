@@ -452,7 +452,7 @@ function Navbar({ goTo }) {
         }
         .ovmenu__socials a:hover { color: rgba(255,255,255,0.65); }
 
-        @media (max-width: 1050px) {
+        @media (max-width: 1180px) {
           .nn__links, .nn__actions { display: none; }
           .hamburger { display: flex; }
         }

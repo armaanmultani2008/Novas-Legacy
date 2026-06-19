@@ -486,7 +486,7 @@ app.post('/api/stripe/checkout', async (req, res) => {
     if (!name || !price) {
         return res.status(400).json({ error: 'Dati prodotto mancanti' });
     }
-    const origin = req.headers.origin || 'http://localhost:5174';
+    const origin = req.headers.origin || process.env.FRONTEND_URL || 'http://localhost:5174';
     try {
         const sessionData = {
             payment_method_types: ['card'],

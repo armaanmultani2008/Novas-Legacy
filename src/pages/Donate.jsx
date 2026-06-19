@@ -99,7 +99,6 @@ function Donate({ goTo }) {
               </h2>
             </div>
 
-            {/* ── DONATION CARD ── */}
             <div className="donate-card rv rv-d1">
               <div className="donate-amounts">
                 {AMOUNTS.map(a => (
@@ -128,7 +127,7 @@ function Donate({ goTo }) {
                 {t('donate.summary')} <strong>€{finalAmount > 0 ? finalAmount.toFixed(2) : '—'}</strong> {t('donate.summary_to')}
               </div>
 
-              <div ref={btnRef} className="paypal-btn-wrap" />
+              <div ref={btnRef} className="paypal-btn-wrap"/>
 
               {status === 'error' && (
                   <p style={{ color: 'var(--red-alert)', textAlign: 'center', fontSize: '0.85rem', marginTop: '1rem' }}>

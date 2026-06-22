@@ -309,17 +309,25 @@ app.get('/api/printful/debug', async (_req, res) => {
 app.get('/api/printful/products', async (_req, res) => {
     try {
         const raw = await printfulGet('/store/products');
+        if (raw.code && raw.code !== 200) {
+            console.error('[printful] GET /store/products failed:', raw.code, raw.error?.message || raw.result);
+            return res.status(502).json({ error: raw.error?.message || raw.result || 'Printful API error' });
+        }
         const list = Array.isArray(raw.result) ? raw.result : raw.result?.sync_products ?? [];
         if (!list.length) return res.json([]);
 
         const products = await Promise.all(list.map(async (p) => {
-            const { result } = await printfulGet(`/store/products/${p.id}`);
-            const sp = result.sync_product;
+            const detail = await printfulGet(`/store/products/${p.id}`);
+            if (detail.code && detail.code !== 200) {
+                console.error(`[printful] GET /store/products/${p.id} failed:`, detail.code, detail.error?.message || detail.result);
+                return null;
+            }
+            const sp = detail.result.sync_product;
             return {
                 id: sp.id,
                 name: sp.name,
                 thumbnail: sp.thumbnail_url,
-                variants: result.sync_variants.map(v => ({
+                variants: detail.result.sync_variants.map(v => ({
                     id: v.id,
                     name: v.name,
                     price: parseFloat(v.retail_price),
@@ -328,17 +336,21 @@ app.get('/api/printful/products', async (_req, res) => {
             };
         }));
 
-        res.json(products);
+        res.json(products.filter(Boolean));
     } catch (err) {
+        console.error('[printful] /api/printful/products fatal error:', err.message);
         res.status(500).json({ error: err.message });
     }
 });
 
-// ── Stripe: abbonamento adozione ─────────────────────────────────────────────
+// ── Stripe: abbonamento adozione  ───────────────────────────────────
 app.post('/api/stripe/subscribe', async (req, res) => {
     const { animalName, animalSpecies, price, userId } = req.body;
     if (!animalName || !price) return res.status(400).json({ error: 'Dati mancanti' });
-    const origin = req.headers.origin || 'http://localhost:5174';
+
+    // Rileva l'origin corrente o usa come fallback la porta corretta del tuo frontend (5173)
+    const origin = req.headers.origin || 'http://localhost:5173';
+
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -357,8 +369,8 @@ app.post('/api/stripe/subscribe', async (req, res) => {
             }],
             metadata: { animalName, animalSpecies, monthlyEur: String(price), ...(userId ? { userId } : {}) },
             billing_address_collection: 'required',
-            success_url: `${origin}/?adoption=success&animal=${encodeURIComponent(animalName)}`,
-            cancel_url: `${origin}/`,
+            success_url: `${origin}/?page=adopt&adoption=success&animal=${encodeURIComponent(animalName)}`,
+            cancel_url: `${origin}/?page=adopt&adoption=cancel`,
         });
         res.json({ url: session.url });
     } catch (err) {
@@ -369,7 +381,7 @@ app.post('/api/stripe/subscribe', async (req, res) => {
 app.post('/api/stripe/portal', async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: 'Email richiesta' });
-    const origin = req.headers.origin || 'http://localhost:5174';
+    const origin = req.headers.origin || 'http://localhost:5173';
     try {
         const customers = await stripe.customers.list({ email, limit: 1 });
         if (!customers.data.length) {
@@ -377,7 +389,7 @@ app.post('/api/stripe/portal', async (req, res) => {
         }
         const session = await stripe.billingPortal.sessions.create({
             customer: customers.data[0].id,
-            return_url: origin,
+            return_url: `${origin}/?page=adopt`,
         });
         res.json({ url: session.url });
     } catch (err) {
@@ -407,7 +419,6 @@ app.post('/api/stripe/webhook',
             const s = await stripe.checkout.sessions.retrieve(event.data.object.id);
             console.log('[webhook] session mode:', s.mode, '| variantId:', s.metadata?.variantId, '| email:', s.customer_details?.email);
 
-            // FLUSSO ABBONAMENTI ADOZIONE
             if (s.mode === 'subscription') {
                 const animalName = s.metadata?.animalName || '—';
                 const animalSpecies = s.metadata?.animalSpecies || '—';
@@ -432,7 +443,6 @@ app.post('/api/stripe/webhook',
                 }
             }
 
-            // FLUSSO SHOP PRODOTTI (PRINTFUL)
             if (s.mode === 'payment' && s.metadata?.variantId) {
                 const variantId = parseInt(s.metadata.variantId);
                 const qty = parseInt(s.metadata.quantity || '1');
@@ -475,7 +485,6 @@ app.post('/api/stripe/webhook',
                     }
                 }
 
-                // Invio email SOLO al cliente (Kim riceve già la notifica automatica da Printful)
                 console.log('[webhook] sending confirmation email to customer:', customerEmail);
                 try {
                     await sendOrderConfirmation(customerEmail, recipientName, productName, amount);
@@ -505,12 +514,13 @@ app.post('/api/stripe/webhook',
     }
 );
 
+// ── Stripe: checkout shop ───────────────────────────────────────────────────
 app.post('/api/stripe/checkout', async (req, res) => {
     const { name, price, quantity = 1, variantId, userId } = req.body;
     if (!name || !price) {
         return res.status(400).json({ error: 'Dati prodotto mancanti' });
     }
-    const origin = req.headers.origin || 'http://localhost:5174';
+    const origin = req.headers.origin || process.env.FRONTEND_URL || 'http://localhost:5174';
     try {
         const sessionData = {
             payment_method_types: ['card'],
@@ -523,8 +533,8 @@ app.post('/api/stripe/checkout', async (req, res) => {
                 },
                 quantity,
             }],
-            success_url: `${origin}/?payment=success`,
-            cancel_url: `${origin}/?payment=cancel`,
+            success_url: `${origin}/?page=merch&payment=success`,
+            cancel_url: `${origin}/?page=merch&payment=cancel`,
         };
 
         if (variantId) {
@@ -775,6 +785,13 @@ app.put('/api/cms/products', requireAdmin, (req, res) => {
 app.put('/api/cms/animals', requireAdmin, (req, res) => {
     const cms = readCMS();
     cms.animals = req.body;
+    writeCMS(cms);
+    res.json({ ok: true });
+});
+
+app.put('/api/cms/productOverrides', requireAdmin, (req, res) => {
+    const cms = readCMS();
+    cms.productOverrides = req.body;
     writeCMS(cms);
     res.json({ ok: true });
 });

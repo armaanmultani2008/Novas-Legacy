@@ -144,8 +144,8 @@ function CheetahRun({ goTo }) {
 
           <div className="run-grid-imgs">
             {[
-              { src: '/img/ghepardo-corsa-erba-gialla.png', cap: t('cheetah_run.stat_labels', { returnObjects: true })[0] },
-              { src: '/img/volontarie-ghepardo.png',        cap: t('cheetah_run.hero_sub') },
+              { src: cmsImages.cheetah_run_photo_1 || '/img/ghepardo-corsa-erba-gialla.png', cap: t('cheetah_run.stat_labels', { returnObjects: true })[0] },
+              { src: cmsImages.cheetah_run_photo_2 || '/img/volontarie-ghepardo.png',        cap: t('cheetah_run.hero_sub') },
             ].map((p, i) => (
                 <div key={i} style={{ height: '280px', overflow: 'hidden', position: 'relative', borderRadius: '6px' }}>
                   <img

@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
 import { useCMSImages } from '../CMSContext'
 
-const KIM_PHOTO = '/img/kim-portrait.jpg'
 const KIM_HERO_BG = '/img/kim-savana.svg'
+const KIM_PHOTO_DEFAULT = '/img/kim-portrait.jpg'
 
 function KimStory({ goTo }) {
   useScrollReveal()
@@ -37,7 +37,7 @@ function KimStory({ goTo }) {
 
           <div className="kim-split rv">
             <div className="kim-photo-wrap">
-              <img src={KIM_PHOTO} alt="Kim Hiltrop — fondatrice di Nova's Legacy" />
+              <img src={cmsImages.kim_story_portrait || KIM_PHOTO_DEFAULT} alt="Kim Hiltrop — fondatrice di Nova's Legacy" />
             </div>
             <div className="kim-text">
               <span className="label">{t('kim_story.section_label')}</span>

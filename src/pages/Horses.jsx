@@ -46,8 +46,8 @@ function Horses({ goTo }) {
               margin: '2.5rem 0'
             }}>
               {[
-                { src: '/img/volontario-recinzione.png', cap: 'Fence maintenance' },
-                { src: '/img/volontari-lavoro.png',      cap: 'Team at work' },
+                { src: cmsImages.horses_photo_1 || '/img/volontario-recinzione.png', cap: 'Fence maintenance' },
+                { src: cmsImages.horses_photo_2 || '/img/volontari-lavoro.png',      cap: 'Team at work' },
               ].map((p, i) => (
                   <div key={i} style={{ height: '320px', overflow: 'hidden', position: 'relative', borderRadius: '6px' }}>
                     <img src={p.src} alt={p.cap} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}
@@ -63,7 +63,7 @@ function Horses({ goTo }) {
             <p>{t('horses.vol_p2')}</p>
 
             <div style={{overflow: 'hidden', position: 'relative', margin: '2.5rem 0', borderRadius: '6px' }}>
-              <img className={'horses-img'} src="/img/horse-project.png" alt="Our Horses" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', maxHeight: '500px' }} />
+              <img className={'horses-img'} src={cmsImages.horses_fullwidth || '/img/horse-project.png'} alt="Our Horses" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', maxHeight: '500px' }} />
               <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)', padding: '0.8rem 1.2rem', color: 'rgba(255,255,255,0.8)', fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', pointerEvents: 'none' }}>Out horses</div>
             </div>
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useCMSImages } from '../CMSContext'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -14,6 +15,7 @@ const FALLBACK_IMGS = [
 
 function Blog({ goTo }) {
   const { t } = useTranslation()
+  const cmsImages = useCMSImages()
   const fallback = t('blog.posts', { returnObjects: true })
 
   const [posts, setPosts] = useState(null)
@@ -34,7 +36,7 @@ function Blog({ goTo }) {
   return (
       <>
         <div className="page-hero-img" style={{height: '65dvh'}}>
-          <img src="/img/ghepardo-corsa-2.png" alt="Blog Nova's Legacy" style={{ objectPosition: 'center 20%' }} />
+          <img src={cmsImages.blog_hero || '/img/ghepardo-corsa-2.png'} alt="Blog Nova's Legacy" style={{ objectPosition: 'center 20%' }} />
           <div className="page-hero-img-overlay" />
           <div className="page-hero-text">
             <span className="label label-light">{t('blog.hero_label')}</span>

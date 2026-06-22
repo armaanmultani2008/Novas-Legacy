@@ -3,18 +3,19 @@ import { useTranslation } from 'react-i18next'
 import Lightbox from '../components/Lightbox'
 import { useCMSImages } from '../CMSContext'
 
-const PHOTOS = [
-  { src: '/img/nova-primo-piano.png' },
-  { src: '/img/cub.png' },
-  { src: '/img/nova-madre-cucciolo.png' },
-  { src: '/img/due-ghepardi.png' },
+const PHOTO_DEFAULTS = [
+  '/img/nova-primo-piano.png',
+  '/img/cub.png',
+  '/img/nova-madre-cucciolo.png',
+  '/img/due-ghepardi.png',
 ]
-const PHOTO_SRCS = PHOTOS.map(p => p.src)
 
 function NovaStory({ goTo }) {
   const { t } = useTranslation()
   const cmsImages = useCMSImages()
-  const photoCaps = t('nova_story.photo_caps', { returnObjects: true })
+  const photoCapsDefault = t('nova_story.photo_caps', { returnObjects: true }) || []
+  const photoCaps = PHOTO_DEFAULTS.map((_, i) => cmsImages[`cap_nova_story_photo_${i + 1}`] || photoCapsDefault[i] || '')
+  const photoSrcs = PHOTO_DEFAULTS.map((def, i) => cmsImages[`nova_story_photo_${i + 1}`] || def)
   const [lbIdx, setLbIdx] = useState(null)
 
   const heroImgRef = useRef(null)
@@ -50,12 +51,12 @@ function NovaStory({ goTo }) {
           <picture style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}>
             <source
                 media="(max-width: 768px)"
-                srcSet="/img/ghepardo-erba.png"
+                srcSet={cmsImages.nova_story_hero_mobile || '/img/ghepardo-erba.png'}
             />
             <img
                 ref={heroImgRef}
                 className="hero-img-responsive"
-                src="/img/nova-sdraiata.png"
+                src={cmsImages.nova_story_hero || '/img/nova-sdraiata.png'}
                 alt="Nova — la gheparda fondatrice"
                 style={{
                   width: '100%',
@@ -112,14 +113,14 @@ function NovaStory({ goTo }) {
             `}</style>
 
             <div className="responsive-grid">
-              {PHOTOS.map((p, i) => (
+              {photoSrcs.map((src, i) => (
                   <div
                       key={i}
                       style={{ height: '320px', overflow: 'hidden', position: 'relative', cursor: 'pointer', borderRadius: '6px' }}
                       onClick={() => setLbIdx(i)}
                   >
                     <img
-                        src={p.src}
+                        src={src}
                         alt={photoCaps[i]}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}
                         onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
@@ -140,7 +141,7 @@ function NovaStory({ goTo }) {
             </div>
 
             {lbIdx !== null && (
-                <Lightbox srcs={PHOTO_SRCS} captions={photoCaps} idx={lbIdx} setIdx={setLbIdx} />
+                <Lightbox srcs={photoSrcs} captions={photoCaps} idx={lbIdx} setIdx={setLbIdx} />
             )}
 
             <h2>{t('nova_story.genetics_title')}</h2>

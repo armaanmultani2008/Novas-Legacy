@@ -35,9 +35,9 @@ function Visit({ goTo }) {
             {chalets.map(c => (
               <div key={c.name} style={{ border: '1px solid #EDE5D8', overflow: 'overflow', background: 'var(--off-white)', borderRadius: '8px' }}>
                 <div style={{ height: '320px', overflow: 'hidden' }}>
-                  {c.name === 'Chalet Nova' && <img src="/img/chalet-cucina.png" alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
-                  {c.name === 'Chalet Bush' && <img src="/img/chalet-esterno-2.png" alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
-                  {c.name === 'Chalet Waterberg' && <img src="/img/chalet-camera.png" alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                  {c.name === 'Chalet Nova'      && <img src={cmsImages.visit_chalet_nova      || '/img/chalet-cucina.png'}     alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                  {c.name === 'Chalet Bush'      && <img src={cmsImages.visit_chalet_bush      || '/img/chalet-esterno-2.png'}  alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                  {c.name === 'Chalet Waterberg' && <img src={cmsImages.visit_chalet_waterberg || '/img/chalet-camera.png'}     alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                 </div>
                 <div style={{ padding: '1.5rem' }}>
                   <div style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.4rem' }}>{c.size}</div>
@@ -64,8 +64,8 @@ function Visit({ goTo }) {
           `}</style>
           <div className="chalet-grid-imgs">
             {[
-              { src: '/img/external.jpg', cap: 'External space' },
-              { src: '/img/thutlwa.jpg',    cap: 'Peaceful place' },
+              { src: cmsImages.visit_photo_1 || '/img/external.jpg', cap: 'External space' },
+              { src: cmsImages.visit_photo_2 || '/img/thutlwa.jpg',  cap: 'Peaceful place' },
             ].map((p, i) => (
                 <div key={i} style={{ height: '300px', overflow: 'hidden', position: 'relative', borderRadius: '6px' }}>
                   <img

@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
+import { useCMSImages } from '../CMSContext'
 
 function FAQ({ goTo }) {
     useScrollReveal()
     const { t } = useTranslation()
+    const cmsImages = useCMSImages()
     const [activeCategory, setActiveCategory] = useState('volunteer')
     const [openIndex, setOpenIndex] = useState(null)
 
@@ -18,7 +20,7 @@ function FAQ({ goTo }) {
     return (
         <>
             <div className="page-hero-img" style={{ height: '65dvh' }}>
-                <img className={"page-hero-img-photo"} src="/img/nova-sdraiata.png" alt="FAQ Nova's Legacy" style={{ objectPosition: 'center 40%' }} />
+                <img className={"page-hero-img-photo"} src={cmsImages.faq_hero || '/img/nova-sdraiata.png'} alt="FAQ Nova's Legacy" style={{ objectPosition: 'center 40%' }} />
                 <div className="page-hero-img-overlay" />
                 <div className="page-hero-text">
                     <span className="label label-light">{t('faq.hero_label')}</span>

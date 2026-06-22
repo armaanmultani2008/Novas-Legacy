@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import Lightbox from '../components/Lightbox'
 import { useCMSImages } from '../CMSContext'
 
-const VOL_PHOTO_SRCS = [
+const VOL_PHOTO_DEFAULTS = [
   '/img/animal-care.png',
   '/img/daily-work.png',
   '/img/with-the-cheetahs.png',
@@ -17,8 +17,10 @@ function Volunteer({ goTo }) {
   const cmsImages = useCMSImages()
   const schedule  = t('volunteer.schedule',   { returnObjects: true })
   const tasks     = t('volunteer.tasks',      { returnObjects: true })
-  const photoCaps = t('volunteer.photo_caps', { returnObjects: true })
+  const photoCapsDefault = t('volunteer.photo_caps', { returnObjects: true }) || []
+  const photoCaps = VOL_PHOTO_DEFAULTS.map((_, i) => cmsImages[`cap_volunteer_photo_${i + 1}`] || photoCapsDefault[i] || '')
   const [lbIdx, setLbIdx] = useState(null)
+  const volPhotoSrcs = VOL_PHOTO_DEFAULTS.map((def, i) => cmsImages[`volunteer_photo_${i + 1}`] || def)
 
   return (
       <>
@@ -74,7 +76,7 @@ function Volunteer({ goTo }) {
               gap: '6px',
               margin: '2rem 0 2.5rem',
             }}>
-              {VOL_PHOTO_SRCS.map((src, i) => (
+              {volPhotoSrcs.map((src, i) => (
                   <div
                       key={i}
                       style={{
@@ -114,7 +116,7 @@ function Volunteer({ goTo }) {
             </div>
 
             {lbIdx !== null && (
-                <Lightbox srcs={VOL_PHOTO_SRCS} captions={photoCaps} idx={lbIdx} setIdx={setLbIdx} />
+                <Lightbox srcs={volPhotoSrcs} captions={photoCaps} idx={lbIdx} setIdx={setLbIdx} />
             )}
 
             <div className="highlight">

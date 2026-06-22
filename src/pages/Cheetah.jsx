@@ -1,12 +1,14 @@
 import { useTranslation } from 'react-i18next'
+import { useCMSImages } from '../CMSContext'
 
 function Cheetah({ goTo }) {
   const { t } = useTranslation()
+  const cmsImages = useCMSImages()
 
   return (
     <>
       <div className="page-hero-img">
-        <img src="/img/nova-madre-cucciolo.png" alt="Ghepardo Nova's Legacy" />
+        <img src={cmsImages.cheetah_hero || '/img/nova-madre-cucciolo.png'} alt="Ghepardo Nova's Legacy" />
         <div className="page-hero-img-overlay" />
         <div className="page-hero-text">
           <span className="label label-light">{t('cheetah.hero_label')}</span>

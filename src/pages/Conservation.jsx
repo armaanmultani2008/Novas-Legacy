@@ -14,7 +14,7 @@ function Conservation({ goTo }) {
           overflow: 'hidden'
         }}>
           <picture style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}>
-            <source media="(max-width: 768px)" srcSet="/img/due-ghepardi.png" />
+            <source media="(max-width: 768px)" srcSet={cmsImages.conservation_hero_mobile || '/img/due-ghepardi.png'} />
 
             <img
                 src={cmsImages.conservation_hero || '/img/hero-cheetah-project.png'}
@@ -64,8 +64,8 @@ function Conservation({ goTo }) {
               margin: '2.5rem 0'
             }}>
               {[
-                { src: '/img/cubs.png',    cap: 'Cubs' },
-                { src: '/img/veterinary.jpg', cap: 'Veterinary monitoring' },
+                { src: cmsImages.conservation_photo_1 || '/img/cubs.png',       cap: 'Cubs' },
+                { src: cmsImages.conservation_photo_2 || '/img/veterinary.jpg', cap: 'Veterinary monitoring' },
               ].map((p, i) => (
                   <div key={i} style={{ height: '320px', overflow: 'hidden', position: 'relative', borderRadius: '6px' }}>
                     <img src={p.src} alt={p.cap} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}
@@ -90,8 +90,8 @@ function Conservation({ goTo }) {
               margin: '2.5rem 0'
             }}>
               {[
-                { src: '/img/volontari-gruppo.png',   cap: t('conservation.edu_title') },
-                { src: '/img/man-cheetah.png', cap: 'Cheetah' },
+                { src: cmsImages.conservation_photo_3 || '/img/volontari-gruppo.png', cap: t('conservation.edu_title') },
+                { src: cmsImages.conservation_photo_4 || '/img/man-cheetah.png',      cap: 'Cheetah' },
               ].map((p, i) => (
                   <div key={i} style={{ height: '320px', overflow: 'hidden', position: 'relative', borderRadius: '6px' }}>
                     <img src={p.src} alt={p.cap} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}

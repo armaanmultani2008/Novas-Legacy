@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react'
 import { useUser } from '../UserContext'
 
 const LEVELS = [
-  { name: "Friend of Cheetahs", emoji: '🌿', color: '#4caf50', min: 0,   max: 100  },
-  { name: 'Protector',          emoji: '🛡️', color: '#26a69a', min: 100,  max: 300  },
-  { name: 'Guardian',           emoji: '⚡',  color: '#7c4dff', min: 300,  max: 600  },
-  { name: 'Champion',           emoji: '🌟', color: '#c8880a', min: 600,  max: 1000 },
-  { name: "Nova's Hero",        emoji: '🏆', color: '#ff8f00', min: 1000, max: Infinity },
+  { name: "Friend of Cheetahs", color: '#4caf50', bg: 'rgba(76,175,80,0.08)',  min: 0,   max: 100  },
+  { name: 'Protector',          color: '#26a69a', bg: 'rgba(38,166,154,0.08)', min: 100,  max: 300  },
+  { name: 'Guardian',           color: '#7c4dff', bg: 'rgba(124,77,255,0.08)', min: 300,  max: 600  },
+  { name: 'Champion',           color: '#c8880a', bg: 'rgba(200,136,10,0.08)', min: 600,  max: 1000 },
+  { name: "Nova's Hero",        color: '#e65100', bg: 'rgba(230,81,0,0.08)',   min: 1000, max: Infinity },
 ]
 
 function getLevel(xp) { return LEVELS.findLast(l => xp >= l.min) || LEVELS[0] }
@@ -24,6 +24,43 @@ function fmtDate(d) {
   return new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
+const IconPaw = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="7" cy="8" r="2"/><circle cx="17" cy="8" r="2"/>
+    <circle cx="4" cy="14" r="1.5"/><circle cx="20" cy="14" r="1.5"/>
+    <path d="M12 21c-3 0-6-2-6-5 0-1.5 1-3 3-4l3-1 3 1c2 1 3 2.5 3 4 0 3-3 5-6 5z"/>
+  </svg>
+)
+const IconBag = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+    <line x1="3" y1="6" x2="21" y2="6"/>
+    <path d="M16 10a4 4 0 0 1-8 0"/>
+  </svg>
+)
+const IconUser = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="8" r="4"/>
+    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+  </svg>
+)
+const IconBox = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+  </svg>
+)
+const IconStar = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+  </svg>
+)
+const IconChevron = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <polyline points="9 18 15 12 9 6"/>
+  </svg>
+)
+
 export default function UserProfile({ goTo }) {
   const { user, logout, refreshUser } = useUser()
   const [tab, setTab] = useState('animals')
@@ -32,9 +69,9 @@ export default function UserProfile({ goTo }) {
 
   if (!user) {
     return (
-      <div className="up-empty">
+      <div className="up-gate">
         <p>You are not logged in.</p>
-        <button className="up-btn-primary" onClick={() => goTo('home')}>Go home</button>
+        <button className="up-btn-gold" onClick={() => goTo('home')}>Go home</button>
       </div>
     )
   }
@@ -49,67 +86,95 @@ export default function UserProfile({ goTo }) {
   return (
     <div className="up">
 
-      {/* Hero */}
-      <div className="up__hero">
-        <div className="up__avatar">{user.name?.[0]?.toUpperCase() || '?'}</div>
-        <div className="up__hero-info">
+      {/* ── Header ── */}
+      <div className="up__header">
+        <div className="up__av">{user.name?.[0]?.toUpperCase() || '?'}</div>
+        <div className="up__header-center">
           <h1 className="up__name">{user.name}</h1>
-          <div className="up__level-badge" style={{ color: level.color }}>
-            {level.emoji} {level.name}
-          </div>
+          <span className="up__level-pill" style={{ color: level.color, background: level.bg }}>
+            {level.name}
+          </span>
         </div>
-        <div className="up__xp-block">
-          <div className="up__xp-num">{xp} <span>XP</span></div>
-          <div className="up__xp-bar-wrap">
-            <div className="up__xp-bar" style={{ width: `${progress}%`, background: level.color }} />
+        <div className="up__xp-panel">
+          <div className="up__xp-top">
+            <span className="up__xp-label">Total XP</span>
+            <span className="up__xp-value" style={{ color: level.color }}>{xp}</span>
           </div>
-          {nextLevel
-            ? <div className="up__xp-next">{nextLevel.max - xp} XP to {nextLevel.emoji} {nextLevel.name}</div>
-            : <div className="up__xp-next">Max level reached 🏆</div>
-          }
+          <div className="up__xp-track">
+            <div className="up__xp-fill" style={{ width: `${progress}%`, background: level.color }} />
+          </div>
+          <div className="up__xp-sub">
+            {nextLevel
+              ? <>{nextLevel.max - xp} XP to <strong>{nextLevel.name}</strong></>
+              : 'Maximum level reached'}
+          </div>
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* ── Stats row ── */}
+      <div className="up__stats">
+        <div className="up__stat">
+          <div className="up__stat-n">{adoptions.length}</div>
+          <div className="up__stat-l">Adoptions</div>
+        </div>
+        <div className="up__stat-div" />
+        <div className="up__stat">
+          <div className="up__stat-n">{orders.length}</div>
+          <div className="up__stat-l">Orders</div>
+        </div>
+        <div className="up__stat-div" />
+        <div className="up__stat">
+          <div className="up__stat-n" style={{ color: level.color }}>{LEVELS.findIndex(l => l === level) + 1}<span>/{LEVELS.length}</span></div>
+          <div className="up__stat-l">Level</div>
+        </div>
+      </div>
+
+      {/* ── Tabs ── */}
       <div className="up__tabs">
         <button className={`up__tab ${tab === 'animals' ? 'active' : ''}`} onClick={() => setTab('animals')}>
-          🐆 My Animals
-          {adoptions.length > 0 && <span className="up__badge">{adoptions.length}</span>}
+          <IconPaw /> My Animals
+          {adoptions.length > 0 && <span className="up__count">{adoptions.length}</span>}
         </button>
         <button className={`up__tab ${tab === 'orders' ? 'active' : ''}`} onClick={() => setTab('orders')}>
-          🛍️ My Orders
-          {orders.length > 0 && <span className="up__badge">{orders.length}</span>}
+          <IconBag /> My Orders
+          {orders.length > 0 && <span className="up__count">{orders.length}</span>}
         </button>
         <button className={`up__tab ${tab === 'account' ? 'active' : ''}`} onClick={() => setTab('account')}>
-          ⚙️ Account
+          <IconUser /> Account
         </button>
       </div>
 
-      {/* Content */}
-      <div className="up__content">
+      {/* ── Content ── */}
+      <div className="up__body">
 
         {tab === 'animals' && (
           <div className="up__section">
             {adoptions.length === 0 ? (
-              <div className="up__empty-state">
-                <div className="up__empty-icon">🐆</div>
-                <p>You haven't adopted any animals yet.</p>
-                <button className="up-btn-primary" onClick={() => goTo('adopt')}>Adopt an Animal</button>
+              <div className="up__empty">
+                <div className="up__empty-icon"><IconPaw /></div>
+                <h3>No adoptions yet</h3>
+                <p>Adopt an animal and it will appear here with your monthly contribution.</p>
+                <button className="up-btn-gold" onClick={() => goTo('adopt')}>Adopt an Animal</button>
               </div>
             ) : (
               <div className="up__list">
                 {adoptions.map((a, i) => (
                   <div key={i} className="up__card">
-                    <div className="up__card-icon">🐆</div>
+                    <div className="up__card-icon-wrap" style={{ background: 'rgba(76,175,80,0.08)', color: '#4caf50' }}>
+                      <IconPaw />
+                    </div>
                     <div className="up__card-body">
                       <div className="up__card-title">{a.animalName}</div>
                       <div className="up__card-sub">{a.animalSpecies}</div>
-                      <div className="up__card-meta">
-                        <span className="up__tag-gold">€{a.monthlyEur}/month</span>
-                        <span className="up__card-date">since {fmtDate(a.date)}</span>
+                      <div className="up__card-row">
+                        <span className="up__chip up__chip--gold">€{a.monthlyEur}/month</span>
+                        <span className="up__chip up__chip--green">
+                          <IconStar /> +50 XP
+                        </span>
+                        <span className="up__card-date">Since {fmtDate(a.date)}</span>
                       </div>
                     </div>
-                    <div className="up__xp-tag">+50 XP</div>
+                    <div className="up__card-arrow"><IconChevron /></div>
                   </div>
                 ))}
                 <button className="up-btn-outline" onClick={() => goTo('adopt')}>Adopt another animal</button>
@@ -121,23 +186,28 @@ export default function UserProfile({ goTo }) {
         {tab === 'orders' && (
           <div className="up__section">
             {orders.length === 0 ? (
-              <div className="up__empty-state">
-                <div className="up__empty-icon">🛍️</div>
-                <p>No orders yet. Visit our shop!</p>
-                <button className="up-btn-primary" onClick={() => goTo('merch')}>Go to Shop</button>
+              <div className="up__empty">
+                <div className="up__empty-icon"><IconBag /></div>
+                <h3>No orders yet</h3>
+                <p>Your merch purchases will appear here after checkout.</p>
+                <button className="up-btn-gold" onClick={() => goTo('merch')}>Visit the Shop</button>
               </div>
             ) : (
               <div className="up__list">
                 {orders.map((o, i) => (
                   <div key={i} className="up__card">
-                    <div className="up__card-icon">📦</div>
+                    <div className="up__card-icon-wrap" style={{ background: 'rgba(200,136,10,0.08)', color: 'var(--gold)' }}>
+                      <IconBox />
+                    </div>
                     <div className="up__card-body">
                       <div className="up__card-title">{o.productName}</div>
-                      <div className="up__card-date">{fmtDate(o.date)}</div>
-                    </div>
-                    <div className="up__card-right">
-                      <div className="up__tag-gold">{fmt(o.amount)}</div>
-                      <div className="up__xp-tag">+{Math.max(1, Math.floor(o.amount / 100))} XP</div>
+                      <div className="up__card-row">
+                        <span className="up__chip up__chip--gold">{fmt(o.amount)}</span>
+                        <span className="up__chip up__chip--green">
+                          <IconStar /> +{Math.max(1, Math.floor(o.amount / 100))} XP
+                        </span>
+                        <span className="up__card-date">{fmtDate(o.date)}</span>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -148,39 +218,45 @@ export default function UserProfile({ goTo }) {
 
         {tab === 'account' && (
           <div className="up__section">
-            <div className="up__fields">
-              <div className="up__field">
-                <label>Name</label>
-                <div className="up__field-val">{user.name}</div>
+            <div className="up__info-grid">
+              <div className="up__info-card">
+                <label>Full name</label>
+                <span>{user.name}</span>
               </div>
-              <div className="up__field">
-                <label>Email</label>
-                <div className="up__field-val">{user.email}</div>
+              <div className="up__info-card">
+                <label>Email address</label>
+                <span>{user.email}</span>
               </div>
-              <div className="up__field">
+              <div className="up__info-card">
                 <label>Member since</label>
-                <div className="up__field-val">{user.createdAt ? fmtDate(user.createdAt) : '—'}</div>
+                <span>{user.createdAt ? fmtDate(user.createdAt) : '—'}</span>
               </div>
-              <div className="up__field">
-                <label>Level</label>
-                <div className="up__field-val" style={{ color: level.color, fontWeight: 700 }}>
-                  {level.emoji} {level.name} — {xp} XP
-                </div>
+              <div className="up__info-card">
+                <label>Current level</label>
+                <span style={{ color: level.color, fontWeight: 700 }}>{level.name}</span>
               </div>
             </div>
 
-            <div className="up__levels-box">
-              <div className="up__levels-title">XP Levels</div>
-              {LEVELS.map(l => (
-                <div key={l.name} className={`up__level-row ${level.name === l.name ? 'current' : ''}`}>
-                  <span className="up__level-dot" style={{ background: l.color }} />
-                  <span className="up__level-name">{l.emoji} {l.name}</span>
-                  <span className="up__level-req">{l.min === 0 ? '0' : l.min}+ XP</span>
-                </div>
-              ))}
+            <div className="up__levels-card">
+              <div className="up__levels-head">XP Progress</div>
+              {LEVELS.map((l, i) => {
+                const isCurrent = level.name === l.name
+                const isPast = xp >= l.min
+                return (
+                  <div key={l.name} className={`up__lv-row ${isCurrent ? 'current' : ''} ${isPast && !isCurrent ? 'past' : ''}`}>
+                    <div className="up__lv-dot" style={{ background: isPast ? l.color : 'rgba(0,0,0,0.1)' }} />
+                    {i < LEVELS.length - 1 && <div className="up__lv-line" style={{ background: isPast && !isCurrent ? l.color : 'rgba(0,0,0,0.06)' }} />}
+                    <div className="up__lv-info">
+                      <span className="up__lv-name" style={isCurrent ? { color: l.color } : {}}>{l.name}</span>
+                      <span className="up__lv-req">{l.min === 0 ? 'Starting level' : `${l.min}+ XP`}</span>
+                    </div>
+                    {isCurrent && <span className="up__lv-badge" style={{ background: l.bg, color: l.color }}>Current</span>}
+                  </div>
+                )
+              })}
             </div>
 
-            <button className="up-btn-danger" onClick={logout}>Sign Out</button>
+            <button className="up-btn-danger" onClick={logout}>Sign out</button>
           </div>
         )}
       </div>
@@ -188,197 +264,260 @@ export default function UserProfile({ goTo }) {
       <style>{`
         .up {
           min-height: 100vh;
-          padding: 7rem 2rem 5rem;
-          max-width: 820px;
-          margin: 0 auto;
           background: var(--cream);
+          padding: 7rem 2rem 5rem;
+          max-width: 860px;
+          margin: 0 auto;
         }
 
-        /* Hero */
-        .up__hero {
+        /* Header */
+        .up__header {
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           gap: 1.5rem;
-          margin-bottom: 3rem;
-          padding-bottom: 2.5rem;
-          border-bottom: 1px solid rgba(0,0,0,0.08);
+          padding: 2rem;
+          background: #fff;
+          border: 1px solid rgba(0,0,0,0.07);
+          border-radius: 20px;
+          margin-bottom: 1.25rem;
+          box-shadow: 0 2px 16px rgba(0,0,0,0.05);
           flex-wrap: wrap;
         }
-        .up__avatar {
-          width: 72px; height: 72px; border-radius: 50%;
+        .up__av {
+          width: 68px; height: 68px; border-radius: 50%;
           background: var(--gold-pale);
           border: 2px solid var(--gold);
           display: flex; align-items: center; justify-content: center;
-          font-size: 1.8rem; font-family: var(--serif);
-          color: var(--gold); font-weight: 700; flex-shrink: 0;
+          font-family: var(--serif); font-size: 1.9rem; font-weight: 700;
+          color: var(--gold); flex-shrink: 0;
         }
-        .up__hero-info { flex: 1; min-width: 160px; padding-top: 0.25rem; }
+        .up__header-center { flex: 1; min-width: 140px; }
         .up__name {
-          font-family: var(--serif); font-size: 2rem; font-weight: 700;
-          color: var(--dark); margin: 0 0 0.3rem; line-height: 1.1;
+          font-family: var(--serif); font-size: 1.75rem; font-weight: 700;
+          color: var(--dark); margin: 0 0 0.5rem; line-height: 1;
         }
-        .up__level-badge {
-          font-size: 0.78rem; font-weight: 700;
-          letter-spacing: 0.1em; text-transform: uppercase;
+        .up__level-pill {
+          display: inline-block;
+          font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+          text-transform: uppercase; padding: 0.3rem 0.85rem;
+          border-radius: 99px;
         }
-        .up__xp-block { flex-shrink: 0; min-width: 200px; padding-top: 0.25rem; }
-        .up__xp-num {
-          font-size: 2.2rem; font-weight: 700;
-          color: var(--dark); line-height: 1;
+        .up__xp-panel {
+          min-width: 200px; flex-shrink: 0;
+          border-left: 1px solid rgba(0,0,0,0.07);
+          padding-left: 1.5rem;
         }
-        .up__xp-num span { font-size: 1rem; color: var(--gray); font-weight: 400; }
-        .up__xp-bar-wrap {
-          height: 6px; background: rgba(0,0,0,0.08);
-          border-radius: 99px; margin: 0.6rem 0 0.4rem; overflow: hidden;
+        .up__xp-top {
+          display: flex; justify-content: space-between;
+          align-items: baseline; margin-bottom: 0.5rem;
         }
-        .up__xp-bar {
+        .up__xp-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray); font-weight: 600; }
+        .up__xp-value { font-size: 1.6rem; font-weight: 700; line-height: 1; }
+        .up__xp-track {
+          height: 5px; background: rgba(0,0,0,0.07);
+          border-radius: 99px; overflow: hidden; margin-bottom: 0.4rem;
+        }
+        .up__xp-fill {
           height: 100%; border-radius: 99px;
-          transition: width 0.8s cubic-bezier(0.22,1,0.36,1);
+          transition: width 1s cubic-bezier(0.22,1,0.36,1);
         }
-        .up__xp-next { font-size: 0.75rem; color: var(--gray); }
+        .up__xp-sub { font-size: 0.74rem; color: var(--gray); }
+        .up__xp-sub strong { color: var(--dark-2); }
+
+        /* Stats */
+        .up__stats {
+          display: flex; align-items: center;
+          background: #fff;
+          border: 1px solid rgba(0,0,0,0.07);
+          border-radius: 16px;
+          margin-bottom: 1.25rem;
+          padding: 1.25rem 2rem;
+          box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+        }
+        .up__stat { flex: 1; text-align: center; }
+        .up__stat-n {
+          font-family: var(--serif); font-size: 2rem; font-weight: 700;
+          color: var(--dark); line-height: 1; margin-bottom: 0.25rem;
+        }
+        .up__stat-n span { font-size: 1rem; color: var(--gray); }
+        .up__stat-l { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray); font-weight: 600; }
+        .up__stat-div { width: 1px; height: 40px; background: rgba(0,0,0,0.08); margin: 0 1rem; }
 
         /* Tabs */
         .up__tabs {
-          display: flex;
-          border-bottom: 2px solid rgba(0,0,0,0.08);
-          margin-bottom: 2.5rem;
-          gap: 0;
+          display: flex; gap: 0.5rem;
+          margin-bottom: 1.5rem;
         }
         .up__tab {
-          flex: 1; background: none; border: none;
-          padding: 0.9rem 0.5rem;
-          font-size: 0.82rem; font-weight: 600;
-          letter-spacing: 0.05em; text-transform: uppercase;
+          flex: 1; background: #fff;
+          border: 1px solid rgba(0,0,0,0.08);
+          border-radius: 12px;
+          padding: 0.75rem 0.5rem;
+          font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em;
           color: var(--gray); cursor: pointer;
-          border-bottom: 2px solid transparent;
-          margin-bottom: -2px;
-          transition: color 0.2s, border-color 0.2s;
-          display: flex; align-items: center; justify-content: center; gap: 0.4rem;
-          font-family: var(--sans);
+          display: flex; align-items: center; justify-content: center; gap: 0.45rem;
+          transition: all 0.2s; font-family: var(--sans);
         }
-        .up__tab.active { color: var(--gold); border-bottom-color: var(--gold); }
-        .up__badge {
+        .up__tab:hover { border-color: var(--gold-mid); color: var(--dark); }
+        .up__tab.active {
+          background: var(--dark); border-color: var(--dark);
+          color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .up__count {
           background: var(--gold); color: #fff;
-          border-radius: 99px; font-size: 0.65rem;
-          padding: 0.1rem 0.45rem; font-weight: 700;
+          border-radius: 99px; font-size: 0.62rem;
+          padding: 0.1rem 0.4rem; font-weight: 700; line-height: 1.4;
         }
+        .up__tab.active .up__count { background: rgba(255,255,255,0.2); color: #fff; }
 
-        /* Section animation */
-        .up__section { animation: upFade 0.25s ease; }
-        @keyframes upFade {
-          from { opacity: 0; transform: translateY(6px); }
+        /* Body */
+        .up__body { }
+        .up__section { animation: upIn 0.22s ease; }
+        @keyframes upIn {
+          from { opacity: 0; transform: translateY(8px); }
           to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* Empty state */
-        .up__empty-state {
-          text-align: center; padding: 5rem 1rem;
-          color: var(--gray);
+        /* Empty */
+        .up__empty {
+          background: #fff; border: 1px solid rgba(0,0,0,0.07);
+          border-radius: 20px; padding: 4rem 2rem;
+          text-align: center; box-shadow: 0 2px 16px rgba(0,0,0,0.04);
         }
-        .up__empty-icon { font-size: 3rem; margin-bottom: 1rem; }
-        .up__empty-state p { margin-bottom: 1.5rem; font-size: 1rem; }
+        .up__empty-icon {
+          width: 60px; height: 60px; border-radius: 16px;
+          background: var(--gold-pale); color: var(--gold);
+          display: flex; align-items: center; justify-content: center;
+          margin: 0 auto 1.25rem;
+        }
+        .up__empty-icon svg { width: 28px; height: 28px; }
+        .up__empty h3 { font-family: var(--serif); font-size: 1.4rem; color: var(--dark); margin: 0 0 0.5rem; }
+        .up__empty p { font-size: 0.9rem; color: var(--gray); margin: 0 0 1.5rem; max-width: 320px; margin-left: auto; margin-right: auto; }
 
-        /* Cards list */
-        .up__list { display: flex; flex-direction: column; gap: 1rem; }
+        /* Cards */
+        .up__list { display: flex; flex-direction: column; gap: 0.75rem; }
         .up__card {
-          display: flex; align-items: center; gap: 1.25rem;
-          background: #fff;
-          border: 1px solid rgba(0,0,0,0.08);
-          border-radius: 14px; padding: 1.25rem 1.5rem;
+          display: flex; align-items: center; gap: 1rem;
+          background: #fff; border: 1px solid rgba(0,0,0,0.07);
+          border-radius: 14px; padding: 1.1rem 1.25rem;
           box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+          transition: box-shadow 0.2s, transform 0.2s;
         }
-        .up__card-icon { font-size: 2rem; flex-shrink: 0; }
+        .up__card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); transform: translateY(-1px); }
+        .up__card-icon-wrap {
+          width: 44px; height: 44px; border-radius: 12px;
+          display: flex; align-items: center; justify-content: center;
+          flex-shrink: 0;
+        }
         .up__card-body { flex: 1; }
-        .up__card-title {
-          font-family: var(--serif); font-size: 1.1rem;
-          font-weight: 700; color: var(--dark); margin-bottom: 0.15rem;
+        .up__card-title { font-size: 0.95rem; font-weight: 700; color: var(--dark); margin-bottom: 0.2rem; }
+        .up__card-sub { font-size: 0.78rem; color: var(--gray); margin-bottom: 0.5rem; }
+        .up__card-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+        .up__card-date { font-size: 0.75rem; color: var(--gray-light); margin-left: 0.25rem; }
+        .up__card-arrow { color: var(--gray-light); flex-shrink: 0; }
+        .up__chip {
+          display: inline-flex; align-items: center; gap: 0.25rem;
+          font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.6rem;
+          border-radius: 99px; letter-spacing: 0.02em;
         }
-        .up__card-sub { font-size: 0.8rem; color: var(--gray); margin-bottom: 0.5rem; }
-        .up__card-date { font-size: 0.78rem; color: var(--gray); }
-        .up__card-meta { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-        .up__card-right { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; gap: 0.3rem; align-items: flex-end; }
-        .up__tag-gold {
-          font-size: 0.85rem; font-weight: 700; color: var(--gold);
-        }
-        .up__xp-tag {
-          font-size: 0.72rem; font-weight: 700; color: #4caf50;
-          background: rgba(76,175,80,0.1); border-radius: 99px;
-          padding: 0.15rem 0.6rem;
-        }
+        .up__chip--gold { background: rgba(200,136,10,0.1); color: var(--gold); }
+        .up__chip--green { background: rgba(76,175,80,0.1); color: #388e3c; }
 
-        /* Account fields */
-        .up__fields { display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2rem; }
-        .up__field { display: flex; flex-direction: column; gap: 0.3rem; }
-        .up__field label {
-          font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
-          text-transform: uppercase; color: var(--gray);
+        /* Account */
+        .up__info-grid {
+          display: grid; grid-template-columns: 1fr 1fr;
+          gap: 0.75rem; margin-bottom: 1.25rem;
         }
-        .up__field-val { font-size: 0.95rem; color: var(--dark-2); }
-
-        /* Levels box */
-        .up__levels-box {
-          background: #fff; border: 1px solid rgba(0,0,0,0.08);
-          border-radius: 14px; padding: 1.4rem;
-          display: flex; flex-direction: column; gap: 0.7rem;
-          margin-bottom: 2rem;
+        .up__info-card {
+          background: #fff; border: 1px solid rgba(0,0,0,0.07);
+          border-radius: 14px; padding: 1.1rem 1.25rem;
           box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+          display: flex; flex-direction: column; gap: 0.35rem;
         }
-        .up__levels-title {
-          font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
-          text-transform: uppercase; color: var(--gray); margin-bottom: 0.25rem;
+        .up__info-card label {
+          font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em;
+          color: var(--gray); font-weight: 600;
         }
-        .up__level-row {
-          display: flex; align-items: center; gap: 0.75rem;
-          font-size: 0.88rem; color: var(--gray-light);
+        .up__info-card span { font-size: 0.9rem; color: var(--dark-2); font-weight: 500; }
+
+        /* Levels card */
+        .up__levels-card {
+          background: #fff; border: 1px solid rgba(0,0,0,0.07);
+          border-radius: 16px; padding: 1.5rem 1.75rem;
+          margin-bottom: 1.25rem;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+          position: relative;
         }
-        .up__level-row.current { color: var(--dark); font-weight: 600; }
-        .up__level-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-        .up__level-name { flex: 1; }
-        .up__level-req { font-size: 0.75rem; color: var(--gray-light); }
-        .up__level-row.current .up__level-req { color: var(--gray); }
+        .up__levels-head {
+          font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em;
+          color: var(--gray); font-weight: 700; margin-bottom: 1.25rem;
+        }
+        .up__lv-row {
+          display: flex; align-items: flex-start; gap: 1rem;
+          padding: 0.35rem 0; position: relative;
+        }
+        .up__lv-dot {
+          width: 12px; height: 12px; border-radius: 50%;
+          flex-shrink: 0; margin-top: 0.2rem; position: relative; z-index: 1;
+          transition: background 0.3s;
+        }
+        .up__lv-line {
+          position: absolute; left: 5px; top: 18px;
+          width: 2px; height: calc(100% + 0.35rem);
+          z-index: 0; transition: background 0.3s;
+        }
+        .up__lv-info { flex: 1; }
+        .up__lv-name { display: block; font-size: 0.88rem; color: var(--gray); font-weight: 500; }
+        .up__lv-row.past .up__lv-name { color: var(--dark-2); }
+        .up__lv-row.current .up__lv-name { font-weight: 700; }
+        .up__lv-req { font-size: 0.72rem; color: var(--gray-light); }
+        .up__lv-badge {
+          font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
+          text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 99px;
+          flex-shrink: 0; margin-top: 0.1rem;
+        }
 
         /* Buttons */
-        .up-btn-primary {
+        .up-btn-gold {
           background: var(--gold); color: #fff; border: none;
-          padding: 0.75rem 2rem; border-radius: 50px;
-          font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em;
-          text-transform: uppercase; cursor: pointer;
-          font-family: var(--sans);
+          padding: 0.8rem 2.2rem; border-radius: 50px;
+          font-size: 0.78rem; font-weight: 700; letter-spacing: 0.07em;
+          text-transform: uppercase; cursor: pointer; font-family: var(--sans);
           transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
         }
-        .up-btn-primary:hover {
+        .up-btn-gold:hover {
           background: var(--gold-mid); transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(200,136,10,0.35);
+          box-shadow: 0 8px 24px rgba(200,136,10,0.3);
         }
         .up-btn-outline {
-          background: none; border: 2px solid var(--gold);
-          color: var(--gold); padding: 0.65rem 1.8rem; border-radius: 50px;
-          font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em;
+          background: none; border: 1.5px solid var(--gold);
+          color: var(--gold); padding: 0.7rem 1.8rem; border-radius: 50px;
+          font-size: 0.78rem; font-weight: 700; letter-spacing: 0.07em;
           text-transform: uppercase; cursor: pointer; font-family: var(--sans);
-          transition: background 0.2s, color 0.2s;
-          align-self: flex-start; margin-top: 0.5rem;
+          transition: all 0.2s; margin-top: 0.5rem;
         }
         .up-btn-outline:hover { background: var(--gold); color: #fff; }
         .up-btn-danger {
-          background: none; border: 1.5px solid rgba(200,0,0,0.25);
-          color: #c00; padding: 0.65rem 1.6rem; border-radius: 8px;
-          font-size: 0.8rem; font-weight: 600; cursor: pointer;
-          font-family: var(--sans);
-          transition: border-color 0.2s, background 0.2s;
+          background: none; border: 1.5px solid rgba(180,0,0,0.2);
+          color: #b00; padding: 0.65rem 1.6rem; border-radius: 8px;
+          font-size: 0.78rem; font-weight: 600; cursor: pointer; font-family: var(--sans);
+          transition: all 0.2s;
         }
-        .up-btn-danger:hover { border-color: rgba(200,0,0,0.5); background: rgba(200,0,0,0.04); }
+        .up-btn-danger:hover { border-color: rgba(180,0,0,0.45); background: rgba(180,0,0,0.04); }
 
-        .up-empty {
+        .up-gate {
           display: flex; flex-direction: column; align-items: center;
           justify-content: center; min-height: 60vh; gap: 1rem; color: var(--gray);
         }
 
-        @media (max-width: 600px) {
-          .up { padding: 5.5rem 1.25rem 3rem; }
-          .up__hero { flex-direction: column; gap: 1rem; }
-          .up__xp-block { width: 100%; }
-          .up__tab { font-size: 0.72rem; padding: 0.75rem 0.25rem; }
-          .up__card { padding: 1rem 1.1rem; }
+        @media (max-width: 640px) {
+          .up { padding: 5.5rem 1rem 3rem; }
+          .up__header { padding: 1.25rem; gap: 1rem; }
+          .up__xp-panel { border-left: none; padding-left: 0; border-top: 1px solid rgba(0,0,0,0.07); padding-top: 1rem; width: 100%; }
+          .up__stats { padding: 1rem; }
+          .up__info-grid { grid-template-columns: 1fr; }
+          .up__tab { font-size: 0.72rem; gap: 0.3rem; }
+          .up__tab svg { width: 16px; height: 16px; }
         }
       `}</style>
     </div>

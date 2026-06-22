@@ -21,8 +21,9 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
       label: t('nav.about_us'),
       page: 'nova-story',
       children: [
-        { label: t('nav.nova_story'), page: 'nova-story', sym: '◆' },
-        { label: t('nav.kim_story'),  page: 'kim-story',  sym: '◆' },
+        { label: t('nav.nova_story'),  page: 'nova-story',  sym: '◆' },
+        { label: t('nav.kim_story'),   page: 'kim-story',   sym: '◆' },
+        { label: t('nav.our_animals', 'Our Animals'), page: 'our-animals', sym: '◆' },
       ],
     },
     {
@@ -114,6 +115,12 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
             </ul>
 
             <div className="nn__actions">
+              <button className="nn__cta" onClick={() => handleNav('volunteer')}>
+                {t('nav.become_volunteer')}
+              </button>
+            </div>
+
+            <div className="nn__user-wrap">
               {user ? (
                 <button className="nn__user-btn" onClick={() => handleNav('user-profile')}>
                   <span className="nn__user-avatar">{user.name?.[0]?.toUpperCase()}</span>
@@ -129,9 +136,6 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
                   </svg>
                 </button>
               )}
-              <button className="nn__cta" onClick={() => handleNav('volunteer')}>
-                {t('nav.become_volunteer')}
-              </button>
             </div>
 
             <button
@@ -224,7 +228,8 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
           box-shadow: 0 1px 0 rgba(255,255,255,0.05);
         }
         .nn__wrap {
-          max-width: 1340px;
+          width: 100%;
+          max-width: 1260px;
           margin: 0 auto;
           padding: 0 2.5rem;
           height: 72px;
@@ -253,10 +258,9 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
         .nn__links {
           display: flex;
           list-style: none;
-          margin: 0; padding: 0;
-          gap: 0.2rem;
-          flex: 1;
-          justify-content: center;
+          margin: 0; 
+          padding: 0;
+          gap: 0.5rem;
         }
         .nn__item { position: relative; }
         .nn__link {
@@ -338,6 +342,7 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
         .nn__drop-sym { color: var(--gold-mid); font-size: 0.65rem; flex-shrink: 0; }
 
         .nn__actions { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+        .nn__user-wrap { display: flex; align-items: center; flex-shrink: 0; margin-left: auto; }
         .nn__user-icon {
           background: none; border: 1px solid rgba(255,255,255,0.15);
           color: rgba(255,255,255,0.7); border-radius: 50%;
@@ -552,7 +557,7 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
         }
         .ovmenu__socials a:hover { color: rgba(255,255,255,0.65); }
 
-        @media (max-width: 1180px) {
+        @media (max-width: 1260px) {
           .nn__links, .nn__actions { display: none; }
           .hamburger { display: flex; }
         }

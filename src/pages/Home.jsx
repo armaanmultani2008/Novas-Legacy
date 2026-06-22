@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Turnstile from "react-turnstile";
-import Lightbox from '../components/Lightbox'
 import { useCMSImages } from '../CMSContext'
 
 const DEFAULTS = {
@@ -20,18 +19,36 @@ const DEFAULTS = {
   bigCta:      '/img/ghepardo-corsa.png',
 }
 
-const ANIMALS_SRCS = [
-  '/img/nova-primo-piano.png',
-  '/img/leone-cucciolo-pneumatico.png',
-  '/img/licaone.png',
-  '/img/ghepardo-erba-alta.png',
-  '/img/cavallo-puledro.png',
-  '/img/volpe-orecchie.png',
-  '/img/baby-wild.png',
-  '/img/serval.png',
+const SPECIES = [
+  { slug: 'cheetahs',             key: 'cheetahs',             title: 'Cheetahs',             img: '/img/ghepardo-erba-alta.png',
+    desc: "Built for speed — a light frame, semi-retractable claws and a flexible spine let cheetahs reach strides of up to 7 metres. They can't roar; instead they chirp and purr." },
+  { slug: 'lions',                key: 'lions',                title: 'Lions',                img: '/img/lions.png',
+    desc: "Africa's second-largest big cat, living in close-knit prides. Maned males guard the group while lionesses do most of the hunting." },
+  { slug: 'tigers',               key: 'tigers',               title: 'Tigers',               img: '/img/tigri-quake-storm-coccole.jpg',
+    desc: 'The largest cat in the world and a powerful swimmer, with fully retractable claws built for stalking silently through long grass.' },
+  { slug: 'servals',              key: 'servals',              title: 'Servals',              img: '/img/serval.png',
+    desc: 'Tall, slender hunters with oversized ears and a leap that can clear 3 metres — perfect for snatching birds straight out of the air.' },
+  { slug: 'caracals',             key: 'caracals',             title: 'Caracals',             img: '/img/lince.png',
+    desc: "Known as the desert lynx, Africa's largest small cat can leap nearly 3 metres to knock flying birds clean out of the sky." },
+  { slug: 'civets',               key: 'civets',               title: 'Civets',               img: '/img/african-civet.png',
+    desc: 'Solitary and nocturnal, civets are recognisable by their bandit-like facial mask and use scent glands to mark their territory.' },
+  { slug: 'porcupines',           key: 'porcupines',           title: 'Porcupines',           img: '/img/porcospino.png',
+    desc: "Africa's largest porcupine species, covered in rattling quills that form a defensive crest along the head and neck when raised." },
+  { slug: 'bat-eared-foxes',      key: 'bat_eared_foxes',      title: 'Bat-Eared Foxes',      img: '/img/fox.png',
+    desc: 'Small, social foxes with oversized ears tuned to hear insects moving underground, foraging together in tight family groups.' },
+  { slug: 'horses',               key: 'horses',               title: 'Horses',               img: '/img/horses-species.png',
+    desc: "Rescued and rehabilitated horses given patient, individual care until they're ready to trust again — and to share gentle moments with our volunteers." },
+  { slug: 'cows',                 key: 'cows',                 title: 'Cows',                 img: '/img/cows.png',
+    desc: 'Rescued cattle living out peaceful lives on the reserve, part of the wider sanctuary family we care for every day.' },
+  { slug: 'pets',                 key: 'pets',                 title: 'Pets',                 img: '/img/pets.png',
+    desc: "Rescued cats and dogs who found a second chance at Nova's Legacy, living safely alongside the rest of our animal family." },
+  { slug: 'birds',                key: 'birds',                title: 'Birds',                img: '/img/birds.png',
+    desc: "From birds of prey to colourful residents and migratory visitors, the reserve's skies are as alive as the bush below." },
+  { slug: 'jackals',              key: 'jackals',              title: 'Jackals',              img: '/img/smokey-jackal.png',
+    desc: 'Highly adaptable, opportunistic canids that hunt alone or in pairs and scavenge just as readily. Monogamous for life, jackal pairs mark and defend their territory together, and are best known for their sharp, far-carrying howls used to stay in contact at dusk and through the night.' },
+  { slug: 'free-roaming-animals', key: 'free_roaming_animals', title: 'Free-Roaming Animals', img: '/img/free-roaming.png',
+    desc: 'Giraffes, zebras, antelope and other herbivores roam freely across the open reserve, keeping the bushveld ecosystem in balance.' },
 ]
-
-const ANIMALS_NAMES = ['Nova', 'Shira', 'Ghost Pack', 'Tumelo', 'Spirit', 'Sandy', 'Caracal', 'Serval']
 
 const DIAL_CODES = [
   { name: 'Afghanistan',    code: '+93',  flag: '🇦🇫' },
@@ -176,12 +193,17 @@ function Home({ goTo }) {
     bigCta:      cmsImages.home_cta           || DEFAULTS.bigCta,
   }
   const PROG_IMGS = [IMG.progRun, IMG.progVol, IMG.progChalet, IMG.progInt, IMG.progAdopt, IMG.progBreed]
-  const animalSrcs = ANIMALS_SRCS.map((def, i) => cmsImages[`home_animal_${i + 1}`] || def)
 
-  const animalRoles = t('home.animal_roles',   { returnObjects: true })
   const progTags    = t('home.prog_tags',       { returnObjects: true })
   const progTitles  = t('home.prog_titles',     { returnObjects: true })
   const progDescs   = t('home.prog_descs',      { returnObjects: true })
+
+  const speciesCards = SPECIES.map(s => ({
+    ...s,
+    img:   cmsImages[`our_animals_${s.key}`] || s.img,
+    title: t(`our_animals.${s.key}_title`, s.title),
+    desc:  t(`our_animals.${s.key}_desc`, s.desc),
+  }))
 
   const heroTitleWords = t('home.hero_title').split(' ')
   const cta2parts = t('home.cta_title').split('. ')
@@ -197,10 +219,8 @@ function Home({ goTo }) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const [lbIdx, setLbIdx] = useState(null)
-
   const marqueeRef = useRef(null)
-  const marqueeState = useRef({ dragging: false, hasDragged: false, startX: 0, startOffset: 0, offset: 0, lastTime: null, isHovered: false })
+  const marqueeState = useRef({ dragging: false, hasDragged: false, startX: 0, startOffset: 0, offset: 0, lastTime: null, isHovered: false, pointerId: null })
 
   useEffect(() => {
     const track = marqueeRef.current
@@ -234,7 +254,7 @@ function Home({ goTo }) {
     s.hasDragged = false
     s.startX = e.clientX
     s.startOffset = s.offset
-    e.currentTarget.setPointerCapture(e.pointerId)
+    s.pointerId = e.pointerId
     e.currentTarget.style.cursor = 'grabbing'
   }
 
@@ -242,7 +262,10 @@ function Home({ goTo }) {
     const s = marqueeState.current
     if (!s.dragging) return
     const delta = e.clientX - s.startX
-    if (Math.abs(delta) > 5) s.hasDragged = true
+    if (Math.abs(delta) > 5 && !s.hasDragged) {
+      s.hasDragged = true
+      e.currentTarget.setPointerCapture(e.pointerId)
+    }
     const track = marqueeRef.current
     if (!track) return
     const halfWidth = track.scrollWidth / 2
@@ -649,6 +672,9 @@ function Home({ goTo }) {
             <h2 className="h2 rv rv-d1">
               {t('home.animals_title').split(' ').slice(0, -2).join(' ')} <em>{t('home.animals_title').split(' ').slice(-2).join(' ')}</em>
             </h2>
+            <p className="rv rv-d2" style={{ color: '#555', maxWidth: '850px', lineHeight: '1.65', margin: '0 0 3.5rem 0' }}>
+              {t('home.animals_desc')}
+            </p>
           </div>
 
           <div className="marquee-wrapper">
@@ -671,21 +697,26 @@ function Home({ goTo }) {
                 style={{ cursor: 'default', userSelect: 'none', touchAction: 'none' }}
             >
               {[...Array(2)].flatMap((_, rep) =>
-                  ANIMALS_NAMES.map((name, i) => (
+                  speciesCards.map((s, i) => (
                       <div
-                          key={`${rep}-${name}-${i}`}
-                          className="animal-card"
+                          key={`${rep}-${s.slug}-${i}`}
+                          className="animal-card species-card"
                           onClick={() => {
-                            if (!marqueeState.current.hasDragged) setLbIdx(i)
+                            if (!marqueeState.current.hasDragged) goTo('our-animals', s.slug)
                           }}
-                          style={{ borderRadius: '8px' }}
+                          style={{ borderRadius: '8px', width: '400px' }}
                       >
-                        <div className="animal-photo">
-                          <img src={animalSrcs[i]} alt={name} draggable={false} />
+                        <div className="animal-photo" style={{ height: '320px' }}>
+                          <img src={s.img} alt={s.title} draggable={false} />
                         </div>
-                        <div className="animal-info">
-                          <h4>{name}</h4>
-                          <span>{animalRoles[i]}</span>
+                        <div className="animal-info" style={{ padding: '1.3rem 1.4rem' }}>
+                          <h4 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>{s.title}</h4>
+                          <p style={{ fontSize: '0.82rem', color: '#777', lineHeight: 1.6, fontWeight: 300, margin: '0 0 1rem' }}>
+                            {s.desc}
+                          </p>
+                          <span className="program-link" style={{ fontStyle: 'normal', color: 'var(--dark)' }}>
+                            {t('common.discover', 'Discover')} →
+                          </span>
                         </div>
                       </div>
                   ))
@@ -735,10 +766,6 @@ function Home({ goTo }) {
             user-select: none;
           }
         `}</style>
-
-        {lbIdx !== null && (
-            <Lightbox srcs={animalSrcs} captions={ANIMALS_NAMES} idx={lbIdx} setIdx={setLbIdx} />
-        )}
 
         <section className="big-cta" style={{height:'720px'}}>
           <img src={IMG.bigCta} className={'big-cta-img'} alt="Cheetah" style={{objectFit: 'cover', objectPosition: 'center 30%'}}/>

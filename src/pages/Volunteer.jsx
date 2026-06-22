@@ -54,7 +54,7 @@ function Volunteer({ goTo }) {
         `}</style>
 
         <div className="page-content" style={{ padding: '4rem 1.5rem'}}>
-          <div className="container">
+          <div className="container" style={{maxWidth: '1100px', margin: '0 auto'}}>
             <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -124,7 +124,7 @@ function Volunteer({ goTo }) {
             </div>
 
             <h2>{t('volunteer.daily_title')}</h2>
-            <div className="vol-tasks" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem 2rem', margin: '1.5rem 0 2.5rem' }}>
+            <div className="vol-tasks" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem 2rem', margin: '1.5rem 1rem 2.5rem', alignContent: 'center' }}>
               {tasks.map(task => (
                   <div key={task} className="vol-task">{task}</div>
               ))}

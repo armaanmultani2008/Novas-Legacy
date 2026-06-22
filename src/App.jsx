@@ -25,6 +25,7 @@ import Wishlist from './pages/Wishlist'
 import Admin from './pages/Admin'
 import FAQ from './pages/FAQ'
 import OtherAnimals from './pages/OtherAnimals'
+import OurAnimals from './pages/OurAnimals'
 import UserProfile from './pages/UserProfile'
 
 const pages = {
@@ -46,8 +47,12 @@ const pages = {
   wishlist: Wishlist,
   faq: FAQ,
   'other-animals': OtherAnimals,
+  'our-animals': OurAnimals,
   'user-profile': UserProfile,
 }
+
+// Pages without a dark page-hero-img up top — the navbar must stay solid here.
+const NO_HERO_PAGES = ['user-profile']
 
 function AppInner() {
   const { user, refreshUser } = useUser()
@@ -193,7 +198,7 @@ function AppInner() {
         </div>
       )}
       <style>{`@keyframes slideUp { from { opacity:0; transform:translateX(-50%) translateY(20px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }`}</style>
-      <Navbar goTo={goTo} openAuth={() => setAuthOpen(true)} forceSolid={currentPage !== 'home'} />
+      <Navbar goTo={goTo} openAuth={() => setAuthOpen(true)} forceSolid={NO_HERO_PAGES.includes(currentPage)} />
       {successBanner && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999,

@@ -95,14 +95,52 @@
       }
     ]
   },
-  "products": [
-  ],
+  "products": [],
   "animals": [
-    { "id": "1", "name": "Storm",    "species": "Golden Tabby Tiger", "price": 15, "img": "/img/adopt-storm.png" },
-    { "id": "2", "name": "Guinness", "species": "King Cheetah",       "price": 20, "img": "/img/adopt-guinness.png" },
-    { "id": "3", "name": "Lyvia",    "species": "Cheetah",            "price": 15, "img": "/img/adopt-lyvia.png" },
-    { "id": "4", "name": "Oakley",   "species": "Cheetah",            "price": 15, "img": "/img/adopt-oakley.png" },
-    { "id": "5", "name": "Jagger",   "species": "Cheetah",            "price": 12, "img": "/img/adopt-jagger.png" }
+    {
+      "id": "1",
+      "name": "Storm",
+      "species": "Golden Tabby Tiger",
+      "price": 15,
+      "img": "/img/adopt-storm.png",
+      "bio": "Storm came to us malnourished and frightened, rescued from a facility that couldn't give her the care she deserved. Years of patient love later, she's a calm, content golden tabby tiger who shares her enclosure with her best friend Quake.",
+      "extraImg": "/img/tigri-quake-storm-coccole.jpg"
+    },
+    {
+      "id": "2",
+      "name": "Guinness",
+      "species": "King Cheetah",
+      "price": 20,
+      "img": "/img/adopt-guinness.png",
+      "bio": "Born with severe breathing problems that needed round-the-clock care, Guinness pulled through to become one of the sweetest cheetahs on the reserve — a gentle purring machine with the rare, striped coat of a king cheetah."
+    },
+    {
+      "id": "3",
+      "name": "Lyvia",
+      "species": "Cheetah",
+      "price": 15,
+      "img": "/img/adopt-lyvia.png",
+      "bio": "Lyvia survived a black mamba attack as a six-day-old cub that tragically took her mother's life, and pulled through emergency surgery against the odds. Today she's healthy, affectionate, and loves lying close to the people she trusts.",
+      "extraImg": "/img/ghepardo-lyvia-guarita.jpg"
+    },
+    {
+      "id": "4",
+      "name": "Oakley",
+      "species": "Cheetah",
+      "price": 15,
+      "img": "/img/adopt-oakley.png",
+      "bio": "Oakley overcame a serious intestinal blockage that required emergency surgery as a cub. Now fully recovered, she's known on the reserve for her grumpy little face — and for being one of our most resilient success stories.",
+      "extraImg": "/img/ghepardo-oakley-recupero.jpg"
+    },
+    {
+      "id": "5",
+      "name": "Jagger",
+      "species": "Cheetah",
+      "price": 12,
+      "img": "/img/adopt-jagger.png",
+      "bio": "Jagger was just two months old when an x-ray revealed multiple fractures from a difficult start in life. Hand-raised back to health, he's now a sweet, playful cheetah with a soft spot for chewing on red toys.",
+      "extraImg": "/img/ghepardo-jagger-adulto.jpg"
+    }
   ],
   "common": {
     "back_home": "← Back to Home",
@@ -114,7 +152,8 @@
     "write_us": "Write to us now",
     "book_now": "Book now",
     "error_checkout": "Checkout error. Please try again.",
-    "error_backend": "Backend unreachable. Please try again later."
+    "error_backend": "Backend unreachable. Please try again later.",
+    "discover": "Discover"
   },
   "nav": {
     "home": "Home",
@@ -138,7 +177,9 @@
     "support_us": "Support Us",
     "wishlist": "Wishlist",
     "become_volunteer": "Become a Volunteer",
-    "FAQ": "FAQ"
+    "FAQ": "FAQ",
+    "our_animals": "Our Animals",
+    "other_animals": "Other Animals"
   },
   "footer": {
     "brand_desc": "A cheetah breeding and conservation project in the heart of the Waterberg, South Africa. Founded by Kim Hiltrop — a veterinary nurse who hand-raised Nova, a three-legged cheetah.",
@@ -195,6 +236,7 @@
     "vol_btn": "Apply as a Volunteer",
     "animals_label": "~ Our Animals ~",
     "animals_title": "Every animal has its story",
+    "animals_desc": "Everybody is welcome at Nova's Legacy. Discover the stories of all the animals present at the camp.",
     "testi_label": "~ What They Say ~",
     "testi_title": "Words from those already part of the Coalition",
     "accom_label": "~ Where to Sleep ~",
@@ -237,16 +279,6 @@
       "Daily Care",
       "Sunset",
       "Nova"
-    ],
-    "animal_roles": [
-      "Cheetah · The Founder",
-      "Lioness · Rescued as a cub",
-      "African Wild Dogs",
-      "Giraffe · Free in the Reserve",
-      "Horse · Rehabilitated",
-      "Bat-Eared Fox",
-      "Desert Lynx",
-      "Nocturnal Hunter"
     ],
     "prog_tags": [
       "Experience",
@@ -353,7 +385,7 @@
     "coexist_title": "Human-Wildlife Coexistence",
     "coexist_p": "One of the main reasons for the cheetah's decline is conflict with local farmers. Cheetahs kill livestock — and farmers kill them in response. We work with Waterberg communities to find coexistence solutions: guard dogs, electric fencing, compensation for losses.",
     "btn1": "Join the Project",
-    "btn2": "University Internship"
+    "btn2": "Meet Our Cheetahs"
   },
   "horses": {
     "hero_label": "~ Rescue & Rehabilitation ~",
@@ -370,7 +402,7 @@
     "ecosystem_p1": "Nova's Legacy's horses live in the same reserve as cheetahs, wild dogs, giraffes and zebras. This creates an extraordinarily rich environment, where every morning is a different discovery.",
     "ecosystem_p2": "Many volunteers say the most memorable moment of their stay was seeing a cheetah and a horse separated only by the fence, looking at each other with mutual curiosity.",
     "btn1": "Volunteer",
-    "btn2": "Learn about Conservation"
+    "btn2": "Meet Our Horses"
   },
   "volunteer": {
     "hero_label": "~ Join the Coalition ~",
@@ -500,6 +532,7 @@
     "desc": "With a symbolic adoption you receive: an official certificate with photo, monthly updates directly from Kim about the animal's life, and the knowledge that your contribution goes 100% towards food and medical care.",
     "highlight": "To adopt, write to kim@novaslegacy.co.za indicating the animal chosen. We will reply within 48 hours with payment instructions and your personalised adoption certificate.",
     "adopt_btn": "Adopt",
+    "discover_story": "Discover their story →",
     "per_month": "month",
     "loading": "Loading...",
     "what_you_get_title": "What you receive",
@@ -604,10 +637,18 @@
     "unavailable": "Donations temporarily unavailable. Please try again later.",
     "wishlist_cta_text": "Want to donate physical goods or see what we need most?",
     "impact": [
-      { "desc": "Feeds a cheetah for one week" },
-      { "desc": "Funds monthly veterinary care" },
-      { "desc": "Contributes to sanctuary maintenance" },
-      { "desc": "Supports a conservation programme" }
+      {
+        "desc": "Feeds a cheetah for one week"
+      },
+      {
+        "desc": "Funds monthly veterinary care"
+      },
+      {
+        "desc": "Contributes to sanctuary maintenance"
+      },
+      {
+        "desc": "Supports a conservation programme"
+      }
     ]
   },
   "wishlist": {
@@ -660,7 +701,7 @@
     "cap_antille": "Antelope Species",
     "cap_zebra": "Free-roaming Zebras",
     "btn_adopt": "Adopt an Animal",
-    "btn_volunteer": "Join Us"
+    "btn_volunteer": "Meet the Other Animals"
   },
   "kim_story": {
     "hero_label": "The Team",
@@ -670,7 +711,7 @@
     "section_label": "Mission",
     "section_title": "The Story",
     "section_title_em": "of Kim",
-    "p1": "Born in ’84, immediately after finishing her studies as a vet nurse, she moved to South Africa. Here begins a path of working with animals and wildlife in specific. Kim started working with birds, then moved over to small cat species and eventually settled on big cats.",
+    "p1": "Born in ’84, immediately after finishing her studies as a vet nurse in Belgium, she moved to South Africa to pursue her dream. Here begins a path of working with animals and wildlife in specific. Kim started working with birds, then moved over to small cat species, and eventually settled on big cats, gaining years of experience with species like tigers and lions. Later, while collaborating with Ann van Dyk, she specialized in raising orphaned cubs, eventually raising her first cheetah, Nova. The incredible bond she formed with him sparked her lifelong passion for cheetahs, leading her to start her own project and take over the private cheetah farm in the Waterberg area.",
     "quote1": "Nova was the very first cheetah cub I hand reared. He taught me the beauty in cheetahs, the incredible bond they can form with their carers and all the problems they face as a species.",
     "quote2": "Nova and I spent nearly 11 years together, a time where Nova pushed me to fight for the cheetahs' survival.",
     "quote3": "Nova’s legacy will continue to fight for the species through captive breeding with the aim to give cheetahs a fighting chance in a world where they are running out of space.",
@@ -759,5 +800,202 @@
         ]
       }
     }
-  }
+  },
+  "our_animals": {
+    "hero_label": "~ Meet the Family ~",
+    "hero_title": "Our Animals",
+    "hero_sub": "Every species at Nova's Legacy has its own story — scroll through to meet the cheetahs, horses and wild family who call the reserve home.",
+    "intro_p1": "From the cheetahs at the heart of our mission to the horses, predators and free-roaming herbivores who share the reserve with them, every animal here has found a safe place to belong. Scroll through each species below and discover their stories.",
+    "other_label": "~ Beyond Cheetahs & Horses ~",
+    "other_title": "Other Animals",
+    "other_desc": "Beyond cheetahs and horses, Nova's Legacy is home to a wide family of rescued wildlife and farm animals — lions, tigers, small wild cats, free-roaming herbivores and more, each with a sanctuary built around their needs.",
+    "cheetahs_title": "Cheetahs",
+    "cheetahs_desc": "Built for speed — a light frame, semi-retractable claws and a flexible spine let cheetahs reach strides of up to 7 metres. They can't roar; instead they chirp and purr.",
+    "horses_title": "Horses",
+    "horses_desc": "Rescued and rehabilitated horses given patient, individual care until they're ready to trust again — and to share gentle moments with our volunteers.",
+    "lions_title": "Lions",
+    "lions_desc": "Africa's second-largest big cat, living in close-knit prides. Maned males guard the group while lionesses do most of the hunting.",
+    "tigers_title": "Tigers",
+    "tigers_desc": "The largest cat in the world and a powerful swimmer, with fully retractable claws built for stalking silently through long grass.",
+    "servals_title": "Servals",
+    "servals_desc": "Tall, slender hunters with oversized ears and a leap that can clear 3 metres — perfect for snatching birds straight out of the air.",
+    "caracals_title": "Caracals",
+    "caracals_desc": "Known as the desert lynx, Africa's largest small cat can leap nearly 3 metres to knock flying birds clean out of the sky.",
+    "civets_title": "Civets",
+    "civets_desc": "Solitary and nocturnal, civets are recognisable by their bandit-like facial mask and use scent glands to mark their territory.",
+    "porcupines_title": "Porcupines",
+    "porcupines_desc": "Africa's largest porcupine species, covered in rattling quills that form a defensive crest along the head and neck when raised.",
+    "bat_eared_foxes_title": "Bat-Eared Foxes",
+    "bat_eared_foxes_desc": "Small, social foxes with oversized ears tuned to hear insects moving underground, foraging together in tight family groups.",
+    "cows_title": "Cows",
+    "cows_desc": "Rescued cattle living out peaceful lives on the reserve, part of the wider sanctuary family we care for every day.",
+    "pets_title": "Pets",
+    "pets_desc": "Rescued cats and dogs who found a second chance at Nova's Legacy, living safely alongside the rest of our animal family.",
+    "birds_title": "Birds",
+    "birds_desc": "From birds of prey to colourful residents and migratory visitors, the reserve's skies are as alive as the bush below.",
+    "free_roaming_animals_title": "Free-Roaming Animals",
+    "free_roaming_animals_desc": "Giraffes, zebras, antelope and other herbivores roam freely across the open reserve, keeping the bushveld ecosystem in balance.",
+    "discover_story": "Discover their story →",
+    "empty_species": "No animals added for this species yet.",
+    "jackals_title": "Jackals",
+    "jackals_desc": "Highly adaptable, opportunistic canids that hunt alone or in pairs and scavenge just as readily. Monogamous for life, jackal pairs mark and defend their territory together, and are best known for their sharp, far-carrying howls used to stay in contact at dusk and through the night.",
+    "btn1": "Meet Kim",
+    "btn2": "Adopt an Animal",
+    "cheetahs_detail": "Built for speed, the cheetah has a light skeleton, semi-retractable claws and a long, flexible spine that lets it reach strides of up to 7 metres at full sprint. Solid black spots and dark \"tear stripes\" running from the eyes to the mouth help cut the sun's glare while hunting. Cheetahs can't roar — instead they chirp, purr and even churr to communicate. Males often form small coalitions for life, while females remain solitary outside of raising cubs. Fewer than 7,000 are estimated to survive in the wild today.",
+    "horses_detail": "Every horse on the reserve arrives with a different story — most rescued from neglect, abandonment or situations where they could no longer be cared for. Each is assessed by a vet, treated for any injuries or illness, and gradually rehabilitated through patient, hands-on care and a structured re-training programme. Many were once underweight or distrustful of people; today they graze freely across the reserve alongside cheetahs, wild dogs and zebras, and several have grown calm enough to share quiet moments with visiting volunteers.",
+    "lions_detail": "Africa's second-largest big cat, the lion is best known for its powerful roar and the thick mane that makes males look larger and helps protect the neck during fights. Lions are the only cat with a tufted tail, used to signal to the rest of the pride during a hunt. Cubs are born with soft spots that fade with age, and the rare white lion's pale coat comes from a genetic condition called leucism. Lions live in tight social groups called prides, with males up to 50% larger than females.",
+    "tigers_detail": "The largest cat in the world, the tiger is a powerful, surprisingly enthusiastic swimmer — one of the few big cats that actively seeks out water. Its bold stripes are unique to every individual and provide near-perfect camouflage when stalking prey through long grass, while fully retractable claws and padded paws keep its approach silent. Genetic variation produces several coat colours, from the classic orange-and-black to rare white, golden and snow-white tigers. Tigers greet one another with a friendly huffing sound called \"chuffing.\"",
+    "servals_detail": "Tall and slender, the serval is one of the tallest small cats in Africa thanks to long legs built for leaping — it can spring up to 3 metres into the air to snatch a bird mid-flight or pounce on prey hidden in tall grass. Its oversized, mobile ears can rotate 180 degrees and pick up the ultrasonic calls of rodents moving underground. Servals have water-resistant fur and often lie in shallow water to stalk passing prey. They are solitary hunters, most active from dusk through the night.",
+    "caracals_detail": "Known as the desert lynx, the caracal is the largest of Africa's small cats. Long, powerful legs let it leap nearly 3 metres straight up to knock birds clean out of the air, and it climbs trees with ease. The long black tufts on its ears — used to communicate with other caracals — give it a passing resemblance to a lynx, though it's actually more closely related to servals and golden cats. Caracals are solitary, mostly hunting at twilight, and are rarely seen far from cover.",
+    "civets_detail": "The African civet is easy to recognise by its bold black-and-white spots, stripes and the bandit-like mask around its eyes. Solitary and intensely territorial, it marks its range using scent glands that produce a strong musk. Unlike most mammals, civets have five non-retractable claws on each foot, which helps them climb. Mostly nocturnal, they're omnivores that will eat anything from fruit and insects to small rodents, birds and eggs.",
+    "porcupines_detail": "Africa's largest porcupine species is covered in long, hollow quills that rattle loudly in warning when shaken — and form a dramatic crest along the head and neck when raised. Porcupines are largely monogamous, keeping the same mate for life, but forage for food alone after dark and shelter together in multi-chambered underground dens. Despite their fearsome defences, they're gentle herbivores, feeding on bark, roots, fallen fruit and the occasional crop raid.",
+    "bat_eared_foxes_detail": "This small African fox is unmistakable thanks to ears that can grow over 5 inches tall — built to keep the fox cool and to pick up the faintest rustle of insects underground. Bat-eared foxes are grey with black markings on the face, legs and tail, and their strong digging claws are used to build the underground dens and tunnel networks they live in. They live and forage together in pairs or small family groups, feeding mostly on termites, beetles and other insects through the night.",
+    "jackals_detail": "Highly adaptable and opportunistic, jackals will hunt alone or in pairs just as readily as they'll scavenge a free meal. Black-backed and side-striped jackals are both found across southern Africa, identifiable by the dark saddle of fur running down the back. They're monogamous for life, with bonded pairs marking and defending a shared territory together, and are best known for their sharp, far-carrying howls — used to keep in contact with their mate and warn off rivals at dusk and through the night.",
+    "cows_detail": "Our cattle come from backgrounds of neglect or abandonment, often arriving underweight or in poor health. Once assessed and treated by our veterinary team, they're slowly nursed back to full health and given the run of open grazing land on the reserve. Naturally calm and social, they form small, settled herds and are a familiar, reassuring presence for the volunteers and staff who care for them every day.",
+    "pets_detail": "Alongside the wildlife, Nova's Legacy is also home to a small family of rescued cats and dogs, many of whom arrived as strays or were surrendered by owners who could no longer care for them. They live safely on the property, vaccinated, sterilised and well fed, often becoming the first friendly faces volunteers meet on their morning rounds. Each has its own personality and place in the daily life of the reserve.",
+    "birds_detail": "The reserve's bushveld habitat supports a striking variety of birdlife, from birds of prey patrolling the skies above the enclosures to small, colourful songbirds darting through the acacia trees below. Some are year-round residents, while others pass through on seasonal migration, drawn by the same water sources and open grassland that sustain the reserve's larger animals. For many visitors, the birdlife is an unexpected highlight of every walk through the bush.",
+    "free_roaming_animals_detail": "Across the reserve's open grassland, giraffes, zebras, antelope and other herbivores roam freely, exactly as they would in the wild. Left largely undisturbed, these free-roaming species play a vital role in keeping the bushveld ecosystem healthy — grazing keeps grasses in balance, while their presence supports the same natural food web that has sustained Waterberg's wildlife for generations. For many guests, spotting a herd moving quietly through the bush is one of the most memorable parts of a visit."
+  },
+  "ourAnimals": [
+    {
+      "id": "nova",
+      "name": "Nova",
+      "species": "cheetahs",
+      "role": "Cheetah · The Founder",
+      "img": "/img/nova-primo-piano.png",
+      "bio": "Nova was the very first cheetah Kim hand-reared, born with one back leg never fully formed. He lived a full, joyful life on three legs and inspired the project that carries his name."
+    },
+    {
+      "id": "jagger",
+      "name": "Jagger",
+      "species": "cheetahs",
+      "role": "Cheetah · Against All Odds",
+      "img": "/img/ghepardo-jagger-cucciolo.jpg",
+      "bio": "Jagger was a fragile two-month-old cub with multiple fractures when he came into our care. Hand-raised back to full health, he's now a playful, sweet-natured cheetah with one quirk: he loves to chase anything red.",
+      "extraImg": "/img/ghepardo-jagger-adulto.jpg"
+    },
+    {
+      "id": "spirit",
+      "name": "Spirit",
+      "species": "horses",
+      "role": "Horse · Rehabilitated",
+      "img": "/img/cavallo-puledro.png",
+      "bio": "Spirit arrived undernourished and distrustful of people. Months of patient care later, he trots the reserve every morning like he owns it."
+    },
+    {
+      "id": "shira",
+      "name": "Shira",
+      "species": "lions",
+      "role": "Lioness · Rescued as a Cub",
+      "img": "/img/leone-cucciolo-pneumatico.png",
+      "bio": "Shira was rescued as an orphaned cub and raised by the team. She now lives peacefully in the reserve, still curious about every visitor who passes her enclosure."
+    },
+    {
+      "id": "bliss_thunder",
+      "name": "Bliss & Thunder",
+      "species": "lions",
+      "role": "Lions · Bonded Pair",
+      "img": "/img/leoni-bliss-thunder.jpg",
+      "bio": "Bliss, a rare white lioness, and Thunder, hand-raised after losing his mother, found each other at Nova's Legacy. Today they roam together as parents of four cubs, and Thunder's roar still echoes across the reserve every evening.",
+      "extraImg": "/img/leoni-bliss-thunder-albero.jpg"
+    },
+    {
+      "id": "quake",
+      "name": "Quake",
+      "species": "tigers",
+      "role": "White Bengal Tiger",
+      "img": "/img/tigre-quake-ritratto.jpg",
+      "bio": "Quake came to us at just two weeks old after a breeder couldn't export him. He loves a swim in his pool and never misses the chance for a friendly \"tiger hello\" at the fence, especially when his partner Storm is close by.",
+      "extraImg": "/img/tigri-quake-storm-coccole.jpg"
+    },
+    {
+      "id": "serval",
+      "name": "Serval",
+      "species": "servals",
+      "role": "Nocturnal Hunter",
+      "img": "/img/serval.png",
+      "bio": "Our serval prowls the reserve by night, using its oversized ears to track prey hidden in the grass."
+    },
+    {
+      "id": "serval_young",
+      "name": "Young Serval",
+      "species": "servals",
+      "role": "Growing Up on the Reserve",
+      "img": "/img/serval-cucciolo.png",
+      "bio": "Born on the reserve, this young serval already shows the oversized ears and long legs that make the species such gifted hunters of birds and rodents."
+    },
+    {
+      "id": "caracal",
+      "name": "Caracal",
+      "species": "caracals",
+      "role": "Desert Lynx",
+      "img": "/img/lince.png",
+      "bio": "Our caracal is a shy, solitary hunter, most active at dusk and rarely seen far from the cover of tall grass."
+    },
+    {
+      "id": "civet",
+      "name": "African Civet",
+      "species": "civets",
+      "role": "Nocturnal Forager",
+      "img": "/img/dumbo.png",
+      "bio": "Solitary and mostly active after dark, our African civet is recognisable by its black-and-white markings and the bandit-like mask around its eyes."
+    },
+    {
+      "id": "spike",
+      "name": "Spike",
+      "species": "porcupines",
+      "role": "Porcupine · The Elder",
+      "img": "/img/istrice-spike-pannocchia.jpg",
+      "bio": "Spike has called Nova's Legacy home since 2016. This gentle porcupine loves fresh corn and a good scratch through the fence, though her quills mean visitors must always move slowly and calmly around her.",
+      "extraImg": "/img/istrice-spike-snack.jpg"
+    },
+    {
+      "id": "sandy",
+      "name": "Sandy",
+      "species": "bat_eared_foxes",
+      "role": "Bat-Eared Fox",
+      "img": "/img/volpe-orecchie.png",
+      "bio": "Sandy is one of our bat-eared foxes — small, big-eared, and always digging for insects after dark."
+    },
+    {
+      "id": "cow",
+      "name": "Rescued Cattle",
+      "species": "cows",
+      "role": "Sanctuary Residents",
+      "img": "/img/kim-savana.svg",
+      "bio": "Rescued from neglect, our cattle graze peacefully across the reserve, part of the wider Nova's Legacy family of animals in our care."
+    },
+    {
+      "id": "pet",
+      "name": "Sanctuary Pets",
+      "species": "pets",
+      "role": "Cats & Dogs",
+      "img": "/img/kim-savana.svg",
+      "bio": "Rescued cats and dogs share a safe home at Nova's Legacy, often the first friendly faces volunteers meet each morning on the reserve."
+    },
+    {
+      "id": "birds",
+      "name": "Resident Birds",
+      "species": "birds",
+      "role": "Birds of the Reserve",
+      "img": "/img/kim-savana.svg",
+      "bio": "From birds of prey patrolling the skies to colourful songbirds in the bush, the reserve's skies are as alive as the ground below."
+    },
+    {
+      "id": "tumelo",
+      "name": "Tumelo",
+      "species": "free_roaming_animals",
+      "role": "Giraffe · Free in the Reserve",
+      "img": "/img/antille.png",
+      "bio": "Tumelo wanders freely across the reserve, often spotted grazing among the cheetah enclosures at golden hour."
+    },
+    {
+      "id": "ghost_pack",
+      "name": "Ghost Pack",
+      "species": "free_roaming_animals",
+      "role": "African Wild Dogs",
+      "img": "/img/licaone.png",
+      "bio": "Our pack of African wild dogs roams together as a tight-knit family — playful, noisy and never far from one another."
+    }
+  ]
 }

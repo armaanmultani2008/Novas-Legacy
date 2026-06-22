@@ -47,7 +47,7 @@ function Conservation({ goTo }) {
 
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <button className="btn btn-dark" onClick={() => goTo('volunteer')}>{t('conservation.btn1')}</button>
-              <button className="btn btn-outline-dark" onClick={() => goTo('internship')}>{t('conservation.btn2')}</button>
+              <button className="btn btn-outline-dark" onClick={() => goTo('our-animals', 'cheetahs')}>{t('conservation.btn2', 'Meet Our Cheetahs')}</button>
             </div>
 
             <h2>{t('conservation.mission_title').split(' ').slice(0,-1).join(' ')} <em>{t('conservation.mission_title').split(' ').slice(-1)}</em></h2>

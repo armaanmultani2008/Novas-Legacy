@@ -2,17 +2,15 @@ import { useState, useEffect, useRef } from 'react'
 import i18n from '../i18n'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-const TABS = ['Blog', 'Shop', 'Animals', 'Content', 'Settings']
+const TABS = ['Blog', 'Shop', 'Animals', 'Our Animals', 'Content', 'Settings']
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2) }
 
-// ── localStorage cache ────────────────────────────────────────────────────────
 const LS = {
   get: key => { try { return JSON.parse(localStorage.getItem('nl_cms_' + key)) } catch { return null } },
   set: (key, val) => localStorage.setItem('nl_cms_' + key, JSON.stringify(val)),
 }
 
-// ── API helpers ───────────────────────────────────────────────────────────────
 async function loadCMS() {
   try {
     const r = await fetch(`${API}/api/cms`)
@@ -52,7 +50,6 @@ async function saveContent(data, token) {
   } catch { return { ok: false } }
 }
 
-// ── Image compress (client-side, no backend needed) ───────────────────────────
 function compressImage(file, maxPx = 1000, quality = 0.82) {
   return new Promise(resolve => {
     const img = new Image()
@@ -72,7 +69,6 @@ function compressImage(file, maxPx = 1000, quality = 0.82) {
   })
 }
 
-// ── Styles ────────────────────────────────────────────────────────────────────
 const S = `
   *, *::before, *::after { box-sizing: border-box; }
   .adm { min-height: 100vh; background: #F6F3EE; font-family: var(--sans, system-ui, sans-serif); color: #111; }
@@ -229,6 +225,13 @@ const S = `
   .adm-field-hint { font-size: 0.7rem; color: #999; margin-top: 0.22rem; }
   .adm-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 
+  /* array fields (repeatable list/object editor) */
+  .adm-arr { display: flex; flex-direction: column; gap: 0.5rem; }
+  .adm-arr-row { display: flex; gap: 0.6rem; align-items: flex-start; background: #FDFBF8; border: 1px solid #EDE5D8; border-radius: 4px; padding: 0.6rem; }
+  .adm-arr-row-main { flex: 1; display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
+  .adm-arr-row-btns { display: flex; gap: 0.3rem; flex-shrink: 0; }
+  .adm-arr-row-btns .btn-sm:disabled { opacity: 0.35; cursor: not-allowed; }
+
   /* image upload */
   .img-up-wrap { display: flex; flex-direction: column; gap: 0.5rem; }
   .img-up-preview { width: 100%; height: 140px; object-fit: cover; border-radius: 4px; border: 1px solid #EDE5D8; display: block; }
@@ -291,7 +294,6 @@ function Dots() {
   return <span className="dots"><span>.</span><span>.</span><span>.</span></span>
 }
 
-// ── Image upload component ────────────────────────────────────────────────────
 function ImageUpload({ value, onChange, label = 'Photo' }) {
   const inputRef = useRef()
   const isBase64 = value?.startsWith('data:')
@@ -325,10 +327,8 @@ function ImageUpload({ value, onChange, label = 'Photo' }) {
   )
 }
 
-// ── Login / Setup ─────────────────────────────────────────────────────────────
 function LoginScreen({ onLogin, goTo }) {
   const [needsSetup, setNeedsSetup] = useState(null)
-  // mode: 'login' | 'setup' | 'recover'
   const [mode, setMode] = useState('login')
   const [f, setF] = useState({ pw: '', recoveryKey: '', newpw: '', newpwConfirm: '' })
   const [err, setErr] = useState(null)
@@ -404,7 +404,6 @@ function LoginScreen({ onLogin, goTo }) {
         <div className="adm-login-box">
           <div className="adm-login-logo">Nova&apos;s <em>Legacy</em></div>
 
-          {/* ── SETUP ── */}
           {mode === 'setup' && <>
             <h2>Initial Setup</h2>
             <p className="adm-login-sub">Choose a password and a recovery keyword.</p>
@@ -426,7 +425,6 @@ function LoginScreen({ onLogin, goTo }) {
             </form>
           </>}
 
-          {/* ── LOGIN ── */}
           {mode === 'login' && <>
             <h2>Admin Sign In</h2>
             <p className="adm-login-sub">Internal use only.</p>
@@ -448,7 +446,6 @@ function LoginScreen({ onLogin, goTo }) {
             </div>
           </>}
 
-          {/* ── RECOVER ── */}
           {mode === 'recover' && <>
             <h2>Password Recovery</h2>
             <p className="adm-login-sub">Enter your recovery keyword to set a new password.</p>
@@ -491,7 +488,6 @@ function LoginScreen({ onLogin, goTo }) {
   )
 }
 
-// ── Modal base ────────────────────────────────────────────────────────────────
 function Modal({ title, onClose, onSave, saving, children }) {
   return (
     <div className="adm-overlay" onClick={onClose}>
@@ -514,18 +510,18 @@ function Modal({ title, onClose, onSave, saving, children }) {
   )
 }
 
-// ── Shared hook per caricare e salvare una sezione CMS ────────────────────────
-function useCMS(section, token) {
+function useCMS(section, token, listKey) {
   const [items, setItems] = useState(null)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState(null)
 
   useEffect(() => {
     loadCMS().then(d => {
-      if (d?.[section]?.length) { setItems(d[section]); LS.set(section, d[section]) }
+      const raw = listKey ? d?.[section]?.[listKey] : d?.[section]
+      if (raw?.length) { setItems(raw); LS.set(section, raw) }
       else { const cached = LS.get(section); if (cached) setItems(cached); else setItems([]) }
     })
-  }, [section])
+  }, [section, listKey])
 
   const persist = async list => {
     setSaving(true); setMsg(null)
@@ -538,9 +534,8 @@ function useCMS(section, token) {
   return { items, saving, msg, persist }
 }
 
-// ── Blog tab ──────────────────────────────────────────────────────────────────
 function BlogTab({ token }) {
-  const { items: posts, saving, msg, persist } = useCMS('blog', token)
+  const { items: posts, saving, msg, persist } = useCMS('blog', token, 'posts')
   const [editing, setEditing] = useState(null)
 
   const del = id => { if (!confirm('Delete this post?')) return; persist(posts.filter(p => p.id !== id)) }
@@ -611,7 +606,6 @@ function BlogForm({ post, onSave, onClose, saving }) {
   )
 }
 
-// ── Shop tab ──────────────────────────────────────────────────────────────────
 const SHOP_CATEGORIES = [
   { key: 'tshirts',  label: 'T-Shirts' },
   { key: 'hoodies',  label: 'Hoodies' },
@@ -748,7 +742,6 @@ function ShopTab({ token }) {
   )
 }
 
-// ── Animali tab ───────────────────────────────────────────────────────────────
 function AnimaliTab({ token }) {
   const { items: animals, saving, msg, persist } = useCMS('animals', token)
   const [editing, setEditing] = useState(null)
@@ -796,7 +789,7 @@ function AnimalForm({ animal, onSave, onClose, saving }) {
   const [f, setF] = useState({
     id: animal.id || '', name: animal.name || '',
     species: animal.species || '', price: animal.price ?? '',
-    img: animal.img || '',
+    img: animal.img || '', bio: animal.bio || '', extraImg: animal.extraImg || '',
   })
   const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
   const save = () => {
@@ -815,11 +808,112 @@ function AnimalForm({ animal, onSave, onClose, saving }) {
         </div>
       </div>
       <ImageUpload label="Animal photo" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} />
+      <div className="adm-field">
+        <label>Story / bio (shown when visitors click the photo)</label>
+        <textarea rows={4} value={f.bio} onChange={set('bio')} placeholder="A short story about this animal…" />
+      </div>
+      <ImageUpload label="Extra photo (optional, shown in the story popup)" value={f.extraImg} onChange={v => setF(p => ({ ...p, extraImg: v }))} />
     </Modal>
   )
 }
 
-// ── Content tab — site-wide text & image editor ────────────────────────────
+const OUR_ANIMALS_SPECIES = [
+  { value: 'cheetahs',             label: 'Cheetahs' },
+  { value: 'lions',                label: 'Lions' },
+  { value: 'tigers',               label: 'Tigers' },
+  { value: 'servals',              label: 'Servals' },
+  { value: 'caracals',             label: 'Caracals' },
+  { value: 'civets',               label: 'Civets' },
+  { value: 'porcupines',           label: 'Porcupines' },
+  { value: 'bat_eared_foxes',      label: 'Bat-Eared Foxes' },
+  { value: 'horses',               label: 'Horses' },
+  { value: 'cows',                 label: 'Cows' },
+  { value: 'pets',                 label: 'Pets' },
+  { value: 'birds',                label: 'Birds' },
+  { value: 'jackals',              label: 'Jackals' },
+  { value: 'free_roaming_animals', label: 'Free-Roaming Animals' },
+]
+
+function OurAnimalsTab({ token }) {
+  const { items: animals, saving, msg, persist } = useCMS('ourAnimals', token)
+  const [editing, setEditing] = useState(null)
+
+  const del = id => { if (!confirm('Delete this animal?')) return; persist(animals.filter(a => a.id !== id)) }
+  const upsert = animal => {
+    const list = animals.find(a => a.id === animal.id)
+      ? animals.map(a => a.id === animal.id ? animal : a)
+      : [...animals, { ...animal, id: uid() }]
+    persist(list); setEditing(null)
+  }
+  const speciesLabel = v => OUR_ANIMALS_SPECIES.find(s => s.value === v)?.label || v
+
+  return (
+    <div>
+      {msg === 'local' && <div className="adm-offline">Saved locally. Deploy the backend to make changes visible to everyone.</div>}
+      {msg === 'ok'    && <div className="adm-ok">Saved to server.</div>}
+      <div className="adm-section-head">
+        <h2>Our Animals {animals && <span style={{ fontWeight: 400, color: '#999', fontSize: '0.82rem' }}>({animals.length})</span>}</h2>
+        <button className="btn-add" onClick={() => setEditing({})}>+ New Animal</button>
+      </div>
+      <p style={{ color: '#888', fontSize: '0.82rem', marginBottom: '1rem' }}>
+        These are the individual animals shown scrolling under each species on the public "Our Animals" page. If none are added for a species yet, a set of bundled defaults is shown instead — add one here to replace them.
+      </p>
+      {animals === null && <p style={{ color: '#999', fontSize: '0.85rem' }}>Loading<Dots /></p>}
+      {animals?.length === 0 && <p className="adm-empty">No animals yet — the public page is showing its bundled defaults.</p>}
+      <div className="adm-list">
+        {animals?.map(a => (
+          <div key={a.id} className="adm-item">
+            <div className="adm-item-thumb">{a.img && <img src={a.img} alt="" />}</div>
+            <div className="adm-item-info">
+              <div className="adm-item-label">{speciesLabel(a.species)}</div>
+              <div className="adm-item-name">{a.name}</div>
+              <div className="adm-item-meta">{a.role}</div>
+            </div>
+            <div className="adm-item-btns">
+              <button className="btn-sm" onClick={() => setEditing(a)}>Edit</button>
+              <button className="btn-sm btn-del" onClick={() => del(a.id)}>Delete</button>
+            </div>
+          </div>
+        ))}
+      </div>
+      {editing && <OurAnimalForm animal={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} />}
+    </div>
+  )
+}
+
+function OurAnimalForm({ animal, onSave, onClose, saving }) {
+  const [f, setF] = useState({
+    id: animal.id || '', name: animal.name || '',
+    species: animal.species || OUR_ANIMALS_SPECIES[0].value,
+    role: animal.role || '', img: animal.img || '', bio: animal.bio || '', extraImg: animal.extraImg || '',
+  })
+  const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
+  const save = () => {
+    if (!f.name.trim()) return alert('Please enter a name.')
+    onSave(f)
+  }
+  return (
+    <Modal title={f.id ? 'Edit animal' : 'New animal'} onClose={onClose} onSave={save} saving={saving}>
+      <div className="adm-grid2">
+        <div className="adm-field"><label>Name *</label><input value={f.name} onChange={set('name')} /></div>
+        <div className="adm-field">
+          <label>Species *</label>
+          <select value={f.species} onChange={set('species')}>
+            {OUR_ANIMALS_SPECIES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+          </select>
+        </div>
+      </div>
+      <div className="adm-field"><label>Role / caption (shown under the name)</label><input value={f.role} onChange={set('role')} placeholder="Cheetah · The Founder" /></div>
+      <ImageUpload label="Animal photo" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} />
+      <div className="adm-field">
+        <label>Story / bio (shown when visitors click the photo)</label>
+        <textarea rows={4} value={f.bio} onChange={set('bio')} placeholder="A short story about this animal…" />
+      </div>
+      <ImageUpload label="Extra photo (optional, shown in the story popup)" value={f.extraImg} onChange={v => setF(p => ({ ...p, extraImg: v }))} />
+    </Modal>
+  )
+}
+
 
 const CURATED = [
   { key: 'home', label: 'Homepage',
@@ -837,18 +931,25 @@ const CURATED = [
       { k: 'home_prog_internship', l: 'Project Internship', def: '/img/volontari-gruppo.png' },
       { k: 'home_adopt', l: 'Project adopt', def: '/img/ghepardo-cucciolo.png' },
       { k: 'home_prog_breed', l: 'Project breed', def: '/img/cucciolata.png' },
-      { k: 'home_animal_1', l: 'Animals carousel — Nova', def: '/img/nova-primo-piano.png', capL: 'Animal 1 — role/caption' },
-      { k: 'home_animal_2', l: 'Animals carousel — Shira', def: '/img/leone-cucciolo-pneumatico.png', capL: 'Animal 2 — role/caption' },
-      { k: 'home_animal_3', l: 'Animals carousel — Ghost Pack', def: '/img/licaone.png', capL: 'Animal 3 — role/caption' },
-      { k: 'home_animal_4', l: 'Animals carousel — Tumelo', def: '/img/ghepardo-erba-alta.png', capL: 'Animal 4 — role/caption' },
-      { k: 'home_animal_5', l: 'Animals carousel — Spirit', def: '/img/cavallo-puledro.png', capL: 'Animal 5 — role/caption' },
-      { k: 'home_animal_6', l: 'Animals carousel — Sandy', def: '/img/volpe-orecchie.png', capL: 'Animal 6 — role/caption' },
-      { k: 'home_animal_7', l: 'Animals carousel — Caracal', def: '/img/baby-wild.png', capL: 'Animal 7 — role/caption' },
-      { k: 'home_animal_8', l: 'Animals carousel — Serval', def: '/img/serval.png', capL: 'Animal 8 — role/caption' },
     ],
     fields: [
+      { k: 'hero_eyebrow',  l: 'Hero — small label above title' },
       { k: 'hero_title',    l: 'Hero — main title' },
       { k: 'hero_sub',      l: 'Hero — subtitle' },
+      { k: 'btn_volunteer', l: 'Hero — "Become a volunteer" button' },
+      { k: 'btn_discover',  l: 'Hero — "Discover Nova\'s story" button' },
+      { k: 'stat_cheetahs',   l: 'Hero stats — cheetahs remaining label' },
+      { k: 'stat_reserve',    l: 'Hero stats — reserve size label' },
+      { k: 'stat_animals',    l: 'Hero stats — animals hosted label' },
+      { k: 'stat_volunteers', l: 'Hero stats — volunteers/year label' },
+      { k: 'alert_tag',           l: 'Alert bar — tag' },
+      { k: 'alert_body_1',        l: 'Alert bar — text part 1' },
+      { k: 'alert_body_strong1',  l: 'Alert bar — bold part 1' },
+      { k: 'alert_body_2',        l: 'Alert bar — text part 2' },
+      { k: 'alert_body_strong2',  l: 'Alert bar — bold part 2' },
+      { k: 'alert_body_3',        l: 'Alert bar — text part 3' },
+      { k: 'alert_btn',           l: 'Alert bar — button' },
+      { k: 'work_label',    l: 'Three pillars — small label' },
       { k: 'work_title',    l: 'Three pillars — title' },
       { k: 'work_desc',     l: 'Three pillars — text' },
       { k: 'pillar1_title', l: 'Pillar 1 — title' },
@@ -857,9 +958,118 @@ const CURATED = [
       { k: 'pillar2_desc',  l: 'Pillar 2 — text' },
       { k: 'pillar3_title', l: 'Pillar 3 — title' },
       { k: 'pillar3_desc',  l: 'Pillar 3 — text' },
-      { k: 'cta_title',     l: 'CTA — title' },
-      { k: 'cta_desc',      l: 'CTA — text' },
+      { k: 'run_label',       l: 'Cheetah Run banner — small label' },
+      { k: 'run_title',       l: 'Cheetah Run banner — title' },
+      { k: 'run_desc',        l: 'Cheetah Run banner — text' },
+      { k: 'run_speed_label', l: 'Cheetah Run banner — "km/h" caption' },
+      { k: 'run_btn',         l: 'Cheetah Run banner — button' },
+      { k: 'programs_label', l: 'Programs grid — small label' },
+      { k: 'programs_title', l: 'Programs grid — title' },
+      { k: 'prog_tags',   l: 'Programs grid — tags (one per card)', arrayShape: 'string' },
+      { k: 'prog_titles', l: 'Programs grid — titles (one per card)', arrayShape: 'string' },
+      { k: 'prog_descs',  l: 'Programs grid — descriptions (one per card)', arrayShape: 'string' },
+      { k: 'animals_label', l: 'Species section — small label' },
+      { k: 'animals_title', l: 'Species section — title' },
+      { k: 'animals_desc',  l: 'Species section — text'},
+      { k: 'cta_label', l: 'Bottom CTA — small label' },
+      { k: 'cta_title', l: 'CTA — title' },
+      { k: 'cta_desc',  l: 'CTA — text' },
+      { k: 'cta_btn1',  l: 'CTA — first button (Adopt)' },
+      { k: 'cta_btn2',  l: 'CTA — second button (Volunteer)' },
+      { k: 'contact_label', l: 'Contact section — small label' },
+      { k: 'contact_title', l: 'Contact section — title' },
       { k: 'contact_desc',  l: 'Contact section — intro text' },
+      { k: 'contact_email_label',   l: 'Contact section — email field label' },
+      { k: 'contact_phone_label',   l: 'Contact section — phone field label' },
+      { k: 'contact_address_label', l: 'Contact section — address field label' },
+      { k: 'form_name',    l: 'Contact form — name placeholder' },
+      { k: 'form_surname', l: 'Contact form — surname placeholder' },
+      { k: 'form_email',   l: 'Contact form — email placeholder' },
+      { k: 'form_phone',   l: 'Contact form — phone placeholder' },
+      { k: 'form_reason',        l: 'Contact form — reason placeholder' },
+      { k: 'form_reason_vol',    l: 'Contact form — reason option: Volunteering' },
+      { k: 'form_reason_int',    l: 'Contact form — reason option: Internship' },
+      { k: 'form_reason_stay',   l: 'Contact form — reason option: Stay' },
+      { k: 'form_reason_run',    l: 'Contact form — reason option: Cheetah Run' },
+      { k: 'form_reason_adopt',  l: 'Contact form — reason option: Adopt' },
+      { k: 'form_reason_donate', l: 'Contact form — reason option: Donate' },
+      { k: 'form_reason_other',  l: 'Contact form — reason option: Other' },
+      { k: 'form_message', l: 'Contact form — message placeholder' },
+      { k: 'form_success',  l: 'Contact form — success message' },
+      { k: 'form_error',    l: 'Contact form — error message' },
+    ]},
+  { key: 'our_animals', label: 'Our Animals',
+    images: [
+      { k: 'our_animals_hero',                 l: 'Hero image',                           def: '/img/leoni-bliss-thunder.jpg' },
+      { k: 'our_animals_cheetahs',             l: 'Species cover — Cheetahs',             def: '/img/ghepardo-erba-alta.png' },
+      { k: 'our_animals_horses',               l: 'Species cover — Horses',               def: '/img/horses-species.png' },
+      { k: 'our_animals_lions',                l: 'Species cover — Lions',                def: '/img/lions.png' },
+      { k: 'our_animals_tigers',               l: 'Species cover — Tigers',               def: '/img/tigre-quake-ritratto.jpg' },
+      { k: 'our_animals_servals',              l: 'Species cover — Servals',              def: '/img/serval.png' },
+      { k: 'our_animals_caracals',             l: 'Species cover — Caracals',             def: '/img/lince.png' },
+      { k: 'our_animals_civets',               l: 'Species cover — Civets',               def: '/img/african-civet.png' },
+      { k: 'our_animals_porcupines',           l: 'Species cover — Porcupines',           def: '/img/porcospino.png' },
+      { k: 'our_animals_bat_eared_foxes',      l: 'Species cover — Bat-Eared Foxes',      def: '/img/fox.png' },
+      { k: 'our_animals_cows',                 l: 'Species cover — Cows',                 def: '/img/cows.png' },
+      { k: 'our_animals_pets',                 l: 'Species cover — Pets',                 def: '/img/pets.png' },
+      { k: 'our_animals_birds',                l: 'Species cover — Birds',                def: '/img/birds.png' },
+      { k: 'our_animals_jackals',              l: 'Species cover — Jackals',              def: '/img/smokey-jackal.png' },
+      { k: 'our_animals_free_roaming_animals', l: 'Species cover — Free-Roaming Animals', def: '/img/free-roaming.png' },
+    ],
+    fields: [
+      { k: 'hero_label',  l: 'Small label (above title)' },
+      { k: 'hero_title',  l: 'Hero title' },
+      { k: 'hero_sub',    l: 'Hero subtitle' },
+      { k: 'intro_p1',    l: 'Intro paragraph' },
+      { k: 'other_label', l: '"Other Animals" group — small label' },
+      { k: 'other_title', l: '"Other Animals" group — title' },
+      { k: 'other_desc',  l: '"Other Animals" group — text' },
+      { k: 'discover_story', l: 'Photo overlay link — "Discover their story"' },
+      { k: 'empty_species',  l: 'Message shown when a species has no animals yet' },
+      { k: 'btn1', l: 'Button 1 — (→ Kim\'s Story)' },
+      { k: 'btn2', l: 'Button 2 — (→ Adopt)' },
+      { k: 'cheetahs_title',             l: 'Cheetahs — title' },
+      { k: 'cheetahs_desc',              l: 'Cheetahs — short description (Home page card)' },
+      { k: 'cheetahs_detail',            l: 'Cheetahs — full description (Our Animals page)' },
+      { k: 'horses_title',               l: 'Horses — title' },
+      { k: 'horses_desc',                l: 'Horses — short description (Home page card)' },
+      { k: 'horses_detail',              l: 'Horses — full description (Our Animals page)' },
+      { k: 'lions_title',                l: 'Lions — title' },
+      { k: 'lions_desc',                 l: 'Lions — short description (Home page card)' },
+      { k: 'lions_detail',               l: 'Lions — full description (Our Animals page)' },
+      { k: 'tigers_title',               l: 'Tigers — title' },
+      { k: 'tigers_desc',                l: 'Tigers — short description (Home page card)' },
+      { k: 'tigers_detail',              l: 'Tigers — full description (Our Animals page)' },
+      { k: 'servals_title',              l: 'Servals — title' },
+      { k: 'servals_desc',               l: 'Servals — short description (Home page card)' },
+      { k: 'servals_detail',             l: 'Servals — full description (Our Animals page)' },
+      { k: 'caracals_title',             l: 'Caracals — title' },
+      { k: 'caracals_desc',              l: 'Caracals — short description (Home page card)' },
+      { k: 'caracals_detail',            l: 'Caracals — full description (Our Animals page)' },
+      { k: 'civets_title',               l: 'Civets — title' },
+      { k: 'civets_desc',                l: 'Civets — short description (Home page card)' },
+      { k: 'civets_detail',              l: 'Civets — full description (Our Animals page)' },
+      { k: 'porcupines_title',           l: 'Porcupines — title' },
+      { k: 'porcupines_desc',            l: 'Porcupines — short description (Home page card)' },
+      { k: 'porcupines_detail',          l: 'Porcupines — full description (Our Animals page)' },
+      { k: 'jackals_title',              l: 'Jackals — title' },
+      { k: 'jackals_desc',               l: 'Jackals — short description (Home page card)' },
+      { k: 'jackals_detail',             l: 'Jackals — full description (Our Animals page)' },
+      { k: 'bat_eared_foxes_title',      l: 'Bat-Eared Foxes — title' },
+      { k: 'bat_eared_foxes_desc',       l: 'Bat-Eared Foxes — short description (Home page card)' },
+      { k: 'bat_eared_foxes_detail',     l: 'Bat-Eared Foxes — full description (Our Animals page)' },
+      { k: 'cows_title',                 l: 'Cows — title' },
+      { k: 'cows_desc',                  l: 'Cows — short description (Home page card)' },
+      { k: 'cows_detail',                l: 'Cows — full description (Our Animals page)' },
+      { k: 'pets_title',                 l: 'Pets — title' },
+      { k: 'pets_desc',                  l: 'Pets — short description (Home page card)' },
+      { k: 'pets_detail',                l: 'Pets — full description (Our Animals page)' },
+      { k: 'birds_title',                l: 'Birds — title' },
+      { k: 'birds_desc',                 l: 'Birds — short description (Home page card)' },
+      { k: 'birds_detail',               l: 'Birds — full description (Our Animals page)' },
+      { k: 'free_roaming_animals_title', l: 'Free-Roaming Animals — title' },
+      { k: 'free_roaming_animals_desc',  l: 'Free-Roaming Animals — short description (Home page card)' },
+      { k: 'free_roaming_animals_detail', l: 'Free-Roaming Animals — full description (Our Animals page)' },
     ]},
   { key: 'nova_story', label: "Nova's Story",
     images: [
@@ -874,6 +1084,8 @@ const CURATED = [
       { k: 'hero_label',     l: 'Small label (above title)' },
       { k: 'hero_title',     l: 'Hero title' },
       { k: 'hero_sub',       l: 'Hero subtitle' },
+      { k: 'btn1',           l: 'Button 1' },
+      { k: 'btn2',           l: 'Button 2' },
       { k: 'origins_title',  l: 'Origins — section title' },
       { k: 'origins_p1',     l: 'Origins — paragraph 1' },
       { k: 'origins_p2',     l: 'Origins — paragraph 2' },
@@ -885,17 +1097,21 @@ const CURATED = [
       { k: 'legacy_title',   l: 'Legacy — section title' },
       { k: 'legacy_p1',      l: 'Legacy — paragraph 1' },
       { k: 'legacy_p2',      l: 'Legacy — paragraph 2' },
+      { k: 'photo_caps',     l: 'Gallery — default captions (used if a photo has no custom caption)', arrayShape: 'string' },
     ]},
   { key: 'kim_story', label: "Kim's Story",
     images: [
       { k: 'kim_story_hero', l: 'Hero image', def: '/img/kim-savana.svg' },
       { k: 'kim_story_portrait', l: 'Kim portrait photo', def: '/img/kim-portrait.jpg' },
+      { k: 'kim_story_cheetah', l: 'Kim with a cheetah photo', def: '/img/kim-cheetah.png' },
     ],
     fields: [
       { k: 'hero_label',        l: 'Small label' },
       { k: 'hero_title',        l: 'Title — first part' },
       { k: 'hero_title_em',     l: 'Title — italic part' },
       { k: 'hero_sub',          l: 'Subtitle' },
+      { k: 'btn1',              l: 'Button 1' },
+      { k: 'btn2',              l: 'Button 2' },
       { k: 'section_label',     l: 'Section label' },
       { k: 'section_title',     l: 'Section title — first part' },
       { k: 'section_title_em',  l: 'Section title — italic part' },
@@ -927,6 +1143,8 @@ const CURATED = [
       { k: 'science_p',     l: 'Scientific research — text' },
       { k: 'coexist_title', l: 'Coexistence — title' },
       { k: 'coexist_p',     l: 'Coexistence — text' },
+      { k: 'btn1', l: 'Button 1 — Join the Project (→ Volunteer)' },
+      { k: 'btn2', l: 'Button 2 — (→ Our Animals / Cheetahs)' },
     ]},
   { key: 'volunteer', label: 'Volunteering',
     images: [
@@ -942,12 +1160,17 @@ const CURATED = [
       { k: 'hero_label',     l: 'Small label' },
       { k: 'hero_title',     l: 'Title' },
       { k: 'hero_sub',       l: 'Subtitle' },
+      { k: 'btn_write',      l: 'Button 1 — Write to us' },
+      { k: 'btn2',           l: 'Button 2 — Apply now' },
       { k: 'what_title',     l: 'What it means — title' },
       { k: 'what_p1',        l: 'What it means — paragraph 1' },
       { k: 'what_p2',        l: 'What it means — paragraph 2' },
       { k: 'highlight',      l: 'Highlighted box' },
       { k: 'daily_title',    l: 'Daily tasks — title' },
+      { k: 'tasks',          l: 'Daily tasks — list', arrayShape: 'string' },
       { k: 'schedule_title', l: 'Schedule — title' },
+      { k: 'schedule',       l: 'Schedule — entries', arrayShape: ['time', 'title', 'desc'] },
+      { k: 'photo_caps',     l: 'Gallery — default captions (used if a photo has no custom caption)', arrayShape: 'string' },
       { k: 'apply_title',    l: 'How to apply — title' },
       { k: 'apply_text',     l: 'How to apply — text' },
     ]},
@@ -964,14 +1187,17 @@ const CURATED = [
       { k: 'hero_label',    l: 'Small label' },
       { k: 'hero_title',    l: 'Title' },
       { k: 'hero_sub',      l: 'Subtitle' },
+      { k: 'btn_book',      l: 'Button 1 — Book your stay' },
       { k: 'chalets_title', l: 'Chalets — title' },
       { k: 'chalets_p',     l: 'Chalets — text' },
+      { k: 'chalets',       l: 'Chalets — entries', arrayShape: ['name', 'size', 'desc'] },
       { k: 'highlight',     l: 'Highlighted box (best season etc.)' },
       { k: 'how_title',     l: 'How to get there — title' },
       { k: 'how_p1',        l: 'How to get there — paragraph 1' },
       { k: 'how_p2',        l: 'How to get there — paragraph 2' },
       { k: 'add_run_title', l: 'Add Cheetah Run — title' },
       { k: 'add_run_p',     l: 'Add Cheetah Run — text' },
+      { k: 'btn2',          l: 'Button 2 — Add the Cheetah Run' },
     ]},
   { key: 'horses', label: 'Horse Project',
     images: [
@@ -994,6 +1220,8 @@ const CURATED = [
       { k: 'ecosystem_title', l: 'Ecosystem — title' },
       { k: 'ecosystem_p1',    l: 'Ecosystem — paragraph 1' },
       { k: 'ecosystem_p2',    l: 'Ecosystem — paragraph 2' },
+      { k: 'btn1', l: 'Button 1 — Volunteer (→ Volunteer)' },
+      { k: 'btn2', l: 'Button 2 — (→ Our Animals / Horses)' },
     ]},
   { key: 'cheetah_run', label: 'Cheetah Run',
     images: [
@@ -1005,8 +1233,11 @@ const CURATED = [
       { k: 'hero_label',        l: 'Small label' },
       { k: 'hero_title',        l: 'Title' },
       { k: 'hero_sub',          l: 'Subtitle' },
+      { k: 'btn1',              l: 'Button 1' },
+      { k: 'btn2',              l: 'Button 2' },
       { k: 'title',             l: 'Section title' },
       { k: 'p1',                l: 'Main text' },
+      { k: 'stat_labels',       l: 'Stat captions (used as photo captions)', arrayShape: 'string' },
       { k: 'highlight',         l: 'Highlighted box' },
       { k: 'how_title',         l: 'How it works — title' },
       { k: 'how_p1',            l: 'How it works — paragraph 1' },
@@ -1032,6 +1263,8 @@ const CURATED = [
       { k: 'success_title',      l: 'Success — title' },
       { k: 'success_desc',       l: 'Success — text' },
       { k: 'donate_again',       l: 'Donate again button' },
+      { k: 'error_text',         l: 'Error message (payment failed)' },
+      { k: 'impact',             l: 'Impact list (what a donation funds)', arrayShape: ['desc'] },
     ]},
   { key: 'cheetah', label: 'Cheetah Project',
     images: [
@@ -1041,6 +1274,8 @@ const CURATED = [
       { k: 'hero_label',     l: 'Small label' },
       { k: 'hero_title',     l: 'Hero title' },
       { k: 'hero_sub',       l: 'Hero subtitle' },
+      { k: 'btn1',           l: 'Button 1' },
+      { k: 'btn2',           l: 'Button 2' },
       { k: 'nova_title',     l: "Nova's story — title" },
       { k: 'nova_p1',        l: "Nova's story — paragraph 1" },
       { k: 'nova_p2',        l: "Nova's story — paragraph 2" },
@@ -1064,11 +1299,14 @@ const CURATED = [
       { k: 'hero_label',     l: 'Small label' },
       { k: 'hero_title',     l: 'Hero title' },
       { k: 'hero_sub',       l: 'Hero subtitle' },
+      { k: 'btn1',           l: 'Button 1' },
+      { k: 'btn2',           l: 'Button 2' },
       { k: 'learn_title',    l: 'Learn in the field — title' },
       { k: 'learn_p1',       l: 'Learn in the field — paragraph 1' },
       { k: 'learn_p2',       l: 'Learn in the field — paragraph 2' },
       { k: 'highlight',      l: 'Highlighted box' },
       { k: 'fields_title',   l: 'Specialisation areas — title' },
+      { k: 'field_labels',   l: 'Specialisation areas — list', arrayShape: 'string' },
       { k: 'includes_title', l: 'What is included — title' },
       { k: 'includes_p',     l: 'What is included — text' },
       { k: 'duration_title', l: 'Duration — title' },
@@ -1079,9 +1317,13 @@ const CURATED = [
       { k: 'blog_hero', l: 'Hero image', def: '/img/ghepardo-corsa-2.png' },
     ],
     fields: [
-      { k: 'hero_label', l: 'Small label' },
-      { k: 'hero_title', l: 'Hero title' },
-      { k: 'hero_sub',   l: 'Hero subtitle' },
+      { k: 'hero_label',    l: 'Small label' },
+      { k: 'hero_title',    l: 'Hero title' },
+      { k: 'hero_sub',      l: 'Hero subtitle' },
+      { k: 'read_all',      l: 'Card link — "Read more"' },
+      { k: 'back_to_blog',  l: 'Post page — back link' },
+      { k: 'prev_post',     l: 'Post page — previous link' },
+      { k: 'next_post',     l: 'Post page — next link' },
     ]},
   { key: 'adopt', label: 'Adopt an Animal',
     images: [
@@ -1094,6 +1336,17 @@ const CURATED = [
       { k: 'desc',               l: 'Description text' },
       { k: 'what_you_get_title', l: 'What you receive — label' },
       { k: 'what_you_get_text',  l: 'What you receive — items' },
+      { k: 'discover_story',     l: 'Photo overlay link — "Discover their story"' },
+      { k: 'per_month',                l: '"/month" suffix' },
+      { k: 'adopt_btn',                l: '"Adopt" button text' },
+      { k: 'loading',                  l: 'Loading state text' },
+      { k: 'portal_title',             l: 'Manage subscription — title (first part)' },
+      { k: 'portal_title_em',          l: 'Manage subscription — title (italic part)' },
+      { k: 'portal_desc',              l: 'Manage subscription — text' },
+      { k: 'portal_email_placeholder', l: 'Manage subscription — email placeholder' },
+      { k: 'portal_btn',               l: 'Manage subscription — button' },
+      { k: 'portal_loading',           l: 'Manage subscription — loading text' },
+      { k: 'portal_error_not_found',   l: 'Manage subscription — "not found" error' },
     ]},
   { key: 'wishlist', label: 'Wishlist',
     images: [
@@ -1108,6 +1361,9 @@ const CURATED = [
       { k: 'urgent_title', l: 'Urgent items — label' },
       { k: 'urgent_text',  l: 'Urgent items — text' },
       { k: 'list_title',   l: 'Wishlist link — label' },
+      { k: 'items',        l: 'Wishlist items', arrayShape: 'string' },
+      { k: 'disclaimer_1', l: 'Disclaimer — paragraph 1' },
+      { k: 'disclaimer_2', l: 'Disclaimer — paragraph 2' },
       { k: 'need_start',   l: 'What we need — title start' },
       { k: 'need_em',      l: 'What we need — title italic' },
       { k: 'footer_text',  l: 'Footer text' },
@@ -1137,6 +1393,7 @@ const CURATED = [
       { k: 'section_title', l: 'Section title' },
       { k: 'order_btn',     l: 'Order button text' },
       { k: 'custom_orders', l: 'Custom orders text' },
+      { k: 'info',          l: 'Info strip (shipping/payment/impact)', arrayShape: ['icon', 'title', 'desc'] },
     ]},
   { key: 'other_animals', label: 'Other Animals',
     images: [
@@ -1165,11 +1422,23 @@ const CURATED = [
       { k: 'small_p1',         l: 'Small wildlife — text' },
       { k: 'herbivores_title', l: 'Herbivores — title' },
       { k: 'herbivores_p1',    l: 'Herbivores — text' },
+      { k: 'btn_adopt',     l: 'Button 1 — Adopt an Animal (→ Home contact)' },
+      { k: 'btn_volunteer', l: 'Button 2 — (→ Our Animals / Other Animals)' },
     ]},
   { key: 'footer', label: 'Footer',
     images: [],
     fields: [
-      { k: 'brand_desc', l: 'Brand description' },
+      { k: 'brand_desc',    l: 'Brand description' },
+      { k: 'col_project',   l: 'Column 1 — heading ("The Project")' },
+      { k: 'conservation',  l: 'Column 1 — link: Conservation' },
+      { k: 'horses',        l: 'Column 1 — link: Horse Project' },
+      { k: 'blog',          l: 'Column 1 — link: Blog' },
+      { k: 'col_involved',  l: 'Column 2 — heading ("Get Involved")' },
+      { k: 'volunteer',     l: 'Column 2 — link: Volunteering' },
+      { k: 'internship',    l: 'Column 2 — link: Internship' },
+      { k: 'stay',          l: 'Column 2 — link: Stay' },
+      { k: 'adopt',         l: 'Column 2 — link: Adopt' },
+      { k: 'col_social',    l: 'Column 3 — heading ("Follow Us")' },
       { k: 'copyright',  l: 'Copyright line' },
       { k: 'reg',        l: 'Legal info (reg. number)' },
     ]},
@@ -1180,14 +1449,17 @@ const CURATED = [
       { k: 'about_us',         l: 'About Us (menu label)' },
       { k: 'nova_story',       l: "  ↳ Nova's Story" },
       { k: 'kim_story',        l: "  ↳ Kim's Story" },
+      { k: 'our_animals',      l: '  ↳ Our Animals' },
       { k: 'our_mission',      l: 'Our Mission (menu label)' },
       { k: 'cheetah_project',  l: '  ↳ Cheetah Project' },
       { k: 'horses',           l: '  ↳ Horse Project' },
+      { k: 'other_animals',    l: '  ↳ Other Animals' },
       { k: 'get_involved',     l: 'Get Involved (menu label)' },
       { k: 'volunteer',        l: '  ↳ Volunteering' },
       { k: 'internship',       l: '  ↳ Internship' },
       { k: 'stay',             l: '  ↳ Stay' },
       { k: 'cheetah_run',      l: '  ↳ Cheetah Run' },
+      { k: 'FAQ',              l: '  ↳ FAQ' },
       { k: 'blog',             l: 'Blog' },
       { k: 'shop',             l: 'Shop' },
       { k: 'support_us',       l: 'Support Us (menu label)' },
@@ -1195,6 +1467,16 @@ const CURATED = [
       { k: 'wishlist',         l: '  ↳ Wishlist' },
       { k: 'adopt_animal',     l: '  ↳ Adopt an Animal' },
       { k: 'become_volunteer', l: 'CTA button (top right)' },
+    ]},
+  { key: 'common', label: 'Shared text (used across many pages)',
+    images: [],
+    fields: [
+      { k: 'back_home',        l: '"← Back to Home" link' },
+      { k: 'discover',         l: '"Discover" (species card button)' },
+      { k: 'learn_more_arrow', l: '"Learn more →" link' },
+      { k: 'send_message',     l: 'Contact form submit button' },
+      { k: 'error_backend',    l: 'Generic "server unreachable" error' },
+      { k: 'error_checkout',   l: 'Generic checkout error' },
     ]},
 ]
 
@@ -1207,6 +1489,52 @@ function TextField({ label, value, onChange }) {
         ? <textarea rows={Math.min(Math.ceil(value.length / 80) + 1, 7)} value={value} onChange={e => onChange(e.target.value)} />
         : <input value={value || ''} onChange={e => onChange(e.target.value)} />
       }
+    </div>
+  )
+}
+
+// Editor for cms.json values that are arrays — either a plain list of strings
+// (shape=null) or a list of objects with a fixed set of text fields (shape=['time','title','desc']).
+function ArrayField({ label, value, shape, onChange }) {
+  const items = Array.isArray(value) ? value : []
+
+  const setString = (i, v) => { const next = [...items]; next[i] = v; onChange(next) }
+  const setObjField = (i, key, v) => { const next = [...items]; next[i] = { ...next[i], [key]: v }; onChange(next) }
+  const addItem = () => onChange([...items, shape ? Object.fromEntries(shape.map(k => [k, ''])) : ''])
+  const removeItem = i => onChange(items.filter((_, idx) => idx !== i))
+  const moveItem = (i, dir) => {
+    const j = i + dir
+    if (j < 0 || j >= items.length) return
+    const next = [...items]
+    ;[next[i], next[j]] = [next[j], next[i]]
+    onChange(next)
+  }
+
+  return (
+    <div className="adm-field">
+      <label>{label}</label>
+      <div className="adm-arr">
+        {items.map((item, i) => (
+          <div key={i} className="adm-arr-row">
+            <div className="adm-arr-row-main">
+              {shape
+                ? shape.map(fieldKey => (
+                    fieldKey === 'desc'
+                      ? <textarea key={fieldKey} rows={2} placeholder={fieldKey} value={item?.[fieldKey] || ''} onChange={e => setObjField(i, fieldKey, e.target.value)} />
+                      : <input key={fieldKey} placeholder={fieldKey} value={item?.[fieldKey] || ''} onChange={e => setObjField(i, fieldKey, e.target.value)} />
+                  ))
+                : <input value={item || ''} onChange={e => setString(i, e.target.value)} />
+              }
+            </div>
+            <div className="adm-arr-row-btns">
+              <button type="button" className="btn-sm" disabled={i === 0} onClick={() => moveItem(i, -1)} title="Move up">↑</button>
+              <button type="button" className="btn-sm" disabled={i === items.length - 1} onClick={() => moveItem(i, 1)} title="Move down">↓</button>
+              <button type="button" className="btn-sm btn-del" onClick={() => removeItem(i)} title="Remove">Remove</button>
+            </div>
+          </div>
+        ))}
+        <button type="button" className="btn-sm" onClick={addItem}>+ Add item</button>
+      </div>
     </div>
   )
 }
@@ -1344,8 +1672,10 @@ function ContentTab({ token }) {
               <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#AAA', marginBottom: '0.8rem' }}>
                 Text
               </div>
-              {sec.fields.map(({ k, l }) => (
-                <TextField key={k} label={l} value={secData[k] || ''} onChange={v => updateField(k, v)} />
+              {sec.fields.map(({ k, l, arrayShape }) => (
+                arrayShape
+                  ? <ArrayField key={k} label={l} value={secData[k] || []} shape={arrayShape === 'string' ? null : arrayShape} onChange={v => updateField(k, v)} />
+                  : <TextField key={k} label={l} value={secData[k] || ''} onChange={v => updateField(k, v)} />
               ))}
             </>
           )}
@@ -1512,8 +1842,9 @@ export default function Admin({ goTo }) {
           {tab === 0 && <BlogTab     token={token} />}
           {tab === 1 && <ShopTab token={token} />}
           {tab === 2 && <AnimaliTab  token={token} />}
-          {tab === 3 && <ContentTab  token={token} />}
-          {tab === 4 && <SettingsTab token={token} />}
+          {tab === 3 && <OurAnimalsTab token={token} />}
+          {tab === 4 && <ContentTab  token={token} />}
+          {tab === 5 && <SettingsTab token={token} />}
         </div>
       </div>
     </>

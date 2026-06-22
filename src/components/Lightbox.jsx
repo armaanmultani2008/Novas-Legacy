@@ -1,11 +1,14 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
 
 function Lightbox({ srcs, captions, idx, setIdx }) {
   const n = srcs.length
   const close = () => setIdx(null)
   const prev  = () => setIdx(i => (i - 1 + n) % n)
   const next  = () => setIdx(i => (i + 1) % n)
+
+  useBodyScrollLock(true)
 
   useEffect(() => {
     function onKey(e) {
@@ -15,7 +18,9 @@ function Lightbox({ srcs, captions, idx, setIdx }) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [])
+  }, [n])
+
+  if (idx == null || idx < 0 || idx >= n) return null
 
   return createPortal(
     <div className="lb-overlay" onClick={close}>

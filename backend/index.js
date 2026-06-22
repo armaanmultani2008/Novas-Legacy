@@ -16,7 +16,7 @@ import { ObjectId } from 'mongodb';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CMS_FILE  = path.join(__dirname, 'cms.json');
 
-const CMS_DEFAULTS = { blog: [], products: [], animals: [] };
+const CMS_DEFAULTS = { blog: [], products: [], animals: [], ourAnimals: [] };
 
 // ── In-memory store (caricato da MongoDB o dal file locale all'avvio) ───────────
 let _db       = null;
@@ -799,7 +799,7 @@ app.get('/api/cms', (_req, res) => {
 
 app.put('/api/cms/blog', requireAdmin, (req, res) => {
     const cms = readCMS();
-    cms.blog = req.body;
+    cms.blog = { ...cms.blog, posts: req.body };
     writeCMS(cms);
     res.json({ ok: true });
 });
@@ -814,6 +814,13 @@ app.put('/api/cms/products', requireAdmin, (req, res) => {
 app.put('/api/cms/animals', requireAdmin, (req, res) => {
     const cms = readCMS();
     cms.animals = req.body;
+    writeCMS(cms);
+    res.json({ ok: true });
+});
+
+app.put('/api/cms/ourAnimals', requireAdmin, (req, res) => {
+    const cms = readCMS();
+    cms.ourAnimals = req.body;
     writeCMS(cms);
     res.json({ ok: true });
 });

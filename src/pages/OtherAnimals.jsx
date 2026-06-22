@@ -115,8 +115,8 @@ function OtherAnimals({ goTo }) {
                         <button onClick={() => goTo('home', 'contact')} className="btn btn-dark">
                             {t('other_animals.btn_adopt', 'Adopt an Animal')}
                         </button>
-                        <button className="btn btn-outline-dark" onClick={() => goTo('volunteer')}>
-                            {t('other_animals.btn_volunteer', 'Join Us')}
+                        <button className="btn btn-outline-dark" onClick={() => goTo('our-animals', 'other-animals')}>
+                            {t('other_animals.btn_volunteer', 'Meet the Other Animals')}
                         </button>
                     </div>
 

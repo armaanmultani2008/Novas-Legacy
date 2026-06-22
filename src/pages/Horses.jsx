@@ -28,7 +28,7 @@ function Horses({ goTo }) {
 
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <button className="btn btn-dark" onClick={() => goTo('volunteer')}>{t('horses.btn1')}</button>
-              <button className="btn btn-outline-dark" onClick={() => goTo('conservation')}>{t('horses.btn2')}</button>
+              <button className="btn btn-outline-dark" onClick={() => goTo('our-animals', 'horses')}>{t('horses.btn2', 'Meet Our Horses')}</button>
             </div>
 
             <h2>{t('horses.who_title').split(' ').slice(0,-1).join(' ')} <em>{t('horses.who_title').split(' ').slice(-1)}</em></h2>
@@ -47,7 +47,7 @@ function Horses({ goTo }) {
             }}>
               {[
                 { src: cmsImages.horses_photo_1 || '/img/volontario-recinzione.png', cap: 'Fence maintenance' },
-                { src: cmsImages.horses_photo_2 || '/img/volontari-lavoro.png',      cap: 'Team at work' },
+                { src: cmsImages.horses_photo_2 || '/img/ponys.png',      cap: 'Team at work' },
               ].map((p, i) => (
                   <div key={i} style={{ height: '320px', overflow: 'hidden', position: 'relative', borderRadius: '6px' }}>
                     <img src={p.src} alt={p.cap} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.5s' }}

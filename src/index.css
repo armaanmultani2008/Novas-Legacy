@@ -737,7 +737,7 @@ nav.solid {
 .lb-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 100000;
   background: rgba(0, 0, 0, 0.92);
   display: flex;
   align-items: center;
@@ -800,6 +800,150 @@ nav.solid {
   user-select: none;
 }
 .lb-nav:hover { color: #fff; }
+
+/* ── Animal info modal ── */
+.am-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background: rgba(20, 16, 12, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.am-card {
+  background: var(--off-white);
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.45);
+  position: relative;
+  animation: fadeIn 0.25s ease;
+}
+
+.am-close {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.am-close:hover { background: rgba(0,0,0,0.7); }
+
+.am-media {
+  position: relative;
+  width: min(100%, 60vh);
+  margin: 0 auto;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #000;
+}
+.am-media::before {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+.am-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.am-media-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 0.5rem 0.8rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.65), transparent);
+  color: rgba(255,255,255,0.85);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.am-thumbs {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.7rem 1.3rem 0;
+  flex-shrink: 0;
+}
+.am-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: opacity 0.2s, border-color 0.2s;
+}
+.am-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.am-thumb:hover { opacity: 0.9; }
+.am-thumb--on { border-color: var(--gold); opacity: 1; }
+
+.am-body {
+  padding: 1.3rem 1.5rem 1.6rem;
+  overflow-y: auto;
+}
+.am-role {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.35rem;
+}
+.am-name {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  color: var(--dark);
+  margin: 0 0 0.6rem;
+}
+.am-bio {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #666;
+  font-weight: 300;
+  margin: 0;
+}
+
+/* Tablet and up: the modal grows to cover most of the viewport. */
+@media (min-width: 700px) {
+  .am-card { max-width: 760px; }
+}
+@media (min-width: 1100px) {
+  .am-card { max-width: 960px; }
+  .am-name { font-size: 1.9rem; }
+  .am-bio { font-size: 1rem; }
+}
+
+/* Mobile: the modal takes over the full screen. */
+@media (max-width: 480px) {
+  .am-overlay { padding: 0; }
+  .am-card { max-width: 100%; height: 100%; max-height: 100%; border-radius: 0; }
+}
 
 /* ======================================================
    VOLUNTEER SECTION — 2 colonne
@@ -981,7 +1125,7 @@ nav.solid {
 }
 
 .animal-card {
-  width: 240px;
+  width: 320px;
   flex-shrink: 0;
   background: var(--white);
   border: 1px solid #EDE5D8;
@@ -993,7 +1137,7 @@ nav.solid {
 .animal-card:hover { transform: translateY(-4px); }
 
 .animal-photo {
-  height: 180px;
+  height: 240px;
   overflow: hidden;
   display: flex;
   align-items: center;

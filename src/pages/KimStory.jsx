@@ -4,6 +4,7 @@ import { useCMSImages } from '../CMSContext'
 
 const KIM_HERO_BG = '/img/kim-savana.svg'
 const KIM_PHOTO_DEFAULT = '/img/kim-portrait.jpg'
+const KIM_PHOTO2_DEFAULT = '/img/kim-cheetah.png'
 
 function KimStory({ goTo }) {
   useScrollReveal()
@@ -37,7 +38,7 @@ function KimStory({ goTo }) {
 
           <div className="kim-split rv">
             <div className="kim-photo-wrap">
-              <img src={cmsImages.kim_story_portrait || KIM_PHOTO_DEFAULT} alt="Kim Hiltrop — fondatrice di Nova's Legacy" />
+              <img src={cmsImages.kim_story_portrait || KIM_PHOTO_DEFAULT} alt="Kim Hiltrop — Nova's Legacy's founer" style={{ borderRadius: '6px' }} />
             </div>
             <div className="kim-text">
               <span className="label">{t('kim_story.section_label')}</span>
@@ -47,6 +48,8 @@ function KimStory({ goTo }) {
               <p className="body-lg">{t('kim_story.p1')}</p>
             </div>
           </div>
+
+          <img src={cmsImages.kim_story_cheetah || KIM_PHOTO2_DEFAULT} alt={"Kim with her friend"} style={{paddingBottom: '3.5rem', borderRadius: '6px'}}/>
 
           <div className="kim-quotes rv rv-d1">
             <blockquote className="kim-quote">

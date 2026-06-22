@@ -21,7 +21,7 @@ export default function AuthModal({ open, onClose, onSuccess }) {
     setError(null)
     if (mode === 'register' && !name.trim()) return setError('Please enter your name')
     if (!email.includes('@') || !email.includes('.')) return setError('Please enter a valid email address')
-    if (password.length < 6) return setError('Password must be at least 6 characters')
+    if (password.length < 8) return setError('Password must be at least 8 characters')
     setLoading(true)
     try {
       if (mode === 'login') {
@@ -88,7 +88,7 @@ export default function AuthModal({ open, onClose, onSuccess }) {
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              placeholder={mode === 'register' ? 'Min. 6 characters' : '••••••••'}
+              placeholder={mode === 'register' ? 'Min. 8 characters' : '••••••••'}
               required
               autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
             />

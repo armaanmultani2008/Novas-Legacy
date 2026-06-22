@@ -700,7 +700,7 @@ async function addUserXP(userId, xp) {
 app.post('/api/auth/register', async (req, res) => {
     const { name, email, password } = req.body;
     if (!name || !email || !password) return res.status(400).json({ error: 'All fields required' });
-    if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
     if (!_db) return res.status(503).json({ error: 'Database not available' });
     try {
         const existing = await _db.collection('users').findOne({ email: email.toLowerCase() });

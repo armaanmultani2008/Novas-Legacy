@@ -191,7 +191,7 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
                     {getLevel(user.xp || 0).emoji} {user.xp || 0} XP
                   </span>
                 </button>
-                <button className="ovmenu__logout" onClick={logout}>Sign out</button>
+                <button className="ovmenu__logout" onClick={() => { logout(); handleNav('home') }}>Sign out</button>
               </div>
             ) : (
               <button className="ovmenu__signin" onClick={() => { setMenuOpen(false); openAuth() }}>

@@ -322,7 +322,7 @@ export default function UserProfile({ goTo }) {
               </button>
             </form>
 
-            <button className="up-btn-danger" onClick={logout}>Sign out</button>
+            <button className="up-btn-danger" onClick={() => { logout(); goTo('home') }}>Sign out</button>
           </div>
         )}
       </div>

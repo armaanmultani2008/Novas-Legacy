@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useUser } from '../UserContext'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -13,6 +14,7 @@ const FALLBACK_ANIMALS = [
 
 function Adopt({ goTo }) {
   const { t } = useTranslation()
+  const { user } = useUser()
   const [loading, setLoading] = useState(null)
   const [portalEmail, setPortalEmail] = useState('')
   const [portalLoading, setPortalLoading] = useState(false)
@@ -38,6 +40,7 @@ function Adopt({ goTo }) {
           animalName: animal.name,
           animalSpecies: animal.species,
           price: animal.price,
+          ...(user?._id ? { userId: user._id } : {}),
         }),
       })
       const data = await r.json()

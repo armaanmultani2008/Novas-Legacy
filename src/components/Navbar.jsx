@@ -1,8 +1,19 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useUser } from '../UserContext'
 
-function Navbar({ goTo }) {
+const LEVELS = [
+  { name: "Friend of Cheetahs", emoji: '🌿', color: '#4caf50', min: 0   },
+  { name: 'Protector',          emoji: '🛡️', color: '#26a69a', min: 100  },
+  { name: 'Guardian',           emoji: '⚡',  color: '#7c4dff', min: 300  },
+  { name: 'Champion',           emoji: '🌟', color: '#c8880a', min: 600  },
+  { name: "Nova's Hero",        emoji: '🏆', color: '#ff8f00', min: 1000 },
+]
+function getLevel(xp) { return LEVELS.findLast(l => xp >= l.min) || LEVELS[0] }
+
+function Navbar({ goTo, openAuth }) {
   const { t } = useTranslation()
+  const { user, logout } = useUser()
 
   const NAV = [
     { label: t('nav.home'), page: 'home' },
@@ -103,6 +114,21 @@ function Navbar({ goTo }) {
             </ul>
 
             <div className="nn__actions">
+              {user ? (
+                <button className="nn__user-btn" onClick={() => handleNav('user-profile')}>
+                  <span className="nn__user-avatar">{user.name?.[0]?.toUpperCase()}</span>
+                  <span className="nn__user-xp" style={{ color: getLevel(user.xp || 0).color }}>
+                    {getLevel(user.xp || 0).emoji} {user.xp || 0} XP
+                  </span>
+                </button>
+              ) : (
+                <button className="nn__user-icon" onClick={openAuth} aria-label="Sign in">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                  </svg>
+                </button>
+              )}
               <button className="nn__cta" onClick={() => handleNav('volunteer')}>
                 {t('nav.become_volunteer')}
               </button>
@@ -156,6 +182,22 @@ function Navbar({ goTo }) {
           </ul>
 
           <div className="ovmenu__foot">
+            {user ? (
+              <div className="ovmenu__user">
+                <button className="ovmenu__user-profile" onClick={() => handleNav('user-profile')}>
+                  <span className="ovmenu__user-av">{user.name?.[0]?.toUpperCase()}</span>
+                  <span className="ovmenu__user-name">{user.name}</span>
+                  <span className="ovmenu__user-xp" style={{ color: getLevel(user.xp || 0).color }}>
+                    {getLevel(user.xp || 0).emoji} {user.xp || 0} XP
+                  </span>
+                </button>
+                <button className="ovmenu__logout" onClick={logout}>Sign out</button>
+              </div>
+            ) : (
+              <button className="ovmenu__signin" onClick={() => { setMenuOpen(false); openAuth() }}>
+                Sign in / Create account
+              </button>
+            )}
             <div className="ovmenu__contacts">
               <a href="mailto:kim@novaslegacy.co.za">kim@novaslegacy.co.za</a>
               <a href="tel:+27823520940">+27 82 352 0940</a>
@@ -295,7 +337,31 @@ function Navbar({ goTo }) {
         }
         .nn__drop-sym { color: var(--gold-mid); font-size: 0.65rem; flex-shrink: 0; }
 
-        .nn__actions { display: flex; align-items: center; flex-shrink: 0; }
+        .nn__actions { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+        .nn__user-icon {
+          background: none; border: 1px solid rgba(255,255,255,0.15);
+          color: rgba(255,255,255,0.7); border-radius: 50%;
+          width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+          cursor: pointer; transition: border-color 0.2s, color 0.2s;
+          flex-shrink: 0;
+        }
+        .nn__user-icon:hover { border-color: var(--gold-light); color: var(--gold-light); }
+        .nn__user-btn {
+          display: flex; align-items: center; gap: 0.5rem;
+          background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+          border-radius: 50px; padding: 0.3rem 0.8rem 0.3rem 0.35rem;
+          cursor: pointer; transition: border-color 0.2s, background 0.2s;
+          flex-shrink: 0;
+        }
+        .nn__user-btn:hover { border-color: var(--gold-mid); background: rgba(255,255,255,0.08); }
+        .nn__user-avatar {
+          width: 26px; height: 26px; border-radius: 50%;
+          background: rgba(200,136,10,0.2); border: 1px solid var(--gold-mid);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 0.75rem; font-weight: 700; color: var(--gold-light);
+          flex-shrink: 0;
+        }
+        .nn__user-xp { font-size: 0.72rem; font-weight: 700; white-space: nowrap; }
         .nn__cta {
           background: var(--gold-light);
           color: #111;
@@ -420,6 +486,40 @@ function Navbar({ goTo }) {
         .ovmenu__sub-item:hover { color: rgba(255,255,255,0.85); }
         .ovmenu__sub-sym { color: var(--gold-mid); font-size: 0.6rem; }
 
+        .ovmenu__user {
+          display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+          padding-bottom: 1rem; margin-bottom: 1rem;
+          border-bottom: 1px solid rgba(255,255,255,0.06);
+          width: 100%;
+        }
+        .ovmenu__user-profile {
+          display: flex; align-items: center; gap: 0.75rem;
+          background: none; border: none; cursor: pointer; flex: 1;
+        }
+        .ovmenu__user-av {
+          width: 36px; height: 36px; border-radius: 50%;
+          background: rgba(200,136,10,0.15); border: 1.5px solid var(--gold-mid);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 0.9rem; font-weight: 700; color: var(--gold-light); flex-shrink: 0;
+        }
+        .ovmenu__user-name { font-size: 0.95rem; color: rgba(255,255,255,0.8); font-weight: 600; }
+        .ovmenu__user-xp { font-size: 0.78rem; font-weight: 700; }
+        .ovmenu__logout {
+          background: none; border: 1px solid rgba(255,255,255,0.12);
+          color: rgba(255,255,255,0.35); border-radius: 6px;
+          padding: 0.35rem 0.85rem; font-size: 0.75rem; cursor: pointer;
+          transition: color 0.2s, border-color 0.2s;
+        }
+        .ovmenu__logout:hover { color: rgba(255,100,100,0.8); border-color: rgba(255,100,100,0.3); }
+        .ovmenu__signin {
+          background: rgba(200,136,10,0.1); border: 1px solid rgba(200,136,10,0.25);
+          color: var(--gold-light); border-radius: 50px;
+          padding: 0.6rem 1.4rem; font-size: 0.78rem; font-weight: 600;
+          letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
+          transition: background 0.2s, border-color 0.2s;
+          margin-bottom: 1.5rem;
+        }
+        .ovmenu__signin:hover { background: rgba(200,136,10,0.18); border-color: rgba(200,136,10,0.5); }
         .ovmenu__foot {
           margin-top: 3rem;
           display: flex;

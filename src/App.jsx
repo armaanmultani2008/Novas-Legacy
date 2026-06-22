@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ChatbaseBot from "./components/ChatbaseBot.jsx";
 import Lightbox from "./components/Lightbox.jsx";
+import AuthModal from './components/AuthModal'
+import { UserProvider, useUser } from './UserContext'
 import Home from './pages/Home'
 import Cheetah from './pages/Cheetah'
 import CheetahRun from './pages/CheetahRun'
@@ -22,6 +24,7 @@ import Wishlist from './pages/Wishlist'
 import Admin from './pages/Admin'
 import FAQ from './pages/FAQ'
 import OtherAnimals from './pages/OtherAnimals'
+import UserProfile from './pages/UserProfile'
 
 const pages = {
   home: Home,
@@ -41,15 +44,32 @@ const pages = {
   donate: Donate,
   wishlist: Wishlist,
   faq: FAQ,
-  'other-animals': OtherAnimals
+  'other-animals': OtherAnimals,
+  'user-profile': UserProfile,
 }
 
-function App() {
+function AppInner() {
+  const { user } = useUser()
   const [currentPage, setCurrentPage] = useState('home')
   const [pendingSection, setPendingSection] = useState(null)
   const [postId, setPostId] = useState(0)
   const [transitioning, setTransitioning] = useState(false)
   const [successBanner, setSuccessBanner] = useState(null)
+  const [authOpen, setAuthOpen] = useState(false)
+  const [regBanner, setRegBanner] = useState(false)
+  const regTimerRef = useRef(null)
+
+  useEffect(() => {
+    if (user) { setRegBanner(false); return }
+    const first = setTimeout(() => setRegBanner(true), 30000)
+    return () => clearTimeout(first)
+  }, [user])
+
+  const dismissRegBanner = () => {
+    setRegBanner(false)
+    clearTimeout(regTimerRef.current)
+    regTimerRef.current = setTimeout(() => { if (!user) setRegBanner(true) }, 4 * 60 * 1000)
+  }
 
   useEffect(() => {
     // Set initial history state so popstate can restore 'home'
@@ -114,7 +134,43 @@ function App() {
 
   return (
     <>
-      <Navbar goTo={goTo} />
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
+      {regBanner && !user && (
+        <div style={{
+          position: 'fixed', bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)',
+          zIndex: 9998, background: 'rgba(14,14,14,0.97)',
+          border: '1px solid rgba(200,136,10,0.35)',
+          borderRadius: '50px', padding: '0.7rem 1rem 0.7rem 1.4rem',
+          display: 'flex', alignItems: 'center', gap: '1rem',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(12px)',
+          animation: 'slideUp 0.4s cubic-bezier(0.22,1,0.36,1)',
+          whiteSpace: 'nowrap',
+        }}>
+          <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.65)' }}>
+            🐆 Track your adoptions & earn XP
+          </span>
+          <button
+            onClick={() => { dismissRegBanner(); setAuthOpen(true) }}
+            style={{
+              background: 'var(--gold-light)', color: '#111', border: 'none',
+              borderRadius: '50px', padding: '0.4rem 1rem',
+              fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.06em',
+              textTransform: 'uppercase', cursor: 'pointer',
+            }}
+          >
+            Join free
+          </button>
+          <button
+            onClick={dismissRegBanner}
+            style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.25)', cursor: 'pointer', fontSize: '0.85rem', padding: '0 0.25rem' }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+      <style>{`@keyframes slideUp { from { opacity:0; transform:translateX(-50%) translateY(20px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }`}</style>
+      <Navbar goTo={goTo} openAuth={() => setAuthOpen(true)} />
       {successBanner && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999,
@@ -142,6 +198,14 @@ function App() {
       <Footer goTo={goTo} />
       <ChatbaseBot />
     </>
+  )
+}
+
+function App() {
+  return (
+    <UserProvider>
+      <AppInner />
+    </UserProvider>
   )
 }
 

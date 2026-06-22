@@ -336,7 +336,7 @@ app.get('/api/printful/products', async (_req, res) => {
 
 // ── Stripe: abbonamento adozione ─────────────────────────────────────────────
 app.post('/api/stripe/subscribe', async (req, res) => {
-    const { animalName, animalSpecies, price } = req.body;
+    const { animalName, animalSpecies, price, userId } = req.body;
     if (!animalName || !price) return res.status(400).json({ error: 'Dati mancanti' });
     const origin = req.headers.origin || 'http://localhost:5174';
     try {
@@ -355,7 +355,7 @@ app.post('/api/stripe/subscribe', async (req, res) => {
                 },
                 quantity: 1,
             }],
-            metadata: { animalName, animalSpecies, monthlyEur: String(price) },
+            metadata: { animalName, animalSpecies, monthlyEur: String(price), ...(userId ? { userId } : {}) },
             billing_address_collection: 'required',
             success_url: `${origin}/?adoption=success&animal=${encodeURIComponent(animalName)}`,
             cancel_url: `${origin}/`,
@@ -418,6 +418,18 @@ app.post('/api/stripe/webhook',
                     sendAdoptionWelcome(adopterEmail, adopterName, animalName, animalSpecies, monthlyEur),
                     notifyKimAdoption(adopterName, adopterEmail, animalName, monthlyEur),
                 ]);
+                const userId = s.metadata?.userId;
+                if (userId && _db) {
+                    try {
+                        await _db.collection('users').updateOne(
+                            { _id: new ObjectId(userId) },
+                            {
+                                $push: { adoptions: { stripeSessionId: s.id, animalName, animalSpecies, monthlyEur: parseFloat(monthlyEur) || 0, date: new Date(), active: true } },
+                                $inc: { xp: 50 },
+                            }
+                        );
+                    } catch (e) { console.error('[USER] adoption link error:', e.message); }
+                }
             }
 
             // FLUSSO SHOP PRODOTTI (PRINTFUL)
@@ -472,6 +484,19 @@ app.post('/api/stripe/webhook',
                     console.error('[webhook] customer email error:', emailErr.message);
                 }
 
+                const userId = s.metadata?.userId;
+                if (userId && _db) {
+                    try {
+                        await _db.collection('users').updateOne(
+                            { _id: new ObjectId(userId) },
+                            {
+                                $push: { orders: { stripeSessionId: s.id, productName, amount: s.amount_total || 0, date: new Date() } },
+                                $inc: { xp: Math.max(1, Math.floor((s.amount_total || 0) / 100)) },
+                            }
+                        );
+                    } catch (e) { console.error('[USER] order link error:', e.message); }
+                }
+
                 if (!printfulOk) {
                     console.error(`ALERT: Printful order FAILED for Stripe session ${s.id} — manual action required`);
                 }
@@ -481,7 +506,7 @@ app.post('/api/stripe/webhook',
 );
 
 app.post('/api/stripe/checkout', async (req, res) => {
-    const { name, price, quantity = 1, variantId } = req.body;
+    const { name, price, quantity = 1, variantId, userId } = req.body;
     if (!name || !price) {
         return res.status(400).json({ error: 'Dati prodotto mancanti' });
     }
@@ -506,7 +531,7 @@ app.post('/api/stripe/checkout', async (req, res) => {
             sessionData.shipping_address_collection = {
                 allowed_countries: ['AT','AU','BE','CA','CH','CZ','DE','DK','ES','FI','FR','GB','GR','HU','IE','IT','JP','NL','NO','NZ','PL','PT','RO','SE','SG','SK','US','ZA'],
             };
-            sessionData.metadata = { variantId: String(variantId), quantity: String(quantity), productName: name };
+            sessionData.metadata = { variantId: String(variantId), quantity: String(quantity), productName: name, ...(userId ? { userId } : {}) };
         }
 
         const session = await stripe.checkout.sessions.create(sessionData);
@@ -635,6 +660,88 @@ function requireAdmin(req, res, next) {
         res.status(401).json({ error: 'Invalid Token' });
     }
 }
+
+function requireUser(req, res, next) {
+    const auth = req.headers.authorization;
+    if (!auth?.startsWith('Bearer ')) return res.status(401).json({ error: 'Not authenticated' });
+    try {
+        const payload = jwt.verify(auth.slice(7), envVars.JWT_SECRET || 'dev_secret');
+        if (payload.role !== 'user') return res.status(403).json({ error: 'Not a user token' });
+        req.userId = payload.userId;
+        next();
+    } catch {
+        res.status(401).json({ error: 'Invalid token' });
+    }
+}
+
+async function addUserXP(userId, xp) {
+    if (!_db || !userId) return;
+    try {
+        await _db.collection('users').updateOne(
+            { _id: new ObjectId(userId) },
+            { $inc: { xp } }
+        );
+    } catch (e) {
+        console.error('[XP]', e.message);
+    }
+}
+
+// ── User Auth ──────────────────────────────────────────────────────────────────
+app.post('/api/auth/register', async (req, res) => {
+    const { name, email, password } = req.body;
+    if (!name || !email || !password) return res.status(400).json({ error: 'All fields required' });
+    if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    if (!_db) return res.status(503).json({ error: 'Database not available' });
+    try {
+        const existing = await _db.collection('users').findOne({ email: email.toLowerCase() });
+        if (existing) return res.status(409).json({ error: 'Email already registered' });
+        const passwordHash = await bcrypt.hash(password, 10);
+        const result = await _db.collection('users').insertOne({
+            name, email: email.toLowerCase(), passwordHash,
+            xp: 0, createdAt: new Date(), orders: [], adoptions: [],
+        });
+        const token = jwt.sign(
+            { role: 'user', userId: result.insertedId.toString() },
+            envVars.JWT_SECRET || 'dev_secret',
+            { expiresIn: '30d' }
+        );
+        res.json({ token, user: { _id: result.insertedId.toString(), name, email: email.toLowerCase(), xp: 0 } });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
+    if (!_db) return res.status(503).json({ error: 'Database not available' });
+    try {
+        const user = await _db.collection('users').findOne({ email: email.toLowerCase() });
+        if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+        const valid = await bcrypt.compare(password, user.passwordHash);
+        if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
+        const token = jwt.sign(
+            { role: 'user', userId: user._id.toString() },
+            envVars.JWT_SECRET || 'dev_secret',
+            { expiresIn: '30d' }
+        );
+        res.json({ token, user: { _id: user._id.toString(), name: user.name, email: user.email, xp: user.xp || 0 } });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+app.get('/api/user/me', requireUser, async (req, res) => {
+    if (!_db) return res.status(503).json({ error: 'Database not available' });
+    try {
+        const user = await _db.collection('users').findOne({ _id: new ObjectId(req.userId) });
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        const { passwordHash, ...safe } = user;
+        res.json({ ...safe, _id: safe._id.toString() });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
 
 app.get('/api/content', (_req, res) => {
     res.json(readCMS());

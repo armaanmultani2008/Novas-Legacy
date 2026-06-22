@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useScrollReveal } from '../hooks/useScrollReveal.js'
+import { useUser } from '../UserContext'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 const FALLBACK_ITEMS = [
 ]
 
-async function startCheckout(name, price, variantId, quantity, errCheckout, errBackend) {
+async function startCheckout(name, price, variantId, quantity, errCheckout, errBackend, userId) {
   try {
     const r = await fetch(`${API}/api/stripe/checkout`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, price, variantId, quantity }),
+      body: JSON.stringify({ name, price, variantId, quantity, ...(userId ? { userId } : {}) }),
     })
     const data = await r.json()
     if (data.url) window.location.href = data.url
@@ -45,6 +46,7 @@ function getEffectiveCategory(item, overrides) {
 function Merch({ goTo }) {
   useScrollReveal()
   const { t } = useTranslation()
+  const { user } = useUser()
   const [loading, setLoading] = useState(null)
   const [cmsItems, setCmsItems] = useState(null)
   const [overrides, setOverrides] = useState({})
@@ -120,7 +122,7 @@ function Merch({ goTo }) {
   const handleBuy = async (item) => {
     setLoading(item.id || item.name)
     const variantId = item.isPrintful ? (selectedVariants[item.id] || item.variants?.[0]?.id) : undefined
-    await startCheckout(item.name, item.price, variantId, 1, t('common.error_checkout'), t('common.error_backend'))
+    await startCheckout(item.name, item.price, variantId, 1, t('common.error_checkout'), t('common.error_backend'), user?._id)
     setLoading(null)
   }
 

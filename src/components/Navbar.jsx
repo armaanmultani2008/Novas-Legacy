@@ -11,7 +11,7 @@ const LEVELS = [
 ]
 function getLevel(xp) { return LEVELS.findLast(l => xp >= l.min) || LEVELS[0] }
 
-function Navbar({ goTo, openAuth }) {
+function Navbar({ goTo, openAuth, forceSolid = false }) {
   const { t } = useTranslation()
   const { user, logout } = useUser()
 
@@ -81,7 +81,7 @@ function Navbar({ goTo, openAuth }) {
 
   return (
       <>
-        <nav className={`nn ${solid || menuOpen ? 'nn--solid' : ''}`}>
+        <nav className={`nn ${solid || menuOpen || forceSolid ? 'nn--solid' : ''}`}>
           <div className="nn__wrap">
 
             <div className="nn__logo" onClick={() => handleNav('home')}>

@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react'
 import { useUser } from '../UserContext'
 
 const LEVELS = [
-  { name: "Friend of Cheetahs", color: '#4caf50', bg: 'rgba(76,175,80,0.08)',  min: 0,   max: 100  },
-  { name: 'Protector',          color: '#26a69a', bg: 'rgba(38,166,154,0.08)', min: 100,  max: 300  },
-  { name: 'Guardian',           color: '#7c4dff', bg: 'rgba(124,77,255,0.08)', min: 300,  max: 600  },
-  { name: 'Champion',           color: '#c8880a', bg: 'rgba(200,136,10,0.08)', min: 600,  max: 1000 },
-  { name: "Nova's Hero",        color: '#e65100', bg: 'rgba(230,81,0,0.08)',   min: 1000, max: Infinity },
+  { name: "Friend of Cheetahs", emoji: '🌿', color: '#4caf50', bg: 'rgba(76,175,80,0.1)',   min: 0,   max: 100  },
+  { name: 'Protector',          emoji: '🛡️', color: '#26a69a', bg: 'rgba(38,166,154,0.1)',  min: 100,  max: 300  },
+  { name: 'Guardian',           emoji: '⚡',  color: '#7c4dff', bg: 'rgba(124,77,255,0.1)',  min: 300,  max: 600  },
+  { name: 'Champion',           emoji: '🌟', color: '#c8880a', bg: 'rgba(200,136,10,0.1)',  min: 600,  max: 1000 },
+  { name: "Nova's Hero",        emoji: '🏆', color: '#e65100', bg: 'rgba(230,81,0,0.1)',    min: 1000, max: Infinity },
 ]
 
 function getLevel(xp) { return LEVELS.findLast(l => xp >= l.min) || LEVELS[0] }
@@ -92,7 +92,7 @@ export default function UserProfile({ goTo }) {
         <div className="up__header-center">
           <h1 className="up__name">{user.name}</h1>
           <span className="up__level-pill" style={{ color: level.color, background: level.bg }}>
-            {level.name}
+            {level.emoji} {level.name}
           </span>
         </div>
         <div className="up__xp-panel">
@@ -238,22 +238,33 @@ export default function UserProfile({ goTo }) {
             </div>
 
             <div className="up__levels-card">
-              <div className="up__levels-head">XP Progress</div>
-              {LEVELS.map((l, i) => {
-                const isCurrent = level.name === l.name
-                const isPast = xp >= l.min
-                return (
-                  <div key={l.name} className={`up__lv-row ${isCurrent ? 'current' : ''} ${isPast && !isCurrent ? 'past' : ''}`}>
-                    <div className="up__lv-dot" style={{ background: isPast ? l.color : 'rgba(0,0,0,0.1)' }} />
-                    {i < LEVELS.length - 1 && <div className="up__lv-line" style={{ background: isPast && !isCurrent ? l.color : 'rgba(0,0,0,0.06)' }} />}
-                    <div className="up__lv-info">
-                      <span className="up__lv-name" style={isCurrent ? { color: l.color } : {}}>{l.name}</span>
-                      <span className="up__lv-req">{l.min === 0 ? 'Starting level' : `${l.min}+ XP`}</span>
+              <div className="up__levels-head">Your Journey</div>
+              <div className="up__lv-grid">
+                {LEVELS.map((l) => {
+                  const isCurrent = level.name === l.name
+                  const isUnlocked = xp >= l.min
+                  const isLocked = !isUnlocked
+                  return (
+                    <div
+                      key={l.name}
+                      className={`up__lv-tile ${isCurrent ? 'current' : ''} ${isUnlocked && !isCurrent ? 'unlocked' : ''} ${isLocked ? 'locked' : ''}`}
+                      style={isCurrent ? { borderColor: l.color, background: l.bg } : {}}
+                    >
+                      <div className="up__lv-emoji" style={{ filter: isLocked ? 'grayscale(1) opacity(0.4)' : 'none' }}>
+                        {l.emoji}
+                      </div>
+                      <div className="up__lv-tile-name" style={isCurrent ? { color: l.color } : isLocked ? { color: 'var(--gray-light)' } : {}}>
+                        {l.name}
+                      </div>
+                      <div className="up__lv-tile-req">
+                        {l.min === 0 ? '0 XP' : `${l.min} XP`}
+                      </div>
+                      {isCurrent && <div className="up__lv-current-dot" style={{ background: l.color }} />}
+                      {isLocked && <div className="up__lv-lock">🔒</div>}
                     </div>
-                    {isCurrent && <span className="up__lv-badge" style={{ background: l.bg, color: l.color }}>Current</span>}
-                  </div>
-                )
-              })}
+                  )
+                })}
+              </div>
             </div>
 
             <button className="up-btn-danger" onClick={logout}>Sign out</button>
@@ -446,35 +457,38 @@ export default function UserProfile({ goTo }) {
           border-radius: 16px; padding: 1.5rem 1.75rem;
           margin-bottom: 1.25rem;
           box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-          position: relative;
         }
         .up__levels-head {
           font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em;
           color: var(--gray); font-weight: 700; margin-bottom: 1.25rem;
         }
-        .up__lv-row {
-          display: flex; align-items: flex-start; gap: 1rem;
-          padding: 0.35rem 0; position: relative;
+        .up__lv-grid {
+          display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem;
         }
-        .up__lv-dot {
-          width: 12px; height: 12px; border-radius: 50%;
-          flex-shrink: 0; margin-top: 0.2rem; position: relative; z-index: 1;
-          transition: background 0.3s;
+        .up__lv-tile {
+          position: relative; border: 2px solid rgba(0,0,0,0.07);
+          border-radius: 14px; padding: 1rem 0.5rem 0.85rem;
+          text-align: center; transition: all 0.2s; background: #fafafa;
         }
-        .up__lv-line {
-          position: absolute; left: 5px; top: 18px;
-          width: 2px; height: calc(100% + 0.35rem);
-          z-index: 0; transition: background 0.3s;
+        .up__lv-tile.unlocked { border-color: rgba(0,0,0,0.1); background: #fff; }
+        .up__lv-tile.current {
+          box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-2px);
         }
-        .up__lv-info { flex: 1; }
-        .up__lv-name { display: block; font-size: 0.88rem; color: var(--gray); font-weight: 500; }
-        .up__lv-row.past .up__lv-name { color: var(--dark-2); }
-        .up__lv-row.current .up__lv-name { font-weight: 700; }
-        .up__lv-req { font-size: 0.72rem; color: var(--gray-light); }
-        .up__lv-badge {
-          font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
-          text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 99px;
-          flex-shrink: 0; margin-top: 0.1rem;
+        .up__lv-tile.locked { opacity: 0.45; }
+        .up__lv-emoji { font-size: 1.9rem; margin-bottom: 0.5rem; display: block; line-height: 1; }
+        .up__lv-tile-name {
+          font-size: 0.66rem; font-weight: 700; color: var(--dark-2);
+          line-height: 1.3; margin-bottom: 0.3rem;
+        }
+        .up__lv-tile-req {
+          font-size: 0.6rem; color: var(--gray); font-weight: 600; letter-spacing: 0.04em;
+        }
+        .up__lv-current-dot {
+          position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+          width: 28px; height: 3px; border-radius: 99px;
+        }
+        .up__lv-lock {
+          position: absolute; top: 0.35rem; right: 0.35rem; font-size: 0.65rem; opacity: 0.7;
         }
 
         /* Buttons */
@@ -518,6 +532,9 @@ export default function UserProfile({ goTo }) {
           .up__info-grid { grid-template-columns: 1fr; }
           .up__tab { font-size: 0.72rem; gap: 0.3rem; }
           .up__tab svg { width: 16px; height: 16px; }
+          .up__lv-grid { grid-template-columns: repeat(3, 1fr); }
+          .up__lv-emoji { font-size: 1.5rem; }
+          .up__levels-card { padding: 1.25rem 1rem; }
         }
       `}</style>
     </div>

@@ -191,7 +191,7 @@ function AppInner() {
         </div>
       )}
       <style>{`@keyframes slideUp { from { opacity:0; transform:translateX(-50%) translateY(20px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }`}</style>
-      <Navbar goTo={goTo} openAuth={() => setAuthOpen(true)} />
+      <Navbar goTo={goTo} openAuth={() => setAuthOpen(true)} forceSolid={currentPage !== 'home'} />
       {successBanner && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999,

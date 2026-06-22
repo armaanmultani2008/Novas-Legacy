@@ -61,9 +61,37 @@ const IconChevron = () => (
   </svg>
 )
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+
 export default function UserProfile({ goTo }) {
-  const { user, logout, refreshUser } = useUser()
+  const { user, token, logout, refreshUser } = useUser()
   const [tab, setTab] = useState('animals')
+  const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' })
+  const [pwStatus, setPwStatus] = useState(null) // { type: 'ok'|'err', msg }
+  const [pwLoading, setPwLoading] = useState(false)
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault()
+    setPwStatus(null)
+    if (pwForm.next.length < 8) return setPwStatus({ type: 'err', msg: 'New password must be at least 8 characters' })
+    if (pwForm.next !== pwForm.confirm) return setPwStatus({ type: 'err', msg: 'Passwords do not match' })
+    setPwLoading(true)
+    try {
+      const res = await fetch(`${API}/api/user/password`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ currentPassword: pwForm.current, newPassword: pwForm.next }),
+      })
+      const data = await res.json()
+      if (!res.ok) return setPwStatus({ type: 'err', msg: data.error || 'Error' })
+      setPwStatus({ type: 'ok', msg: 'Password updated successfully!' })
+      setPwForm({ current: '', next: '', confirm: '' })
+    } catch {
+      setPwStatus({ type: 'err', msg: 'Could not reach the server' })
+    } finally {
+      setPwLoading(false)
+    }
+  }
 
   useEffect(() => { refreshUser() }, [])
 
@@ -266,6 +294,33 @@ export default function UserProfile({ goTo }) {
                 })}
               </div>
             </div>
+
+            <form className="up__pw-form" onSubmit={handleChangePassword} noValidate>
+              <div className="up__pw-head">Change Password</div>
+              <div className="up__pw-fields">
+                <div className="up__pw-field">
+                  <label>Current password</label>
+                  <input type="password" placeholder="••••••••" value={pwForm.current}
+                    onChange={e => setPwForm(p => ({ ...p, current: e.target.value }))} required />
+                </div>
+                <div className="up__pw-field">
+                  <label>New password</label>
+                  <input type="password" placeholder="Min. 8 characters" value={pwForm.next}
+                    onChange={e => setPwForm(p => ({ ...p, next: e.target.value }))} required />
+                </div>
+                <div className="up__pw-field">
+                  <label>Confirm new password</label>
+                  <input type="password" placeholder="Repeat new password" value={pwForm.confirm}
+                    onChange={e => setPwForm(p => ({ ...p, confirm: e.target.value }))} required />
+                </div>
+              </div>
+              {pwStatus && (
+                <div className={`up__pw-msg ${pwStatus.type}`}>{pwStatus.msg}</div>
+              )}
+              <button className="up-btn-gold" type="submit" disabled={pwLoading}>
+                {pwLoading ? 'Saving…' : 'Update Password'}
+              </button>
+            </form>
 
             <button className="up-btn-danger" onClick={logout}>Sign out</button>
           </div>
@@ -490,6 +545,38 @@ export default function UserProfile({ goTo }) {
         .up__lv-lock {
           position: absolute; top: 0.35rem; right: 0.35rem; font-size: 0.65rem; opacity: 0.7;
         }
+
+        /* Change password form */
+        .up__pw-form {
+          background: #fff; border: 1px solid rgba(0,0,0,0.07);
+          border-radius: 16px; padding: 1.5rem 1.75rem;
+          margin-bottom: 1.25rem;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+          display: flex; flex-direction: column; gap: 1.1rem;
+        }
+        .up__pw-head {
+          font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em;
+          color: var(--gray); font-weight: 700;
+        }
+        .up__pw-fields { display: flex; flex-direction: column; gap: 0.75rem; }
+        .up__pw-field { display: flex; flex-direction: column; gap: 0.35rem; }
+        .up__pw-field label {
+          font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em;
+          color: var(--gray); font-weight: 600;
+        }
+        .up__pw-field input {
+          background: var(--cream); border: 1.5px solid rgba(0,0,0,0.1);
+          border-radius: 10px; padding: 0.65rem 1rem;
+          font-size: 0.9rem; color: var(--dark); outline: none;
+          font-family: var(--sans); transition: border-color 0.2s;
+          width: 100%; box-sizing: border-box;
+        }
+        .up__pw-field input:focus { border-color: var(--gold-mid); background: #fff; }
+        .up__pw-msg {
+          font-size: 0.82rem; padding: 0.6rem 0.9rem; border-radius: 8px;
+        }
+        .up__pw-msg.ok { background: rgba(76,175,80,0.1); color: #2e7d32; border: 1px solid rgba(76,175,80,0.2); }
+        .up__pw-msg.err { background: rgba(200,0,0,0.07); color: #b00; border: 1px solid rgba(200,0,0,0.15); }
 
         /* Buttons */
         .up-btn-gold {

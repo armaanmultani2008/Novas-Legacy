@@ -741,6 +741,24 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
+app.put('/api/user/password', requireUser, async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) return res.status(400).json({ error: 'Both fields required' });
+    if (newPassword.length < 8) return res.status(400).json({ error: 'New password must be at least 8 characters' });
+    if (!_db) return res.status(503).json({ error: 'Database not available' });
+    try {
+        const user = await _db.collection('users').findOne({ _id: new ObjectId(req.userId) });
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        const valid = await bcrypt.compare(currentPassword, user.passwordHash);
+        if (!valid) return res.status(401).json({ error: 'Current password is incorrect' });
+        const passwordHash = await bcrypt.hash(newPassword, 10);
+        await _db.collection('users').updateOne({ _id: new ObjectId(req.userId) }, { $set: { passwordHash } });
+        res.json({ ok: true });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 app.get('/api/user/me', requireUser, async (req, res) => {
     if (!_db) return res.status(503).json({ error: 'Database not available' });
     try {

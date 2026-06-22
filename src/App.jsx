@@ -50,7 +50,7 @@ const pages = {
 }
 
 function AppInner() {
-  const { user } = useUser()
+  const { user, refreshUser } = useUser()
   const getInitialPage = () => {
     const params = new URLSearchParams(window.location.search)
     const pageParam = params.get('page')
@@ -88,6 +88,7 @@ function AppInner() {
     if (pageParam === 'merch' || params.get('payment')) {
       if (params.get('payment') === 'success') {
         setSuccessBanner({ type: 'order', msg: "Thank you for your order! You'll receive a confirmation email shortly. Printful will ship your item directly to you." })
+        setTimeout(() => refreshUser(), 4000)
       }
       window.history.replaceState({ page: 'merch' }, '', '/#merch')
       setCurrentPage('merch')
@@ -96,6 +97,7 @@ function AppInner() {
       if (params.get('adoption') === 'success') {
         const animal = params.get('animal') || 'your animal'
         setSuccessBanner({ type: 'adoption', msg: `Welcome to ${animal}'s family! Check your email — your adoption confirmation is on its way.` })
+        setTimeout(() => refreshUser(), 4000)
       }
       window.history.replaceState({ page: 'adopt' }, '', '/#adopt')
       setCurrentPage('adopt')

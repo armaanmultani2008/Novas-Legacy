@@ -741,6 +741,17 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
+app.delete('/api/admin/users/:email', requireAdmin, async (req, res) => {
+    if (!_db) return res.status(503).json({ error: 'Database not available' });
+    try {
+        const result = await _db.collection('users').deleteOne({ email: req.params.email.toLowerCase() });
+        if (result.deletedCount === 0) return res.status(404).json({ error: 'User not found' });
+        res.json({ ok: true, deleted: req.params.email });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 app.put('/api/user/password', requireUser, async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     if (!currentPassword || !newPassword) return res.status(400).json({ error: 'Both fields required' });

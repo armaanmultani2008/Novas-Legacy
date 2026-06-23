@@ -1127,6 +1127,7 @@ nav.solid {
 }
 
 .animal-card {
+  height: 480px;
   width: 320px;
   flex-shrink: 0;
   background: var(--white);

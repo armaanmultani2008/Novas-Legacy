@@ -704,9 +704,9 @@ function Home({ goTo }) {
                           onClick={() => {
                             if (!marqueeState.current.hasDragged) goTo('our-animals', s.slug)
                           }}
-                          style={{ borderRadius: '8px', width: '400px' }}
+                          style={{ borderRadius: '8px', width: '375px' }}
                       >
-                        <div className="animal-photo" style={{ height: '320px' }}>
+                        <div className="animal-photo" style={{ height: '300px' }}>
                           <img src={s.img} alt={s.title} draggable={false} />
                         </div>
                         <div className="animal-info" style={{ padding: '1.3rem 1.4rem' }}>

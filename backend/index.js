@@ -12,6 +12,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import { MongoClient } from 'mongodb';
 import { ObjectId } from 'mongodb';
+import { v2 as cloudinary } from 'cloudinary';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CMS_FILE  = path.join(__dirname, 'cms.json');
@@ -88,6 +89,12 @@ const app = express();
 const envVars = globalThis.process?.env || process.env;
 const PORT = envVars.PORT || 3001;
 const stripe = new Stripe(envVars.STRIPE_SECRET_KEY);
+
+cloudinary.config({
+    cloud_name: envVars.CLOUDINARY_CLOUD_NAME,
+    api_key: envVars.CLOUDINARY_API_KEY,
+    api_secret: envVars.CLOUDINARY_API_SECRET,
+});
 
 const PRINTFUL_BASE = 'https://api.printful.com';
 const printfulGet = (path) =>
@@ -795,6 +802,19 @@ app.put('/api/content', requireAdmin, (req, res) => {
 
 app.get('/api/cms', (_req, res) => {
     res.json(readCMS());
+});
+
+// ── Image uploads (Cloudinary) ───────────────────────────────────────────────
+app.post('/api/admin/upload-image', requireAdmin, async (req, res) => {
+    const { image } = req.body;
+    if (!image) return res.status(400).json({ error: 'No image provided' });
+    try {
+        const result = await cloudinary.uploader.upload(image, { folder: 'novas-legacy' });
+        res.json({ url: result.secure_url });
+    } catch (err) {
+        console.error('[cloudinary] upload failed:', err.message);
+        res.status(500).json({ error: 'Image upload failed' });
+    }
 });
 
 app.put('/api/cms/blog', requireAdmin, (req, res) => {

@@ -40,6 +40,17 @@ async function loadContent() {
   } catch { return null }
 }
 
+async function uploadImage(dataUrl, token) {
+  const r = await fetch(`${API}/api/admin/upload-image`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ image: dataUrl }),
+  })
+  if (!r.ok) throw new Error('Upload failed')
+  const { url } = await r.json()
+  return url
+}
+
 async function saveContent(data, token) {
   try {
     const r = await fetch(`${API}/api/content`, {
@@ -296,15 +307,22 @@ function Dots() {
   return <span className="dots"><span>.</span><span>.</span><span>.</span></span>
 }
 
-function ImageUpload({ value, onChange, label = 'Photo' }) {
+function ImageUpload({ value, onChange, token, label = 'Photo' }) {
   const inputRef = useRef()
+  const [uploading, setUploading] = useState(false)
   const isBase64 = value?.startsWith('data:')
 
   const pick = async e => {
     const file = e.target.files[0]
     if (!file) return
-    const b64 = await compressImage(file)
-    if (b64) onChange(b64)
+    setUploading(true)
+    try {
+      const b64 = await compressImage(file)
+      if (b64) onChange(await uploadImage(b64, token))
+    } catch {
+      alert('Image upload failed. Please try again.')
+    }
+    setUploading(false)
     e.target.value = ''
   }
 
@@ -319,8 +337,8 @@ function ImageUpload({ value, onChange, label = 'Photo' }) {
             : <input value="" readOnly placeholder="[uploaded from device — click to remove]" style={{ color: '#888', fontStyle: 'italic' }} onClick={() => onChange('')} title="Click to remove and use a URL instead" />
           }
           <label className="btn-upload" title="Upload from device">
-            + Upload
-            <input ref={inputRef} type="file" accept="image/*" onChange={pick} style={{ display: 'none' }} />
+            {uploading ? 'Uploading…' : '+ Upload'}
+            <input ref={inputRef} type="file" accept="image/*" onChange={pick} disabled={uploading} style={{ display: 'none' }} />
           </label>
         </div>
         {isBase64 && <div className="img-up-name">Photo uploaded — click the text field to remove it and use a URL</div>}
@@ -577,12 +595,12 @@ function BlogTab({ token, onExpired }) {
           </div>
         ))}
       </div>
-      {editing && <BlogForm post={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} />}
+      {editing && <BlogForm post={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} token={token} />}
     </div>
   )
 }
 
-function BlogForm({ post, onSave, onClose, saving }) {
+function BlogForm({ post, onSave, onClose, saving, token }) {
   const [f, setF] = useState({
     id: post.id || '', title: post.title || '', tag: post.tag || '',
     date: post.date || '', excerpt: post.excerpt || '', img: post.img || '',
@@ -601,7 +619,7 @@ function BlogForm({ post, onSave, onClose, saving }) {
         <div className="adm-field"><label>Date (e.g. June 11, 2026)</label><input value={f.date} onChange={set('date')} /></div>
       </div>
       <div className="adm-field"><label>Short excerpt</label><textarea rows={2} value={f.excerpt} onChange={set('excerpt')} /></div>
-      <ImageUpload label="Cover photo" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} />
+      <ImageUpload label="Cover photo" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} token={token} />
       <div className="adm-field">
         <label>Article body</label>
         <textarea rows={9} value={f.body} onChange={set('body')} />
@@ -785,12 +803,12 @@ function AnimaliTab({ token, onExpired }) {
           </div>
         ))}
       </div>
-      {editing && <AnimalForm animal={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} />}
+      {editing && <AnimalForm animal={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} token={token} />}
     </div>
   )
 }
 
-function AnimalForm({ animal, onSave, onClose, saving }) {
+function AnimalForm({ animal, onSave, onClose, saving, token }) {
   const [f, setF] = useState({
     id: animal.id || '', name: animal.name || '',
     species: animal.species || '', price: animal.price ?? '',
@@ -812,12 +830,12 @@ function AnimalForm({ animal, onSave, onClose, saving }) {
           <input type="number" min="1" step="1" value={f.price} onChange={set('price')} placeholder="15" />
         </div>
       </div>
-      <ImageUpload label="Animal photo" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} />
+      <ImageUpload label="Animal photo" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} token={token} />
       <div className="adm-field">
         <label>Story / bio (shown when visitors click the photo)</label>
         <textarea rows={4} value={f.bio} onChange={set('bio')} placeholder="A short story about this animal…" />
       </div>
-      <ImageUpload label="Extra photo (optional, shown in the story popup)" value={f.extraImg} onChange={v => setF(p => ({ ...p, extraImg: v }))} />
+      <ImageUpload label="Extra photo (optional, shown in the story popup)" value={f.extraImg} onChange={v => setF(p => ({ ...p, extraImg: v }))} token={token} />
     </Modal>
   )
 }
@@ -881,12 +899,12 @@ function OurAnimalsTab({ token, onExpired }) {
           </div>
         ))}
       </div>
-      {editing && <OurAnimalForm animal={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} />}
+      {editing && <OurAnimalForm animal={editing} onSave={upsert} onClose={() => setEditing(null)} saving={saving} token={token} />}
     </div>
   )
 }
 
-function OurAnimalForm({ animal, onSave, onClose, saving }) {
+function OurAnimalForm({ animal, onSave, onClose, saving, token }) {
   const [f, setF] = useState({
     id: animal.id || '', name: animal.name || '',
     species: animal.species || OUR_ANIMALS_SPECIES[0].value,
@@ -909,12 +927,12 @@ function OurAnimalForm({ animal, onSave, onClose, saving }) {
         </div>
       </div>
       <div className="adm-field"><label>Role / caption (shown under the name)</label><input value={f.role} onChange={set('role')} placeholder="Cheetah · The Founder" /></div>
-      <ImageUpload label="Animal photo" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} />
+      <ImageUpload label="Animal photo" value={f.img} onChange={v => setF(p => ({ ...p, img: v }))} token={token} />
       <div className="adm-field">
         <label>Story / bio (shown when visitors click the photo)</label>
         <textarea rows={4} value={f.bio} onChange={set('bio')} placeholder="A short story about this animal…" />
       </div>
-      <ImageUpload label="Extra photo (optional, shown in the story popup)" value={f.extraImg} onChange={v => setF(p => ({ ...p, extraImg: v }))} />
+      <ImageUpload label="Extra photo (optional, shown in the story popup)" value={f.extraImg} onChange={v => setF(p => ({ ...p, extraImg: v }))} token={token} />
     </Modal>
   )
 }
@@ -1647,7 +1665,7 @@ function ContentTab({ token, onExpired }) {
                       </div>
                       <div style={{ padding: '0.6rem 0.7rem' }}>
                         <div style={{ fontSize: '0.7rem', fontWeight: 600, color: '#555', marginBottom: '0.45rem' }}>{l}</div>
-                        <ImageUpload label="" value={cmsImgs[k] || ''} onChange={v => updateImage(k, v)} />
+                        <ImageUpload label="" value={cmsImgs[k] || ''} onChange={v => updateImage(k, v)} token={token} />
                         {capL && (
                           <div className="adm-field" style={{ marginTop: '0.4rem', marginBottom: 0 }}>
                             <label style={{ color: '#888', fontSize: '0.68rem' }}>{capL}</label>

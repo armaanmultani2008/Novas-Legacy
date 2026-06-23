@@ -669,7 +669,7 @@ function Home({ goTo }) {
         <section className="animals-section" id="animals" style={{ paddingTop: '1rem', paddingBottom: '4rem' }}>
           <div className="animals-header">
             <span className="label rv">{t('home.animals_label')}</span>
-            <h2 className="h2 rv rv-d1">
+            <h2 className="h2 rv rv-d1" style={{margin: '0 0 1.2rem 0'}}>
               {t('home.animals_title').split(' ').slice(0, -2).join(' ')} <em>{t('home.animals_title').split(' ').slice(-2).join(' ')}</em>
             </h2>
             <p className="rv rv-d2" style={{ color: '#555', maxWidth: '850px', lineHeight: '1.65', margin: '0 0 3.5rem 0' }}>
@@ -710,7 +710,12 @@ function Home({ goTo }) {
                           <img src={s.img} alt={s.title} draggable={false} />
                         </div>
                         <div className="animal-info" style={{ padding: '1.3rem 1.4rem' }}>
-                          <h4 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>{s.title}</h4>
+                          <h3 style={{
+                            fontFamily: 'var(--serif)',
+                            fontSize: '1.4rem',
+                            marginBottom: '0.5rem',
+                            color: 'var(--dark)',
+                            lineHeight: '1.3'}}>{s.title}</h3>
                           <p style={{ fontSize: '0.82rem', color: '#777', lineHeight: 1.6, fontWeight: 300, margin: '0 0 1rem' }}>
                             {s.desc}
                           </p>

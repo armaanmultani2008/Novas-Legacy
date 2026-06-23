@@ -26,7 +26,8 @@ async function saveCMS(section, data, token) {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(data),
     })
-    return r.ok ? { ok: true } : { ok: false }
+    if (r.status === 401) return { ok: false, expired: true }
+    return { ok: r.ok }
   } catch { return { ok: false } }
 }
 
@@ -46,7 +47,8 @@ async function saveContent(data, token) {
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(data),
     })
-    return r.ok ? { ok: true } : { ok: false }
+    if (r.status === 401) return { ok: false, expired: true }
+    return { ok: r.ok }
   } catch { return { ok: false } }
 }
 
@@ -327,7 +329,7 @@ function ImageUpload({ value, onChange, label = 'Photo' }) {
   )
 }
 
-function LoginScreen({ onLogin, goTo }) {
+function LoginScreen({ onLogin, goTo, sessionExpired }) {
   const [needsSetup, setNeedsSetup] = useState(null)
   const [mode, setMode] = useState('login')
   const [f, setF] = useState({ pw: '', recoveryKey: '', newpw: '', newpwConfirm: '' })
@@ -428,6 +430,7 @@ function LoginScreen({ onLogin, goTo }) {
           {mode === 'login' && <>
             <h2>Admin Sign In</h2>
             <p className="adm-login-sub">Internal use only.</p>
+            {sessionExpired && <div className="adm-err">Your session expired. Please sign in again.</div>}
             {err && <div className="adm-err">{err}</div>}
             <form onSubmit={doLogin}>
               <div className="adm-field">
@@ -510,7 +513,7 @@ function Modal({ title, onClose, onSave, saving, children }) {
   )
 }
 
-function useCMS(section, token, listKey) {
+function useCMS(section, token, onExpired, listKey) {
   const [items, setItems] = useState(null)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState(null)
@@ -525,17 +528,19 @@ function useCMS(section, token, listKey) {
 
   const persist = async list => {
     setSaving(true); setMsg(null)
-    const { ok } = await saveCMS(section, list, token)
-    if (ok) { setItems(list); LS.set(section, list); setMsg('ok') }
-    else    { LS.set(section, list); setItems(list); setMsg('local') }
+    LS.set(section, list)
+    const { ok, expired } = await saveCMS(section, list, token)
+    if (expired) { onExpired(); return }
+    setItems(list)
+    setMsg(ok ? 'ok' : 'local')
     setSaving(false)
   }
 
   return { items, saving, msg, persist }
 }
 
-function BlogTab({ token }) {
-  const { items: posts, saving, msg, persist } = useCMS('blog', token, 'posts')
+function BlogTab({ token, onExpired }) {
+  const { items: posts, saving, msg, persist } = useCMS('blog', token, onExpired, 'posts')
   const [editing, setEditing] = useState(null)
 
   const del = id => { if (!confirm('Delete this post?')) return; persist(posts.filter(p => p.id !== id)) }
@@ -742,8 +747,8 @@ function ShopTab({ token }) {
   )
 }
 
-function AnimaliTab({ token }) {
-  const { items: animals, saving, msg, persist } = useCMS('animals', token)
+function AnimaliTab({ token, onExpired }) {
+  const { items: animals, saving, msg, persist } = useCMS('animals', token, onExpired)
   const [editing, setEditing] = useState(null)
 
   const del = id => { if (!confirm('Delete this animal?')) return; persist(animals.filter(a => a.id !== id)) }
@@ -834,8 +839,8 @@ const OUR_ANIMALS_SPECIES = [
   { value: 'free_roaming_animals', label: 'Free-Roaming Animals' },
 ]
 
-function OurAnimalsTab({ token }) {
-  const { items: animals, saving, msg, persist } = useCMS('ourAnimals', token)
+function OurAnimalsTab({ token, onExpired }) {
+  const { items: animals, saving, msg, persist } = useCMS('ourAnimals', token, onExpired)
   const [editing, setEditing] = useState(null)
 
   const del = id => { if (!confirm('Delete this animal?')) return; persist(animals.filter(a => a.id !== id)) }
@@ -1539,7 +1544,7 @@ function ArrayField({ label, value, shape, onChange }) {
   )
 }
 
-function ContentTab({ token }) {
+function ContentTab({ token, onExpired }) {
   const [content, setContent] = useState(null)
   const [secIdx,  setSecIdx]  = useState(0)
   const [saving,  setSaving]  = useState(false)
@@ -1570,16 +1575,11 @@ function ContentTab({ token }) {
   const save = async () => {
     setSaving(true); setMsg(null)
     const payload = content || {}
-    const { ok } = await saveContent(payload, token)
-    if (ok) {
-      i18n.addResourceBundle('en', 'translation', payload, true, true)
-      localStorage.setItem('nl_content', JSON.stringify(payload))
-      setMsg('ok')
-    } else {
-      localStorage.setItem('nl_content', JSON.stringify(payload))
-      i18n.addResourceBundle('en', 'translation', payload, true, true)
-      setMsg('local')
-    }
+    const { ok, expired } = await saveContent(payload, token)
+    localStorage.setItem('nl_content', JSON.stringify(payload))
+    i18n.addResourceBundle('en', 'translation', payload, true, true)
+    if (expired) { onExpired(); return }
+    setMsg(ok ? 'ok' : 'local')
     setSaving(false)
   }
 
@@ -1812,11 +1812,13 @@ function SettingsTab({ token }) {
 export default function Admin({ goTo }) {
   const [token, setToken] = useState(() => localStorage.getItem('nl_admin_token') || '')
   const [tab, setTab] = useState(0)
+  const [sessionExpired, setSessionExpired] = useState(false)
 
-  const login = t => { localStorage.setItem('nl_admin_token', t); setToken(t) }
+  const login = t => { localStorage.setItem('nl_admin_token', t); setToken(t); setSessionExpired(false) }
   const logout = () => { localStorage.removeItem('nl_admin_token'); setToken(''); goTo('home') }
+  const onExpired = () => { localStorage.removeItem('nl_admin_token'); setToken(''); setSessionExpired(true) }
 
-  if (!token) return <LoginScreen onLogin={login} goTo={goTo} />
+  if (!token) return <LoginScreen onLogin={login} goTo={goTo} sessionExpired={sessionExpired} />
 
   return (
     <>
@@ -1839,11 +1841,11 @@ export default function Admin({ goTo }) {
           </div>
         </div>
         <div className="adm-body">
-          {tab === 0 && <BlogTab     token={token} />}
+          {tab === 0 && <BlogTab     token={token} onExpired={onExpired} />}
           {tab === 1 && <ShopTab token={token} />}
-          {tab === 2 && <AnimaliTab  token={token} />}
-          {tab === 3 && <OurAnimalsTab token={token} />}
-          {tab === 4 && <ContentTab  token={token} />}
+          {tab === 2 && <AnimaliTab  token={token} onExpired={onExpired} />}
+          {tab === 3 && <OurAnimalsTab token={token} onExpired={onExpired} />}
+          {tab === 4 && <ContentTab  token={token} onExpired={onExpired} />}
           {tab === 5 && <SettingsTab token={token} />}
         </div>
       </div>

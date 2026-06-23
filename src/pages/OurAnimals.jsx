@@ -162,7 +162,7 @@ function OurAnimals({ goTo }) {
       </div>
 
       <div className="page-content" style={{padding: '4rem 1.5rem'}}>
-        <div className="container" style={{ maxWidth: '900px', margin: '0 auto' }}>
+        <div className="container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>

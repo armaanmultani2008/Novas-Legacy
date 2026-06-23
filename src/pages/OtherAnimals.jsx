@@ -159,7 +159,7 @@ function OtherAnimals({ goTo }) {
                                 <img
                                     src={allPhotos[i]}
                                     alt={photoCaps[i]}
-                                    style={imgStyle}
+                                    style={{...imgStyle, objectPosition: i === 3 ? 'center 20%' : 'center'}}
                                     onMouseEnter={e => e.target.style.transform = 'scale(1.04)'}
                                     onMouseLeave={e => e.target.style.transform = 'none'}
                                 />

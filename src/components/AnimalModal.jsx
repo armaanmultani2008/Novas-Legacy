@@ -42,7 +42,11 @@ function AnimalModal({ animal, onClose }) {
 
         <div className="am-body">
           {animal.role && <span className="am-role">{animal.role}</span>}
-          <h3 className="am-name">{animal.name}</h3>
+          <h3 className="am-name" style={{fontFamily: 'var(--serif)',
+            fontSize: '1.4rem',
+            marginBottom: '0.5rem',
+            color: 'var(--dark)',
+            lineHeight: '1.3'}}>{animal.name}</h3>
           {animal.bio && <p className="am-bio">{animal.bio}</p>}
         </div>
       </div>

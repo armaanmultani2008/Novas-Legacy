@@ -81,7 +81,7 @@ function AnimalsRow({ items, onSelect }) {
         {items.map(a => (
           <div key={a.id} className="animal-card" onClick={() => onSelect(a)} style={{ borderRadius: '8px' }}>
             <div className="animal-photo">
-              <img src={a.img} alt={a.name} draggable={false} />
+              <img style={{width: '100%', objectFit: 'cover', height: '100%', objectPosition: '20% 20%'}} src={a.img} alt={a.name} draggable={false} />
             </div>
             <div className="animal-info">
               <h4>{a.name}</h4>
@@ -161,7 +161,7 @@ function OurAnimals({ goTo }) {
         </div>
       </div>
 
-      <div className="page-content" style={{padding: '4rem 1.5rem'}}>
+      <div className="page-content" style={{padding: '4rem 1rem'}}>
         <div className="container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
@@ -208,7 +208,7 @@ function OurAnimals({ goTo }) {
           gap: 1rem;
           overflow-x: auto;
           scroll-behavior: smooth;
-          padding: 0 2.75rem;
+          padding: 0;
           margin: 0 -2.75rem;
           scrollbar-width: none;
         }

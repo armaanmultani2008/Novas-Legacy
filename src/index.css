@@ -850,11 +850,14 @@ nav.solid {
 
 .am-media {
   position: relative;
-  width: min(100%, 60vh);
-  margin: 0 auto;
+  width: 100%;
+  max-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
   overflow: hidden;
-  background: #000;
+  background: #14100c;
 }
 .am-media::before {
   content: '';
@@ -862,11 +865,10 @@ nav.solid {
   padding-top: 100%;
 }
 .am-media img {
-  position: absolute;
-  inset: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  max-height: 60vh;
+  object-fit: contain;
   display: block;
 }
 .am-media-caption {
@@ -941,7 +943,7 @@ nav.solid {
 
 /* Mobile: the modal takes over the full screen. */
 @media (max-width: 480px) {
-  .am-overlay { padding: 0; }
+  .am-overlay { padding: 1rem; }
   .am-card { max-width: 100%; height: 100%; max-height: 100%; border-radius: 0; }
 }
 

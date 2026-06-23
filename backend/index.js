@@ -172,7 +172,7 @@ async function sendOrderConfirmation(toEmail, toName, productName, amount) {
 app.use(cors());
 app.use((req, res, next) => {
     if (req.path === '/api/stripe/webhook') return next();
-    express.json()(req, res, next);
+    express.json({ limit: '15mb' })(req, res, next);
 });
 
 let adminPasswordHash = envVars.ADMIN_PASSWORD_HASH || "";

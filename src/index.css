@@ -1123,6 +1123,17 @@ nav.solid {
   overflow: hidden;
 }
 
+.species-card{
+  height: auto;
+  width: 400px;
+  flex-shrink: 0;
+  background: var(--white);
+  border: 1px solid #EDE5D8;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
 .animals-header { margin-bottom: 2.5rem; }
 
 .marquee-track {
@@ -1132,8 +1143,8 @@ nav.solid {
 }
 
 .animal-card {
-  height: 475px;
-  width: 350px;
+  height: 420px;
+  width: 380px;
   flex-shrink: 0;
   background: var(--white);
   border: 1px solid #EDE5D8;

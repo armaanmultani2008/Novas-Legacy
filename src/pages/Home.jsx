@@ -666,7 +666,7 @@ function Home({ goTo }) {
         `}</style>
         </section>
 
-        <section className="animals-section" id="animals" style={{ paddingTop: '1rem', paddingBottom: '4rem' }}>
+        <section className="animal-section" id="animals" style={{ paddingTop: '1rem', paddingBottom: '4rem' }}>
           <div className="animals-header">
             <span className="label rv">{t('home.animals_label')}</span>
             <h2 className="h2 rv rv-d1" style={{margin: '0 0 1.2rem 0'}}>
@@ -700,7 +700,7 @@ function Home({ goTo }) {
                   speciesCards.map((s, i) => (
                       <div
                           key={`${rep}-${s.slug}-${i}`}
-                          className="animal-card species-card"
+                          className="species-card"
                           onClick={() => {
                             if (!marqueeState.current.hasDragged) goTo('our-animals', s.slug)
                           }}

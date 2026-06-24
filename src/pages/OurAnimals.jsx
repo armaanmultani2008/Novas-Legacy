@@ -176,37 +176,57 @@ function OurAnimals({ goTo }) {
         }
         .oa-scroller {
           display: flex;
-          gap: 1rem;
+          gap: 1.25rem;
           overflow-x: auto;
           scroll-behavior: smooth;
-          padding-bottom: 1.2rem;
+          padding-bottom: 1.5rem;
           margin: 0 -3.5rem;
           -webkit-overflow-scrolling: touch;
           scroll-snap-type: x mandatory;
         }
-        .oa-scroller::-webkit-scrollbar { height: 6px; }
-        .oa-scroller::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 10px; }
-        .oa-scroller::-webkit-scrollbar-thumb { border-radius: 10px; background: rgba(0, 0, 0, 0.2); transition: 0.2s; }
-        .oa-scroller::-webkit-scroller-thumb::hover { background: var(--gold, #c5a880); }
+        .oa-scroller::-webkit-scrollbar {
+          height: 6px;
+        }
+        .oa-scroller::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.04);
+          border-radius: 10px;
+        }
+        .oa-scroller::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.15);
+          border-radius: 10px;
+          transition: background 0.2s;
+        }
+        .oa-scroller::-webkit-scrollbar-thumb:hover {
+          background: var(--gold, #c5a880);
+        }
+        .oa-scroller {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.04);
+        }
         .oa-scroller.justify-center {
           justify-content: center;
-          margin: 0;
-          padding: 0 0 1.2rem 0;
+          margin: 0; 
+          padding: 0 0 1.5rem 0;
         }
-        @media (max-width: 820px){
+        @media (max-width: 820px) {
           .oa-scroller.justify-center {
-            justify-content: flex-start;
+            justify-content: flex-start; 
             margin: 0 -2rem;
-            padding: 0:
+            padding-left: 2rem;
+            padding-right: 2rem;
           }
         }
         @media (max-width: 640px) {
           .oa-scroller, 
           .oa-scroller.justify-center { 
-            padding: 0; margin: 0 -2.2rem; gap: 1rem; justify-content: flex-start;
+            margin: 0 -2rem;  
+            justify-content: flex-start;
+            gap: 1rem;
           }
-          .am-card { 
-            scroll-snap-align: center; flex-shrink: 0; width: 82vw; flex-shrink: 0; max-width: 100%;
+          .animal-card {
+            scroll-snap-align: center; 
+            flex-shrink: 0;
+            max-width: 100%;
           }
         }
       `}</style>

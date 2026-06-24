@@ -43,7 +43,7 @@ const OTHER_SECTIONS = [
     detail: "Across the reserve's open grassland, giraffes, zebras, antelope and other herbivores roam freely, exactly as they would in the wild. Left largely undisturbed, these free-roaming species play a vital role in keeping the bushveld ecosystem healthy — grazing keeps grasses in balance, while their presence supports the same natural food web that has sustained Waterberg's wildlife for generations. For many guests, spotting a herd moving quietly through the bush is one of the most memorable parts of a visit." },
 ]
 
-function AnimalsRow({ items, onSelect }) {
+function AnimalsRow({ items, onSelect, justifyCenter }) {
   const { t } = useTranslation()
   const scrollerRef = useRef(null)
   const [canLeft, setCanLeft] = useState(false)
@@ -77,7 +77,7 @@ function AnimalsRow({ items, onSelect }) {
   return (
     <div className="oa-row">
       {canLeft && <button className="oa-arrow oa-arrow--left" onClick={() => scroll(-1)} aria-label="Scroll left">‹</button>}
-      <div className="oa-scroller" ref={scrollerRef}>
+      <div className="oa-scroller" ref={scrollerRef} style={justifyCenter ? {justifyContent: 'center', margin: 0} : {}}>
         {items.map(a => (
           <div key={a.id} className="animal-card" onClick={() => onSelect(a)} style={{ borderRadius: '8px' }}>
             <div className="animal-photo">
@@ -112,9 +112,9 @@ function SpeciesBlock({ section, individuals, onSelect }) {
     <div id={section.slug} className="oa-block">
       <h2>{titleWords.slice(0, -1).join(' ')} <em>{titleWords.slice(-1)}</em></h2>
       <p>{detail}</p>
-      {individuals.length > 0
-        ? <AnimalsRow items={individuals} onSelect={onSelect} />
-        : <p className="oa-empty">{t('our_animals.empty_species', 'No animals added for this species yet.')}</p>
+      {individuals.length === 0
+        ? <p className="oa-empty">{t('our_animals.empty_species', 'No animals added for this species yet.')}</p>
+        : <AnimalsRow items={individuals} onSelect={onSelect} justifyCenter={individuals.length <= 2}/>
       }
     </div>
   )
@@ -211,6 +211,8 @@ function OurAnimals({ goTo }) {
           padding: 0;
           margin: 0 -2.75rem;
           scrollbar-width: none;
+          -webkit-overflow-scrolling: touch;
+          scroll-snap-type: x mandatory;
         }
         .oa-scroller::-webkit-scrollbar { display: none; }
         .oa-arrow {
@@ -248,7 +250,7 @@ function OurAnimals({ goTo }) {
             role: modalAnimal.role,
             bio: modalAnimal.bio,
             img: modalAnimal.img,
-            gallery: modalAnimal.extraImg ? [{ src: modalAnimal.extraImg }] : [],
+            gallery: modalAnimal.extraImages?.length ? modalAnimal.extraImages : (modalAnimal.extraImg ? [modalAnimal.extraImg] : []),
           }}
           onClose={() => setModalAnimal(null)}
         />

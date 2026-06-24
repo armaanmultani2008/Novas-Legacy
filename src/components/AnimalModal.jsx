@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
 
 function AnimalModal({ animal, onClose }) {
-  const images = [animal.img, ...(animal.gallery || []).map(g => g.src)].filter(Boolean)
+  const images = [animal.img, ...(animal.gallery || [])].filter(Boolean)
   const [activeIdx, setActiveIdx] = useState(0)
 
   useBodyScrollLock(true)

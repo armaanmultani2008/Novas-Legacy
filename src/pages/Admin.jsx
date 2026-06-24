@@ -812,13 +812,26 @@ function AnimalForm({ animal, onSave, onClose, saving, token }) {
   const [f, setF] = useState({
     id: animal.id || '', name: animal.name || '',
     species: animal.species || '', price: animal.price ?? '',
-    img: animal.img || '', bio: animal.bio || '', extraImg: animal.extraImg || '',
+    img: animal.img || '', bio: animal.bio || '', extraImages: animal.extraImages || (animal.extraImg ? [animal.extraImg] : []),
   })
   const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
   const save = () => {
     if (!f.name.trim()) return alert('Please enter a name.')
     if (!f.price) return alert('Please enter the monthly fee.')
     onSave({ ...f, price: parseFloat(f.price) || 0 })
+  }
+  const addImageSlot = () => {
+    setF(p => ({
+      ...p,
+      extraImages: [...p.extraImages, '']
+    }))
+  }
+  const handleExtraImageChange = (index, value) => {
+    setF(p => {
+      const updatedImages = [...p.extraImages]
+      updatedImages[index] = value
+      return {...p, extraImages: updatedImages}
+    })
   }
   return (
     <Modal title={f.id ? 'Edit animal' : 'New animal'} onClose={onClose} onSave={save} saving={saving}>
@@ -835,7 +848,20 @@ function AnimalForm({ animal, onSave, onClose, saving, token }) {
         <label>Story / bio (shown when visitors click the photo)</label>
         <textarea rows={4} value={f.bio} onChange={set('bio')} placeholder="A short story about this animal…" />
       </div>
-      <ImageUpload label="Extra photo (optional, shown in the story popup)" value={f.extraImg} onChange={v => setF(p => ({ ...p, extraImg: v }))} token={token} />
+      {f.extraImages.map((imgUrl, index) => (
+          <ImageUpload
+              key={index}
+              label={`Extra Photo #${index + 1} (optional, shown in story popup)`}
+              value={imgUrl}
+              onChange={v => handleExtraImageChange(index, v)}
+              token={token}
+          />
+      ))}
+      <div className="adm-field" style={{ marginTop: '0.5rem' }}>
+        <button type="button" className="btn btn-outline-dark btn-sm" onClick={addImageSlot}>
+          + Add another photo
+        </button>
+      </div>
     </Modal>
   )
 }
@@ -908,12 +934,25 @@ function OurAnimalForm({ animal, onSave, onClose, saving, token }) {
   const [f, setF] = useState({
     id: animal.id || '', name: animal.name || '',
     species: animal.species || OUR_ANIMALS_SPECIES[0].value,
-    role: animal.role || '', img: animal.img || '', bio: animal.bio || '', extraImg: animal.extraImg || '',
+    role: animal.role || '', img: animal.img || '', bio: animal.bio || '', extraImages: animal.extraImages || (animal.extraImg ? [animal.extraImg]: []) || '',
   })
   const set = k => e => setF(p => ({ ...p, [k]: e.target.value }))
   const save = () => {
     if (!f.name.trim()) return alert('Please enter a name.')
     onSave(f)
+  }
+  const addImageSlot = () => {
+    setF(p => ({
+      ...p,
+      extraImages: [...p.extraImages, '']
+    }))
+  }
+  const handleExtraImageChange = (index, value) => {
+    setF(p => {
+      const updatedImages = [...p.extraImages]
+      updatedImages[index] = value
+      return {...p, extraImages: updatedImages}
+    })
   }
   return (
     <Modal title={f.id ? 'Edit animal' : 'New animal'} onClose={onClose} onSave={save} saving={saving}>
@@ -932,7 +971,24 @@ function OurAnimalForm({ animal, onSave, onClose, saving, token }) {
         <label>Story / bio (shown when visitors click the photo)</label>
         <textarea rows={4} value={f.bio} onChange={set('bio')} placeholder="A short story about this animal…" />
       </div>
-      <ImageUpload label="Extra photo (optional, shown in the story popup)" value={f.extraImg} onChange={v => setF(p => ({ ...p, extraImg: v }))} token={token} />
+      {f.extraImages.map((imgUrl, index) => (
+          <ImageUpload
+          key={index}
+          label={`Extra Photo #${index + 1} (optional, shown in story popup)`}
+          value={imgUrl}
+          onChange={v => handleExtraImageChange(index, v)}
+          token={token}
+          />
+      ))}
+      <div className={"adm-field"} style={{marginTop: '0.5rem'}}>
+        <button
+          type="button"
+          className={"btn btn-outline-dark btn-sm"}
+          onClick={addImageSlot}
+          >
+          + Add another photo
+        </button>
+      </div>
     </Modal>
   )
 }

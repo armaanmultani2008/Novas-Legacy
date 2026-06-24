@@ -41,7 +41,7 @@ function Adopt({ goTo }) {
           if (!d.animals?.length) return
           const merged = d.animals.map(remote => {
             const fallback = FALLBACK_ANIMALS.find(f => f.name === remote.name)
-            return fallback ? { ...fallback, ...remote, bio: remote.bio || fallback.bio, extraImg: remote.extraImg || fallback.extraImg } : remote
+            return fallback ? { ...fallback, ...remote, bio: remote.bio || fallback.bio, extraImages: remote.extraImages?.length ? remote.extraImages : (remote.extraImg ? [remote.extraImg] : (fallback.extraImg ? [fallback.extraImg] : [])) } : remote
           })
           setCmsAnimals(merged)
         })
@@ -216,7 +216,7 @@ function Adopt({ goTo }) {
                   role: storyAnimal.species,
                   bio: storyAnimal.bio,
                   img: storyAnimal.img,
-                  gallery: storyAnimal.extraImg ? [{ src: storyAnimal.extraImg }] : [],
+                  gallery: storyAnimal.extraImages?.length ? storyAnimal.extraImages : (storyAnimal.extraImg ? [storyAnimal.extraImg] : []),
                 }}
                 onClose={() => setStoryAnimal(null)}
             />

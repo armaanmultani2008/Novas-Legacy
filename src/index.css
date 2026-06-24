@@ -826,6 +826,8 @@ nav.solid {
   box-shadow: 0 40px 100px rgba(0,0,0,0.45);
   position: relative;
   animation: fadeIn 0.25s ease;
+  scroll-snap-align: start;
+  flex-shrink: 0;
 }
 
 .am-close {
@@ -870,6 +872,7 @@ nav.solid {
   max-height: 60vh;
   object-fit: contain;
   display: block;
+  pointer-events: none;
 }
 .am-media-caption {
   position: absolute;
@@ -944,7 +947,9 @@ nav.solid {
 /* Mobile: the modal takes over the full screen. */
 @media (max-width: 480px) {
   .am-overlay { padding: 1rem; }
-  .am-card { max-width: 100%; height: 100%; max-height: 100%; border-radius: 0; }
+  .am-card { max-width: 380px; width: 100%; height: auto; max-height: 85vh; border-radius: 12px }
+  .am-name { font-size: 1.3rem; }
+  .am-bio { font-size: 0.85rem; }
 }
 
 /* ======================================================
@@ -1127,8 +1132,8 @@ nav.solid {
 }
 
 .animal-card {
-  height: 480px;
-  width: 320px;
+  height: 410px;
+  width: 350px;
   flex-shrink: 0;
   background: var(--white);
   border: 1px solid #EDE5D8;
@@ -1140,7 +1145,7 @@ nav.solid {
 .animal-card:hover { transform: translateY(-4px); }
 
 .animal-photo {
-  height: 240px;
+  height: 280px;
   overflow: hidden;
   display: flex;
   align-items: center;

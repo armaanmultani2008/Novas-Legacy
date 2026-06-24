@@ -205,7 +205,7 @@ function OurAnimals({ goTo }) {
           .oa-scroller.justify-center { 
             padding: 0; margin: 0 -2.2rem; gap: 1rem; justify-content: flex-start;
           }
-          .animal-card { 
+          .am-card { 
             scroll-snap-align: center; flex-shrink: 0; width: 82vw; flex-shrink: 0; max-width: 100%;
           }
         }

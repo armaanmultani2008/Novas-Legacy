@@ -455,14 +455,15 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
           line-height: 1.15;
           transform: translateY(100%);
           transition:
-            transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
-            color 0.25s ease;
-          transition-delay: calc(var(--i, 0) * 0.055s);
+            transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 0.055s),
+            color 0.12s ease 0s;
           user-select: none;
         }
         .ovmenu--open .ovmenu__link {
           transform: translateY(0);
-          transition-delay: calc(var(--i, 0) * 0.055s + 0.25s);
+          transition:
+            transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 0.055s + 0.25s),
+            color 0.12s ease 0s;
         }
         .ovmenu__link:hover { color: var(--gold-light); }
 
@@ -574,6 +575,33 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
           .nn__links, .nn__actions { display: none; }
           .nn__role-badge { display: none; }
           .hamburger { display: flex; }
+        }
+
+        /* ── Dropdown panel (769px–1460px): panel instead of fullscreen overlay ── */
+        @media (min-width: 769px) and (max-width: 1460px) {
+          .ovmenu {
+            top: 72px;
+            bottom: auto;
+            max-height: calc(100vh - 72px);
+            padding: 1.25rem 6vw 1.75rem;
+            background: rgba(6,6,6,0.99);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+          }
+          .ovmenu__link,
+          .ovmenu--open .ovmenu__link {
+            font-size: clamp(1rem, 1.7vw, 1.45rem);
+            padding: 0.5rem 0;
+            transform: none;
+            transition: color 0.12s ease;
+          }
+          .ovmenu__toggle { font-size: 1.2rem; }
+          .ovmenu__sub { padding: 0 0 0.6rem 1.75rem; font-size: 0.88rem; gap: 0.15rem 1.5rem; }
+          .ovmenu__sub-item { font-size: 0.88rem; }
+          .ovmenu__foot { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.06); }
+          .ovmenu__signin { margin-bottom: 0.75rem; }
         }
 
         /* ── Tablet portrait (≤900px): font cresce per touch ── */

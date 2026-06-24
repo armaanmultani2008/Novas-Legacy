@@ -71,6 +71,7 @@ function AppInner() {
   const [transitioning, setTransitioning] = useState(false)
   const [successBanner, setSuccessBanner] = useState(null)
   const [authOpen, setAuthOpen] = useState(false)
+  const [resetToken, setResetToken] = useState(null)
   const [regBanner, setRegBanner] = useState(false)
   const regTimerRef = useRef(null)
 
@@ -89,6 +90,14 @@ function AppInner() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const pageParam = params.get('page')
+    const resetParam = params.get('reset')
+
+    if (resetParam) {
+      setResetToken(resetParam)
+      setAuthOpen(true)
+      window.history.replaceState({}, '', '/')
+      return
+    }
 
     if (pageParam === 'merch' || params.get('payment')) {
       if (params.get('payment') === 'success') {
@@ -162,7 +171,7 @@ function AppInner() {
 
   return (
     <>
-      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
+      <AuthModal open={authOpen} onClose={() => { setAuthOpen(false); setResetToken(null) }} resetToken={resetToken} />
       {regBanner && !user && (
         <div style={{
           position: 'fixed', bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)',
@@ -176,7 +185,7 @@ function AppInner() {
           whiteSpace: 'nowrap',
         }}>
           <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.65)' }}>
-            🐆 Track your adoptions & earn XP
+            🐆 Track your adoptions & unlock donor roles
           </span>
           <button
             onClick={() => { dismissRegBanner(); setAuthOpen(true) }}

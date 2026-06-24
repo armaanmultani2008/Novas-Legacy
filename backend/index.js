@@ -5,6 +5,7 @@ import express from 'express';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import dotenv from 'dotenv';
 import Stripe from 'stripe';
 import fs from 'fs';
@@ -723,6 +724,67 @@ app.post('/api/auth/register', async (req, res) => {
             { expiresIn: '30d' }
         );
         res.json({ token, user: { _id: result.insertedId.toString(), name, email: email.toLowerCase(), xp: 0 } });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+app.post('/api/auth/forgot-password', async (req, res) => {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email required' });
+    if (!_db) return res.status(503).json({ error: 'Database not available' });
+    try {
+        const user = await _db.collection('users').findOne({ email: email.toLowerCase() });
+        // Always return 200 to avoid email enumeration
+        if (!user) return res.json({ ok: true });
+        const token = crypto.randomBytes(32).toString('hex');
+        const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+        await _db.collection('users').updateOne(
+            { _id: user._id },
+            { $set: { resetToken: token, resetTokenExpiry: expiry } }
+        );
+        const frontendUrl = envVars.FRONTEND_URL || 'https://novas-legacy.vercel.app';
+        const resetUrl = `${frontendUrl}/?reset=${token}`;
+        await sendEmail({
+            to: user.email,
+            subject: "Reset your Nova's Legacy password",
+            html: `
+      <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#111">
+        <h2 style="color:#C8880A">Reset your password</h2>
+        <p>Hi ${user.name || 'there'},</p>
+        <p>We received a request to reset your password. Click the button below — the link expires in 1 hour.</p>
+        <p style="margin:2rem 0">
+          <a href="${resetUrl}" style="display:inline-block;background:#C8880A;color:#fff;padding:0.8rem 2rem;border-radius:50px;text-decoration:none;font-weight:700;font-size:0.9rem">
+            Reset Password
+          </a>
+        </p>
+        <p style="font-size:0.85rem;color:#666">If you didn't request this, you can safely ignore this email.</p>
+        <p style="margin-top:2rem;font-size:0.85rem;color:#888">Nova's Legacy — Bela-Bela, Limpopo, South Africa</p>
+      </div>`,
+        });
+        res.json({ ok: true });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+app.post('/api/auth/reset-password', async (req, res) => {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword) return res.status(400).json({ error: 'Token and new password required' });
+    if (newPassword.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    if (!_db) return res.status(503).json({ error: 'Database not available' });
+    try {
+        const user = await _db.collection('users').findOne({
+            resetToken: token,
+            resetTokenExpiry: { $gt: new Date() },
+        });
+        if (!user) return res.status(400).json({ error: 'Invalid or expired reset link' });
+        const passwordHash = await bcrypt.hash(newPassword, 10);
+        await _db.collection('users').updateOne(
+            { _id: user._id },
+            { $set: { passwordHash }, $unset: { resetToken: '', resetTokenExpiry: '' } }
+        );
+        res.json({ ok: true });
     } catch (e) {
         res.status(500).json({ error: e.message });
     }

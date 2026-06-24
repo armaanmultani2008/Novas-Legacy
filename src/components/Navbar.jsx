@@ -569,19 +569,46 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
         }
         .ovmenu__socials a:hover { color: rgba(255,255,255,0.65); }
 
+        /* ── Tablet landscape / small laptop (≤1460px) ── */
         @media (max-width: 1460px) {
           .nn__links, .nn__actions { display: none; }
           .nn__role-badge { display: none; }
           .hamburger { display: flex; }
         }
 
-        @media (max-width: 768px) {
-          .nn__wrap { padding: 0 1.5rem; }
-          .ovmenu { padding: 90px 6vw 3rem 6vw; }
+        /* ── Tablet portrait (≤900px) ── */
+        @media (max-width: 900px) {
+          .ovmenu__link { font-size: clamp(1.9rem, 5vw, 3rem); }
+          .ovmenu__sub { padding: 0 0 0.8rem 2.5rem; }
+          .ovmenu__foot { margin-top: 2.5rem; gap: 2rem; }
         }
+
+        /* ── Mobile (≤768px) ── */
+        @media (max-width: 768px) {
+          .nn__wrap { padding: 0 1.25rem; gap: 1rem; }
+          .ovmenu { padding: 80px 5vw 3rem 5vw; justify-content: flex-start; }
+          .ovmenu__link { font-size: clamp(1.75rem, 6vw, 2.8rem); padding: 0.45rem 0; }
+          .ovmenu__sub { padding: 0 0 0.6rem 2rem; gap: 0.2rem 1.5rem; }
+          .ovmenu__foot { margin-top: 2rem; }
+        }
+
+        /* ── Small mobile (≤480px) ── */
         @media (max-width: 480px) {
-          .ovmenu__foot { gap: 1.5rem; }
-          .ovmenu__socials { margin-left: 0; }
+          .nn__wrap { padding: 0 1rem; gap: 0.75rem; }
+          .ovmenu { padding: 72px 4vw 2.5rem 4vw; }
+          .ovmenu__link { font-size: clamp(1.5rem, 7.5vw, 2.2rem); padding: 0.4rem 0; }
+          .ovmenu__sub { padding: 0 0 0.5rem 1.25rem; font-size: 0.9rem; }
+          .ovmenu__sub-item { font-size: 0.88rem; }
+          .ovmenu__foot { gap: 1.25rem; flex-direction: column; align-items: flex-start; }
+          .ovmenu__socials { margin-left: 0; gap: 1.25rem; }
+          .ovmenu__contacts a { font-size: 0.78rem; }
+        }
+
+        /* ── Very small (≤360px) ── */
+        @media (max-width: 360px) {
+          .nn__wrap { padding: 0 0.75rem; }
+          .ovmenu { padding: 68px 3.5vw 2rem 3.5vw; }
+          .ovmenu__link { font-size: clamp(1.35rem, 8vw, 1.9rem); }
         }
       `}</style>
       </>

@@ -423,7 +423,7 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
           background: #080808;
           display: flex;
           flex-direction: column;
-          justify-content: center;
+          justify-content: flex-start;
           padding: 100px 8vw 4rem 8vw;
           pointer-events: none;
           clip-path: inset(0 0 100% 0);
@@ -447,12 +447,12 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
           align-items: center;
           gap: 1.5rem;
           font-family: var(--serif);
-          font-size: clamp(2rem, 4.5vw, 3.8rem);
+          font-size: clamp(1.3rem, 2.5vw, 2rem);
           font-weight: 700;
           color: rgba(255,255,255,0.85);
           cursor: pointer;
-          padding: 0.55rem 0;
-          line-height: 1.1;
+          padding: 0.4rem 0;
+          line-height: 1.15;
           transform: translateY(100%);
           transition:
             transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
@@ -576,9 +576,9 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
           .hamburger { display: flex; }
         }
 
-        /* ── Tablet portrait (≤900px) ── */
+        /* ── Tablet portrait (≤900px): font cresce per touch ── */
         @media (max-width: 900px) {
-          .ovmenu__link { font-size: clamp(1.9rem, 5vw, 3rem); }
+          .ovmenu__link { font-size: clamp(1.4rem, 4vw, 2.4rem); }
           .ovmenu__sub { padding: 0 0 0.8rem 2.5rem; }
           .ovmenu__foot { margin-top: 2.5rem; gap: 2rem; }
         }
@@ -586,8 +586,8 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
         /* ── Mobile (≤768px) ── */
         @media (max-width: 768px) {
           .nn__wrap { padding: 0 1.25rem; gap: 1rem; }
-          .ovmenu { padding: 80px 5vw 3rem 5vw; justify-content: flex-start; }
-          .ovmenu__link { font-size: clamp(1.75rem, 6vw, 2.8rem); padding: 0.45rem 0; }
+          .ovmenu { padding: 80px 5vw 3rem 5vw; }
+          .ovmenu__link { font-size: clamp(1.5rem, 5.5vw, 2.6rem); padding: 0.45rem 0; }
           .ovmenu__sub { padding: 0 0 0.6rem 2rem; gap: 0.2rem 1.5rem; }
           .ovmenu__foot { margin-top: 2rem; }
         }
@@ -596,8 +596,8 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
         @media (max-width: 480px) {
           .nn__wrap { padding: 0 1rem; gap: 0.75rem; }
           .ovmenu { padding: 72px 4vw 2.5rem 4vw; }
-          .ovmenu__link { font-size: clamp(1.5rem, 7.5vw, 2.2rem); padding: 0.4rem 0; }
-          .ovmenu__sub { padding: 0 0 0.5rem 1.25rem; font-size: 0.9rem; }
+          .ovmenu__link { font-size: clamp(1.4rem, 7vw, 2rem); padding: 0.4rem 0; }
+          .ovmenu__sub { padding: 0 0 0.5rem 1.25rem; }
           .ovmenu__sub-item { font-size: 0.88rem; }
           .ovmenu__foot { gap: 1.25rem; flex-direction: column; align-items: flex-start; }
           .ovmenu__socials { margin-left: 0; gap: 1.25rem; }
@@ -608,7 +608,7 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
         @media (max-width: 360px) {
           .nn__wrap { padding: 0 0.75rem; }
           .ovmenu { padding: 68px 3.5vw 2rem 3.5vw; }
-          .ovmenu__link { font-size: clamp(1.35rem, 8vw, 1.9rem); }
+          .ovmenu__link { font-size: clamp(1.3rem, 8vw, 1.8rem); }
         }
       `}</style>
       </>

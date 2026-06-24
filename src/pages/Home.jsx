@@ -19,6 +19,8 @@ const DEFAULTS = {
   bigCta:      '/img/ghepardo-corsa.png',
 }
 
+const MARQUEE_RESUME_DELAY = 900
+
 const SPECIES = [
   { slug: 'cheetahs',             key: 'cheetahs',             title: 'Cheetahs',             img: '/img/ghepardo-erba-alta.png',
     desc: "Built for speed — a light frame, semi-retractable claws and a flexible spine let cheetahs reach strides of up to 7 metres. They can't roar; instead they chirp and purr." },
@@ -220,7 +222,7 @@ function Home({ goTo }) {
   }, [])
 
   const marqueeRef = useRef(null)
-  const marqueeState = useRef({ dragging: false, hasDragged: false, startX: 0, startOffset: 0, offset: 0, lastTime: null, isHovered: false, pointerId: null })
+  const marqueeState = useRef({ dragging: false, hasDragged: false, startX: 0, startOffset: 0, offset: 0, lastTime: null, lastInteraction: 0, isHovered: false, pointerId: null })
 
   useEffect(() => {
     const track = marqueeRef.current
@@ -232,7 +234,7 @@ function Home({ goTo }) {
       const s = marqueeState.current
       const dt = s.lastTime ? Math.min(now - s.lastTime, 50) : 16.66
       s.lastTime = now
-      if (!s.dragging && !s.isHovered) {
+      if (!s.dragging && !s.isHovered && now - s.lastInteraction > MARQUEE_RESUME_DELAY) {
         const halfWidth = track.scrollWidth / 2
         if (halfWidth > 0)
           s.offset -= (halfWidth / 35000) * dt
@@ -281,12 +283,29 @@ function Home({ goTo }) {
     const s = marqueeState.current
     s.dragging = false
     s.lastTime = null
+    s.lastInteraction = performance.now()
     try{
       e.currentTarget.releasePointerCapture(e.pointerId)
     } catch(err) {}
     if (marqueeRef.current) {
       marqueeRef.current.style.cursor = s.isHovered ? 'grab' : 'default'
     }
+  }
+
+  function onMarqueeWheel(e) {
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return
+    e.preventDefault()
+    const s = marqueeState.current
+    const track = marqueeRef.current
+    if (!track) return
+    const halfWidth = track.scrollWidth / 2
+    let newOffset = s.offset - e.deltaX
+    if (halfWidth > 0) {
+      newOffset = ((newOffset % halfWidth) + halfWidth) % halfWidth - halfWidth
+    }
+    s.offset = newOffset
+    s.lastInteraction = performance.now()
+    track.style.transform = `translateX(${s.offset}px)`
   }
 
   const [contactForm, setContactForm] = useState({ name: '', surname: '', email: '', dialCode: '+27', phone: '', reason: '', message: '' })
@@ -666,7 +685,7 @@ function Home({ goTo }) {
         `}</style>
         </section>
 
-        <section className="animal-section" id="animals" style={{ paddingTop: '1rem', paddingBottom: '4rem' }}>
+        <section className="animals-section" id="animals" style={{ paddingTop: '1rem', paddingBottom: '4rem' }}>
           <div className="animals-header">
             <span className="label rv">{t('home.animals_label')}</span>
             <h2 className="h2 rv rv-d1" style={{margin: '0 0 1.2rem 0'}}>
@@ -685,6 +704,7 @@ function Home({ goTo }) {
                 onPointerMove={onMarqueePointerMove}
                 onPointerUp={onMarqueePointerUp}
                 onPointerCancel={onMarqueePointerUp}
+                onWheel={onMarqueeWheel}
                 onMouseEnter={(e) => {
                   marqueeState.current.isHovered = true
                   e.currentTarget.style.cursor = 'grab'

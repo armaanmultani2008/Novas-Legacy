@@ -77,7 +77,7 @@ function AnimalsRow({ items, onSelect, justifyCenter }) {
   return (
     <div className="oa-row">
       {canLeft && <button className="oa-arrow oa-arrow--left" onClick={() => scroll(-1)} aria-label="Scroll left">‹</button>}
-      <div className="oa-scroller" ref={scrollerRef} style={justifyCenter ? {justifyContent: 'center', margin: 0} : {}}>
+      <div className={`oa-scroller ${justifyCenter ? 'justify-center' : ''}`} ref={scrollerRef}>
         {items.map(a => (
           <div key={a.id} className="animal-card" onClick={() => onSelect(a)} style={{ borderRadius: '8px' }}>
             <div className="animal-photo">
@@ -161,7 +161,7 @@ function OurAnimals({ goTo }) {
         </div>
       </div>
 
-      <div className="page-content" style={{padding: '4rem 1rem'}}>
+      <div className="page-content" style={{padding: '4rem 1.5rem'}}>
         <div className="container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <span className="back-btn" onClick={() => goTo('home')}>{t('common.back_home')}</span>
 
@@ -201,7 +201,7 @@ function OurAnimals({ goTo }) {
         }
         .oa-row {
           position: relative;
-          margin: 1.5rem 0 2.5rem;
+          margin: 0 !important;
         }
         .oa-scroller {
           display: flex;
@@ -209,7 +209,20 @@ function OurAnimals({ goTo }) {
           overflow-x: auto;
           scroll-behavior: smooth;
           padding: 0;
-          margin: 0 -2.75rem;
+          margin: 0 -3.10rem;
+          scrollbar-width: none;
+          -webkit-overflow-scrolling: touch;
+          scroll-snap-type: x mandatory;
+        }
+        .oa-scroller.justify-center {
+          justify-content: center;
+          align-content: center;
+          display: flex;
+          gap: 1rem;
+          overflow-x: auto;
+          scroll-behavior: smooth;
+          padding: 0 0.25rem;
+          margin: 0 -3.10rem;
           scrollbar-width: none;
           -webkit-overflow-scrolling: touch;
           scroll-snap-type: x mandatory;
@@ -239,7 +252,8 @@ function OurAnimals({ goTo }) {
         .oa-arrow--left { left: 0; }
         .oa-arrow--right { right: 0; }
         @media (max-width: 640px) {
-          .oa-scroller { padding: 0; margin: 0; }
+          .oa-scroller { padding: 0 1rem; margin: 0; }
+          .oa-arrow { display: none; }
         }
       `}</style>
 

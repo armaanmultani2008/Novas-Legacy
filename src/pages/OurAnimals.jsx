@@ -208,8 +208,8 @@ function OurAnimals({ goTo }) {
           gap: 1rem;
           overflow-x: auto;
           scroll-behavior: smooth;
-          padding: 0;
-          margin: 0 -3.10rem;
+          padding: 0rem;
+          margin: 0 -3.5rem;
           scrollbar-width: none;
           -webkit-overflow-scrolling: touch;
           scroll-snap-type: x mandatory;
@@ -221,7 +221,7 @@ function OurAnimals({ goTo }) {
           gap: 1rem;
           overflow-x: auto;
           scroll-behavior: smooth;
-          padding: 0 0.25rem;
+          padding: 0;
           margin: 0 -3.10rem;
           scrollbar-width: none;
           -webkit-overflow-scrolling: touch;
@@ -252,7 +252,7 @@ function OurAnimals({ goTo }) {
         .oa-arrow--left { left: 0; }
         .oa-arrow--right { right: 0; }
         @media (max-width: 640px) {
-          .oa-scroller { padding: 0 1rem; margin: 0; }
+          .oa-scroller { padding: 0; margin: 0 -2.2rem; }
           .oa-arrow { display: none; }
         }
       `}</style>

@@ -46,37 +46,9 @@ const OTHER_SECTIONS = [
 function AnimalsRow({ items, onSelect, justifyCenter }) {
   const { t } = useTranslation()
   const scrollerRef = useRef(null)
-  const [canLeft, setCanLeft] = useState(false)
-  const [canRight, setCanRight] = useState(false)
-
-  const updateArrows = () => {
-    const el = scrollerRef.current
-    if (!el) return
-    setCanLeft(el.scrollLeft > 4)
-    setCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4)
-  }
-
-  useEffect(() => {
-    const el = scrollerRef.current
-    if (!el) return
-    updateArrows()
-    el.addEventListener('scroll', updateArrows)
-    const ro = new ResizeObserver(updateArrows)
-    ro.observe(el)
-    return () => {
-      el.removeEventListener('scroll', updateArrows)
-      ro.disconnect()
-    }
-  }, [items])
-
-  const scroll = (dir) => {
-    const el = scrollerRef.current
-    if (el) el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: 'smooth' })
-  }
 
   return (
     <div className="oa-row">
-      {canLeft && <button className="oa-arrow oa-arrow--left" onClick={() => scroll(-1)} aria-label="Scroll left">‹</button>}
       <div className={`oa-scroller ${justifyCenter ? 'justify-center' : ''}`} ref={scrollerRef}>
         {items.map(a => (
           <div key={a.id} className="animal-card" onClick={() => onSelect(a)} style={{ borderRadius: '8px' }}>
@@ -97,7 +69,6 @@ function AnimalsRow({ items, onSelect, justifyCenter }) {
           </div>
         ))}
       </div>
-      {canRight && <button className="oa-arrow oa-arrow--right" onClick={() => scroll(1)} aria-label="Scroll right">›</button>}
     </div>
   )
 }
@@ -208,51 +179,35 @@ function OurAnimals({ goTo }) {
           gap: 1rem;
           overflow-x: auto;
           scroll-behavior: smooth;
-          padding: 0rem;
+          padding-bottom: 1.2rem;
           margin: 0 -3.5rem;
-          scrollbar-width: none;
           -webkit-overflow-scrolling: touch;
           scroll-snap-type: x mandatory;
         }
+        .oa-scroller::-webkit-scrollbar { height: 6px; }
+        .oa-scroller::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 10px; }
+        .oa-scroller::-webkit-scrollbar-thumb { border-radius: 10px; background: rgba(0, 0, 0, 0.2); transition: 0.2s; }
+        .oa-scroller::-webkit-scroller-thumb::hover { background: var(--gold, #c5a880); }
         .oa-scroller.justify-center {
           justify-content: center;
-          align-content: center;
-          display: flex;
-          gap: 1rem;
-          overflow-x: auto;
-          scroll-behavior: smooth;
-          padding: 0;
-          margin: 0 -3.10rem;
-          scrollbar-width: none;
-          -webkit-overflow-scrolling: touch;
-          scroll-snap-type: x mandatory;
+          margin: 0;
+          padding: 0 0 1.2rem 0;
         }
-        .oa-scroller::-webkit-scrollbar { display: none; }
-        .oa-arrow {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          z-index: 2;
-          width: 42px;
-          height: 42px;
-          border-radius: 50%;
-          border: 1px solid rgba(0,0,0,0.08);
-          background: #fff;
-          box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-          font-size: 1.4rem;
-          line-height: 1;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: var(--dark);
-          transition: background 0.2s, color 0.2s;
+        @media (max-width: 820px){
+          .oa-scroller.justify-center {
+            justify-content: flex-start;
+            margin: 0 -2rem;
+            padding: 0:
+          }
         }
-        .oa-arrow:hover { background: var(--gold-light); }
-        .oa-arrow--left { left: 0; }
-        .oa-arrow--right { right: 0; }
         @media (max-width: 640px) {
-          .oa-scroller { padding: 0; margin: 0 -2.2rem; }
+          .oa-scroller, 
+          .oa-scroller.justify-center { 
+            padding: 0; margin: 0 -2.2rem; gap: 1rem; justify-content: flex-start;
+          }
+          .animal-card { 
+            scroll-snap-align: center; flex-shrink: 0; width: 82vw; flex-shrink: 0; max-width: 100%;
+          }
         }
       `}</style>
 

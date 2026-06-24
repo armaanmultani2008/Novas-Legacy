@@ -569,7 +569,7 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
         }
         .ovmenu__socials a:hover { color: rgba(255,255,255,0.65); }
 
-        @media (max-width: 1260px) {
+        @media (max-width: 1460px) {
           .nn__links, .nn__actions { display: none; }
           .nn__role-badge { display: none; }
           .hamburger { display: flex; }

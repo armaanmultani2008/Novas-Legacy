@@ -1,24 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useUser } from '../UserContext'
 
-const LEVELS = [
-  { name: "Friend of Cheetahs", emoji: '🌿', color: '#4caf50', bg: 'rgba(76,175,80,0.1)',   min: 0,   max: 100  },
-  { name: 'Protector',          emoji: '🛡️', color: '#26a69a', bg: 'rgba(38,166,154,0.1)',  min: 100,  max: 300  },
-  { name: 'Guardian',           emoji: '⚡',  color: '#7c4dff', bg: 'rgba(124,77,255,0.1)',  min: 300,  max: 600  },
-  { name: 'Champion',           emoji: '🌟', color: '#c8880a', bg: 'rgba(200,136,10,0.1)',  min: 600,  max: 1000 },
-  { name: "Nova's Hero",        emoji: '🏆', color: '#e65100', bg: 'rgba(230,81,0,0.1)',    min: 1000, max: Infinity },
+const ROLES = [
+  { name: 'Friend of Nova',     emoji: '🌿', color: '#4caf50', gradient: 'linear-gradient(135deg, #388e3c, #66bb6a)', bg: 'rgba(76,175,80,0.1)',   desc: 'Join the family',       min: 0    },
+  { name: 'Conservation Ally',  emoji: '🛡️', color: '#26a69a', gradient: 'linear-gradient(135deg, #00897b, #4db6ac)', bg: 'rgba(38,166,154,0.1)',  desc: 'First contribution',    min: 100  },
+  { name: 'Wildlife Guardian',  emoji: '⚡',  color: '#7c4dff', gradient: 'linear-gradient(135deg, #651fff, #9c6eff)', bg: 'rgba(124,77,255,0.1)',  desc: 'Active supporter',      min: 300  },
+  { name: 'Cheetah Champion',   emoji: '🌟', color: '#c8880a', gradient: 'linear-gradient(135deg, #c8880a, #f5a623)', bg: 'rgba(200,136,10,0.1)',  desc: 'Dedicated patron',      min: 600  },
+  { name: "Nova's Legend",      emoji: '👑', color: '#e65100', gradient: 'linear-gradient(135deg, #bf360c, #ff7043)', bg: 'rgba(230,81,0,0.1)',    desc: 'Ultimate hero',         min: 1000 },
 ]
 
-function getLevel(xp) { return LEVELS.findLast(l => xp >= l.min) || LEVELS[0] }
-function getLevelProgress(xp) {
-  const lvl = getLevel(xp)
-  if (lvl.max === Infinity) return 100
-  return Math.round(((xp - lvl.min) / (lvl.max - lvl.min)) * 100)
-}
-function getNextLevel(xp) {
-  const idx = LEVELS.findIndex(l => l === getLevel(xp))
-  return LEVELS[idx + 1] || null
-}
+function getRole(xp) { return ROLES.findLast(l => xp >= l.min) || ROLES[0] }
+function getRoleIndex(xp) { return ROLES.findLastIndex(l => xp >= l.min) }
 function fmt(amount) { return `€${(amount / 100).toFixed(2)}` }
 function fmtDate(d) {
   return new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -105,9 +97,9 @@ export default function UserProfile({ goTo }) {
   }
 
   const xp = user.xp || 0
-  const level = getLevel(xp)
-  const progress = getLevelProgress(xp)
-  const nextLevel = getNextLevel(xp)
+  const role = getRole(xp)
+  const roleIdx = getRoleIndex(xp)
+  const nextRole = ROLES[roleIdx + 1] || null
   const adoptions = user.adoptions || []
   const orders = user.orders || []
 
@@ -116,25 +108,18 @@ export default function UserProfile({ goTo }) {
 
       {/* ── Header ── */}
       <div className="up__header">
-        <div className="up__av">{user.name?.[0]?.toUpperCase() || '?'}</div>
+        <div className="up__av" style={{ borderColor: role.color, color: role.color }}>{user.name?.[0]?.toUpperCase() || '?'}</div>
         <div className="up__header-center">
           <h1 className="up__name">{user.name}</h1>
-          <span className="up__level-pill" style={{ color: level.color, background: level.bg }}>
-            {level.emoji} {level.name}
+          <span className="up__role-badge" style={{ background: role.gradient }}>
+            {role.emoji} {role.name}
           </span>
         </div>
-        <div className="up__xp-panel">
-          <div className="up__xp-top">
-            <span className="up__xp-label">Total XP</span>
-            <span className="up__xp-value" style={{ color: level.color }}>{xp}</span>
-          </div>
-          <div className="up__xp-track">
-            <div className="up__xp-fill" style={{ width: `${progress}%`, background: level.color }} />
-          </div>
-          <div className="up__xp-sub">
-            {nextLevel
-              ? <>{nextLevel.max - xp} XP to <strong>{nextLevel.name}</strong></>
-              : 'Maximum level reached'}
+        <div className="up__role-panel">
+          <div className="up__role-panel-emoji">{role.emoji}</div>
+          <div className="up__role-panel-name" style={{ color: role.color }}>{role.name}</div>
+          <div className="up__role-panel-sub">
+            {nextRole ? <>Support more to become <strong>{nextRole.name}</strong></> : '✨ Maximum rank achieved'}
           </div>
         </div>
       </div>
@@ -152,8 +137,8 @@ export default function UserProfile({ goTo }) {
         </div>
         <div className="up__stat-div" />
         <div className="up__stat">
-          <div className="up__stat-n" style={{ color: level.color }}>{LEVELS.findIndex(l => l === level) + 1}<span>/{LEVELS.length}</span></div>
-          <div className="up__stat-l">Level</div>
+          <div className="up__stat-n" style={{ color: role.color }}>{roleIdx + 1}<span>/{ROLES.length}</span></div>
+          <div className="up__stat-l">Rank</div>
         </div>
       </div>
 
@@ -196,9 +181,7 @@ export default function UserProfile({ goTo }) {
                       <div className="up__card-sub">{a.animalSpecies}</div>
                       <div className="up__card-row">
                         <span className="up__chip up__chip--gold">€{a.monthlyEur}/month</span>
-                        <span className="up__chip up__chip--green">
-                          <IconStar /> +50 XP
-                        </span>
+                        <span className="up__chip up__chip--green"><IconStar /> Supporter</span>
                         <span className="up__card-date">Since {fmtDate(a.date)}</span>
                       </div>
                     </div>
@@ -231,9 +214,7 @@ export default function UserProfile({ goTo }) {
                       <div className="up__card-title">{o.productName}</div>
                       <div className="up__card-row">
                         <span className="up__chip up__chip--gold">{fmt(o.amount)}</span>
-                        <span className="up__chip up__chip--green">
-                          <IconStar /> +{Math.max(1, Math.floor(o.amount / 100))} XP
-                        </span>
+                        <span className="up__chip up__chip--green"><IconStar /> Donor</span>
                         <span className="up__card-date">{fmtDate(o.date)}</span>
                       </div>
                     </div>
@@ -260,34 +241,32 @@ export default function UserProfile({ goTo }) {
                 <span>{user.createdAt ? fmtDate(user.createdAt) : '—'}</span>
               </div>
               <div className="up__info-card">
-                <label>Current level</label>
-                <span style={{ color: level.color, fontWeight: 700 }}>{level.name}</span>
+                <label>Donor Role</label>
+                <span style={{ color: role.color, fontWeight: 700 }}>{role.emoji} {role.name}</span>
               </div>
             </div>
 
             <div className="up__levels-card">
-              <div className="up__levels-head">Your Journey</div>
+              <div className="up__levels-head">Your Donor Journey</div>
               <div className="up__lv-grid">
-                {LEVELS.map((l) => {
-                  const isCurrent = level.name === l.name
-                  const isUnlocked = xp >= l.min
+                {ROLES.map((r, idx) => {
+                  const isCurrent = role.name === r.name
+                  const isUnlocked = xp >= r.min
                   const isLocked = !isUnlocked
                   return (
                     <div
-                      key={l.name}
+                      key={r.name}
                       className={`up__lv-tile ${isCurrent ? 'current' : ''} ${isUnlocked && !isCurrent ? 'unlocked' : ''} ${isLocked ? 'locked' : ''}`}
-                      style={isCurrent ? { borderColor: l.color, background: l.bg } : {}}
+                      style={isCurrent ? { borderColor: r.color, background: r.bg } : {}}
                     >
                       <div className="up__lv-emoji" style={{ filter: isLocked ? 'grayscale(1) opacity(0.4)' : 'none' }}>
-                        {l.emoji}
+                        {r.emoji}
                       </div>
-                      <div className="up__lv-tile-name" style={isCurrent ? { color: l.color } : isLocked ? { color: 'var(--gray-light)' } : {}}>
-                        {l.name}
+                      <div className="up__lv-tile-name" style={isCurrent ? { color: r.color } : isLocked ? { color: 'var(--gray-light)' } : {}}>
+                        {r.name}
                       </div>
-                      <div className="up__lv-tile-req">
-                        {l.min === 0 ? '0 XP' : `${l.min} XP`}
-                      </div>
-                      {isCurrent && <div className="up__lv-current-dot" style={{ background: l.color }} />}
+                      <div className="up__lv-tile-req">{r.desc}</div>
+                      {isCurrent && <div className="up__lv-current-dot" style={{ background: r.color }} />}
                       {isLocked && <div className="up__lv-lock">🔒</div>}
                     </div>
                   )
@@ -360,35 +339,25 @@ export default function UserProfile({ goTo }) {
         .up__header-center { flex: 1; min-width: 140px; }
         .up__name {
           font-family: var(--serif); font-size: 1.75rem; font-weight: 700;
-          color: var(--dark); margin: 0 0 0.5rem; line-height: 1;
+          color: var(--dark); margin: 0 0 0.6rem; line-height: 1;
         }
-        .up__level-pill {
+        .up__role-badge {
           display: inline-block;
-          font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
-          text-transform: uppercase; padding: 0.3rem 0.85rem;
-          border-radius: 99px;
+          font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em;
+          text-transform: uppercase; padding: 0.32rem 0.9rem;
+          border-radius: 99px; color: #fff;
+          box-shadow: 0 3px 10px rgba(0,0,0,0.2);
         }
-        .up__xp-panel {
-          min-width: 200px; flex-shrink: 0;
+        .up__role-panel {
+          min-width: 180px; flex-shrink: 0;
           border-left: 1px solid rgba(0,0,0,0.07);
           padding-left: 1.5rem;
+          display: flex; flex-direction: column; align-items: flex-start; gap: 0.3rem;
         }
-        .up__xp-top {
-          display: flex; justify-content: space-between;
-          align-items: baseline; margin-bottom: 0.5rem;
-        }
-        .up__xp-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray); font-weight: 600; }
-        .up__xp-value { font-size: 1.6rem; font-weight: 700; line-height: 1; }
-        .up__xp-track {
-          height: 5px; background: rgba(0,0,0,0.07);
-          border-radius: 99px; overflow: hidden; margin-bottom: 0.4rem;
-        }
-        .up__xp-fill {
-          height: 100%; border-radius: 99px;
-          transition: width 1s cubic-bezier(0.22,1,0.36,1);
-        }
-        .up__xp-sub { font-size: 0.74rem; color: var(--gray); }
-        .up__xp-sub strong { color: var(--dark-2); }
+        .up__role-panel-emoji { font-size: 2rem; line-height: 1; }
+        .up__role-panel-name { font-size: 1rem; font-weight: 800; line-height: 1; }
+        .up__role-panel-sub { font-size: 0.74rem; color: var(--gray); }
+        .up__role-panel-sub strong { color: var(--dark-2); }
 
         /* Stats */
         .up__stats {
@@ -614,7 +583,7 @@ export default function UserProfile({ goTo }) {
         @media (max-width: 640px) {
           .up { padding: 5.5rem 1rem 3rem; }
           .up__header { padding: 1.25rem; gap: 1rem; }
-          .up__xp-panel { border-left: none; padding-left: 0; border-top: 1px solid rgba(0,0,0,0.07); padding-top: 1rem; width: 100%; }
+          .up__role-panel { border-left: none; padding-left: 0; border-top: 1px solid rgba(0,0,0,0.07); padding-top: 1rem; width: 100%; flex-direction: row; align-items: center; gap: 0.75rem; }
           .up__stats { padding: 1rem; }
           .up__info-grid { grid-template-columns: 1fr; }
           .up__tab { font-size: 0.72rem; gap: 0.3rem; }

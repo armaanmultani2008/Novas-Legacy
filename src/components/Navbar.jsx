@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useUser } from '../UserContext'
 
-const LEVELS = [
-  { name: "Friend of Cheetahs", emoji: '🌿', color: '#4caf50', min: 0   },
-  { name: 'Protector',          emoji: '🛡️', color: '#26a69a', min: 100  },
-  { name: 'Guardian',           emoji: '⚡',  color: '#7c4dff', min: 300  },
-  { name: 'Champion',           emoji: '🌟', color: '#c8880a', min: 600  },
-  { name: "Nova's Hero",        emoji: '🏆', color: '#ff8f00', min: 1000 },
+const ROLES = [
+  { name: 'Friend of Nova',      emoji: '🌿', color: '#4caf50', gradient: 'linear-gradient(135deg, #388e3c, #66bb6a)', min: 0    },
+  { name: 'Conservation Ally',   emoji: '🛡️', color: '#26a69a', gradient: 'linear-gradient(135deg, #00897b, #4db6ac)', min: 100  },
+  { name: 'Wildlife Guardian',   emoji: '⚡',  color: '#7c4dff', gradient: 'linear-gradient(135deg, #651fff, #9c6eff)', min: 300  },
+  { name: 'Cheetah Champion',    emoji: '🌟', color: '#c8880a', gradient: 'linear-gradient(135deg, #c8880a, #f5a623)', min: 600  },
+  { name: "Nova's Legend",       emoji: '👑', color: '#e65100', gradient: 'linear-gradient(135deg, #bf360c, #ff7043)', min: 1000 },
 ]
-function getLevel(xp) { return LEVELS.findLast(l => xp >= l.min) || LEVELS[0] }
+function getRole(xp) { return ROLES.findLast(l => xp >= l.min) || ROLES[0] }
 
 function Navbar({ goTo, openAuth, forceSolid = false }) {
   const { t } = useTranslation()
@@ -124,8 +124,8 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
               {user ? (
                 <button className="nn__user-btn" onClick={() => handleNav('user-profile')}>
                   <span className="nn__user-avatar">{user.name?.[0]?.toUpperCase()}</span>
-                  <span className="nn__user-xp" style={{ color: getLevel(user.xp || 0).color }}>
-                    {getLevel(user.xp || 0).emoji} {user.xp || 0} XP
+                  <span className="nn__role-badge" style={{ background: getRole(user.xp || 0).gradient }}>
+                    {getRole(user.xp || 0).emoji} {getRole(user.xp || 0).name}
                   </span>
                 </button>
               ) : (
@@ -190,10 +190,12 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
               <div className="ovmenu__user">
                 <button className="ovmenu__user-profile" onClick={() => handleNav('user-profile')}>
                   <span className="ovmenu__user-av">{user.name?.[0]?.toUpperCase()}</span>
-                  <span className="ovmenu__user-name">{user.name}</span>
-                  <span className="ovmenu__user-xp" style={{ color: getLevel(user.xp || 0).color }}>
-                    {getLevel(user.xp || 0).emoji} {user.xp || 0} XP
-                  </span>
+                  <div className="ovmenu__user-info">
+                    <span className="ovmenu__user-name">{user.name}</span>
+                    <span className="ovmenu__role-pill" style={{ background: getRole(user.xp || 0).gradient }}>
+                      {getRole(user.xp || 0).emoji} {getRole(user.xp || 0).name}
+                    </span>
+                  </div>
                 </button>
                 <button className="ovmenu__logout" onClick={() => { logout(); handleNav('home') }}>Sign out</button>
               </div>
@@ -354,19 +356,24 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
         .nn__user-btn {
           display: flex; align-items: center; gap: 0.5rem;
           background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 50px; padding: 0.3rem 0.8rem 0.3rem 0.35rem;
+          border-radius: 50px; padding: 0.3rem 0.45rem 0.3rem 0.35rem;
           cursor: pointer; transition: border-color 0.2s, background 0.2s;
           flex-shrink: 0;
         }
-        .nn__user-btn:hover { border-color: var(--gold-mid); background: rgba(255,255,255,0.08); }
+        .nn__user-btn:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); }
         .nn__user-avatar {
-          width: 26px; height: 26px; border-radius: 50%;
+          width: 28px; height: 28px; border-radius: 50%;
           background: rgba(200,136,10,0.2); border: 1px solid var(--gold-mid);
           display: flex; align-items: center; justify-content: center;
           font-size: 0.75rem; font-weight: 700; color: var(--gold-light);
           flex-shrink: 0;
         }
-        .nn__user-xp { font-size: 0.72rem; font-weight: 700; white-space: nowrap; }
+        .nn__role-badge {
+          font-size: 0.68rem; font-weight: 700; white-space: nowrap;
+          padding: 0.2rem 0.6rem; border-radius: 99px;
+          color: #fff; letter-spacing: 0.03em;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        }
         .nn__cta {
           background: var(--gold-light);
           color: #111;
@@ -502,13 +509,18 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
           background: none; border: none; cursor: pointer; flex: 1;
         }
         .ovmenu__user-av {
-          width: 36px; height: 36px; border-radius: 50%;
+          width: 40px; height: 40px; border-radius: 50%;
           background: rgba(200,136,10,0.15); border: 1.5px solid var(--gold-mid);
           display: flex; align-items: center; justify-content: center;
-          font-size: 0.9rem; font-weight: 700; color: var(--gold-light); flex-shrink: 0;
+          font-size: 1rem; font-weight: 700; color: var(--gold-light); flex-shrink: 0;
         }
-        .ovmenu__user-name { font-size: 0.95rem; color: rgba(255,255,255,0.8); font-weight: 600; }
-        .ovmenu__user-xp { font-size: 0.78rem; font-weight: 700; }
+        .ovmenu__user-info { display: flex; flex-direction: column; gap: 0.3rem; align-items: flex-start; }
+        .ovmenu__user-name { font-size: 0.95rem; color: rgba(255,255,255,0.85); font-weight: 600; }
+        .ovmenu__role-pill {
+          font-size: 0.65rem; font-weight: 700; padding: 0.18rem 0.6rem;
+          border-radius: 99px; color: #fff; letter-spacing: 0.04em;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
         .ovmenu__logout {
           background: none; border: 1px solid rgba(255,255,255,0.12);
           color: rgba(255,255,255,0.35); border-radius: 6px;
@@ -559,6 +571,7 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
 
         @media (max-width: 1260px) {
           .nn__links, .nn__actions { display: none; }
+          .nn__role-badge { display: none; }
           .hamburger { display: flex; }
         }
 

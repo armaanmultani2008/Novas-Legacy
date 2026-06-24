@@ -253,7 +253,6 @@ function OurAnimals({ goTo }) {
         .oa-arrow--right { right: 0; }
         @media (max-width: 640px) {
           .oa-scroller { padding: 0; margin: 0 -2.2rem; }
-          .oa-arrow { display: none; }
         }
       `}</style>
 

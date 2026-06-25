@@ -1,25 +1,43 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
 
 function AnimalModal({ animal, onClose }) {
   const images = [animal.img, ...(animal.gallery || [])].filter(Boolean)
   const [activeIdx, setActiveIdx] = useState(0)
+  const pushedRef = useRef(false)
 
   useBodyScrollLock(true)
 
   useEffect(() => {
-    function onKey(e) { if (e.key === 'Escape') onClose() }
+    if (!pushedRef.current) {
+      window.history.pushState({ ...(window.history.state || {}), animalModalOpen: true }, '')
+      pushedRef.current = true
+    }
+    function onPopState(e) {
+      if (!e.state?.animalModalOpen) onClose()
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
+
+  const requestClose = () => {
+    if (window.history.state?.animalModalOpen) window.history.back()
+    else onClose()
+  }
+
+  useEffect(() => {
+    function onKey(e) { if (e.key === 'Escape') requestClose() }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+  }, [])
 
   const activeCaption = activeIdx === 0 ? null : animal.gallery?.[activeIdx - 1]?.caption
 
   return createPortal(
-    <div className="am-overlay" onClick={onClose}>
+    <div className="am-overlay" onClick={requestClose}>
       <div className="am-card" onClick={e => e.stopPropagation()}>
-        <button className="am-close" onClick={onClose}>✕</button>
+        <button className="am-close" onClick={requestClose}>✕</button>
 
         <div className="am-media">
           <img src={images[activeIdx]} alt={animal.name} />

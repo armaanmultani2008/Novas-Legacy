@@ -22,6 +22,21 @@ export default function AuthModal({ open, onClose, onSuccess, resetToken }) {
     if (resetToken) setMode('reset')
   }, [open, resetToken])
 
+  useEffect(() => {
+    if (!open) return
+    window.history.pushState({ ...(window.history.state || {}), authModalOpen: true }, '')
+    function onPopState(e) {
+      if (!e.state?.authModalOpen) onClose()
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [open])
+
+  const requestClose = () => {
+    if (window.history.state?.authModalOpen) window.history.back()
+    else onClose()
+  }
+
   if (!open) return null
 
   const reset = () => { setName(''); setEmail(''); setPassword(''); setConfirmPw(''); setError(null); setInfo(null) }
@@ -82,7 +97,7 @@ export default function AuthModal({ open, onClose, onSuccess, resetToken }) {
         await register(name.trim(), email, password)
       }
       reset()
-      onClose()
+      requestClose()
       onSuccess?.()
     } catch (err) {
       setError(err.message)
@@ -97,9 +112,9 @@ export default function AuthModal({ open, onClose, onSuccess, resetToken }) {
 
   return (
     <>
-      <div className="auth-overlay" onClick={onClose} />
+      <div className="auth-overlay" onClick={requestClose} />
       <div className="auth-modal">
-        <button className="auth-close" onClick={onClose} aria-label="Close">✕</button>
+        <button className="auth-close" onClick={requestClose} aria-label="Close">✕</button>
 
         <div className="auth-logo">Nova&apos;s <em>Legacy</em></div>
 

@@ -51,7 +51,6 @@ const pages = {
   'user-profile': UserProfile,
 }
 
-// Pages without a dark page-hero-img up top — the navbar must stay solid here.
 const NO_HERO_PAGES = ['user-profile']
 
 function AppInner() {
@@ -133,8 +132,10 @@ function AppInner() {
       const page = e.state?.page || 'home'
       const savedPostId = e.state?.postId
       if (savedPostId != null) setPostId(savedPostId)
-      setCurrentPage(page)
-      window.scrollTo({ top: 0, behavior: 'instant' })
+      setCurrentPage(prev => {
+        if (page !== prev) window.scrollTo({ top: 0, behavior: 'instant' })
+        return page
+      })
     }
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
@@ -173,15 +174,15 @@ function AppInner() {
     <>
       <AuthModal open={authOpen} onClose={() => { setAuthOpen(false); setResetToken(null) }} resetToken={resetToken} />
       {regBanner && !user && (
-        <div style={{
-          position: 'fixed', bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)',
+        <div className="reg-banner" style={{
+          position: 'fixed', top: 'calc(72px + 0.75rem)', left: '50%', transform: 'translateX(-50%)',
           zIndex: 9998, background: 'rgba(14,14,14,0.97)',
           border: '1px solid rgba(200,136,10,0.35)',
           borderRadius: '50px', padding: '0.7rem 1rem 0.7rem 1.4rem',
           display: 'flex', alignItems: 'center', gap: '1rem',
           boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
           backdropFilter: 'blur(12px)',
-          animation: 'slideUp 0.4s cubic-bezier(0.22,1,0.36,1)',
+          animation: 'slideDown 0.4s cubic-bezier(0.22,1,0.36,1)',
           whiteSpace: 'nowrap',
         }}>
           <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.65)' }}>
@@ -206,7 +207,25 @@ function AppInner() {
           </button>
         </div>
       )}
-      <style>{`@keyframes slideUp { from { opacity:0; transform:translateX(-50%) translateY(20px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }`}</style>
+      <style>{`
+        @keyframes slideDown { from { opacity:0; transform:translateX(-50%) translateY(-20px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+        @media (max-width: 480px) {
+          .reg-banner {
+            max-width: calc(100vw - 1.5rem) !important;
+            white-space: normal !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            border-radius: 18px !important;
+            padding: 0.65rem 0.9rem !important;
+            gap: 0.5rem !important;
+          }
+          .reg-banner span { font-size: 0.78rem !important; }
+        }
+        @media (max-width: 360px) {
+          .reg-banner span { font-size: 0.72rem !important; }
+          .reg-banner button:first-of-type { font-size: 0.68rem !important; padding: 0.35rem 0.85rem !important; }
+        }
+      `}</style>
       <Navbar goTo={goTo} openAuth={() => setAuthOpen(true)} forceSolid={NO_HERO_PAGES.includes(currentPage)} />
       {successBanner && (
         <div style={{

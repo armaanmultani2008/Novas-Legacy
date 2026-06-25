@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useUser } from '../UserContext'
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -13,6 +14,8 @@ export default function AuthModal({ open, onClose, onSuccess, resetToken }) {
   const [error, setError] = useState(null)
   const [info, setInfo] = useState(null)
   const [loading, setLoading] = useState(false)
+
+  useBodyScrollLock(open)
 
   useEffect(() => {
     if (!open) { setMode('login'); return }

@@ -74,6 +74,18 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
     return () => { document.body.style.overflow = '' }
   }, [menuOpen])
 
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1461px)')
+    const onChange = (e) => {
+      if (e.matches) {
+        setMenuOpen(false)
+        setActiveDropdown(null)
+      }
+    }
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
   const handleNav = (page) => {
     goTo(page)
     setMenuOpen(false)
@@ -150,6 +162,12 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
 
           </div>
         </nav>
+
+        <div
+            className={`ovmenu-backdrop ${menuOpen ? 'ovmenu-backdrop--open' : ''}`}
+            onClick={() => { setMenuOpen(false); setActiveDropdown(null) }}
+            aria-hidden="true"
+        />
 
         <div className={`ovmenu ${menuOpen ? 'ovmenu--open' : ''}`} aria-hidden={!menuOpen}>
 
@@ -435,6 +453,20 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
           clip-path: inset(0 0 0% 0);
         }
 
+        .ovmenu-backdrop {
+          position: fixed;
+          inset: 0;
+          z-index: 998;
+          background: rgba(0,0,0,0.55);
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.4s ease;
+        }
+        .ovmenu-backdrop--open {
+          opacity: 1;
+          pointer-events: all;
+        }
+
         .ovmenu__row {
           overflow: hidden;
           border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -516,7 +548,7 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
           font-size: 1rem; font-weight: 700; color: var(--gold-light); flex-shrink: 0;
         }
         .ovmenu__user-info { display: flex; flex-direction: column; gap: 0.3rem; align-items: flex-start; }
-        .ovmenu__user-name { font-size: 0.95rem; color: rgba(255,255,255,0.85); font-weight: 600; }
+        .ovmenu__user-name { font-size: 0.85rem; color: rgba(255,255,255,0.85); font-weight: 600; }
         .ovmenu__role-pill {
           font-size: 0.65rem; font-weight: 700; padding: 0.18rem 0.6rem;
           border-radius: 99px; color: #fff; letter-spacing: 0.04em;
@@ -570,17 +602,15 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
         }
         .ovmenu__socials a:hover { color: rgba(255,255,255,0.65); }
 
-        /* ── Tablet landscape / small laptop (≤1460px) ── */
         @media (max-width: 1460px) {
           .nn__links, .nn__actions { display: none; }
-          .nn__role-badge { display: none; }
+          .nn__role-badge { display: flex; }
           .hamburger { display: flex; }
         }
 
-        /* ── Dropdown panel (769px–1460px): panel instead of fullscreen overlay ── */
-        @media (min-width: 769px) and (max-width: 1460px) {
+        @media (hover: hover) and (pointer: fine) {
           .ovmenu {
-            top: 72px;
+            top: 50px;
             bottom: auto;
             max-height: calc(100vh - 72px);
             padding: 1.25rem 6vw 1.75rem;
@@ -592,37 +622,38 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
           }
           .ovmenu__link,
           .ovmenu--open .ovmenu__link {
-            font-size: clamp(1rem, 1.7vw, 1.45rem);
+            font-size: clamp(1.75rem, 2vw, 1.75rem);
             padding: 0.5rem 0;
             transform: none;
             transition: color 0.12s ease;
           }
-          .ovmenu__toggle { font-size: 1.2rem; }
-          .ovmenu__sub { padding: 0 0 0.6rem 1.75rem; font-size: 0.88rem; gap: 0.15rem 1.5rem; }
-          .ovmenu__sub-item { font-size: 0.88rem; }
+          .ovmenu__toggle { font-size: 1.6rem; }
+          .ovmenu__sub { padding: 0 0 0.6rem 1.75rem; font-size: .088rem; gap: 0.15rem 1.5rem; }
+          .ovmenu__sub-item { font-size: 1rem; }
           .ovmenu__foot { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.06); }
           .ovmenu__signin { margin-bottom: 0.75rem; }
         }
 
-        /* ── Tablet portrait (≤900px): font cresce per touch ── */
-        @media (max-width: 900px) {
+        @media (hover: none) and (pointer: coarse) and (max-width: 900px) {
           .ovmenu__link { font-size: clamp(1.4rem, 4vw, 2.4rem); }
           .ovmenu__sub { padding: 0 0 0.8rem 2.5rem; }
           .ovmenu__foot { margin-top: 2.5rem; gap: 2rem; }
         }
 
-        /* ── Mobile (≤768px) ── */
         @media (max-width: 768px) {
           .nn__wrap { padding: 0 1.25rem; gap: 1rem; }
+        }
+        @media (hover: none) and (pointer: coarse) and (max-width: 768px) {
           .ovmenu { padding: 80px 5vw 3rem 5vw; }
           .ovmenu__link { font-size: clamp(1.5rem, 5.5vw, 2.6rem); padding: 0.45rem 0; }
           .ovmenu__sub { padding: 0 0 0.6rem 2rem; gap: 0.2rem 1.5rem; }
           .ovmenu__foot { margin-top: 2rem; }
         }
 
-        /* ── Small mobile (≤480px) ── */
         @media (max-width: 480px) {
           .nn__wrap { padding: 0 1rem; gap: 0.75rem; }
+        }
+        @media (hover: none) and (pointer: coarse) and (max-width: 480px) {
           .ovmenu { padding: 72px 4vw 2.5rem 4vw; }
           .ovmenu__link { font-size: clamp(1.4rem, 7vw, 2rem); padding: 0.4rem 0; }
           .ovmenu__sub { padding: 0 0 0.5rem 1.25rem; }
@@ -632,9 +663,10 @@ function Navbar({ goTo, openAuth, forceSolid = false }) {
           .ovmenu__contacts a { font-size: 0.78rem; }
         }
 
-        /* ── Very small (≤360px) ── */
         @media (max-width: 360px) {
           .nn__wrap { padding: 0 0.75rem; }
+        }
+        @media (hover: none) and (pointer: coarse) and (max-width: 360px) {
           .ovmenu { padding: 68px 3.5vw 2rem 3.5vw; }
           .ovmenu__link { font-size: clamp(1.3rem, 8vw, 1.8rem); }
         }

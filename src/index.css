@@ -1143,7 +1143,7 @@ nav.solid {
 }
 
 .animal-card {
-  height: 420px;
+  height: 445px;
   width: 380px;
   flex-shrink: 0;
   background: var(--white);
@@ -1156,7 +1156,7 @@ nav.solid {
 .animal-card:hover { transform: translateY(-4px); }
 
 .animal-photo {
-  height: 280px;
+  height: 310px;
   overflow: hidden;
   display: flex;
   align-items: center;

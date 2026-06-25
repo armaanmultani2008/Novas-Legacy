@@ -206,14 +206,18 @@ function OurAnimals({ goTo }) {
         .oa-scroller.justify-center {
           justify-content: center;
           margin: 0; 
-          padding: 0 0 1.5rem 0;
+          padding: 1rem;
         }
         @media (max-width: 820px) {
           .oa-scroller.justify-center {
-            justify-content: flex-start; 
-            margin: 0 -2rem;
-            padding-left: 2rem;
-            padding-right: 2rem;
+            display: flex;
+            gap: 1.25rem;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding-bottom: 1.5rem;
+            margin: 0 -3.5rem;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory;
           }
         }
         @media (max-width: 640px) {
